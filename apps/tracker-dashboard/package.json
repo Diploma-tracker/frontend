@@ -7,10 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix --max-warnings 0",
-    "format": "prettier --check . --ignore-unknown",
-    "format:fix": "prettier --write . --ignore-unknown",
+    "lint": "eslint src/ --max-warnings 0",
+    "lint:fix": "eslint src/ --fix --max-warnings 0",
+    "format": "prettier --check src/ --ignore-unknown",
+    "format:fix": "prettier --write src/ --ignore-unknown",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {

@@ -7,7 +7,9 @@
     "create:app": "turbo generate workspace --type app",
     "create:package": "turbo generate workspace --type package",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format:fix": "turbo run format:fix",
     "check-types": "turbo run check-types",
     "prepare": "husky"
   },
