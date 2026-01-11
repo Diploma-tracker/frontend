@@ -21,12 +21,23 @@
         "^lint"
       ]
     },
+    "lint:fix": {
+      "dependsOn": [
+        "^lint:fix"
+      ]
+    },
     "check-types": {
       "dependsOn": [
         "^check-types"
       ]
     },
     "format": {
+      "cache": false
+    },
+    "format:fix": {
+      "dependsOn": [
+        "^format:fix"
+      ],
       "cache": false
     },
     "dev": {
