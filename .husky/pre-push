@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+echo "🔍 Linting branch name..."
+
+if ! npx --no-install branch-name-lint branchlint.config.js; then
+  echo "❌ Invalid branch name. Please follow branchlint rules."
+  exit 1
+fi
+
+echo "✅ Branch name is valid"

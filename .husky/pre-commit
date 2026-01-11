@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+echo "🎨 Checking formatting..."
+pnpm turbo run format
+
+echo "🔍 Running lint..."
+pnpm turbo run lint

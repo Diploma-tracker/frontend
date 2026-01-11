@@ -1,0 +1,29 @@
+{
+  "name": "@repo/code-tools-config",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/react-base": "./eslint/react-base.js",
+    "./eslint/react-vite": "./eslint/react-vite.js",
+    "./prettier/base": "./prettier/base.js",
+    "./prettier/react": "./prettier/react.js"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "eslint-plugin-turbo": "^2.6.0",
+    "globals": "^16.5.0",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
+  }
+}
