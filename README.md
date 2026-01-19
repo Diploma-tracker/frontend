@@ -1,58 +1,76 @@
-# Turborepo Tailwind CSS starter
+# Diploma tracker frontend monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Monorepo repository containing the frontend part of the Diploma tracker application for KHPI university.
 
-## Using this example
+## Tech stack
 
-Run the following command:
+<div align="center">
+    <a href="https://www.typescriptlang.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Typescript-black?style=for-the-badge&logoColor=white&logo=typescript&color=a0001b" alt="Typescript"/>
+    </a>
+    <a href="https://reactjs.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-React-black?style=for-the-badge&logoColor=white&logo=react&color=a0001b" alt="React" />
+    </a>
+    <a href="https://ui.shadcn.com/" target="_blank">
+        <img src="https://img.shields.io/badge/-Shadcn UI-black?style=for-the-badge&logoColor=white&logo=shadcnui&color=a0001b" alt="shadcnui" />
+    </a>
+    <a href="https://tailwindcss.com/" target="_blank">
+        <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=a0001b" alt="tailwindcss" />
+    </a>
+    <a href="https://zustand.pmnd.rs/" target="_blank">
+        <img src="https://img.shields.io/badge/-Zustand-black?style=for-the-badge&logo=redux&logoColor=white&color=a0001b" alt="Zustand" />
+    </a>
+    <a href="https://tanstack.com/query" target="_blank">
+        <img src="https://img.shields.io/badge/-Tanstack Query-black?style=for-the-badge&logo=tanstack&logoColor=white&color=a0001b" alt="Tanstack Query" />
+    </a>
+        <a href="https://tanstack.com/router" target="_blank">
+        <img src="https://img.shields.io/badge/-Tanstack Router-black?style=for-the-badge&logo=tanstack&logoColor=white&color=a0001b" alt="Tanstack Router" />
+    </a>
+</div>
 
-```sh
-npx create-turbo@latest -e with-tailwind
-```
+## Dev instruments
 
-## What's inside?
+<div align="center">
+    <a href="https://turborepo.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Turborepo-black?style=for-the-badge&logoColor=white&logo=turborepo&color=1a1a1a" alt="Turborepo" />
+    </a>
+    <a href="https://pnpm.io/" target="_blank">
+        <img src="https://img.shields.io/badge/-PNPM-black?style=for-the-badge&logoColor=white&logo=pnpm&color=1a1a1a" alt="PNPM" />
+    </a>
+    <a href="https://vitejs.dev/" target="_blank">
+        <img src="https://img.shields.io/badge/-Vite-black?style=for-the-badge&logoColor=white&logo=vite&color=1a1a1a" alt="Vite" />
+    </a>
+    <a href="https://eslint.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Eslint-black?style=for-the-badge&logoColor=white&logo=eslint&color=1a1a1a" alt="eslint" />
+    </a>
+    <a href="https://prettier.io/" target="_blank">
+        <img src="https://img.shields.io/badge/-prettier-black?style=for-the-badge&logoColor=white&logo=prettier&color=1a1a1a" alt="prettier" />
+    </a>
+    <a href="https://commitlint.js.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-commit_lint-black?style=for-the-badge&logoColor=white&logo=commitlint&color=1a1a1a" alt="commit lint" />
+    </a>
+    <a href="https://github.com/features/actions" target="_blank">
+        <img src="https://img.shields.io/badge/-github_actions-black?style=for-the-badge&logoColor=white&logo=githubactions&color=1a1a1a" alt="githubactions" />
+    </a>
+</div>
 
-This Turborepo includes the following packages/apps:
+## Table of Contents
 
-### Apps and Packages
+- [Requirements](#requirements)
+- [Environment Variables](#environment-variables)
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Requirements
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Node.js + `pnpm` package manager
+- Configured `.env` file
 
-### Building packages/ui
+## Environment Variables
 
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.ts`. This was chosen for several reasons:
+To run this project, you will need to add the following environment variables to your .env file.
 
-- Make sharing one `tailwind.config.ts` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
+Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
 
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.ts` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
-
-For example, in [tailwind.config.ts](packages/tailwind-config/tailwind.config.ts):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
-```
-
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+| Parameter      | Description                                |
+| :------------- | :----------------------------------------- |
+| `NODE_ENV`     | Node environment (development, production) |
+| `VITE_API_URL` | URL of the backend API                     |
