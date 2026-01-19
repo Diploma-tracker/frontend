@@ -18,7 +18,7 @@ const ALL_PREFIXES = [...COMMON_PREFIXES, ...CI_PREFIXES];
 module.exports = {
   prefixes: ALL_PREFIXES, // Allowed prefixes
   banned: ["wip", "tmp"], // Banned branch names
-  skip: ["develop", "master", "main"], // Branches to skip checking
+  skip: ["dev", "master", "main"], // Branches to skip checking
   separator: "/", // Separator for branch names
   disallowed: ["master", "develop", "main", "staging"], // Disallowed branch names for pushes
 };
