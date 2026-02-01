@@ -6,10 +6,10 @@
 @layer base {
   body {
     @apply bg-background text-foreground;
-    letter-spacing: var(--tracking-normal);
   }
 
   html {
     @apply font-sans antialiased;
+    letter-spacing: var(--tracking-normal);
   }
 }

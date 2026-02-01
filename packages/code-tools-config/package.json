@@ -1,5 +1,6 @@
 {
   "name": "@repo/code-tools-config",
+  "description": "Shared code-tools configs",
   "version": "0.0.0",
   "type": "module",
   "private": true,

@@ -1,5 +1,6 @@
 {
   "name": "@repo/ui-kit",
+  "description": "A reusable UI component library built with Shadcn UI and Tailwind CSS",
   "version": "0.0.0",
   "type": "module",
   "sideEffects": [
@@ -12,7 +13,6 @@
     "./styles.css": "./dist/index.css",
     "./*": "./dist/*.js"
   },
-  "license": "MIT",
   "scripts": {
     "dev:components": "tsc --watch",
     "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
