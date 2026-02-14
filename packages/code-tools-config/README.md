@@ -1,3 +1,3 @@
-# `@turbo/eslint-config`
+# `@repo/code-tools-config`
 
-Collection of internal eslint configurations.
+Collection of shared configs for code tools (ESLint, Prettier, TypeScript) used across the monorepo.
