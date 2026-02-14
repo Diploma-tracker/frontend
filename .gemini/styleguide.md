@@ -1,132 +1,148 @@
 # Gemini Monorepo Style Guide
 
-## Introduction
+This guide defines strict coding standards for all packages and applications in the monorepo.  
+All code must comply with the rules below.
 
-This style guide defines coding conventions for all code in the Gemini monorepo. It is based on widely accepted standards for TypeScript, React, and modern frontend tooling, with adjustments for our monorepo structure and workflows.
+---
 
-## Key Principles
+## Core Principles
 
-- **Readability:** Code should be clear and easy to follow.
-- **Maintainability:** Favor patterns that make future changes simple.
-- **Consistency:** Use the same style across all packages and apps.
-- **Performance:** Write efficient code, but never sacrifice clarity.
+- Prioritize readability over cleverness.
+- Maintain consistency across all packages.
+- Avoid premature optimization.
+- Follow accessibility best practices.
 
-## General Formatting
+---
 
-### Line Length
+## Formatting
 
-- **Maximum line length:** 100 characters.
+- Separate logical blocks with a blank line.
+- Do not mix unrelated concerns in a single block.
+- Keep files logically structured and predictable.
 
-### Indentation
+---
 
-- **Use 2 spaces per indentation level.**
-- **No tabs.**
+## Naming Conventions
 
-### Imports
+| Entity | Convention |
+| --------- | ---------- |
+| Variables / Functions | `camelCase` |
+| Constants | `UPPER_CASE` |
+| Types / Interfaces | `PascalCase` |
+| React Components | `PascalCase` |
+| Files | `kebab-case` or `camelCase` (no underscores, no spaces) |
+| Folders | `kebab-case` |
 
-- **Group imports:**
-  1. Node.js/standard library (if any)
-  2. Third-party modules
-  3. Internal packages (monorepo)
-  4. Local files
-- **Sort imports alphabetically within groups.**
-- **Prefer absolute imports for internal packages.**
+---
 
-### Naming Conventions
+## React Guidelines
 
-- **Variables & Functions:** `camelCase`
-- **Constants:** `UPPER_CASE`
-- **Types & Interfaces:** `PascalCase`
-- **Components:** `PascalCase`
-- **Files:** `kebab-case` or `camelCase` (no spaces, no underscores)
-- **Folders:** `kebab-case`
+- Use function components with arrow functions.
+- Do not use class components unless strictly required.
+- Always type props explicitly.
+- Extract complex logic into:
+  - Custom hooks
+  - Helper functions
+  - Container components (when appropriate)
+- JSX must remain declarative and focused on rendering.
+- Avoid inline functions inside JSX.
+- Avoid complex conditional logic inside JSX.
+- Move handlers and conditions above `return`.
+- Prefer composition over inheritance.
+- Suggest advanced patterns (HOC, Render Props, Compound Components, Custom Hooks) only when complexity justifies it.
 
-### React & TypeScript
+---
 
-- **Use function components with arrow functions unless class is required.**
-- **Always type props and state.**
-- **Prefer explicit return types for exported functions/components.**
-- **Use hooks for state and side effects.**
-- **Use `useEffect` cleanup when needed.**
+## TypeScript Rules
 
-### Doc Comments
+- Always annotate function parameters and return types.
+- Avoid `any`.
+- Use `unknown` instead of `any` where necessary.
+- Prefer:
+  - `interface` for public contracts
+  - `type` for unions and utility types.
+- Strict mode must be enabled in `tsconfig.json`.
 
-- **Use JSDoc for exported functions, types, and components.**
-- **First line:** Short summary.
-- **Document parameters, return values, and side effects.**
-- **Example:**
+---
 
-  ```ts
-  /**
-   * Increments a counter.
-   * @param count Current count value.
-   * @returns New count value.
-   */
-  export function increment(count: number): number {
-    return count + 1;
-  }
-  ```
+## Documentation (JSDoc)
 
-### TypeScript
+Use JSDoc only when:
 
-- **Always use type annotations for function parameters and return values.**
-- **Prefer interfaces for public APIs, types for unions.**
-- **Avoid `any` and `unknown` unless absolutely necessary.**
-- **Use strict mode in `tsconfig.json`.**
+- The function is reusable.
+- The logic is non-obvious.
+- The function has side effects.
 
-### Comments
+Document:
 
-- **Explain "why", not "what".**
-- **Use complete sentences.**
-- **Avoid commented-out code in main branches.**
+- Short summary.
+- Parameters.
+- Return value.
+- Side effects (if any).
 
-### CSS & Tailwind
+Do not document trivial functions.
 
-- **Use Tailwind CSS utility classes for styling.**
-- **Prefer shared config from [`@repo/tailwind-config`](packages/tailwind-config/package.json).**
-- **Prefix custom classes in `ui-kit` with `ui-` to avoid conflicts.**
-- **Use CSS modules or scoped styles for custom CSS.**
+---
 
-### Error Handling
+## Comments
 
-- **Handle errors gracefully in UI and logic.**
-- **Show user-friendly messages for UI errors.**
-- **Log errors in development, avoid leaking sensitive info in production.**
+- Explain **why**, not **what**.
+- Use complete sentences.
+- Do not leave commented-out code.
+- Remove dead code before merging.
 
-### Tooling
+---
 
-- **Formatter:** [Prettier](https://prettier.io/) (see [`prettier.config.js`](apps/tracker-dashboard/prettier.config.js))
-- **Linter:** [ESLint](https://eslint.org/) (see [`@repo/code-tools-config`](packages/code-tools-config/package.json))
-- **Type Checker:** [TypeScript](https://www.typescriptlang.org/)
-- **CI:** All code is checked for formatting, lint, and types in [`ci.yml`](github/workflows/ci.yml)
+## Styling (Tailwind + UI Kit)
 
-## Example
+- Use Tailwind CSS utilities.
+- Do not hardcode colors — use design tokens.
+- Follow shared configuration from `@repo/tailwind-config`.
+- UI Kit custom classes must use `ui-` prefix.
+- Follow shadcn component philosophy and usage patterns.
+- Use mobile-first responsive utilities.
+- Prefer relative units over fixed pixels.
+- Support dark mode.
+- Use modern CSS functions (`clamp`, `min`, `max`, `minmax`) when appropriate.
 
-```tsx
-/**
- * Button component for Gemini UI.
- * @param props Button props.
- * @returns JSX.Element
- */
-import React from "react";
+---
 
-type ButtonProps = {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-};
+## Error Handling
 
-export const Button: React.FC<ButtonProps> = ({
-  label,
-  onClick,
-  disabled = false,
-}) => (
-  <button
-    className="ui-btn px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {label}
-  </button>
-);
-```
+- Always handle errors from async operations.
+- External service errors must be typed.
+- Use:
+  - `ErrorBoundary` for UI crashes.
+  - `Suspense` for lazy-loaded components.
+- Display user-friendly error messages.
+- Do not leak sensitive data in production logs.
+
+---
+
+## Tooling Requirements (Must Pass)
+
+- Prettier formatting.
+- ESLint validation.
+- TypeScript type checking.
+- CI validation before merge.
+
+---
+
+## AI Code Review Enforcement Rules
+
+During review, the AI must:
+
+1. Detect violations of naming conventions.
+2. Detect missing type annotations.
+3. Detect `any` usage.
+4. Detect inline JSX logic that should be extracted.
+5. Suggest composition when a component becomes complex.
+6. Check accessibility (ARIA usage, semantic HTML).
+7. Detect Tailwind misuse (hardcoded colors, inconsistent spacing).
+8. Ensure async errors are handled properly.
+9. Flag dead code and commented-out code.
+10. Detect duplicated logic across components.
+11. Flag overly large components that violate single-responsibility principle.
+12. Ensure separation of UI logic and business logic.
+
+All violations must be explicitly reported with actionable recommendations.
