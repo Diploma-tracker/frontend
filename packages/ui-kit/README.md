@@ -57,3 +57,9 @@ Type-check without emitting files.
 ```bash
 check-types
 ```
+
+Clean the build output directory called `dist`.
+
+```bash
+clean
+```
