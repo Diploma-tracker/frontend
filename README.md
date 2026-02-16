@@ -1,58 +1,130 @@
-# Turborepo Tailwind CSS starter
+# Diploma tracker frontend monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Monorepo repository containing the frontend part of the Diploma tracker application for KHPI university.
 
-## Using this example
+## Tech stack
 
-Run the following command:
+<div align="center">
+    <a href="https://www.typescriptlang.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Typescript-black?style=for-the-badge&logoColor=white&logo=typescript&color=a0001b" alt="Typescript"/>
+    </a>
+    <a href="https://reactjs.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-React-black?style=for-the-badge&logoColor=white&logo=react&color=a0001b" alt="React" />
+    </a>
+    <a href="https://ui.shadcn.com/" target="_blank">
+        <img src="https://img.shields.io/badge/-Shadcn UI-black?style=for-the-badge&logoColor=white&logo=shadcnui&color=a0001b" alt="shadcnui" />
+    </a>
+    <a href="https://tailwindcss.com/" target="_blank">
+        <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=a0001b" alt="tailwindcss" />
+    </a>
+    <a href="https://reatom.js.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Reatom-black?style=for-the-badge&logo=redux&logoColor=white&color=a0001b" alt="Reatom" />
+    </a>
+    <a href="https://tanstack.com/router" target="_blank">
+        <img src="https://img.shields.io/badge/-Tanstack Router-black?style=for-the-badge&logo=tanstack&logoColor=white&color=a0001b" alt="Tanstack Router" />
+    </a>
+</div>
 
-```sh
-npx create-turbo@latest -e with-tailwind
+## Dev instruments
+
+<div align="center">
+    <a href="https://turborepo.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Turborepo-black?style=for-the-badge&logoColor=white&logo=turborepo&color=1a1a1a" alt="Turborepo" />
+    </a>
+    <a href="https://pnpm.io/" target="_blank">
+        <img src="https://img.shields.io/badge/-PNPM-black?style=for-the-badge&logoColor=white&logo=pnpm&color=1a1a1a" alt="PNPM" />
+    </a>
+    <a href="https://vitejs.dev/" target="_blank">
+        <img src="https://img.shields.io/badge/-Vite-black?style=for-the-badge&logoColor=white&logo=vite&color=1a1a1a" alt="Vite" />
+    </a>
+    <a href="https://eslint.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-Eslint-black?style=for-the-badge&logoColor=white&logo=eslint&color=1a1a1a" alt="eslint" />
+    </a>
+    <a href="https://prettier.io/" target="_blank">
+        <img src="https://img.shields.io/badge/-prettier-black?style=for-the-badge&logoColor=white&logo=prettier&color=1a1a1a" alt="prettier" />
+    </a>
+    <a href="https://commitlint.js.org/" target="_blank">
+        <img src="https://img.shields.io/badge/-commit_lint-black?style=for-the-badge&logoColor=white&logo=commitlint&color=1a1a1a" alt="commit lint" />
+    </a>
+    <a href="https://github.com/features/actions" target="_blank">
+        <img src="https://img.shields.io/badge/-github_actions-black?style=for-the-badge&logoColor=white&logo=githubactions&color=1a1a1a" alt="githubactions" />
+    </a>
+</div>
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Quick start](#quick-start)
+- [Monorepo structure](#monorepo-structure)
+- [Scripts](#root-scripts)
+- [Apps/packages scripts](#appspackages-scripts)
+- [Environment Variables](#environment-variables)
+
+## Requirements
+
+- Node.js + `pnpm` package manager
+- Configured `.env` file
+
+## Quick start
+
+- Install dependencies: `pnpm install`
+- Configure dashboard environment variables in [apps/tracker-dashboard/.env](apps/tracker-dashboard/.env)
+- Run in development mode (all packages with `dev`): `pnpm dev`
+
+## Monorepo structure
+
+- `apps/` — applications ([tracker-dashboard](apps/tracker-dashboard/README.md))
+- `packages/` — shared packages and configs ([ui-kit](packages/ui-kit/README.md), [api-types](packages/api-types/README.md), [code-tools-config](packages/code-tools-config/README.md))
+
+## Scripts
+
+### Root scripts
+
+Scripts are run from the repository root.
+
+- `pnpm dev` — run all packages with `dev` via Turbo
+- `pnpm build` — build all packages
+- `pnpm lint` — lint code
+- `pnpm lint:fix` — lint with auto-fixes
+- `pnpm format` — check formatting
+- `pnpm format:fix` — auto-format
+- `pnpm check-types` — type checking
+- `pnpm create:app` — create a new app
+- `pnpm create:package` — create a new package
+
+### Apps/packages scripts
+
+Depending on what scripts are defined in each package, you can run them from the `root` using commands like:
+
+```bash
+pnpm --filter tracker-dashboard dev
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Building packages/ui
-
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.ts`. This was chosen for several reasons:
-
-- Make sharing one `tailwind.config.ts` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
-
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.ts` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
-
-For example, in [tailwind.config.ts](packages/tailwind-config/tailwind.config.ts):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
+```bash
+pnpm --filter ui-kit build:components
 ```
 
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+> [!TIP]
+> If you want see all available scripts for a package, you can run:  
+> `pnpm --filter <package-name> run`
+>
+> If you want see all available workspaces in monorepo, you can run:
+> `pnpm m list --depth -1 --json`
 
-### Utilities
+Or you can check `package.json` of the package/app and run scripts directly from there:
 
-This Turborepo has some additional tools already setup for you:
+```bash
+cd apps/tracker-dashboard
+pnpm dev
+```
 
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env` file.
+
+Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
+
+| Parameter      | Description                                |
+| :------------- | :----------------------------------------- |
+| `NODE_ENV`     | Node environment (development, production) |
+| `VITE_API_URL` | URL of the backend API                     |

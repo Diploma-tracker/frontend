@@ -1,7 +1,197 @@
 @import "tailwindcss";
 
-@theme {
-  --color-blue-1000: #2a8af6;
-  --color-purple-1000: #a853ba;
-  --color-red-1000: #e92a67;
+:root {
+  --background: #ffffff;
+  --foreground: #404040;
+  --card: #ffffff;
+  --card-foreground: #404040;
+  --popover: #ffffff;
+  --popover-foreground: #404040;
+  --primary: #a0001b;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #404040;
+  --muted: #fafafa;
+  --muted-foreground: #a1a1a1;
+  --accent: #f7f7f7;
+  --accent-foreground: #404040;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #f2f2f2;
+  --input: #f2f2f2;
+  --ring: #a0001b;
+  --chart-1: #a0001b;
+  --chart-2: #6366f1;
+  --chart-3: #22c55e;
+  --chart-4: #facc15;
+  --chart-5: #ef4444;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #404040;
+  --sidebar-primary: #a0001b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5e5e5;
+  --sidebar-accent-foreground: #404040;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #a0001b;
+
+  --font-sans: PT Sans, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: "Merriweather", serif;
+  --font-mono: "Fira Code", monospace;
+
+  --tracking-normal: 0.005em;
+
+  --spacing: 0.25rem;
+
+  --radius: 0rem;
+
+  --shadow-x: 0rem;
+  --shadow-y: 0.125rem;
+  --shadow-blur: 3px;
+  --shadow-spread: -1px;
+  --shadow-opacity: 0.05;
+  --shadow-color: #000000;
+  --shadow-2xs: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.03);
+  --shadow-xs: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.03);
+  --shadow-sm:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.05),
+    0rem 1px 2px -2px hsl(0 0% 0% / 0.05);
+  --shadow:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.05),
+    0rem 1px 2px -2px hsl(0 0% 0% / 0.05);
+  --shadow-md:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.05),
+    0rem 2px 4px -2px hsl(0 0% 0% / 0.05);
+  --shadow-lg:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.05),
+    0rem 4px 6px -2px hsl(0 0% 0% / 0.05);
+  --shadow-xl:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.05),
+    0rem 8px 10px -2px hsl(0 0% 0% / 0.05);
+  --shadow-2xl: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.13);
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #f3f4f6;
+  --card: #1a1a1a;
+  --card-foreground: #f3f4f6;
+  --popover: #1a1a1a;
+  --popover-foreground: #f3f4f6;
+  --primary: #a0001b;
+  --primary-foreground: #ffffff;
+  --secondary: #404040;
+  --secondary-foreground: #f3f4f6;
+  --muted: #262626;
+  --muted-foreground: #9ca3af;
+  --accent: #262626;
+  --accent-foreground: #f3f4f6;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #333333;
+  --input: #333333;
+  --ring: #a0001b;
+  --chart-1: #a0001b;
+  --chart-2: #60a5fa;
+  --chart-3: #34d399;
+  --chart-4: #facc15;
+  --chart-5: #ef4444;
+  --sidebar: #262626;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #a0001b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #f3f4f6;
+  --sidebar-border: #333333;
+  --sidebar-ring: #a0001b;
+
+  --font-sans: PT Sans, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: "Merriweather", serif;
+  --font-mono: "Fira Code", monospace;
+
+  --radius: 0rem;
+
+  --shadow-x: 0rem;
+  --shadow-y: 0.125rem;
+  --shadow-blur: 3px;
+  --shadow-spread: -1px;
+  --shadow-opacity: 0.2;
+  --shadow-color: #000000;
+  --shadow-2xs: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xs: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.1);
+  --shadow-sm:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.2),
+    0rem 1px 2px -2px hsl(0 0% 0% / 0.2);
+  --shadow:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.2),
+    0rem 1px 2px -2px hsl(0 0% 0% / 0.2);
+  --shadow-md:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.2),
+    0rem 2px 4px -2px hsl(0 0% 0% / 0.2);
+  --shadow-lg:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.2),
+    0rem 4px 6px -2px hsl(0 0% 0% / 0.2);
+  --shadow-xl:
+    0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.2),
+    0rem 8px 10px -2px hsl(0 0% 0% / 0.2);
+  --shadow-2xl: 0rem 0.125rem 3px -1px hsl(0 0% 0% / 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 }

@@ -14,6 +14,13 @@
         "dist/**",
         ".next/**",
         "!.next/cache/**"
+      ],
+      "env": [
+        "MODE",
+        "DEV",
+        "PROD",
+        "SSR",
+        "BASE_URL"
       ]
     },
     "lint": {
@@ -42,7 +49,14 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "MODE",
+        "DEV",
+        "PROD",
+        "SSR",
+        "BASE_URL"
+      ]
     }
   }
 }
