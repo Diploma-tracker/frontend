@@ -1,14 +1,10 @@
-name: ci
+name: Continuous Integration
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
 
 jobs:
   ci:
@@ -18,16 +14,14 @@ jobs:
       - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: 20
           cache: pnpm
-
-      - name: 📥 Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -39,7 +33,7 @@ jobs:
         run: pnpm run lint
 
       - name: 🧠 Type check
-        run: pnpm run typecheck
+        run: pnpm run check-types
 
       - name: 🏗 Build
         run: pnpm run build
