@@ -3,6 +3,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReact from "eslint-plugin-react";
+import * as pluginReactComponentName from "eslint-plugin-react-component-name";
 import globals from "globals";
 
 import { config as baseConfig } from "./base.js";
@@ -29,12 +30,53 @@ export const config = [
   {
     plugins: {
       "react-hooks": pluginReactHooks,
+      "react-component-name": pluginReactComponentName,
     },
     settings: { react: { version: "detect" } },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
+
       "react/react-in-jsx-scope": "off",
+
+      // Allow named functions in React components for better stack traces and debugging (reatom recommendations).
+      "prefer-arrow-callback": ["error", { allowNamedFunctions: true }],
+      "react-component-name/react-component-name": [
+        "error",
+        {
+          targets: [
+            "action",
+            "computed",
+            "effect",
+            "reatomComponent",
+            "memo",
+          ],
+        },
+      ],
+    },
+  },
+
+  // Module architectural rules for React apps/packages.
+  {
+    files: ["**/*.{ts,tsx,js,jsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "@/modules/*/**",
+                "src/modules/*/**",
+                "modules/*/**",
+                "../modules/*/**",
+                "../../modules/*/**",
+              ],
+              message:
+                "Importing from a module's subdirectories is not allowed. Please import from the module's root directory instead.",
+            },
+          ],
+        },
+      ],
     },
   },
 ];

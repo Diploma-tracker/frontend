@@ -14,6 +14,198 @@ All code must comply with the rules below.
 
 ---
 
+## Modular architecture of the `apps` in monorepo
+
+Each application inside `apps` must follow a strict layered modular architecture.
+
+### Root Structure
+
+Every app must contain:
+
+```bash
+src/
+  app/
+  pages/
+  modules/
+  shared/
+```
+
+### `app/` — Application Layer
+
+**Purpose:** global application configuration only.
+
+**Allowed:**
+
+- Route configuration
+- Global providers
+- Global state initialization
+- App-level configuration
+
+**Forbidden:**
+
+- Business logic
+- API calls
+- Feature-specific logic
+- UI specific to a single module
+
+`app/` must remain thin and declarative.
+
+---
+
+### `pages/` — Composition Layer
+
+**Purpose:** compose modules into screens.
+
+**Rules:**
+
+- Pages must not contain business logic.
+- Pages must not implement data-fetching logic.
+- Pages must only:
+  - Compose features
+  - Pass props
+  - Configure layout
+
+Pages reuse modules. They do not implement them.
+
+---
+
+### `modules/` — Feature-Based Modules
+
+Each business domain must live inside its own module.
+
+Example:
+
+```bash
+modules/
+  auth/
+    features/
+    models/
+    api/
+    constants/
+```
+
+A module groups all logic related to a specific domain.
+
+---
+
+#### `features/`
+
+UI parts responsible for a concrete user interaction.
+
+**Rules:**
+
+- May use models of the same module.
+- May call module API of the same module.
+- May use other modules **only through their public API**.
+- Must not import internal files from other modules.
+- Must not access shared global state outside allowed boundaries.
+
+---
+
+#### `models/`
+
+Contains:
+
+- Module state
+- Async queries
+- Async mutations
+- Selectors
+- Business logic
+
+**Rules:**
+
+- No JSX.
+- No UI concerns.
+- No direct DOM access.
+
+Models are the source of truth for the module.
+
+---
+
+#### `api/`
+
+Contains:
+
+- API handlers
+- DTO definitions
+- External service communication
+
+**Rules:**
+
+- No UI logic.
+- No business logic.
+- Pure communication layer.
+
+---
+
+#### `constants/`
+
+Contains:
+
+- Module-specific constants only.
+
+Must not contain global or cross-module constants.
+
+---
+
+### `shared/` — Cross-Application Layer
+
+Contains reusable logic shared across the entire app.
+
+Example structure:
+
+```bash
+shared/
+  http/
+  components/
+  utils/
+```
+
+**Rules:**
+
+- Must be domain-agnostic.
+- Must not depend on any module.
+- Must not contain business logic of a specific domain.
+- If logic becomes domain-specific, move it to the corresponding module.
+
+---
+
+## Architectural Constraints (Strict)
+
+1. Modules must not depend on other modules' internal implementation.
+2. Modules may communicate only through explicitly defined public APIs.
+3. `shared/` must not depend on modules.
+4. Pages must not contain business logic.
+5. App layer must not contain feature logic.
+6. Business logic must live inside `models/`.
+7. UI logic must live inside `features/`.
+8. API communication must live inside `api/`.
+9. Constants must not leak across modules.
+10. Direct deep imports from another module (e.g. `modules/other/models/internal-file`) are forbidden.
+11. Avoid circular dependencies at all costs.
+
+---
+
+## AI Review: Modular Architecture Enforcement
+
+During review, the AI must additionally:
+
+1. Detect business logic inside `pages/` or `app/`.
+2. Detect API calls outside `modules/*/api`.
+3. Detect state management outside `modules/*/models`.
+4. Detect illegal cross-module imports (importing anything except the module's public API entry point).
+5. Ensure cross-module communication happens only through public exports.
+6. Detect domain-specific logic placed inside `shared/`.
+7. Flag feature components that contain business logic instead of delegating to `models/`.
+8. Ensure `shared/` remains framework-agnostic where possible.
+9. Detect circular dependencies.
+10. Flag oversized modules that mix multiple business domains.
+11. Ensure each module follows the required internal structure.
+
+Any cross-module dependency must be validated against the public API boundary.
+
+---
+
 ## Formatting
 
 - Separate logical blocks with a blank line.
@@ -24,14 +216,14 @@ All code must comply with the rules below.
 
 ## Naming Conventions
 
-| Entity | Convention |
-| --------- | ---------- |
-| Variables / Functions | `camelCase` |
-| Constants | `UPPER_CASE` |
-| Types / Interfaces | `PascalCase` |
-| React Components | `PascalCase` |
-| Files | `kebab-case` or `camelCase` (no underscores, no spaces) |
-| Folders | `kebab-case` |
+| Entity                | Convention                                              |
+| --------------------- | ------------------------------------------------------- |
+| Variables / Functions | `camelCase`                                             |
+| Constants             | `UPPER_CASE`                                            |
+| Types / Interfaces    | `PascalCase`                                            |
+| React Components      | `PascalCase`                                            |
+| Files                 | `kebab-case` or `camelCase` (no underscores, no spaces) |
+| Folders               | `kebab-case`                                            |
 
 ---
 

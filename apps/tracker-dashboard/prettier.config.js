@@ -6,7 +6,7 @@ import baseConfig from '@repo/code-tools-config/prettier/react';
  */
 const config = {
   ...baseConfig,
-  tailwindStylesheet: './src/styles/index.css',
+  tailwindStylesheet: './src/app/styles/index.css',
 };
 
 export default config;
