@@ -49,7 +49,7 @@ function ChartContainer({
         data-slot="chart"
         data-chart={chartId}
         className={cn(
-          'ui:flex ui:aspect-video ui:justify-center ui:text-xs ui:[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground ui:[&_.recharts-cartesian-grid_line[stroke=#ccc]]:stroke-border/50 ui:[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border ui:[&_.recharts-dot[stroke=#fff]]:stroke-transparent ui:[&_.recharts-layer]:outline-hidden ui:[&_.recharts-polar-grid_[stroke=#ccc]]:stroke-border ui:[&_.recharts-radial-bar-background-sector]:fill-muted ui:[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted ui:[&_.recharts-reference-line_[stroke=#ccc]]:stroke-border ui:[&_.recharts-sector]:outline-hidden ui:[&_.recharts-sector[stroke=#fff]]:stroke-transparent ui:[&_.recharts-surface]:outline-hidden',
+          'ui:flex ui:aspect-video ui:justify-center ui:text-xs ui:[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground ui:[&_.recharts-cartesian-grid_line[stroke="#ccc"]]:stroke-border/50 ui:[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border ui:[&_.recharts-dot[stroke="#fff"]]:stroke-transparent ui:[&_.recharts-layer]:outline-hidden ui:[&_.recharts-polar-grid_[stroke="#ccc"]]:stroke-border ui:[&_.recharts-radial-bar-background-sector]:fill-muted ui:[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted ui:[&_.recharts-reference-line_[stroke="#ccc"]]:stroke-border ui:[&_.recharts-sector]:outline-hidden ui:[&_.recharts-sector[stroke="#fff"]]:stroke-transparent ui:[&_.recharts-surface]:outline-hidden',
           className
         )}
         {...props}
