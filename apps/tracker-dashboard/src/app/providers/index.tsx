@@ -1,7 +1,13 @@
-import type { PropsWithChildren } from 'react';
+import { authContext } from '@/modules/auth';
 
 import { TooltipProvider } from '@repo/ui-kit/components/common/floating/tooltip';
 
-export const ProvidersWrapper = ({ children }: PropsWithChildren) => {
-  return <TooltipProvider>{children}</TooltipProvider>;
+import { AppRouterProvider } from '../config/router';
+
+export const ProvidersWrapper = () => {
+  return (
+    <TooltipProvider>
+      <AppRouterProvider context={{ auth: authContext }} />
+    </TooltipProvider>
+  );
 };
