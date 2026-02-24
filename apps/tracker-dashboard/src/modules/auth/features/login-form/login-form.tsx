@@ -1,26 +1,15 @@
 import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
 import { PasswordFormField, TextFormField } from '@/shared/components';
 import { CircleNotchIcon, MicrosoftOutlookLogoIcon } from '@phosphor-icons/react';
-import { bindField, reatomComponent } from '@reatom/react';
+import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldGroup, FieldSeparator } from '@repo/ui-kit/components/common/form/field';
 
-import { loginSchema } from '../../constants/shemas/login-form-shema';
 import { loginForm } from '../../models/login-form-model';
 
 export const LoginForm = reatomComponent(function LoginForm() {
   const { submit, fields } = loginForm;
-
-  const isFormValid = loginSchema.safeParse(loginForm()).success;
-  const emailValidation = fields.email.validation();
-  const passwordValidation = fields.password.validation();
-
-  const isEmailInvalid = !!(emailValidation.triggered && emailValidation.error);
-  const isPasswordInvalid = !!(passwordValidation.triggered && passwordValidation.error);
-
-  const emailError = isEmailInvalid ? emailValidation.error : undefined;
-  const passwordError = isPasswordInvalid ? passwordValidation.error : undefined;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +25,7 @@ export const LoginForm = reatomComponent(function LoginForm() {
         </div>
 
         <TextFormField
-          {...bindField(fields.email)}
+          field={fields.email}
           type="email"
           label="Email"
           placeholder="Name.Surname@cs.khpi.edu.ua"
@@ -49,19 +38,12 @@ export const LoginForm = reatomComponent(function LoginForm() {
               text: 'khpi.edu.ua',
             },
           ]}
-          invalid={isEmailInvalid}
-          error={emailError}
         />
 
-        <PasswordFormField
-          {...bindField(fields.password)}
-          label="Password"
-          invalid={isPasswordInvalid}
-          error={passwordError}
-        />
+        <PasswordFormField field={fields.password} label="Password" />
 
         <Field>
-          <Button type="submit" disabled={!isFormValid || !submit.ready()}>
+          <Button type="submit" disabled={!submit.ready()}>
             {!submit.ready() ? <CircleNotchIcon className="ml-2 animate-spin" /> : 'Login'}
           </Button>
         </Field>

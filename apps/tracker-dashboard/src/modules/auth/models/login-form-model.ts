@@ -1,6 +1,12 @@
-import { reatomForm } from '@reatom/core';
+import { reatomForm, wrap } from '@reatom/core';
+import { z } from 'zod';
 
-import { loginSchema } from '../constants/shemas/login-form-shema';
+const loginSchema = z.object({
+  email: z
+    .email('This is an invalid email address!')
+    .endsWith('khpi.edu.ua', 'This must be a valid university email address!'),
+  password: z.string().min(1, 'This field is required!'),
+});
 
 export const loginForm = reatomForm(
   {
@@ -10,9 +16,11 @@ export const loginForm = reatomForm(
   {
     onSubmit: async (values) => {
       // TODO: replace with business logic
-      await new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-        console.debug(values);
-      });
+      wrap(
+        await new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
+          console.debug(values);
+        })
+      );
     },
     schema: loginSchema,
     validateOnBlur: true,
