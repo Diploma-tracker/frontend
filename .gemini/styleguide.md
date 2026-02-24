@@ -238,12 +238,13 @@ Any cross-module dependency must be validated against the public API boundary.
 - Use function components with arrow functions.
 - Do not use class components unless strictly required.
 - Always type props explicitly.
+- Apply React optimization hooks (`useMemo`, `useCallback` and other react built-in hooks for performance optimization) only to code with potentially expensive computations or proven re-render bottlenecks, not to every function by default.
 - Extract complex logic into:
   - Custom hooks
   - Helper functions
   - Container components (when appropriate)
 - JSX must remain declarative and focused on rendering.
-- Avoid inline functions inside JSX.
+- Avoid large inline functions or logic blocks inside JSX; small inline snippets are allowed when they clearly improve readability.
 - Avoid complex conditional logic inside JSX.
 - Move handlers and conditions above `return`.
 - Prefer composition over inheritance.
@@ -333,7 +334,7 @@ During review, the AI must:
 1. Detect violations of naming conventions.
 2. Detect missing type annotations.
 3. Detect `any` usage.
-4. Detect inline JSX logic that should be extracted.
+4. Detect large inline JSX logic that should be extracted to improve readability; small inline snippets are acceptable.
 5. Suggest composition when a component becomes complex.
 6. Check accessibility (ARIA usage, semantic HTML).
 7. Detect Tailwind misuse (hardcoded colors, inconsistent spacing).
