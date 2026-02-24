@@ -5,6 +5,12 @@ All code must comply with the rules below.
 
 ---
 
+## Additional Context
+
+- reatom state manager context docs @./lib-context/reatom.md
+
+---
+
 ## Core Principles
 
 - Prioritize readability over cleverness.
