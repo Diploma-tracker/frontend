@@ -1,31 +1,13 @@
 import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
 import { PasswordFormField, TextFormField } from '@/shared/components';
 import { CircleNotchIcon, MicrosoftOutlookLogoIcon } from '@phosphor-icons/react';
-import { reatomForm } from '@reatom/core';
 import { bindField, reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldGroup, FieldSeparator } from '@repo/ui-kit/components/common/form/field';
 
 import { loginSchema } from '../../constants/shemas/login-form-shema';
-
-const loginForm = reatomForm(
-  {
-    email: '',
-    password: '',
-  },
-  {
-    onSubmit: async (values) => {
-      // TODO: replace with business logic
-      await new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
-        console.debug(values);
-      });
-    },
-    schema: loginSchema,
-    validateOnBlur: true,
-    name: 'loginForm',
-  }
-);
+import { loginForm } from '../../models/login-form-model';
 
 export const LoginForm = reatomComponent(function LoginForm() {
   const { submit, fields } = loginForm;
@@ -34,11 +16,11 @@ export const LoginForm = reatomComponent(function LoginForm() {
   const emailValidation = fields.email.validation();
   const passwordValidation = fields.password.validation();
 
-  const isEmailValid = emailValidation.triggered && Boolean(emailValidation.error);
-  const isPasswordValid = passwordValidation.triggered && Boolean(passwordValidation.error);
+  const isEmailInvalid = !!(emailValidation.triggered && emailValidation.error);
+  const isPasswordInvalid = !!(passwordValidation.triggered && passwordValidation.error);
 
-  const emailError = emailValidation.triggered ? emailValidation.error : undefined;
-  const passwordError = passwordValidation.triggered ? passwordValidation.error : undefined;
+  const emailError = isEmailInvalid ? emailValidation.error : undefined;
+  const passwordError = isPasswordInvalid ? passwordValidation.error : undefined;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,14 +49,14 @@ export const LoginForm = reatomComponent(function LoginForm() {
               text: 'khpi.edu.ua',
             },
           ]}
-          invalid={isEmailValid}
+          invalid={isEmailInvalid}
           error={emailError}
         />
 
         <PasswordFormField
           {...bindField(fields.password)}
           label="Password"
-          invalid={isPasswordValid}
+          invalid={isPasswordInvalid}
           error={passwordError}
         />
 

@@ -1,6 +1,7 @@
-import type { AppRouterContext } from '@/app/config/router/create-router';
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+
+import type { AppRouterContext } from '../config/router';
 
 const RootLayout = () => (
   <>

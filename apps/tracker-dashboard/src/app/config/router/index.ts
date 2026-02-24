@@ -1,4 +1,5 @@
 import { routeTree } from '@/app/routeTree.gen';
+import { authContext } from '@/modules/auth';
 import { createRouter } from '@tanstack/react-router';
 
 export interface AppRouterContext {
@@ -9,7 +10,5 @@ export interface AppRouterContext {
 
 export const router = createRouter({
   routeTree,
-  context: {
-    auth: undefined!,
-  },
+  context: { auth: authContext },
 });

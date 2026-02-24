@@ -39,24 +39,24 @@ type CustomAddon = {
 
 type Addon = TextAddon | ActionAddon | CustomAddon;
 
+const renderAddon = (addon: Addon): ReactNode => {
+  switch (addon.type) {
+    case 'text':
+      return <InputGroupText className="text-xs text-muted-foreground">{addon.text}</InputGroupText>;
+    case 'action':
+      return addon.render(InputGroupButton);
+    case 'custom':
+      return addon.content;
+    default:
+      return null;
+  }
+};
+
 export const TextFormField = (props: TextFormFieldProps) => {
   const { description, label, addons = [], error, invalid, ...inputProps } = props;
 
   const ariaInvalid = inputProps['aria-invalid'];
   const isInvalid = invalid ?? (Boolean(error) || ariaInvalid === true || ariaInvalid === 'true');
-
-  const renderAddon = (addon: Addon): ReactNode => {
-    switch (addon.type) {
-      case 'text':
-        return <InputGroupText className="text-xs text-muted-foreground">{addon.text}</InputGroupText>;
-      case 'action':
-        return addon.render(InputGroupButton);
-      case 'custom':
-        return addon.content;
-      default:
-        return null;
-    }
-  };
 
   return (
     <Field data-invalid={isInvalid || undefined}>

@@ -74,10 +74,6 @@ export const config = [
           ],
         },
       ],
-       "no-restricted-imports": [
-        "error",
-      
-      ],
     },
   },
 ];

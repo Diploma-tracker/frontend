@@ -1,13 +1,13 @@
-import { authContext } from '@/modules/auth';
+import { RouterProvider } from '@tanstack/react-router';
 
 import { TooltipProvider } from '@repo/ui-kit/components/common/floating/tooltip';
 
-import { AppRouterProvider } from '../config/router';
+import { router } from '../config/router';
 
 export const ProvidersWrapper = () => {
   return (
     <TooltipProvider>
-      <AppRouterProvider context={{ auth: authContext }} />
+      <RouterProvider router={router} />
     </TooltipProvider>
   );
 };
