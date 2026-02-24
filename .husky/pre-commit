@@ -2,7 +2,7 @@
 set -e
 
 echo "🎨 Checking formatting..."
-pnpm turbo run format
+npx pnpm turbo run format
 
 echo "🔍 Running lint..."
-pnpm turbo run lint
+npx pnpm turbo run lint
