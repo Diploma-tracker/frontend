@@ -1,12 +1,15 @@
 /* Component-level styles for the UI package */
-@import 'tailwindcss' prefix(ui);
-@import '@repo/tailwind-config';
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme' layer(theme) prefix(ui);
+@import 'tailwindcss/utilities' layer(utilities) prefix(ui);
+@import '@repo/tailwind-config/tokens';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-  * {
+  [class*='ui:'] {
     @apply ui:border-border ui:outline-ring/50;
   }
 }

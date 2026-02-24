@@ -2,6 +2,6 @@
 
 echo "🔍 Linting commit message..."
 
-pnpm dlx commitlint --edit $1
+npx pnpm dlx commitlint --edit $1
 
 echo "✅ Commit message is valid"

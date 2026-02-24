@@ -1,30 +1,14 @@
 // sort-imports-ignore
-import './store/store-utils';
+import './config/store/store-utils';
 
-import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-
-import { routeTree } from './routeTree.gen';
 
 import '@repo/ui-kit/styles.css';
 import './styles/index.css';
-
-const router = createRouter({ routeTree });
-
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { ProvidersWrapper } from './providers';
 
 const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>
-  );
+  root.render(<ProvidersWrapper />);
 }

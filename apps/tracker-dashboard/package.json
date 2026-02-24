@@ -26,7 +26,8 @@
     "@tanstack/react-table": "^8.21.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.16",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@repo/code-tools-config": "workspace:*",
@@ -42,6 +43,7 @@
     "globals": "^16.5.0",
     "prettier": "^3.7.4",
     "typescript": "~5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-svgr": "^4.5.0"
   }
 }

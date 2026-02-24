@@ -1,7 +1,13 @@
-import type { PropsWithChildren } from 'react';
+import { RouterProvider } from '@tanstack/react-router';
 
 import { TooltipProvider } from '@repo/ui-kit/components/common/floating/tooltip';
 
-export const ProvidersWrapper = ({ children }: PropsWithChildren) => {
-  return <TooltipProvider>{children}</TooltipProvider>;
+import { router } from '../config/router';
+
+export const ProvidersWrapper = () => {
+  return (
+    <TooltipProvider>
+      <RouterProvider router={router} />
+    </TooltipProvider>
+  );
 };
