@@ -44,9 +44,6 @@ export const config = [
         "error",
         {
           targets: [
-            "action",
-            "computed",
-            "effect",
             "reatomComponent",
             "memo",
           ],
@@ -72,10 +69,14 @@ export const config = [
                 "../../modules/*/**",
               ],
               message:
-                "Importing from a module's subdirectories is not allowed. Please import from the module's root directory instead.",
+                "This import pattern is not allowed. Please import from the module's public API (e.g., \"@/modules/auth\" instead of \"@/modules/auth/some/internal/file\").",
             },
           ],
         },
+      ],
+       "no-restricted-imports": [
+        "error",
+      
       ],
     },
   },
