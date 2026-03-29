@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
+import { Route as appAppRouteImport } from './routes/(app)/_app'
 import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
 
 const IndexRoute = IndexRouteImport.update({
@@ -20,6 +21,10 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const authAuthRoute = authAuthRouteImport.update({
   id: '/(auth)/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appAppRoute = appAppRouteImport.update({
+  id: '/(app)/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authAuthLoginRoute = authAuthLoginRouteImport.update({
@@ -39,6 +44,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(app)/_app': typeof appAppRoute
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(auth)/_auth/login': typeof authAuthLoginRoute
 }
@@ -47,11 +53,12 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/login'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/login'
-  id: '__root__' | '/' | '/(auth)/_auth' | '/(auth)/_auth/login'
+  id: '__root__' | '/' | '/(app)/_app' | '/(auth)/_auth' | '/(auth)/_auth/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  appAppRoute: typeof appAppRoute
   authAuthRoute: typeof authAuthRouteWithChildren
 }
 
@@ -69,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof authAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/_app': {
+      id: '/(app)/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appAppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/_auth/login': {
@@ -95,6 +109,7 @@ const authAuthRouteWithChildren = authAuthRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  appAppRoute: appAppRoute,
   authAuthRoute: authAuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport

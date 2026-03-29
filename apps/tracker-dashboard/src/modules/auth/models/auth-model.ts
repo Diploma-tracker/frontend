@@ -6,7 +6,7 @@ export interface AuthContext {
   isAuth(): boolean;
 }
 
-export const authToken = atom<AuthToken>(null, 'authToken').extend(withCookie({ key: 'auth_token' }));
+export const authToken = atom<AuthToken>('sdsadas', 'authToken').extend(withCookie({ key: 'auth_token' }));
 
 export const isAuth = computed(() => {
   return Boolean(authToken());
