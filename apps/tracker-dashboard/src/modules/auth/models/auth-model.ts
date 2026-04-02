@@ -2,16 +2,8 @@ import { atom, computed, withCookie } from '@reatom/core';
 
 export type AuthToken = string | null;
 
-export interface AuthContext {
-  isAuth(): boolean;
-}
-
-export const authToken = atom<AuthToken>('sdsadas', 'authToken').extend(withCookie({ key: 'auth_token' }));
+export const authTokenAtom = atom<AuthToken>('sdsadas', 'authToken').extend(withCookie({ key: 'auth_token' }));
 
 export const isAuth = computed(() => {
-  return Boolean(authToken());
+  return Boolean(authTokenAtom());
 }, 'isAuth');
-
-export const authContext: AuthContext = {
-  isAuth,
-};
