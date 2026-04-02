@@ -148,7 +148,7 @@ Contains:
 #### `providers/`
 
 Module Providers & Global Integration
-If a module needs to provide state, context, or execute side effects at the global level, it must implement a Single Provider Pattern:
+If a module needs to provide state, context, or execute side effects at the global level, it must implement a Single Provider Pattern (also the could be sharable context objects):
 
 Mandatory Encapsulation:
 Every module that has global impact must export exactly one main provider: [ModuleName]Provider.
