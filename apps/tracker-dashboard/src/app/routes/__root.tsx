@@ -6,7 +6,7 @@ import type { AppRouterContext } from '../config/router';
 const RootLayout = () => (
   <>
     <Outlet />
-    <TanStackRouterDevtools />
+    <TanStackRouterDevtools position="bottom-right" />
   </>
 );
 
