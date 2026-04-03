@@ -1,9 +1,11 @@
+import type { Computed } from '@reatom/core';
+
 import type { UserRole } from '@repo/api-types';
 
 import { isAuth } from '../models/auth-model';
 
 export interface AuthContext {
-  isAuth(): boolean;
+  isAuth: Computed<boolean>;
   userRole: UserRole | null;
 }
 
