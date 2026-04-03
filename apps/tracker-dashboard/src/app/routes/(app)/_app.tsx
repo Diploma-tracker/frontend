@@ -1,6 +1,6 @@
 import { ThemeSwitcher, UserMenu } from '@/modules/user';
 import { Container, Logo } from '@/shared/components';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router';
 
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 import {
@@ -19,6 +19,11 @@ import {
 
 export const Route = createFileRoute('/(app)/_app')({
   component: BaseLayout,
+  beforeLoad: ({ context }) => {
+    if (!context.auth.isAuth) {
+      throw redirect({ to: '/login' });
+    }
+  },
 });
 
 function BaseLayout() {
@@ -65,7 +70,7 @@ function BaseLayout() {
 
         <main className="flex flex-1 flex-col">
           <Container className="py-10">
-            <p>Student profile homepage</p>
+            <Outlet />
           </Container>
         </main>
       </SidebarInset>

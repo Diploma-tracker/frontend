@@ -10,4 +10,6 @@ const RootLayout = () => (
   </>
 );
 
-export const Route = createRootRouteWithContext<AppRouterContext>()({ component: RootLayout });
+export const Route = createRootRouteWithContext<AppRouterContext>()({
+  component: RootLayout,
+});

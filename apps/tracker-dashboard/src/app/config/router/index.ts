@@ -1,14 +1,18 @@
 import { routeTree } from '@/app/routeTree.gen';
-import { authContext } from '@/modules/auth';
 import { createRouter } from '@tanstack/react-router';
 
+import type { UserRole } from '@repo/api-types';
+
+export interface AuthContext {
+  isAuth: boolean;
+  userRole: UserRole | null;
+}
+
 export interface AppRouterContext {
-  auth: {
-    isAuth(): boolean;
-  };
+  auth: AuthContext;
 }
 
 export const router = createRouter({
   routeTree,
-  context: { auth: authContext },
+  context: { auth: undefined! },
 });
