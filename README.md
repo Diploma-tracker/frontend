@@ -59,6 +59,7 @@ Monorepo repository containing the frontend part of the Diploma tracker applicat
 - [Scripts](#root-scripts)
 - [Apps/packages scripts](#appspackages-scripts)
 - [Environment Variables](#environment-variables)
+- [How to build routes](#how-to-build-routes)
 
 ## Requirements
 
@@ -128,3 +129,30 @@ Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
 | :------------- | :----------------------------------------- |
 | `NODE_ENV`     | Node environment (development, production) |
 | `VITE_API_URL` | URL of the backend API                     |
+
+## How to build routes
+
+Routes are generated based on the file system structure of the `app/routes` directory. To create a new route, simply add a new file in that directory with the appropriate name and export a component from it. The router will automatically pick up the new route and make it available in the application. This is how the Tanstack Router's file-based routing works.  
+
+Now project has the next file structure for routes:
+
+```bash
+routes/
+├── __root.tsx
+├── (auth)/
+│   ├── _auth.tsx           ← auth layout
+│   └── _auth.login.tsx     ← /login
+└── (app)/
+    ├── _app.tsx            ← app layout (sidebar + beforeLoad guard)
+    ├── _app.index.tsx      ← /
+    ├── _app.students.tsx   ← /students
+    ├── _app.profile.tsx    ← /profile
+    └── _app.settings/     ← or folder for nested routes
+        ├── index.tsx       ← /settings
+        └── account.tsx     ← /settings/account
+```
+
+> [!NOTE]  
+>
+> 1) If you need page that belongs to general app layout, so you should place it inside `(app)` folder as presented above.
+> 2) If you need page that should not be wrapped in app layout or group of pages that should have their own layout (for example, auth pages), so you can create a separate group folder for them (like `(auth)` in example above) and place route files there.

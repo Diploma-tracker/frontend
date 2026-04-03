@@ -1,6 +1,15 @@
-export type TestUSer = {
+export const UserRole = {
+  ADMIN: "ADMIN",
+  STAFF: "STAFF",
+  STUDENT: "STUDENT",
+} as const;
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
+
+export type User = {
   id: string;
-  name: string;
-  isVerified: boolean;
+  fullName: string;
+  initials: string;
+  email: string;
   avatarUrl?: string;
+  role: UserRole;
 };

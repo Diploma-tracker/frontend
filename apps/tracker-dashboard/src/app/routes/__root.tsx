@@ -6,8 +6,10 @@ import type { AppRouterContext } from '../config/router';
 const RootLayout = () => (
   <>
     <Outlet />
-    <TanStackRouterDevtools />
+    <TanStackRouterDevtools position="bottom-right" />
   </>
 );
 
-export const Route = createRootRouteWithContext<AppRouterContext>()({ component: RootLayout });
+export const Route = createRootRouteWithContext<AppRouterContext>()({
+  component: RootLayout,
+});

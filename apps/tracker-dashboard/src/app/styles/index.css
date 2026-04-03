@@ -3,17 +3,24 @@
 @import 'tailwindcss';
 @import '@repo/tailwind-config';
 
+:root {
+  --container-padding-x: 1em;
+  --container-width: 1600px;
+  --container-real-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground;
+    letter-spacing: var(--tracking-normal);
   }
 
   html {
     @apply font-sans antialiased;
     letter-spacing: var(--tracking-normal);
   }
-}
 
-body {
-  letter-spacing: var(--tracking-normal);
+  * {
+    @apply border-border outline-ring/50;
+  }
 }

@@ -88,6 +88,7 @@ modules/
     models/
     api/
     constants/
+    providers/
 ```
 
 A module groups all logic related to a specific domain.
@@ -144,6 +145,43 @@ Contains:
 
 ---
 
+#### `providers/`
+
+Module Providers & Global Integration
+If a module needs to provide state, context, or execute side effects at the global level, it must implement a Single Provider Pattern (also the could be sharable context objects):
+
+Mandatory Encapsulation:
+Every module that has global impact must export exactly one main provider: [ModuleName]Provider.
+
+Internal Composition:
+All internal module concerns (Context Providers, initialization hooks, event listeners, or global state watchers) must be wrapped inside this single module provider.
+
+Static Integration:
+The [ModuleName]Provider is connected to the global app tree (in src/app/) only once. Once connected, it should not be modified at the app level.
+
+No Logic Leaks:
+The global src/app/ layer must not know about the internal implementation of the module’s initialization. It only imports and renders the top-level module provider.
+
+Example Structure:
+
+```ts
+// modules/auth/providers/auth-provider.tsx
+
+// ✅ RIGHT: Module provider manages its own internal global needs
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  useAuthInitialization(); // Internal logic
+  
+  return (
+    <AuthContext.Provider value={...}>
+      <SessionWatcher /> {/* Internal side-effect component */}
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+---
+
 #### `constants/`
 
 Contains:
@@ -189,6 +227,7 @@ shared/
 9. Constants must not leak across modules.
 10. Direct deep imports from another module (e.g. `modules/other/models/internal-file`) are forbidden.
 11. Avoid circular dependencies at all costs.
+12. Module Provider Rule: Each module must provide a single, stable entry point for global integration. Do not inject multiple providers from the same module into the root. Immutability of App Tree: Once a module provider is added to the src/app/ provider tree, any new global requirements within that module must be added inside the existing module provider, not by adding new providers to the root.
 
 ---
 
@@ -207,6 +246,7 @@ During review, the AI must additionally:
 9. Detect circular dependencies.
 10. Flag oversized modules that mix multiple business domains.
 11. Ensure each module follows the required internal structure.
+12. Detect Multiple Module Providers: Flag if more than one provider from the same module is being imported and used in src/app/. Detect Leaked Initialization Logic: Flag if src/app/ contains hooks or logic that belong inside a specific module's provider (e.g., useAuthInit() called in App.tsx instead of AuthProvider.tsx).
 
 Any cross-module dependency must be validated against the public API boundary.
 
