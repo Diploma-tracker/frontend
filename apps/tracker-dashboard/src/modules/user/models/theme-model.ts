@@ -14,7 +14,3 @@ export const themeAtom = atom<AppTheme>(getSystemTheme(), 'themeAtom').extend(wi
 export const toggleTheme = () => {
   themeAtom.set((current) => (current === AppTheme.Light ? AppTheme.Dark : AppTheme.Light));
 };
-
-themeAtom.subscribe((theme) => {
-  document.documentElement.classList.toggle('dark', theme === AppTheme.Dark);
-});
