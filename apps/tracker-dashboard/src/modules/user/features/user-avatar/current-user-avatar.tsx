@@ -1,9 +1,13 @@
+import { getCapitalsFromStrings } from '@/shared/utils/getCapitalsFromStrings';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui-kit/components/common/data-display/avatar';
 
 import { userAtom } from '../../models';
 
 export const CurrentUserAvatar = () => {
-  const { initials, avatarUrl } = userAtom();
+  const { avatarUrl, firstName, lastName } = userAtom();
+
+  const initials = getCapitalsFromStrings(firstName, lastName);
 
   return (
     <Avatar className="size-8 rounded-lg">

@@ -1,4 +1,6 @@
+import { logoutAction } from '@/modules/auth';
 import { CaretUpDownIcon, SignOutIcon } from '@phosphor-icons/react';
+import { reatomComponent } from '@reatom/react';
 
 import {
   DropdownMenu,
@@ -13,9 +15,16 @@ import { SidebarMenuButton, useSidebar } from '@repo/ui-kit/components/sidebar';
 import { userAtom } from '../../models';
 import { CurrentUserAvatar } from '../user-avatar/current-user-avatar';
 
-export const UserMenu = () => {
+export const UserMenu = reatomComponent(function UserMenu() {
   const user = userAtom();
+
   const { isMobile } = useSidebar();
+
+  const fullName = `${user.firstName} ${user.lastName}`;
+
+  const handleLogout = () => {
+    logoutAction();
+  };
 
   return (
     <DropdownMenu>
@@ -27,7 +36,7 @@ export const UserMenu = () => {
           <CurrentUserAvatar />
 
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{user.fullName}</span>
+            <span className="truncate font-medium">{fullName}</span>
             <span className="truncate text-xs">{user.email}</span>
           </div>
           <CaretUpDownIcon className="ml-auto size-4" />
@@ -45,7 +54,7 @@ export const UserMenu = () => {
             <CurrentUserAvatar />
 
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.fullName}</span>
+              <span className="truncate font-medium">{fullName}</span>
               <span className="truncate text-xs">{user.email}</span>
             </div>
           </div>
@@ -53,11 +62,11 @@ export const UserMenu = () => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <SignOutIcon />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}, 'UserMenu');

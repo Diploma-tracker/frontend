@@ -1,11 +1,12 @@
 import { routeTree } from '@/app/routeTree.gen';
+import type { permissions } from '@/modules/auth';
+import type { User } from '@/modules/user';
 import { createRouter } from '@tanstack/react-router';
-
-import type { UserRole } from '@repo/api-types';
 
 export interface AuthContext {
   isAuth: boolean;
-  userRole: UserRole | null;
+  user: User;
+  check: typeof permissions;
 }
 
 export interface AppRouterContext {

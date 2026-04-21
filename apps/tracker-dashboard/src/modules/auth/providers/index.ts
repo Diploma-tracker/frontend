@@ -1,6 +1,13 @@
-import { isAuth } from '../models/auth-model';
+import { userAtom } from '@/modules/user';
+
+import { isAuth, permissions } from '../models/auth-model';
 
 export const authContext = {
-  isAuth: isAuth(),
-  userRole: null,
+  get isAuth() {
+    return isAuth();
+  },
+  get user() {
+    return userAtom();
+  },
+  check: permissions,
 };
