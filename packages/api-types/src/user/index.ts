@@ -1,15 +1,7 @@
 export const UserRole = {
-  ADMIN: "ADMIN",
-  STAFF: "STAFF",
-  STUDENT: "STUDENT",
+  STUDENT: 'student',
+  STAFF: 'staff',
+  ADMIN: 'admin',
 } as const;
-export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export type User = {
-  id: string;
-  fullName: string;
-  initials: string;
-  email: string;
-  avatarUrl?: string;
-  role: UserRole;
-};
+export type UserRole = typeof UserRole[keyof typeof UserRole];

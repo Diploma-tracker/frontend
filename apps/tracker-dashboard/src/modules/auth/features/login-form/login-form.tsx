@@ -1,10 +1,10 @@
-import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
+// import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
 import { PasswordFormField, TextFormField } from '@/shared/components';
 import { CircleNotchIcon, MicrosoftOutlookLogoIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
-import { Field, FieldGroup, FieldSeparator } from '@repo/ui-kit/components/common/form/field';
+import { Field, FieldGroup } from '@repo/ui-kit/components/common/form/field';
 
 import { loginForm } from '../../models/login-form-model';
 
@@ -13,7 +13,7 @@ export const LoginForm = reatomComponent(function LoginForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginForm.submit();
+    void loginForm.submit();
   };
 
   return (
@@ -48,14 +48,15 @@ export const LoginForm = reatomComponent(function LoginForm() {
           </Button>
         </Field>
 
-        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">Or continue with</FieldSeparator>
+        {/* TODO: Uncomment this when the backend will be ready to validate university emails */}
+        {/* <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">Or continue with</FieldSeparator>
 
         <Field>
           <Button variant="outline" type="button">
             <MicrosoftLogo />
             Login with Microsoft
           </Button>
-        </Field>
+        </Field> */}
       </FieldGroup>
     </form>
   );

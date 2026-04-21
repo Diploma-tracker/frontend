@@ -1,9 +1,14 @@
 import { univerImg } from '@/shared/assets';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { Card, CardContent } from '@repo/ui-kit/components/common/layout/card';
 
 export const Route = createFileRoute('/(auth)/_auth')({
+  beforeLoad: ({ context }) => {
+    if (context.auth.isAuth) {
+      throw redirect({ to: '/' });
+    }
+  },
   component: Authlayout,
 });
 
