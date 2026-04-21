@@ -1,6 +1,7 @@
+import type { User } from '@/modules/user';
 import { atom, computed, withCookie } from '@reatom/core';
 
-import { DomainRole, SystemRole } from '@repo/api-types';
+import { UserRole } from '@repo/api-types';
 
 export type AuthToken = string;
 
@@ -17,10 +18,7 @@ export const authTokenAtom = atom<AuthToken>('', 'authToken').extend(
 export const isAuth = computed(() => Boolean(authTokenAtom()), 'isAuth');
 
 export const permissions = {
-  // System levels
-  isAdmin: (sRole: SystemRole) => sRole === SystemRole.ADMIN || sRole === SystemRole.SUPER_ADMIN,
-
-  // Domain levels
-  isStaff: (dRole: DomainRole) => dRole === DomainRole.STAFF,
-  isStudent: (dRole: DomainRole) => dRole === DomainRole.STUDENT,
+  isAdmin: (user: User) => user.role === UserRole.ADMIN,
+  isStaff: (user: User) => user.role === UserRole.STAFF,
+  isStudent: (user: User) => user.role === UserRole.STUDENT,
 };

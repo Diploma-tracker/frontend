@@ -1,7 +1,7 @@
 import { authTokenAtom, decodeAuthToken } from '@/modules/auth';
 import { computed } from '@reatom/core';
 
-import { DomainRole, SystemRole } from '@repo/api-types';
+import { UserRole } from '@repo/api-types';
 
 export type User = {
   id: string;
@@ -9,8 +9,7 @@ export type User = {
   lastName: string;
   email: string;
   isActive: boolean;
-  systemRole: SystemRole;
-  domainRole: DomainRole;
+  role: UserRole;
   avatarUrl?: string;
 };
 
@@ -19,12 +18,11 @@ const NULL_USER: User = {
   firstName: '',
   lastName: '',
   email: '',
-  systemRole: SystemRole.USER,
-  domainRole: DomainRole.STUDENT,
+  role: UserRole.STUDENT,
   isActive: false,
 };
 
-export const userAtom = computed(() => {
+export const userAtom = computed<User>(() => {
   const token = authTokenAtom();
 
   if (!token) {
@@ -42,8 +40,7 @@ export const userAtom = computed(() => {
     firstName: payload.first_name,
     lastName: payload.last_name,
     email: payload.email,
-    systemRole: payload.system_role,
-    domainRole: payload.domain_role,
+    role: payload.role,
     isActive: payload.is_active,
   };
 });
