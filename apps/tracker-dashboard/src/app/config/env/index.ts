@@ -16,7 +16,7 @@ function getEnv(): Env {
 
 const env = getEnv();
 
-export const envConfig = {
+export const ENV_CONFIG = {
   api: {
     baseUrl: env.VITE_API_URL,
   },
