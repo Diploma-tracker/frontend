@@ -1,3 +1,5 @@
+export * from './login';
+
 import { DomainRole, SystemRole } from '../user'
 
 type TokenType = 'access_token';
@@ -14,13 +16,4 @@ export interface AuthTokenPayload {
   exp: number;
   iat: number;
   nbf: number;
-}
-
-export interface LoginRequest {
-    credential: string;
-    password: string;
-}
-
-export interface LoginResponse {
-    access_token: string;
 }

@@ -4,4 +4,4 @@ import { AxiosAdapter } from './adapters/axios-adapter';
 
 const BASE_URL = envConfig.api.baseUrl;
 
-export const api = new AxiosAdapter(BASE_URL);
+export const API = new AxiosAdapter(BASE_URL);

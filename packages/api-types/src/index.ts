@@ -1,4 +1,4 @@
 export * from "./user";
 export * from "./auth";
-export * from "./genaral";
+export * from "./general";
 
