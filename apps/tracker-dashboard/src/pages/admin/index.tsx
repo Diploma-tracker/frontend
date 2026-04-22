@@ -1,7 +1,12 @@
 import { useState } from 'react';
 
 import { PageLayout } from '@/layouts';
-import { CreateAllocationRoundForm } from '@/modules/project-enrollment';
+import {
+  CreateAllocationRoundForm,
+  AllocationRoundsFilters,
+  AllocationRoundsPagination,
+  AllocationsListTable,
+} from '@/modules/project-enrollment';
 import { PlusIcon } from '@phosphor-icons/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -19,7 +24,11 @@ export const AdminPage = () => {
 
   return (
     <PageLayout>
-      <p>Admin Page</p>
+      <div className="flex flex-col gap-4">
+        <AllocationRoundsFilters />
+        <AllocationsListTable />
+        <AllocationRoundsPagination />
+      </div>
 
       {/* Floating Action Button */}
       <Dialog open={open} onOpenChange={setOpen}>
@@ -39,7 +48,11 @@ export const AdminPage = () => {
             <DialogDescription>Fill in the details to create a new allocation round.</DialogDescription>
           </DialogHeader>
 
-          <CreateAllocationRoundForm onSuccess={() => setOpen(false)} />
+          <CreateAllocationRoundForm
+            onSuccess={() => {
+              setOpen(false);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </PageLayout>
