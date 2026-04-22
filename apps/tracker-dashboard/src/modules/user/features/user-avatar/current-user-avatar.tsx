@@ -1,4 +1,4 @@
-import { getCapitalsFromStrings } from '@/shared/utils/getCapitalsFromStrings';
+import { getCapitalsFromStrings } from '@/shared/utils/get-capitals-from-strings';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui-kit/components/common/data-display/avatar';
 
