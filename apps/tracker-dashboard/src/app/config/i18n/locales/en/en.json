@@ -1,0 +1,28 @@
+{
+  "auth": {
+    "login": {
+      "title": "Welcome to KHPI project tracker",
+      "subtitle": "Login to get an access to your university projects.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "loginButton": "Login"
+    }
+  },
+  "sidebar": {
+    "title": "Tracker dashboard",
+    "subtitle": "Main view",
+    "platform": "Platform",
+    "nav": {
+      "projects": "Projects",
+      "diploma1": "Diploma 1",
+      "diploma2": "Diploma 2"
+    }
+  },
+  "user": {
+    "logOut": "Log out",
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    }
+  }
+}

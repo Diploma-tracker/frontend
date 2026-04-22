@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { CaretRightIcon } from '@phosphor-icons/react';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/ui-kit/components/common/layout/collapsible';
@@ -26,10 +28,11 @@ interface Props {
 
 export default function AppSidebarMainNav(props: Props) {
   const { navItems } = props;
+  const { t } = useTranslation();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('sidebar.platform')}</SidebarGroupLabel>
       <SidebarMenu>
         {navItems.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.defaultOpen} className="group/collapsible">
