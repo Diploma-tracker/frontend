@@ -13,6 +13,9 @@ import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
 import { Route as appAppRouteImport } from './routes/(app)/_app'
 import { Route as appAppIndexRouteImport } from './routes/(app)/_app.index'
 import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
+import { Route as appAppStudentRouteImport } from './routes/(app)/_app.student'
+import { Route as appAppStaffRouteImport } from './routes/(app)/_app.staff'
+import { Route as appAppAdminRouteImport } from './routes/(app)/_app.admin'
 
 const authAuthRoute = authAuthRouteImport.update({
   id: '/(auth)/_auth',
@@ -32,12 +35,33 @@ const authAuthLoginRoute = authAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => authAuthRoute,
 } as any)
+const appAppStudentRoute = appAppStudentRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => appAppRoute,
+} as any)
+const appAppStaffRoute = appAppStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => appAppRoute,
+} as any)
+const appAppAdminRoute = appAppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => appAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof appAppAdminRoute
+  '/staff': typeof appAppStaffRoute
+  '/student': typeof appAppStudentRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
 }
 export interface FileRoutesByTo {
+  '/admin': typeof appAppAdminRoute
+  '/staff': typeof appAppStaffRoute
+  '/student': typeof appAppStudentRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
 }
@@ -45,18 +69,24 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_app': typeof appAppRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
+  '/(app)/_app/admin': typeof appAppAdminRoute
+  '/(app)/_app/staff': typeof appAppStaffRoute
+  '/(app)/_app/student': typeof appAppStudentRoute
   '/(auth)/_auth/login': typeof authAuthLoginRoute
   '/(app)/_app/': typeof appAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/'
+  fullPaths: '/admin' | '/staff' | '/student' | '/login' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/'
+  to: '/admin' | '/staff' | '/student' | '/login' | '/'
   id:
     | '__root__'
     | '/(app)/_app'
     | '/(auth)/_auth'
+    | '/(app)/_app/admin'
+    | '/(app)/_app/staff'
+    | '/(app)/_app/student'
     | '/(auth)/_auth/login'
     | '/(app)/_app/'
   fileRoutesById: FileRoutesById
@@ -96,14 +126,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthLoginRouteImport
       parentRoute: typeof authAuthRoute
     }
+    '/(app)/_app/student': {
+      id: '/(app)/_app/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof appAppStudentRouteImport
+      parentRoute: typeof appAppRoute
+    }
+    '/(app)/_app/staff': {
+      id: '/(app)/_app/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof appAppStaffRouteImport
+      parentRoute: typeof appAppRoute
+    }
+    '/(app)/_app/admin': {
+      id: '/(app)/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof appAppAdminRouteImport
+      parentRoute: typeof appAppRoute
+    }
   }
 }
 
 interface appAppRouteChildren {
+  appAppAdminRoute: typeof appAppAdminRoute
+  appAppStaffRoute: typeof appAppStaffRoute
+  appAppStudentRoute: typeof appAppStudentRoute
   appAppIndexRoute: typeof appAppIndexRoute
 }
 
 const appAppRouteChildren: appAppRouteChildren = {
+  appAppAdminRoute: appAppAdminRoute,
+  appAppStaffRoute: appAppStaffRoute,
+  appAppStudentRoute: appAppStudentRoute,
   appAppIndexRoute: appAppIndexRoute,
 }
 
