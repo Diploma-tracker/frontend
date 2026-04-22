@@ -23,10 +23,11 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   dataStatus: AsyncStatusLike;
+  numberOfLoadingLines?: number;
 }
 
 export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  const { columns, data, dataStatus } = props;
+  const { columns, data, dataStatus, numberOfLoadingLines = 10 } = props;
 
   const table = useReactTable({
     data,
@@ -37,7 +38,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   const renderLoadingState = () => {
     return (
       <>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {Array.from({ length: numberOfLoadingLines }).map((_, index) => (
           <TableRow key={index}>
             <TableCell colSpan={columns.length}>
               <Skeleton className="h-6 w-full" />
