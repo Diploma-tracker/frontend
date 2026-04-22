@@ -37,8 +37,8 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   const renderLoadingState = () => {
     return (
       <>
-        {Array.from({ length: 10 }, (_, index) => index).map((el) => (
-          <TableRow key={el}>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <TableRow key={index}>
             <TableCell colSpan={columns.length}>
               <Skeleton className="h-6 w-full" />
             </TableCell>
@@ -122,7 +122,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     ));
   };
 
-  const isTableNotEmpty = table.getRowModel().rows?.length;
+  const hasData = table.getRowModel().rows.length > 0;
 
   return (
     <div className="overflow-hidden rounded-md border">
@@ -130,9 +130,9 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
         <TableHeader>{renderTableHeadRows()}</TableHeader>
         <TableBody>
           {renderByDataStatus(dataStatus, {
-            fulfilled: <>{isTableNotEmpty ? renderTableBodyRows() : renderTableEmptyState()}</>,
-            pending: <>{renderLoadingState()}</>,
-            rejected: <>{renderErrorState()}</>,
+            fulfilled: hasData ? renderTableBodyRows() : renderTableEmptyState(),
+            pending: renderLoadingState(),
+            rejected: renderErrorState(),
           })}
         </TableBody>
       </Table>
