@@ -7,9 +7,14 @@ import type { ApiError, ApiRequestConfig, ApiResponse, IApiClient } from '../int
 
 export class AxiosAdapter implements IApiClient {
   private client: AxiosInstance;
+  private token: string = '';
 
   constructor(baseURL: string) {
     this.client = axios.create({ baseURL });
+  }
+
+  setToken(token: string): void {
+    this.token = token;
   }
 
   async request<T>(url: string, config: ApiRequestConfig): Promise<ApiResponse<T>> {
@@ -19,7 +24,10 @@ export class AxiosAdapter implements IApiClient {
         method: config.method || 'GET',
         data: config.data,
         params: config.params,
-        headers: config.headers,
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          ...config.headers,
+        },
       });
 
       return { ok: true, data: response.data, error: null };

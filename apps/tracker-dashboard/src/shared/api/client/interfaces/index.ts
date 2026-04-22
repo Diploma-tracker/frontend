@@ -9,10 +9,11 @@ export type ApiResponse<T> = { ok: true; data: T; error: null } | { ok: false; d
 export interface ApiRequestConfig {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   data?: unknown;
-  params?: Record<string, string>;
+  params?: Record<string, unknown>;
   headers?: Record<string, string>;
 }
 
 export interface IApiClient {
   request<T>(url: string, config: ApiRequestConfig): Promise<ApiResponse<T>>;
+  setToken(token: string): void;
 }

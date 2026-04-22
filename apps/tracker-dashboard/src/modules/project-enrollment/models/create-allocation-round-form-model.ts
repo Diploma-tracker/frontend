@@ -1,4 +1,3 @@
-import { authTokenAtom } from '@/modules/auth';
 import { action, reatomForm, withAsync, wrap } from '@reatom/core';
 import { z } from 'zod';
 
@@ -20,16 +19,12 @@ const schema = z
 export type CreateAllocationRoundFormValues = z.infer<typeof schema>;
 
 export const createAllocationRoundAction = action(async (dto: CreateAllocationRoundFormValues) => {
-  const token = authTokenAtom();
   const response = await wrap(
-    fetchCreateAllocationRound(
-      {
-        name: dto.name,
-        start_at: new Date(dto.start_at).toISOString(),
-        end_at: new Date(dto.end_at).toISOString(),
-      },
-      token
-    )
+    fetchCreateAllocationRound({
+      name: dto.name,
+      start_at: new Date(dto.start_at).toISOString(),
+      end_at: new Date(dto.end_at).toISOString(),
+    })
   );
 
   if (!response.ok) {
