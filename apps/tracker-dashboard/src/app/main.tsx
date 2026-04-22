@@ -1,5 +1,6 @@
 // sort-imports-ignore
 import './config/store/store-utils';
+import './config/i18n';
 
 import ReactDOM from 'react-dom/client';
 

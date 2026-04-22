@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { AppSidebar } from '@/modules/app';
+import { AppSidebar, LangSelect } from '@/modules/app';
 import { ThemeSwitcher } from '@/modules/user';
 import { Container } from '@/shared/components';
 
@@ -22,7 +22,11 @@ export const PageLayout = ({ children }: PageLayoutProps) => {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="data-[orientation=vertical]:h-10" />
           </div>
-          <ThemeSwitcher />
+
+          <div className="flex items-center gap-2">
+            <LangSelect />
+            <ThemeSwitcher />
+          </div>
         </header>
 
         <main className="flex flex-1 flex-col">

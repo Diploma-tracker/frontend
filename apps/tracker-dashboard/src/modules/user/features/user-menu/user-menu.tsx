@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { logoutAction } from '@/modules/auth';
 import { CaretUpDownIcon, SignOutIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
@@ -17,6 +19,7 @@ import { CurrentUserAvatar } from '../user-avatar/current-user-avatar';
 
 export const UserMenu = reatomComponent(function UserMenu() {
   const user = userAtom();
+  const { t } = useTranslation();
 
   const { isMobile } = useSidebar();
 
@@ -64,7 +67,7 @@ export const UserMenu = reatomComponent(function UserMenu() {
 
         <DropdownMenuItem onClick={handleLogout}>
           <SignOutIcon />
-          Log out
+          {t('user.logOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

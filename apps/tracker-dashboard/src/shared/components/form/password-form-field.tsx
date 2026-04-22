@@ -4,11 +4,16 @@ import { EyeIcon, EyeSlashIcon, LockSimpleIcon } from '@phosphor-icons/react';
 
 import { TextFormField } from './text-form-field';
 
-export const PasswordFormField = (props: Omit<ComponentProps<typeof TextFormField>, 'type'>) => {
+type PasswordFormFieldProps = Omit<ComponentProps<typeof TextFormField>, 'type'> & {
+  showPasswordAriaLabel: string;
+  hidePasswordAriaLabel: string;
+};
+
+export const PasswordFormField = (props: PasswordFormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const type = showPassword ? 'text' : 'password';
-  const ariaLabel = showPassword ? 'Hide password' : 'Show password';
+  const ariaLabel = showPassword ? props.hidePasswordAriaLabel : props.showPasswordAriaLabel;
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
