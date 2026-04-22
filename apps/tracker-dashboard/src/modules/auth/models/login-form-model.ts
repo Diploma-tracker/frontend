@@ -1,5 +1,5 @@
 import { router } from '@/app/config/router';
-import { reatomForm, withCallHook } from '@reatom/core';
+import { reatomForm, wrap } from '@reatom/core';
 import { z } from 'zod';
 
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
@@ -22,24 +22,17 @@ export const loginForm = reatomForm(
   },
   {
     onSubmit: async (values) => {
-      await loginAction({ credential: values.email, password: values.password });
-
-      router.navigate({ to: '/' });
+      try {
+        await wrap(loginAction({ credential: values.email, password: values.password }));
+        router.navigate({ to: '/' });
+        toast.success('You have successfully logged in!');
+      } catch (error) {
+        toast.error('An error occurred during login. Please try again.');
+        throw error;
+      }
     },
     schema: loginSchema,
     validateOnBlur: true,
     name: 'loginForm',
   }
-);
-
-loginAction.onFulfill.extend(
-  withCallHook(() => {
-    toast.success('Ви успішно увійшли!');
-  })
-);
-
-loginAction.onReject.extend(
-  withCallHook(() => {
-    toast.error('Сталася помилка під час входу. Спробуйте ще раз.');
-  })
 );
