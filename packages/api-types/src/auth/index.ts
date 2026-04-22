@@ -1,13 +1,13 @@
-export * from './login';
+export * from "./login";
 
-import {  UserRole } from '../user'
+import { UserRole } from "../user";
 
-type TokenType = 'access_token';
+type TokenType = "access_token";
 
 export interface AuthTokenPayload {
   user_id: string;
   email: string;
-  role: UserRole
+  role: UserRole;
   first_name: string;
   last_name: string;
   is_active: boolean;
