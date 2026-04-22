@@ -39,11 +39,11 @@ importers:
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@reatom/core':
-        specifier: ^1000.1.0
-        version: 1000.1.0
+        specifier: ^1000.15.2
+        version: 1000.15.2
       '@reatom/react':
-        specifier: ^1000.0.0
-        version: 1000.0.0(@reatom/core@1000.1.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^1000.2.2
+        version: 1000.2.2(@reatom/core@1000.15.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@repo/api-types':
         specifier: workspace:*
         version: link:../../packages/api-types
@@ -163,7 +163,7 @@ importers:
         version: 0.4.26(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-turbo:
         specifier: ^2.6.0
-        version: 2.6.0(eslint@9.39.1(jiti@2.6.1))(turbo@2.7.2)
+        version: 2.6.0(eslint@9.39.1(jiti@2.6.1))(turbo@2.9.6)
       globals:
         specifier: ^16.5.0
         version: 16.5.0
@@ -1501,13 +1501,13 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@reatom/core@1000.1.0':
-    resolution: {integrity: sha512-PZN27dVko4RuP3LD4Hcdxwx8yi9OieHAhj3Zxcf7kk4n3h+NoO3fd62b/COL/wHuBtTIFO7XfWVWZFqWiF5bxw==}
+  '@reatom/core@1000.15.2':
+    resolution: {integrity: sha512-ychH11wZaVHHYsfPuPQvgGr8YyonURggwQwiaTxy+164nRfDnXXgbvuaWePjim7K3FR3LfI6ydYNoqJnDh88Bg==}
 
-  '@reatom/react@1000.0.0':
-    resolution: {integrity: sha512-e2aNUFeeUeiMoQfTQZd5Z4Ctd3g53WaggjsRtwjw8HhO+0Xl4LjU4trhnLOVIqf9B91XCKpAErWyqOlbM5ROWw==}
+  '@reatom/react@1000.2.2':
+    resolution: {integrity: sha512-QxNFwtmbsIK/DUtmjebfW9gmW+d+4UPZVq1f+Nb2wkiNOZ8yUh7o0i4xAs83nneZOFqcqwNiYKfDrEpBozMCvA==}
     peerDependencies:
-      '@reatom/core': ^1000.0.0
+      '@reatom/core': ^1000.14.1
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
@@ -1991,6 +1991,36 @@ packages:
         optional: true
       svelte:
         optional: true
+
+  '@turbo/darwin-64@2.9.6':
+    resolution: {integrity: sha512-X/56SnVXIQZBLKwniGTwEQTGmtE5brSACnKMBWpY3YafuxVYefrC2acamfjgxP7BG5w3I+6jf0UrLoSzgPcSJg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@turbo/darwin-arm64@2.9.6':
+    resolution: {integrity: sha512-aalBeSl4agT/QtYGDyf/XLajedWzUC9Vg/pm/YO6QQ93vkQ91Vz5uK1ta5RbVRDozQSz4njxUNqRNmOXDzW+qw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@turbo/linux-64@2.9.6':
+    resolution: {integrity: sha512-YKi05jnNHaD7vevgYwahpzGwbsNNTwzU2c7VZdmdFm7+cGDP4oREUWSsainiMfRqjRuolQxBwRn8wf1jmu+YZA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@turbo/linux-arm64@2.9.6':
+    resolution: {integrity: sha512-02o/ZS69cOYEDczXvOB2xmyrtzjQ2hVFtWZK1iqxXUfzMmTjZK4UumrfNnjckSg+gqeBfnPRHa0NstA173Ik3g==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@turbo/windows-64@2.9.6':
+    resolution: {integrity: sha512-wVdQjvnBI15wB6JrA+43CtUtagjIMmX6XYO758oZHAsCNSxqRlJtdyujih0D8OCnwCRWiGWGI63zAxR0hO6s9g==}
+    cpu: [x64]
+    os: [win32]
+
+  '@turbo/windows-arm64@2.9.6':
+    resolution: {integrity: sha512-1XUUyWW0W6FTSqGEhU8RHVqb2wP1SPkr7hIvBlMEwH9jr+sJQK5kqeosLJ/QaUv4ecSAd1ZhIrLoW7qslAzT4A==}
+    cpu: [arm64]
+    os: [win32]
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -3975,6 +4005,10 @@ packages:
     resolution: {integrity: sha512-5JIA5aYBAJSAhrhbyag1ZuMSgUZnHtI+Sq3H8D3an4fL8PeF+L1yYvbEJg47akP1PFfATMf5ehkqFnxfkmuwZQ==}
     hasBin: true
 
+  turbo@2.9.6:
+    resolution: {integrity: sha512-+v2QJey7ZUeUiuigkU+uFfklvNUyPI2VO2vBpMYJA+a1hKFLFiKtUYlRHdb3P9CrAvMzi0upbjI4WT+zKtqkBg==}
+    hasBin: true
+
   tw-animate-css@1.4.0:
     resolution: {integrity: sha512-7bziOlRqH0hJx80h/3mbicLW7o8qLsH5+RaLR2t+OHM3D0JlWGODQKQ4cxbK7WlvmUxpcj6Kgu6EKqjrGFe3QQ==}
 
@@ -5466,15 +5500,15 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@reatom/core@1000.1.0':
+  '@reatom/core@1000.15.2':
     dependencies:
       '@standard-schema/spec': 1.1.0
     optionalDependencies:
       idb-keyval: 6.2.2
 
-  '@reatom/react@1000.0.0(@reatom/core@1000.1.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@reatom/react@1000.2.2(@reatom/core@1000.15.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
-      '@reatom/core': 1000.1.0
+      '@reatom/core': 1000.15.2
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
@@ -5887,6 +5921,24 @@ snapshots:
       prettier: 3.6.2
     transitivePeerDependencies:
       - supports-color
+
+  '@turbo/darwin-64@2.9.6':
+    optional: true
+
+  '@turbo/darwin-arm64@2.9.6':
+    optional: true
+
+  '@turbo/linux-64@2.9.6':
+    optional: true
+
+  '@turbo/linux-arm64@2.9.6':
+    optional: true
+
+  '@turbo/windows-64@2.9.6':
+    optional: true
+
+  '@turbo/windows-arm64@2.9.6':
+    optional: true
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -6688,11 +6740,11 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-turbo@2.6.0(eslint@9.39.1(jiti@2.6.1))(turbo@2.7.2):
+  eslint-plugin-turbo@2.6.0(eslint@9.39.1(jiti@2.6.1))(turbo@2.9.6):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.1(jiti@2.6.1)
-      turbo: 2.7.2
+      turbo: 2.9.6
 
   eslint-scope@8.4.0:
     dependencies:
@@ -8029,6 +8081,15 @@ snapshots:
       turbo-linux-arm64: 2.7.2
       turbo-windows-64: 2.7.2
       turbo-windows-arm64: 2.7.2
+
+  turbo@2.9.6:
+    optionalDependencies:
+      '@turbo/darwin-64': 2.9.6
+      '@turbo/darwin-arm64': 2.9.6
+      '@turbo/linux-64': 2.9.6
+      '@turbo/linux-arm64': 2.9.6
+      '@turbo/windows-64': 2.9.6
+      '@turbo/windows-arm64': 2.9.6
 
   tw-animate-css@1.4.0: {}
 
