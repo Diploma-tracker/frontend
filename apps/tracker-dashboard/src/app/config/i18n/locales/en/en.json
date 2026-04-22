@@ -24,5 +24,51 @@
       "show": "Show password",
       "hide": "Hide password"
     }
+  },
+  "projectEnrollment": {
+    "allocationRound": {
+      "status": {
+        "all": "All statuses",
+        "draft": "Draft",
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "filters": {
+        "statusPlaceholder": "Status"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "status": "Status",
+          "actions": "Actions"
+        }
+      },
+      "dialog": {
+        "createTitle": "Create Allocation Round",
+        "createDescription": "Fill in the details to create a new allocation round.",
+        "createAriaLabel": "Create allocation round"
+      },
+      "form": {
+        "namePlaceholder": "Round 2024-2025",
+        "nameLabel": "Name",
+        "startDateLabel": "Start date",
+        "startDatePlaceholder": "Pick start date",
+        "endDateLabel": "End date",
+        "endDatePlaceholder": "Pick end date",
+        "submitButton": "Create",
+        "validation": {
+          "nameRequired": "Name is required",
+          "startDateRequired": "Start date is required",
+          "endDateRequired": "End date is required",
+          "endDateAfterStart": "End date must be after start date"
+        },
+        "toast": {
+          "createSuccess": "Allocation round created successfully!",
+          "createError": "Failed to create allocation round. Please try again."
+        }
+      }
+    }
   }
 }

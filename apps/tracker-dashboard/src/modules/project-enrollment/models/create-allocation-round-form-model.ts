@@ -1,18 +1,21 @@
 import { action, reatomForm, withAsync, wrap } from '@reatom/core';
+import i18n from 'i18next';
 import { z } from 'zod';
 
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
 import { fetchCreateAllocationRound } from '../api';
 
+const t = (key: string) => i18n.t(key);
+
 const schema = z
   .object({
-    name: z.string().min(1, 'Name is required'),
-    start_at: z.string().min(1, 'Start date is required'),
-    end_at: z.string().min(1, 'End date is required'),
+    name: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.nameRequired')),
+    start_at: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.startDateRequired')),
+    end_at: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.endDateRequired')),
   })
   .refine((data) => new Date(data.end_at) > new Date(data.start_at), {
-    message: 'End date must be after start date',
+    message: t('projectEnrollment.allocationRound.form.validation.endDateAfterStart'),
     path: ['end_at'],
   });
 
@@ -28,7 +31,7 @@ export const createAllocationRoundAction = action(async (dto: CreateAllocationRo
   );
 
   if (!response.ok) {
-    throw new Error(response.error?.message ?? 'Failed to create allocation round');
+    throw new Error(response.error?.message ?? t('projectEnrollment.allocationRound.form.toast.createError'));
   }
 
   return response.data;
@@ -44,9 +47,9 @@ export const createAllocationRoundForm = reatomForm(
     onSubmit: async (values) => {
       try {
         await wrap(createAllocationRoundAction(values));
-        toast.success('Allocation round created successfully!');
+        toast.success(t('projectEnrollment.allocationRound.form.toast.createSuccess'));
       } catch (error) {
-        toast.error('Failed to create allocation round. Please try again.');
+        toast.error(t('projectEnrollment.allocationRound.form.toast.createError'));
         throw error;
       }
     },

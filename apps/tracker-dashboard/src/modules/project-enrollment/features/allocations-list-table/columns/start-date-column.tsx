@@ -1,3 +1,4 @@
+import { T } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { AllocationRoundDTO } from '../../../models';
@@ -7,6 +8,6 @@ const formatDate = (value: string | null) =>
 
 export const StartDateColumn: ColumnDef<AllocationRoundDTO> = {
   accessorKey: 'start_at',
-  header: 'Start date',
+  header: () => <T k="projectEnrollment.allocationRound.table.columns.startDate" />,
   cell: ({ row }) => formatDate(row.original.start_at),
 };

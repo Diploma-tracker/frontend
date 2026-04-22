@@ -1,3 +1,4 @@
+import { T } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { AllocationRoundDTO } from '../../../models';
@@ -7,6 +8,6 @@ const formatDate = (value: string | null) =>
 
 export const EndDateColumn: ColumnDef<AllocationRoundDTO> = {
   accessorKey: 'end_at',
-  header: 'End date',
+  header: () => <T k="projectEnrollment.allocationRound.table.columns.endDate" />,
   cell: ({ row }) => formatDate(row.original.end_at),
 };

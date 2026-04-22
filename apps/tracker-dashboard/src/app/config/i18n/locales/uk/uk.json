@@ -24,5 +24,51 @@
       "show": "Показати пароль",
       "hide": "Сховати пароль"
     }
+  },
+  "projectEnrollment": {
+    "allocationRound": {
+      "status": {
+        "all": "Усі статуси",
+        "draft": "Чернетка",
+        "open": "Відкрито",
+        "closed": "Закрито"
+      },
+      "filters": {
+        "statusPlaceholder": "Статус"
+      },
+      "table": {
+        "columns": {
+          "name": "Назва",
+          "startDate": "Дата початку",
+          "endDate": "Дата завершення",
+          "status": "Статус",
+          "actions": "Дії"
+        }
+      },
+      "dialog": {
+        "createTitle": "Створити раунд розподілу",
+        "createDescription": "Заповніть деталі для створення нового раунду розподілу.",
+        "createAriaLabel": "Створити раунд розподілу"
+      },
+      "form": {
+        "namePlaceholder": "Раунд 2024-2025",
+        "nameLabel": "Назва",
+        "startDateLabel": "Дата початку",
+        "startDatePlaceholder": "Оберіть дату початку",
+        "endDateLabel": "Дата завершення",
+        "endDatePlaceholder": "Оберіть дату завершення",
+        "submitButton": "Створити",
+        "validation": {
+          "nameRequired": "Назва є обов'язковою",
+          "startDateRequired": "Дата початку є обов'язковою",
+          "endDateRequired": "Дата завершення є обов'язковою",
+          "endDateAfterStart": "Дата завершення має бути після дати початку"
+        },
+        "toast": {
+          "createSuccess": "Раунд розподілу успішно створено!",
+          "createError": "Не вдалося створити раунд розподілу. Спробуйте ще раз."
+        }
+      }
+    }
   }
 }

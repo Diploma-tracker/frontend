@@ -5,3 +5,5 @@ export { DatePickerFormField } from './form/date-picker-form-field';
 export { Container } from './layout/container/container';
 
 export { Logo } from './logo/logo';
+
+export { T } from './t/t';

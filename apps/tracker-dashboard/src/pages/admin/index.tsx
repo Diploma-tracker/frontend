@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { PageLayout } from '@/layouts';
 import {
@@ -7,6 +8,7 @@ import {
   AllocationRoundsPagination,
   AllocationsListTable,
 } from '@/modules/project-enrollment';
+import { T } from '@/shared/components';
 import { PlusIcon } from '@phosphor-icons/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -20,6 +22,7 @@ import {
 } from '@repo/ui-kit/components/common/floating/dialog';
 
 export const AdminPage = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,7 +39,7 @@ export const AdminPage = () => {
           <Button
             size="icon-lg"
             className="fixed right-6 bottom-6 z-50 size-14 rounded-full shadow-lg"
-            aria-label="Create allocation round"
+            aria-label={t('projectEnrollment.allocationRound.dialog.createAriaLabel')}
           >
             <PlusIcon className="size-6" />
           </Button>
@@ -44,8 +47,12 @@ export const AdminPage = () => {
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Allocation Round</DialogTitle>
-            <DialogDescription>Fill in the details to create a new allocation round.</DialogDescription>
+            <DialogTitle>
+              <T k="projectEnrollment.allocationRound.dialog.createTitle" />
+            </DialogTitle>
+            <DialogDescription>
+              <T k="projectEnrollment.allocationRound.dialog.createDescription" />
+            </DialogDescription>
           </DialogHeader>
 
           <CreateAllocationRoundForm
