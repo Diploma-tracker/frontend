@@ -11,8 +11,9 @@ import { Field, FieldGroup } from '@repo/ui-kit/components/common/form/field';
 import { loginForm } from '../../models/login-form-model';
 
 export const LoginForm = reatomComponent(function LoginForm() {
-  const { submit, fields } = loginForm;
   const { t } = useTranslation();
+
+  const { submit, fields } = loginForm;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +44,12 @@ export const LoginForm = reatomComponent(function LoginForm() {
           ]}
         />
 
-        <PasswordFormField field={fields.password} label={t('auth.login.passwordLabel')} />
+        <PasswordFormField
+          field={fields.password}
+          label={t('auth.login.passwordLabel')}
+          showPasswordAriaLabel={t('user.password.show')}
+          hidePasswordAriaLabel={t('user.password.hide')}
+        />
 
         <Field>
           <Button type="submit" disabled={!submit.ready()}>
