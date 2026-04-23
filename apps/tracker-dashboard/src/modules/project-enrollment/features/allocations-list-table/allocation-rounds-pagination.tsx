@@ -42,6 +42,10 @@ export const AllocationRoundsPagination = reatomComponent(function AllocationRou
   const { page } = filter;
   const pages = buildPageRange(page, totalPages);
 
+  const handlePrevious = () => setFilter({ page: page - 1 });
+  const handleNext = () => setFilter({ page: page + 1 });
+  const handlePageSelect = (p: number) => setFilter({ page: p });
+
   return (
     <Pagination>
       <PaginationContent>
@@ -49,7 +53,7 @@ export const AllocationRoundsPagination = reatomComponent(function AllocationRou
           <PaginationPrevious
             aria-disabled={page <= 1}
             className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
-            onClick={() => setFilter({ page: page - 1 })}
+            onClick={handlePrevious}
           />
         </PaginationItem>
 
@@ -60,7 +64,7 @@ export const AllocationRoundsPagination = reatomComponent(function AllocationRou
             </PaginationItem>
           ) : (
             <PaginationItem key={p}>
-              <PaginationLink isActive={p === page} onClick={() => setFilter({ page: p })}>
+              <PaginationLink isActive={p === page} onClick={() => handlePageSelect(p)}>
                 {p}
               </PaginationLink>
             </PaginationItem>
@@ -71,7 +75,7 @@ export const AllocationRoundsPagination = reatomComponent(function AllocationRou
           <PaginationNext
             aria-disabled={page >= totalPages}
             className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}
-            onClick={() => setFilter({ page: page + 1 })}
+            onClick={handleNext}
           />
         </PaginationItem>
       </PaginationContent>

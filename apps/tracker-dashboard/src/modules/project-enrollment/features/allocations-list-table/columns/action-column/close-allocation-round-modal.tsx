@@ -24,10 +24,14 @@ export const CloseAllocationRoundModal = reatomComponent(function CloseAllocatio
     onOpenChange(false);
   };
 
+  const handleOpenChange = (value: boolean) => {
+    if (!isPending) onOpenChange(value);
+  };
+
   return (
     <ConfirmationModal
       open={open}
-      onOpenChange={(value) => !isPending && onOpenChange(value)}
+      onOpenChange={handleOpenChange}
       title={t('projectEnrollment.allocationRound.actions.confirmClose.title')}
       description={t('projectEnrollment.allocationRound.actions.confirmClose.description')}
       confirmVariant="destructive"

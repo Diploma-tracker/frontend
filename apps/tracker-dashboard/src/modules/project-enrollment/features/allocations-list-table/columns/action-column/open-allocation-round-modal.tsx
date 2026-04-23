@@ -24,10 +24,14 @@ export const OpenAllocationRoundModal = reatomComponent(function OpenAllocationR
     onOpenChange(false);
   };
 
+  const handleOpenChange = (value: boolean) => {
+    if (!isPending) onOpenChange(value);
+  };
+
   return (
     <ConfirmationModal
       open={open}
-      onOpenChange={(value) => !isPending && onOpenChange(value)}
+      onOpenChange={handleOpenChange}
       title={t('projectEnrollment.allocationRound.actions.confirmOpen.title')}
       description={t('projectEnrollment.allocationRound.actions.confirmOpen.description')}
       isPending={isPending}

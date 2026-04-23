@@ -27,6 +27,9 @@ const ActionCell = ({ row }: { row: { original: AllocationRoundDTO } }) => {
   const canOpen = status === 'DRAFT';
   const canClose = status === 'OPEN';
 
+  const handleOpenSelect = () => setOpenModalOpen(true);
+  const handleCloseSelect = () => setCloseModalOpen(true);
+
   if (!canOpen && !canClose) return null;
 
   return (
@@ -39,12 +42,12 @@ const ActionCell = ({ row }: { row: { original: AllocationRoundDTO } }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {canOpen && (
-            <DropdownMenuItem onSelect={() => setOpenModalOpen(true)}>
+            <DropdownMenuItem onSelect={handleOpenSelect}>
               {t('projectEnrollment.allocationRound.actions.open')}
             </DropdownMenuItem>
           )}
           {canClose && (
-            <DropdownMenuItem variant="destructive" onSelect={() => setCloseModalOpen(true)}>
+            <DropdownMenuItem variant="destructive" onSelect={handleCloseSelect}>
               {t('projectEnrollment.allocationRound.actions.close')}
             </DropdownMenuItem>
           )}

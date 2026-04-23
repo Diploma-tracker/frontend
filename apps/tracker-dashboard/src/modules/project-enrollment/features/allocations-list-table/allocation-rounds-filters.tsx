@@ -28,12 +28,13 @@ export const AllocationRoundsFilters = reatomComponent(function AllocationRounds
   const filter = allocationRoundListAtom.filter();
   const setFilter = allocationRoundListAtom.setFilter;
 
+  const handleStatusChange = (value: string) => {
+    setFilter({ statusFilter: value as typeof filter.statusFilter });
+  };
+
   return (
     <div className="flex items-center gap-3">
-      <Select
-        value={filter.statusFilter}
-        onValueChange={(value) => setFilter({ statusFilter: value as typeof filter.statusFilter })}
-      >
+      <Select value={filter.statusFilter} onValueChange={handleStatusChange}>
         <SelectTrigger size="sm" className="w-40">
           <SelectValue placeholder={t('projectEnrollment.allocationRound.filters.statusPlaceholder')} />
         </SelectTrigger>
