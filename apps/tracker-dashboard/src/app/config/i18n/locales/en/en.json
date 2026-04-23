@@ -111,6 +111,7 @@
           "name": "Name",
           "email": "Email",
           "selected": "Selection",
+          "applications": "Applications",
           "actions": "Actions"
         }
       },

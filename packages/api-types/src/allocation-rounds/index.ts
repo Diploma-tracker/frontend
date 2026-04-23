@@ -37,12 +37,23 @@ export interface CreateAllocationRoundResponse {
 
 export type TeacherSelectionFilter = "all" | "selected" | "not_selected";
 
+export type SupervisionApplicationStatus = "PENDING" | "ACCEPTED" | "REJECTED";
+
+export interface ApplicationDTO {
+  id: string;
+  student_id: string;
+  status: SupervisionApplicationStatus;
+  created_at: string;
+  decided_at: string | null;
+}
+
 export interface TeacherDTO {
   id: string;
   email: string;
   first_name: string;
   last_name: string;
   is_selected: boolean;
+  applications: ApplicationDTO[];
 }
 
 export interface ListTeachersRequest extends Record<string, unknown> {
