@@ -1,15 +1,15 @@
 import { roleBasedComponent } from '@/modules/auth';
 import {
-  PojectEnrollmentAdminPage,
-  PojectEnrollmentStaffPage,
-  PojectEnrollmentStudentPage,
+  ProjectEnrollmentAdminPage,
+  ProjectEnrollmentStaffPage,
+  ProjectEnrollmentStudentPage,
 } from '@/pages/project-enrollment';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/(app)/_app/project-enrollment')({
   component: roleBasedComponent({
-    admin: PojectEnrollmentAdminPage,
-    staff: PojectEnrollmentStaffPage,
-    student: PojectEnrollmentStudentPage,
+    admin: ProjectEnrollmentAdminPage,
+    staff: ProjectEnrollmentStaffPage,
+    student: ProjectEnrollmentStudentPage,
   }),
 });

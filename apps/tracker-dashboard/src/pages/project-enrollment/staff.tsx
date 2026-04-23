@@ -1,5 +1,5 @@
 import { PageLayout } from '@/layouts';
 
-export const PojectEnrollmentStaffPage = () => {
+export const ProjectEnrollmentStaffPage = () => {
   return <PageLayout>Staff Home Page</PageLayout>;
 };

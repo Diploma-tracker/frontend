@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from '@repo/ui-kit/components/common/floating/dialog';
 
-export const PojectEnrollmentAdminPage = () => {
+export const ProjectEnrollmentAdminPage = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
