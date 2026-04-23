@@ -29,7 +29,8 @@
     "nav": {
       "projects": "Проєкти",
       "diploma1": "Диплом 1",
-      "diploma2": "Диплом 2"
+      "diploma2": "Диплом 2",
+      "projectEnrollment": "Зарахування до проєктів"
     }
   },
   "user": {

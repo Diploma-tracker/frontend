@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { CaretRightIcon } from '@phosphor-icons/react';
+import { Link } from '@tanstack/react-router';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/ui-kit/components/common/layout/collapsible';
 import {
@@ -14,16 +15,19 @@ import {
   SidebarMenuSubItem,
 } from '@repo/ui-kit/components/sidebar';
 
+type NavSubItem = {
+  title: string;
+  url: string;
+};
+
+type NavItem = {
+  title: string;
+  icon?: React.ElementType;
+  defaultOpen?: boolean;
+} & ({ url: string; items?: never } | { url?: never; items: NavSubItem[] });
+
 interface Props {
-  navItems: {
-    title: string;
-    icon?: React.ElementType;
-    defaultOpen?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
+  navItems: NavItem[];
 }
 
 export default function AppSidebarMainNav(props: Props) {
@@ -34,32 +38,43 @@ export default function AppSidebarMainNav(props: Props) {
     <SidebarGroup>
       <SidebarGroupLabel>{t('sidebar.platform')}</SidebarGroupLabel>
       <SidebarMenu>
-        {navItems.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={item.defaultOpen} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+        {navItems.map((item) =>
+          item.items ? (
+            <Collapsible key={item.title} asChild defaultOpen={item.defaultOpen} className="group/collapsible">
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    <CaretRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <a href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          ) : (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton tooltip={item.title} asChild>
+                <Link to={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                  <CaretRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-          </Collapsible>
-        ))}
+          )
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );

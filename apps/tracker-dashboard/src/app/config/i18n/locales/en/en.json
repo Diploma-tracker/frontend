@@ -29,7 +29,8 @@
     "nav": {
       "projects": "Projects",
       "diploma1": "Diploma 1",
-      "diploma2": "Diploma 2"
+      "diploma2": "Diploma 2",
+      "projectEnrollment": "Project Enrollment"
     }
   },
   "user": {

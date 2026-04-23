@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
-import { GraduationCapIcon } from '@phosphor-icons/react';
+import { GraduationCapIcon, ListChecksIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
 import {
@@ -36,6 +36,11 @@ export const AppSidebar = () => {
           url: '#',
         },
       ],
+    },
+    {
+      title: t('sidebar.nav.projectEnrollment'),
+      url: '/project-enrollment',
+      icon: ListChecksIcon,
     },
   ];
 
