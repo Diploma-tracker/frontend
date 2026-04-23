@@ -19,13 +19,17 @@ export class AxiosAdapter implements IApiClient {
 
   async request<T>(url: string, config: ApiRequestConfig): Promise<ApiResponse<T>> {
     try {
+      const headers: Record<string, string> = {};
+      if (this.token) {
+        headers.Authorization = `Bearer ${this.token}`;
+      }
       const response = await this.client.request<T>({
         url,
         method: config.method || 'GET',
         data: config.data,
         params: config.params,
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          ...headers,
           ...config.headers,
         },
       });

@@ -20,9 +20,7 @@ export const isAuth = computed(() => Boolean(authTokenAtom()), 'isAuth');
 
 effect(() => {
   const token = authTokenAtom();
-  if (token) {
-    API.setToken(token);
-  }
+  API.setToken(token);
 }, 'authEffect');
 
 export const permissions = {
