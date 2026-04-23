@@ -25,3 +25,15 @@ export const fetchListAllocationRounds = (
     params,
   });
 };
+
+export const fetchOpenAllocationRound = (id: string): Promise<ApiResponse<void>> => {
+  return API.request<void>(`/projects/allocation-rounds/${id}/open`, {
+    method: 'POST',
+  });
+};
+
+export const fetchCloseAllocationRound = (id: string): Promise<ApiResponse<void>> => {
+  return API.request<void>(`/projects/allocation-rounds/${id}/close`, {
+    method: 'POST',
+  });
+};

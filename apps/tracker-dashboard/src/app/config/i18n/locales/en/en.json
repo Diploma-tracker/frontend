@@ -1,4 +1,10 @@
 {
+  "common": {
+    "confirm": {
+      "cancel": "Cancel",
+      "proceed": "Confirm"
+    }
+  },
   "auth": {
     "login": {
       "title": "Welcome to KHPI project tracker",
@@ -43,6 +49,24 @@
           "endDate": "End date",
           "status": "Status",
           "actions": "Actions"
+        }
+      },
+      "actions": {
+        "open": "Open",
+        "close": "Close",
+        "confirmOpen": {
+          "title": "Open allocation round?",
+          "description": "This will make the round visible and available for enrollment. This action cannot be undone."
+        },
+        "confirmClose": {
+          "title": "Close allocation round?",
+          "description": "This will end the enrollment period and prevent any further submissions. This action cannot be undone."
+        },
+        "toast": {
+          "openSuccess": "Allocation round opened successfully!",
+          "openError": "Failed to open allocation round. Please try again.",
+          "closeSuccess": "Allocation round closed successfully!",
+          "closeError": "Failed to close allocation round. Please try again."
         }
       },
       "dialog": {
