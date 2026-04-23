@@ -24,7 +24,9 @@ type NavItem = {
   title: string;
   icon?: React.ElementType;
   defaultOpen?: boolean;
-} & ({ url: string; items?: never } | { url?: never; items: NavSubItem[] });
+  url?: string;
+  items?: NavSubItem[];
+};
 
 interface Props {
   navItems: NavItem[];
