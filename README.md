@@ -132,7 +132,7 @@ Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
 
 ## How to build routes
 
-Routes are generated based on the file system structure of the `app/routes` directory. To create a new route, simply add a new file in that directory with the appropriate name and export a component from it. The router will automatically pick up the new route and make it available in the application. This is how the Tanstack Router's file-based routing works.  
+Routes are generated based on the file system structure of the `app/routes` directory. To create a new route, simply add a new file in that directory with the appropriate name and export a component from it. The router will automatically pick up the new route and make it available in the application. This is how the Tanstack Router's file-based routing works.
 
 Now project has the next file structure for routes:
 
@@ -152,7 +152,7 @@ routes/
         └── account.tsx     ← /settings/account
 ```
 
-> [!NOTE]  
+> [!NOTE]
 >
-> 1) If you need page that belongs to general app layout, so you should place it inside `(app)` folder as presented above.
-> 2) If you need page that should not be wrapped in app layout or group of pages that should have their own layout (for example, auth pages), so you can create a separate group folder for them (like `(auth)` in example above) and place route files there.
+> 1. If you need page that belongs to general app layout, so you should place it inside `(app)` folder as presented above.
+> 2. If you need page that should not be wrapped in app layout or group of pages that should have their own layout (for example, auth pages), so you can create a separate group folder for them (like `(auth)` in example above) and place route files there.

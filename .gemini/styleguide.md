@@ -170,7 +170,7 @@ Example Structure:
 // ✅ RIGHT: Module provider manages its own internal global needs
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   useAuthInitialization(); // Internal logic
-  
+
   return (
     <AuthContext.Provider value={...}>
       <SessionWatcher /> {/* Internal side-effect component */}
