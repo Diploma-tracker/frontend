@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useDebounce } from '@/shared/utils/use-debounce';
@@ -35,10 +35,13 @@ export const TeachersFilters = reatomComponent(function TeachersFilters({ roundI
 
   const [searchInput, setSearchInput] = useState(filter.search ?? '');
 
+  useEffect(() => {
+    teacherListAtom.fetch(roundId);
+  }, [roundId]);
+
   useDebounce(
     () => {
       setFilter({ search: searchInput || undefined });
-      teacherListAtom.fetch(roundId);
     },
     300,
     [searchInput]
