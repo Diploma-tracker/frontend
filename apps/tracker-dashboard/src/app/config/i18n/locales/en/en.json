@@ -1,11 +1,25 @@
 {
+  "common": {
+    "confirm": {
+      "cancel": "Cancel",
+      "proceed": "Confirm"
+    }
+  },
   "auth": {
     "login": {
       "title": "Welcome to KHPI project tracker",
       "subtitle": "Login to get an access to your university projects.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
-      "loginButton": "Login"
+      "loginButton": "Login",
+      "validation": {
+        "invalidEmail": "This is an invalid email address!",
+        "passwordRequired": "This field is required!"
+      },
+      "toast": {
+        "loginSuccess": "You have successfully logged in!",
+        "loginError": "An error occurred during login. Please try again."
+      }
     }
   },
   "sidebar": {
@@ -23,6 +37,70 @@
     "password": {
       "show": "Show password",
       "hide": "Hide password"
+    }
+  },
+  "projectEnrollment": {
+    "allocationRound": {
+      "status": {
+        "all": "All statuses",
+        "draft": "Draft",
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "filters": {
+        "statusPlaceholder": "Status"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "status": "Status",
+          "actions": "Actions"
+        }
+      },
+      "actions": {
+        "open": "Open",
+        "close": "Close",
+        "confirmOpen": {
+          "title": "Open allocation round?",
+          "description": "This will make the round visible and available for enrollment. This action cannot be undone."
+        },
+        "confirmClose": {
+          "title": "Close allocation round?",
+          "description": "This will end the enrollment period and prevent any further submissions. This action cannot be undone."
+        },
+        "toast": {
+          "openSuccess": "Allocation round opened successfully!",
+          "openError": "Failed to open allocation round. Please try again.",
+          "closeSuccess": "Allocation round closed successfully!",
+          "closeError": "Failed to close allocation round. Please try again."
+        }
+      },
+      "dialog": {
+        "createTitle": "Create Allocation Round",
+        "createDescription": "Fill in the details to create a new allocation round.",
+        "createAriaLabel": "Create allocation round"
+      },
+      "form": {
+        "namePlaceholder": "Round 2024-2025",
+        "nameLabel": "Name",
+        "startDateLabel": "Start date",
+        "startDatePlaceholder": "Pick start date",
+        "endDateLabel": "End date",
+        "endDatePlaceholder": "Pick end date",
+        "submitButton": "Create",
+        "validation": {
+          "nameRequired": "Name is required",
+          "startDateRequired": "Start date is required",
+          "endDateRequired": "End date is required",
+          "endDateAfterStart": "End date must be after start date"
+        },
+        "toast": {
+          "createSuccess": "Allocation round created successfully!",
+          "createError": "Failed to create allocation round. Please try again."
+        }
+      }
     }
   }
 }

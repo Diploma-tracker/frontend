@@ -7,19 +7,31 @@ import type { ApiError, ApiRequestConfig, ApiResponse, IApiClient } from '../int
 
 export class AxiosAdapter implements IApiClient {
   private client: AxiosInstance;
+  private token: string = '';
 
   constructor(baseURL: string) {
     this.client = axios.create({ baseURL });
   }
 
+  setToken(token: string): void {
+    this.token = token;
+  }
+
   async request<T>(url: string, config: ApiRequestConfig): Promise<ApiResponse<T>> {
     try {
+      const headers: Record<string, string> = {};
+      if (this.token) {
+        headers.Authorization = `Bearer ${this.token}`;
+      }
       const response = await this.client.request<T>({
         url,
         method: config.method || 'GET',
         data: config.data,
         params: config.params,
-        headers: config.headers,
+        headers: {
+          ...headers,
+          ...config.headers,
+        },
       });
 
       return { ok: true, data: response.data, error: null };
