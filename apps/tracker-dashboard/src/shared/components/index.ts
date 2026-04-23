@@ -9,3 +9,5 @@ export { Container } from './layout/container/container';
 export { Logo } from './logo/logo';
 
 export { T } from './t/t';
+
+export { TablePagination } from './table-pagination/table-pagination';
