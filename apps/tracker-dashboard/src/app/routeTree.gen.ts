@@ -14,6 +14,8 @@ import { Route as appAppRouteImport } from './routes/(app)/_app'
 import { Route as appAppIndexRouteImport } from './routes/(app)/_app.index'
 import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
+import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
+import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
 
 const authAuthRoute = authAuthRouteImport.update({
   id: '/(auth)/_auth',
@@ -38,30 +40,52 @@ const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
   path: '/project-enrollment',
   getParentRoute: () => appAppRoute,
 } as any)
+const appAppProjectEnrollmentIndexRoute =
+  appAppProjectEnrollmentIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appAppProjectEnrollmentRoute,
+  } as any)
+const appAppProjectEnrollmentRoundIdRoute =
+  appAppProjectEnrollmentRoundIdRouteImport.update({
+    id: '/$roundId',
+    path: '/$roundId',
+    getParentRoute: () => appAppProjectEnrollmentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/project-enrollment': typeof appAppProjectEnrollmentRoute
+  '/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
+  '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRoutesByTo {
-  '/project-enrollment': typeof appAppProjectEnrollmentRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
+  '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/project-enrollment': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_app': typeof appAppRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
-  '/(app)/_app/project-enrollment': typeof appAppProjectEnrollmentRoute
+  '/(app)/_app/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/(auth)/_auth/login': typeof authAuthLoginRoute
   '/(app)/_app/': typeof appAppIndexRoute
+  '/(app)/_app/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/(app)/_app/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/project-enrollment' | '/login' | '/'
+  fullPaths:
+    | '/project-enrollment'
+    | '/login'
+    | '/'
+    | '/project-enrollment/$roundId'
+    | '/project-enrollment/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/project-enrollment' | '/login' | '/'
+  to: '/login' | '/' | '/project-enrollment/$roundId' | '/project-enrollment'
   id:
     | '__root__'
     | '/(app)/_app'
@@ -69,6 +93,8 @@ export interface FileRouteTypes {
     | '/(app)/_app/project-enrollment'
     | '/(auth)/_auth/login'
     | '/(app)/_app/'
+    | '/(app)/_app/project-enrollment/$roundId'
+    | '/(app)/_app/project-enrollment/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,16 +139,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppProjectEnrollmentRouteImport
       parentRoute: typeof appAppRoute
     }
+    '/(app)/_app/project-enrollment/': {
+      id: '/(app)/_app/project-enrollment/'
+      path: '/'
+      fullPath: '/project-enrollment/'
+      preLoaderRoute: typeof appAppProjectEnrollmentIndexRouteImport
+      parentRoute: typeof appAppProjectEnrollmentRoute
+    }
+    '/(app)/_app/project-enrollment/$roundId': {
+      id: '/(app)/_app/project-enrollment/$roundId'
+      path: '/$roundId'
+      fullPath: '/project-enrollment/$roundId'
+      preLoaderRoute: typeof appAppProjectEnrollmentRoundIdRouteImport
+      parentRoute: typeof appAppProjectEnrollmentRoute
+    }
   }
 }
 
+interface appAppProjectEnrollmentRouteChildren {
+  appAppProjectEnrollmentRoundIdRoute: typeof appAppProjectEnrollmentRoundIdRoute
+  appAppProjectEnrollmentIndexRoute: typeof appAppProjectEnrollmentIndexRoute
+}
+
+const appAppProjectEnrollmentRouteChildren: appAppProjectEnrollmentRouteChildren =
+  {
+    appAppProjectEnrollmentRoundIdRoute: appAppProjectEnrollmentRoundIdRoute,
+    appAppProjectEnrollmentIndexRoute: appAppProjectEnrollmentIndexRoute,
+  }
+
+const appAppProjectEnrollmentRouteWithChildren =
+  appAppProjectEnrollmentRoute._addFileChildren(
+    appAppProjectEnrollmentRouteChildren,
+  )
+
 interface appAppRouteChildren {
-  appAppProjectEnrollmentRoute: typeof appAppProjectEnrollmentRoute
+  appAppProjectEnrollmentRoute: typeof appAppProjectEnrollmentRouteWithChildren
   appAppIndexRoute: typeof appAppIndexRoute
 }
 
 const appAppRouteChildren: appAppRouteChildren = {
-  appAppProjectEnrollmentRoute: appAppProjectEnrollmentRoute,
+  appAppProjectEnrollmentRoute: appAppProjectEnrollmentRouteWithChildren,
   appAppIndexRoute: appAppIndexRoute,
 }
 
