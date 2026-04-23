@@ -7,6 +7,7 @@ import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 
 import type { AllocationRoundDTO, AllocationRoundStatus } from '../../../models';
 
+// TODO: move to badge color variants for reusability
 const STATUS_CLASS: Record<AllocationRoundStatus, string> = {
   DRAFT: 'bg-neutral-100 text-neutral-600 border-neutral-200',
   OPEN: 'bg-green-100 text-green-700 border-green-200',
