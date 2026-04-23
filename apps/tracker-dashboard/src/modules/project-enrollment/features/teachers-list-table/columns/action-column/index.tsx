@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@repo/ui-kit/components/dropdown-menu';
 
-import type { TeacherDTO } from '../../../models';
+import type { TeacherDTO } from '../../../../models';
 import { AddTeacherModal } from './add-teacher-modal';
 import { RemoveTeacherModal } from './remove-teacher-modal';
 
