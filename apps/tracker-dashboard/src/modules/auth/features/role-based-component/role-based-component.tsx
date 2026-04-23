@@ -12,16 +12,16 @@ type RoleComponents = {
   default?: ComponentType;
 };
 
-const roleKeyMap: Record<string, UserRole> = {
-  admin: UserRole.ADMIN,
-  staff: UserRole.STAFF,
-  student: UserRole.STUDENT,
+const roleToKey: Partial<Record<UserRole, keyof RoleComponents>> = {
+  [UserRole.ADMIN]: 'admin',
+  [UserRole.STAFF]: 'staff',
+  [UserRole.STUDENT]: 'student',
 };
 
 export function roleBasedComponent(roleComponents: RoleComponents) {
   return reatomComponent(function RoleBasedComponent() {
     const { role } = userAtom();
-    const key = Object.entries(roleKeyMap).find(([, v]) => v === role)?.[0] as keyof RoleComponents | undefined;
+    const key = roleToKey[role];
     const Component = (key ? roleComponents[key] : undefined) ?? roleComponents.default;
 
     if (!Component) {
