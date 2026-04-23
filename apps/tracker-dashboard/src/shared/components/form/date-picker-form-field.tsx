@@ -34,21 +34,18 @@ export const DatePickerFormField = reatomComponent(function DatePickerFormField(
     }
   }, [fieldValue]);
 
-  const handleChange = React.useCallback(
-    (date: Date | undefined) => {
-      if (!field) return;
+  const handleChange = (date: Date | undefined) => {
+    if (!field) return;
 
-      if (date && !isNaN(date.getTime())) {
-        const newValue = date.toISOString();
-        if (newValue !== fieldValue) {
-          field.set(newValue);
-        }
-      } else {
-        field.set('');
+    if (date && !isNaN(date.getTime())) {
+      const newValue = date.toISOString();
+      if (newValue !== fieldValue) {
+        field.set(newValue);
       }
-    },
-    [field, fieldValue]
-  );
+    } else {
+      field.set('');
+    }
+  };
 
   return (
     <Field data-invalid={invalid || undefined}>
