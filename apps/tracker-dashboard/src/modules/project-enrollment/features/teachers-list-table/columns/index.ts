@@ -1,0 +1,14 @@
+import { type ColumnDef } from '@tanstack/react-table';
+
+import type { TeacherDTO } from '../../../models';
+import { createTeacherActionColumn } from './action-column';
+import { TeacherEmailColumn } from './email-column';
+import { TeacherNameColumn } from './name-column';
+import { TeacherSelectionColumn } from './selection-column';
+
+export const createTeacherColumns = (roundId: string): ColumnDef<TeacherDTO>[] => [
+  TeacherNameColumn,
+  TeacherEmailColumn,
+  TeacherSelectionColumn,
+  createTeacherActionColumn(roundId),
+];

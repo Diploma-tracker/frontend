@@ -34,3 +34,31 @@ export interface CreateAllocationRoundResponse {
   name: string;
   status: string;
 }
+
+export type TeacherSelectionFilter = "all" | "selected" | "not_selected";
+
+export interface TeacherDTO {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_selected: boolean;
+}
+
+export interface ListTeachersRequest extends Record<string, unknown> {
+  page: number;
+  page_size: number;
+  search?: string;
+  selection_filter?: TeacherSelectionFilter;
+}
+
+export interface ListTeachersResponse {
+  items: TeacherDTO[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface AddTeacherRequest {
+  teacher_id: string;
+}
