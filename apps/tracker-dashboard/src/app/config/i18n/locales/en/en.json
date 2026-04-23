@@ -11,7 +11,15 @@
       "subtitle": "Login to get an access to your university projects.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
-      "loginButton": "Login"
+      "loginButton": "Login",
+      "validation": {
+        "invalidEmail": "This is an invalid email address!",
+        "passwordRequired": "This field is required!"
+      },
+      "toast": {
+        "loginSuccess": "You have successfully logged in!",
+        "loginError": "An error occurred during login. Please try again."
+      }
     }
   },
   "sidebar": {
