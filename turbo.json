@@ -47,6 +47,12 @@
       ],
       "cache": false
     },
+    "generate": {
+      "cache": false,
+      "outputs": [
+        "src/generated/**"
+      ]
+    },
     "dev": {
       "cache": false,
       "persistent": true,

@@ -11,6 +11,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\" --ignore-path .prettierignore",
     "format:fix": "turbo run format:fix",
     "check-types": "turbo run check-types",
+    "generate": "turbo run generate",
     "prepare": "husky"
   },
   "devDependencies": {
