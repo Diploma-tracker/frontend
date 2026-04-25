@@ -1,8 +1,5 @@
 # Temporarily downloaded schema used during generation
 schema.json
 
-# Orval-generated files — regenerate with `pnpm generate`
-src/generated/
-
 # Local environment — copy from .env.example and fill in values
 .env
