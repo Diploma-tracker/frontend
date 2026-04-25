@@ -30,7 +30,7 @@ export const TeachersListTable = reatomComponent(function TeachersListTable({ ro
 
   return (
     <div className="flex flex-col gap-4">
-      <TeachersFilters roundId={roundId} />
+      <TeachersFilters />
       <DataTable
         columns={columns}
         data={teachers?.items ?? []}

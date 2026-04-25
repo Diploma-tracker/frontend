@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useDebounce } from '@/shared/utils/use-debounce';
@@ -24,20 +24,12 @@ const SELECTION_LABEL_KEYS: Record<TeacherSelectionFilter, string> = {
   NOT_SELECTED: 'projectEnrollment.teacher.filters.selectionNotSelected',
 };
 
-interface TeachersFiltersProps {
-  roundId: string;
-}
-
-export const TeachersFilters = reatomComponent(function TeachersFilters({ roundId }: TeachersFiltersProps) {
+export const TeachersFilters = reatomComponent(function TeachersFilters() {
   const { t } = useTranslation();
   const filter = teacherListAtom.filter();
   const setFilter = teacherListAtom.setFilter;
 
   const [searchInput, setSearchInput] = useState(filter.search ?? '');
-
-  useEffect(() => {
-    teacherListAtom.fetch(roundId);
-  }, [roundId]);
 
   useDebounce(
     () => {
