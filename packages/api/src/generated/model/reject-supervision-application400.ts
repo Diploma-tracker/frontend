@@ -5,13 +5,17 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { RejectSupervisionApplication400Extra } from "./reject-supervision-application400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type RejectSupervisionApplication400 = {
+export type RawRejectSupervisionApplication400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: RejectSupervisionApplication400Extra;
 };
+
+export type RejectSupervisionApplication400 =
+  CamelCaseKeys<RawRejectSupervisionApplication400>;

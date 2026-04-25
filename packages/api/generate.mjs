@@ -75,12 +75,28 @@ for (const file of modelFiles) {
     interfaceNames.push(match[1]);
   }
 
-  if (interfaceNames.length === 0) continue;
+  // Find exported type aliases with inline object shape: export type Foo = { ... }
+  const typeAliasRegex = /^export type (\w+) = \{/gm;
+  const typeAliasNames = [];
+  while ((match = typeAliasRegex.exec(content)) !== null) {
+    typeAliasNames.push(match[1]);
+  }
+
+  const allNames = [...interfaceNames, ...typeAliasNames];
+  if (allNames.length === 0) continue;
 
   // Rename each interface from FooBar to RawFooBar (if not already prefixed)
   for (const name of interfaceNames) {
     if (!name.startsWith("Raw")) {
       content = content.replaceAll(`interface ${name}`, `interface Raw${name}`);
+    }
+  }
+
+  // Rename each type alias from FooBar to RawFooBar (if not already prefixed)
+  for (const name of typeAliasNames) {
+    if (!name.startsWith("Raw")) {
+      // Replace only the declaration, not any usages of the type elsewhere
+      content = content.replaceAll(`export type ${name} = {`, `export type Raw${name} = {`);
     }
   }
 
@@ -109,7 +125,7 @@ for (const file of modelFiles) {
   }
 
   // Append CamelCaseKeys type alias with the original name (without Raw prefix)
-  for (const name of interfaceNames) {
+  for (const name of allNames) {
     const rawName = name.startsWith("Raw") ? name : `Raw${name}`;
     const alias = `\nexport type ${name} = CamelCaseKeys<${rawName}>;\n`;
     if (!content.includes(`export type ${name} `)) {

@@ -5,13 +5,16 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { Login400Extra } from "./login400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type Login400 = {
+export type RawLogin400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: Login400Extra;
 };
+
+export type Login400 = CamelCaseKeys<RawLogin400>;

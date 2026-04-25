@@ -8,7 +8,11 @@
 /**
  * @nullable
  */
-export type CreateAllocationRound400Extra =
+import type { CamelCaseKeys } from "../../utils/camel-case";
+export type RawCreateAllocationRound400Extra =
   | { [key: string]: unknown }
   | unknown[]
   | null;
+
+export type CreateAllocationRound400Extra =
+  CamelCaseKeys<RawCreateAllocationRound400Extra>;

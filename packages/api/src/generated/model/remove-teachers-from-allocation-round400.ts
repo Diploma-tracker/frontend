@@ -5,13 +5,17 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { RemoveTeachersFromAllocationRound400Extra } from "./remove-teachers-from-allocation-round400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type RemoveTeachersFromAllocationRound400 = {
+export type RawRemoveTeachersFromAllocationRound400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: RemoveTeachersFromAllocationRound400Extra;
 };
+
+export type RemoveTeachersFromAllocationRound400 =
+  CamelCaseKeys<RawRemoveTeachersFromAllocationRound400>;

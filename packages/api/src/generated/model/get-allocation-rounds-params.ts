@@ -5,9 +5,13 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { StatusFilter } from "./status-filter";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
-export type GetAllocationRoundsParams = {
+export type RawGetAllocationRoundsParams = {
   page?: number;
   page_size?: number;
   status_filter?: StatusFilter;
 };
+
+export type GetAllocationRoundsParams =
+  CamelCaseKeys<RawGetAllocationRoundsParams>;

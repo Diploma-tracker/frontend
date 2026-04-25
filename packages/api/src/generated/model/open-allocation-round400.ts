@@ -5,13 +5,16 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { OpenAllocationRound400Extra } from "./open-allocation-round400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type OpenAllocationRound400 = {
+export type RawOpenAllocationRound400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: OpenAllocationRound400Extra;
 };
+
+export type OpenAllocationRound400 = CamelCaseKeys<RawOpenAllocationRound400>;

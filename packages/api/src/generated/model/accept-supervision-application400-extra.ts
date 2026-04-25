@@ -8,7 +8,11 @@
 /**
  * @nullable
  */
-export type AcceptSupervisionApplication400Extra =
+import type { CamelCaseKeys } from "../../utils/camel-case";
+export type RawAcceptSupervisionApplication400Extra =
   | { [key: string]: unknown }
   | unknown[]
   | null;
+
+export type AcceptSupervisionApplication400Extra =
+  CamelCaseKeys<RawAcceptSupervisionApplication400Extra>;

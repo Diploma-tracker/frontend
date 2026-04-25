@@ -5,13 +5,17 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { GetAllocationRoundTeachers400Extra } from "./get-allocation-round-teachers400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type GetAllocationRoundTeachers400 = {
+export type RawGetAllocationRoundTeachers400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: GetAllocationRoundTeachers400Extra;
 };
+
+export type GetAllocationRoundTeachers400 =
+  CamelCaseKeys<RawGetAllocationRoundTeachers400>;

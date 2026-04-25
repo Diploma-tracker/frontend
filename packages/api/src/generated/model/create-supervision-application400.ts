@@ -5,13 +5,17 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { CreateSupervisionApplication400Extra } from "./create-supervision-application400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type CreateSupervisionApplication400 = {
+export type RawCreateSupervisionApplication400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: CreateSupervisionApplication400Extra;
 };
+
+export type CreateSupervisionApplication400 =
+  CamelCaseKeys<RawCreateSupervisionApplication400>;

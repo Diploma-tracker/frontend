@@ -5,13 +5,17 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { AddTeachersToAllocationRound400Extra } from "./add-teachers-to-allocation-round400-extra";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
 /**
  * Validation Exception
  */
-export type AddTeachersToAllocationRound400 = {
+export type RawAddTeachersToAllocationRound400 = {
   status_code: number;
   detail: string;
   /** @nullable */
   extra?: AddTeachersToAllocationRound400Extra;
 };
+
+export type AddTeachersToAllocationRound400 =
+  CamelCaseKeys<RawAddTeachersToAllocationRound400>;

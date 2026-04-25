@@ -5,10 +5,14 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { SelectionFilter } from "./selection-filter";
+import type { CamelCaseKeys } from "../../utils/camel-case";
 
-export type GetAllocationRoundTeachersParams = {
+export type RawGetAllocationRoundTeachersParams = {
   page?: number;
   page_size?: number;
   search?: string | null;
   selection_filter?: SelectionFilter;
 };
+
+export type GetAllocationRoundTeachersParams =
+  CamelCaseKeys<RawGetAllocationRoundTeachersParams>;
