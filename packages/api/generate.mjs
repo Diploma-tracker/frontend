@@ -32,7 +32,16 @@ if (schema?.components?.securitySchemes?.IAMTokenAuth) {
 }
 
 fs.writeFileSync(SCHEMA_PATH, JSON.stringify(schema, null, 2), "utf-8");
-console.log("Schema saved, running orval...");
+console.log("Schema saved.");
+
+// Clear generated folder before running orval
+const GENERATED_DIR = path.join(__dirname, "src/generated");
+if (fs.existsSync(GENERATED_DIR)) {
+  console.log("Clearing generated folder...");
+  fs.rmSync(GENERATED_DIR, { recursive: true, force: true });
+}
+
+console.log("Running orval...");
 
 try {
   execSync("pnpm exec orval --config orval.config.ts", {
@@ -71,10 +80,7 @@ for (const file of modelFiles) {
   // Rename each interface from FooBar to RawFooBar (if not already prefixed)
   for (const name of interfaceNames) {
     if (!name.startsWith("Raw")) {
-      content = content.replaceAll(
-        `interface ${name}`,
-        `interface Raw${name}`
-      );
+      content = content.replaceAll(`interface ${name}`, `interface Raw${name}`);
     }
   }
 
