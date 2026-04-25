@@ -1,13 +1,11 @@
 import { router } from '@/app/config/router';
+import { t } from '@/shared/utils/i18n';
 import { reatomForm, wrap } from '@reatom/core';
-import i18n from 'i18next';
 import { z } from 'zod';
 
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
 import { loginAction } from './login-action';
-
-const t = (key: string) => i18n.t(key);
 
 const loginSchema = z.object({
   email: z.email(t('auth.login.validation.invalidEmail')),
