@@ -9,7 +9,7 @@ const DATE_FNS_LOCALES: Record<string, Locale> = {
   uk: uk,
 };
 
-const getLocale = (): Locale => DATE_FNS_LOCALES[i18n.language] ?? enUS;
+export const getLocale = (): Locale => DATE_FNS_LOCALES[i18n.language] ?? enUS;
 
 export const formatDate = (value: string | null | undefined): string | null => {
   if (!value) return null;

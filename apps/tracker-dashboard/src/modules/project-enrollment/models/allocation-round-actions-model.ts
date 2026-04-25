@@ -1,12 +1,10 @@
+import { t } from '@/shared/utils/i18n';
 import { action, withAsync, wrap } from '@reatom/core';
-import i18n from 'i18next';
 
 import { openAllocationRound, closeAllocationRound } from '@repo/api/allocation-round';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
 import { allocationRoundListAtom } from './list-allocation-rounds-model';
-
-const t = (key: string) => i18n.t(key);
 
 export const openAllocationRoundAction = action(async (id: string) => {
   const response = await wrap(openAllocationRound(id));

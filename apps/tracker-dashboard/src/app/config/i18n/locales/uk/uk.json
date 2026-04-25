@@ -3,6 +3,12 @@
     "confirm": {
       "cancel": "Скасувати",
       "proceed": "Підтвердити"
+    },
+    "datePicker": {
+      "placeholder": "Оберіть дату",
+      "clearDate": "Очистити дату",
+      "hours": "Години",
+      "minutes": "Хвилини"
     }
   },
   "auth": {

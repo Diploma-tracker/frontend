@@ -1,11 +1,9 @@
+import { t } from '@/shared/utils/i18n';
 import { action, reatomForm, withAsync, wrap } from '@reatom/core';
-import i18n from 'i18next';
 import { z } from 'zod';
 
 import { createAllocationRound } from '@repo/api/allocation-round';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
-
-const t = (key: string) => i18n.t(key);
 
 const schema = z
   .object({

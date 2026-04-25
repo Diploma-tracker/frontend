@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CalendarIcon, ClockIcon, XIcon } from '@phosphor-icons/react';
-import { format } from 'date-fns';
+import { format, type Locale } from 'date-fns';
 
 import { cn } from '../../../lib/utils';
 import { Calendar } from '../../calendar';
@@ -20,6 +20,12 @@ export interface DatePickerProps {
   formatString?: string;
   className?: string;
   clearable?: boolean;
+  locale?: Locale;
+  labels?: {
+    hours?: string;
+    minutes?: string;
+    clearDate?: string;
+  };
   'aria-label'?: string;
   'aria-invalid'?: boolean;
   id?: string;
@@ -37,6 +43,8 @@ interface DatePickerTriggerContentProps {
   displayFormat: string;
   clearable: boolean;
   disabled: boolean;
+  locale?: Locale;
+  clearDateLabel?: string;
   onClear: () => void;
 }
 
@@ -47,6 +55,8 @@ function DatePickerTriggerContent({
   displayFormat,
   clearable,
   disabled,
+  locale,
+  clearDateLabel = 'Clear date',
   onClear,
 }: DatePickerTriggerContentProps) {
   const handleClear = (e: React.PointerEvent | React.MouseEvent) => {
@@ -58,7 +68,7 @@ function DatePickerTriggerContent({
   const renderIcon = () => {
     if (clearable && value && !disabled) {
       return (
-        <span role="button" className="ui:cursor-pointer" aria-label="Clear date" onClick={handleClear}>
+        <span role="button" className="ui:cursor-pointer" aria-label={clearDateLabel} onClick={handleClear}>
           <XIcon className="ui:size-4 ui:opacity-50 ui:hover:opacity-100" />
         </span>
       );
@@ -72,7 +82,7 @@ function DatePickerTriggerContent({
   return (
     <>
       {value ? (
-        <span className="ui:flex-1 ui:truncate">{format(value, displayFormat)}</span>
+        <span className="ui:flex-1 ui:truncate">{format(value, displayFormat, { locale })}</span>
       ) : (
         <span>{placeholder}</span>
       )}
@@ -85,10 +95,11 @@ interface DatePickerCalendarProps {
   value?: Date;
   minDate?: Date;
   maxDate?: Date;
+  locale?: Locale;
   onSelect: (date: Date | undefined) => void;
 }
 
-function DatePickerCalendar({ value, minDate, maxDate, onSelect }: DatePickerCalendarProps) {
+function DatePickerCalendar({ value, minDate, maxDate, locale, onSelect }: DatePickerCalendarProps) {
   const isDisabled = React.useCallback(
     (date: Date) => {
       if (minDate && date < minDate) return true;
@@ -106,6 +117,7 @@ function DatePickerCalendar({ value, minDate, maxDate, onSelect }: DatePickerCal
       onSelect={onSelect}
       defaultMonth={value}
       disabled={minDate || maxDate ? isDisabled : undefined}
+      locale={locale}
       initialFocus
     />
   );
@@ -113,10 +125,13 @@ function DatePickerCalendar({ value, minDate, maxDate, onSelect }: DatePickerCal
 
 interface DatePickerTimeSelectorProps {
   time: TimeState;
+  labels?: { hours?: string; minutes?: string };
   onTimeChange: (type: 'hours' | 'minutes', value: string) => void;
 }
 
-function DatePickerTimeSelector({ time, onTimeChange }: DatePickerTimeSelectorProps) {
+function DatePickerTimeSelector({ time, labels, onTimeChange }: DatePickerTimeSelectorProps) {
+  const hoursLabel = labels?.hours ?? 'Hours';
+  const minutesLabel = labels?.minutes ?? 'Minutes';
   return (
     <div className="ui:w-full ui:border-t ui:pt-3">
       <div className="ui:flex ui:items-start ui:gap-2">
@@ -128,9 +143,9 @@ function DatePickerTimeSelector({ time, onTimeChange }: DatePickerTimeSelectorPr
             value={time.hours.toString().padStart(2, '0')}
             onChange={(e) => onTimeChange('hours', e.target.value)}
             className="ui:text-center"
-            aria-label="Hours"
+            aria-label={hoursLabel}
           />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">Hours</span>
+          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">{hoursLabel}</span>
         </div>
 
         <div className="ui:flex-1">
@@ -141,9 +156,9 @@ function DatePickerTimeSelector({ time, onTimeChange }: DatePickerTimeSelectorPr
             value={time.minutes.toString().padStart(2, '0')}
             onChange={(e) => onTimeChange('minutes', e.target.value)}
             className="ui:text-center"
-            aria-label="Minutes"
+            aria-label={minutesLabel}
           />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">Minutes</span>
+          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">{minutesLabel}</span>
         </div>
       </div>
     </div>
@@ -161,6 +176,8 @@ export function DatePicker({
   formatString,
   className,
   clearable = true,
+  locale,
+  labels,
   'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
   id,
@@ -239,6 +256,8 @@ export function DatePicker({
             displayFormat={displayFormat}
             clearable={clearable}
             disabled={disabled}
+            locale={locale}
+            clearDateLabel={labels?.clearDate}
             onClear={handleClear}
           />
         </Button>
@@ -246,9 +265,15 @@ export function DatePicker({
 
       <PopoverContent className="ui:flex ui:w-auto ui:flex-col" align="center">
         <div className="ui:flex ui:justify-center">
-          <DatePickerCalendar value={value} minDate={minDate} maxDate={maxDate} onSelect={handleDateSelect} />
+          <DatePickerCalendar
+            value={value}
+            minDate={minDate}
+            maxDate={maxDate}
+            locale={locale}
+            onSelect={handleDateSelect}
+          />
         </div>
-        {mode === 'datetime' && <DatePickerTimeSelector time={time} onTimeChange={handleTimeChange} />}
+        {mode === 'datetime' && <DatePickerTimeSelector time={time} labels={labels} onTimeChange={handleTimeChange} />}
       </PopoverContent>
     </Popover>
   );
