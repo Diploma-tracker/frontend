@@ -75,7 +75,7 @@ Monorepo repository containing the frontend part of the Diploma tracker applicat
 ## Monorepo structure
 
 - `apps/` — applications ([tracker-dashboard](apps/tracker-dashboard/README.md))
-- `packages/` — shared packages and configs ([ui-kit](packages/ui-kit/README.md), [api-types](packages/api-types/README.md), [code-tools-config](packages/code-tools-config/README.md))
+- `packages/` — shared packages and configs ([ui-kit](packages/ui-kit/README.md), [api](packages/api/README.md), [code-tools-config](packages/code-tools-config/README.md))
 
 ## Scripts
 
