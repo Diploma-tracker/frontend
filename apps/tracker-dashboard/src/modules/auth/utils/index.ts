@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 
-import type { AuthTokenPayload } from '@repo/api-types';
+import { type AuthTokenPayload } from '@repo/api/types';
 
 export function decodeAuthToken(token: string): AuthTokenPayload | null {
   try {

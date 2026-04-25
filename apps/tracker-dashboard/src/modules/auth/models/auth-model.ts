@@ -1,8 +1,8 @@
 import type { User } from '@/modules/user';
-import { API } from '@/shared/api/client';
 import { atom, computed, effect, withCookie } from '@reatom/core';
 
-import { UserRole } from '@repo/api-types';
+import { API } from '@repo/api';
+import { UserRole } from '@repo/api/types';
 
 export type AuthToken = string;
 
@@ -20,7 +20,11 @@ export const isAuth = computed(() => Boolean(authTokenAtom()), 'isAuth');
 
 effect(() => {
   const token = authTokenAtom();
-  API.setToken(token);
+  if (token) {
+    API.setToken(token);
+  } else {
+    API.removeToken();
+  }
 }, 'authEffect');
 
 export const permissions = {
