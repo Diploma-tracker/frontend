@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from "axios";
 import _ from "lodash";
-import { API } from "./api";
-import type { ApiRequestConfig, ApiResponse } from "./api/interface";
+import { API } from "../api";
+import type { ApiRequestConfig, ApiResponse } from "../api/interface";
 
 export const orvalCustomInstance = async <T>(
   config: AxiosRequestConfig,
