@@ -1,7 +1,7 @@
 import { T } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api';
+import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api/model';
 
 const STATUS_STYLES: Record<SupervisionApplicationStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
