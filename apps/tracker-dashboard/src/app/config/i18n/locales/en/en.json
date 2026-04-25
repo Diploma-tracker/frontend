@@ -3,6 +3,12 @@
     "confirm": {
       "cancel": "Cancel",
       "proceed": "Confirm"
+    },
+    "datePicker": {
+      "placeholder": "Pick a date",
+      "clearDate": "Clear date",
+      "hours": "Hours",
+      "minutes": "Minutes"
     }
   },
   "auth": {

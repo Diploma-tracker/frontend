@@ -1,13 +1,18 @@
 import * as React from 'react';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 
+import { getLocale } from '@/shared/utils/format-date';
 import type { FieldAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { DatePicker } from '@repo/ui-kit/components/common/form/date-picker';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 
-interface DatePickerFormFieldProps extends Omit<ComponentProps<typeof DatePicker>, 'value' | 'onChange'> {
+interface DatePickerFormFieldProps extends Omit<
+  ComponentProps<typeof DatePicker>,
+  'value' | 'onChange' | 'locale' | 'labels'
+> {
   description?: string;
   label?: string;
   field?: FieldAtom<string>;
@@ -15,6 +20,9 @@ interface DatePickerFormFieldProps extends Omit<ComponentProps<typeof DatePicker
 
 export const DatePickerFormField = reatomComponent(function DatePickerFormField(props: DatePickerFormFieldProps) {
   const { description, label, field, ...datePickerProps } = props;
+  const { t } = useTranslation();
+
+  const locale = getLocale();
 
   const fieldValue = field?.();
   const fieldValidation = field?.validation();
@@ -57,6 +65,13 @@ export const DatePickerFormField = reatomComponent(function DatePickerFormField(
         onChange={handleChange}
         aria-label={label || ''}
         aria-invalid={invalid || undefined}
+        placeholder={t('common.datePicker.placeholder')}
+        locale={locale}
+        labels={{
+          hours: t('common.datePicker.hours'),
+          minutes: t('common.datePicker.minutes'),
+          clearDate: t('common.datePicker.clearDate'),
+        }}
         {...datePickerProps}
       />
 
