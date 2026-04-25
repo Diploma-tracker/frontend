@@ -102,6 +102,44 @@
           "createError": "Failed to create allocation round. Please try again."
         }
       }
+    },
+    "teacher": {
+      "table": {
+        "selected": "Selected",
+        "notSelected": "Not selected",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "selected": "Selection",
+          "applications": "Applications",
+          "actions": "Actions"
+        }
+      },
+      "filters": {
+        "searchPlaceholder": "Search by name or email...",
+        "selectionPlaceholder": "Selection",
+        "selectionAll": "All teachers",
+        "selectionSelected": "Selected",
+        "selectionNotSelected": "Not selected"
+      },
+      "actions": {
+        "add": "Add to round",
+        "remove": "Remove from round",
+        "confirmAdd": {
+          "title": "Add teacher to round?",
+          "description": "This teacher will be included in the allocation round and will be available for student applications."
+        },
+        "confirmRemove": {
+          "title": "Remove teacher from round?",
+          "description": "This teacher will be removed from the allocation round. This action cannot be undone."
+        },
+        "toast": {
+          "addSuccess": "Teacher added to round successfully!",
+          "addError": "Failed to add teacher. Please try again.",
+          "removeSuccess": "Teacher removed from round successfully!",
+          "removeError": "Failed to remove teacher. Please try again."
+        }
+      }
     }
   }
 }

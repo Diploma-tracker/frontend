@@ -1,7 +1,7 @@
 import { authTokenAtom, decodeAuthToken } from '@/modules/auth';
 import { computed } from '@reatom/core';
 
-import { UserRole } from '@repo/api-types';
+import { UserRole } from '@repo/api/types';
 
 export type User = {
   id: string;

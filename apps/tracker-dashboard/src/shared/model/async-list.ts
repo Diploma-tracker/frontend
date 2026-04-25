@@ -1,4 +1,4 @@
-import { action, atom, withAsyncData, wrap } from '@reatom/core';
+import { action, atom, effect, withAsyncData, wrap } from '@reatom/core';
 
 const DEFAULT_FILTERS = {
   page: 1,
@@ -30,6 +30,21 @@ export function asyncList<
     return await wrap(fetch(params, filters));
   }, `${name}FetchDataAction`).extend(withAsyncData({ status: true }));
 
+  const revalidateAction = action(async () => {
+    const lastParams = lastParamsAtom();
+
+    if (noParams) {
+      await wrap(fetchDataAction(undefined as TFetchParams));
+    } else if (lastParams !== null) {
+      await wrap(fetchDataAction(lastParams));
+    }
+  }, `${name}RevalidateAction`);
+
+  effect(async () => {
+    filterAtom();
+    await wrap(revalidateAction());
+  }, `${name}FilterEffect`);
+
   const setFilterAction = action((update: Partial<TFilters>) => {
     const current = filterAtom();
     // Reset to page 1 when any filter other than page changes
@@ -39,13 +54,6 @@ export function asyncList<
       ...update,
       page: isPageChange ? (update.page ?? current.page) : 1,
     });
-
-    const lastParams = lastParamsAtom();
-    if (noParams) {
-      fetchDataAction(undefined as TFetchParams);
-    } else if (lastParams !== null) {
-      fetchDataAction(lastParams);
-    }
   }, `${name}SetFilterAction`);
 
   return {
@@ -54,5 +62,6 @@ export function asyncList<
     filter: filterAtom,
     fetch: fetchDataAction,
     setFilter: setFilterAction,
+    revalidate: revalidateAction,
   };
 }

@@ -5,7 +5,6 @@ import { T } from '@/shared/components';
 import { DotsThreeVerticalIcon } from '@phosphor-icons/react';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import type { AllocationRoundDTO } from '@repo/api-types';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
   DropdownMenu,
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@repo/ui-kit/components/dropdown-menu';
 
+import type { AllocationRoundDTO } from '../../../../models';
 import { CloseAllocationRoundModal } from './close-allocation-round-modal';
 import { OpenAllocationRoundModal } from './open-allocation-round-modal';
 

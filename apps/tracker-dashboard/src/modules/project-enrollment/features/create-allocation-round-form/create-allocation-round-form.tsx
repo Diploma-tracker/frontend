@@ -35,14 +35,14 @@ export const CreateAllocationRoundForm = reatomComponent(function CreateAllocati
         />
 
         <DatePickerFormField
-          field={fields.start_at}
+          field={fields.startAt}
           label={t('projectEnrollment.allocationRound.form.startDateLabel')}
           mode="date"
           placeholder={t('projectEnrollment.allocationRound.form.startDatePlaceholder')}
         />
 
         <DatePickerFormField
-          field={fields.end_at}
+          field={fields.endAt}
           label={t('projectEnrollment.allocationRound.form.endDateLabel')}
           mode="date"
           placeholder={t('projectEnrollment.allocationRound.form.endDatePlaceholder')}

@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 
 import '@repo/ui-kit/styles.css';
 import './styles/index.css';
+import './api';
 import { ProvidersWrapper } from './providers';
 
 const rootElement = document.getElementById('root')!;

@@ -1,0 +1,5 @@
+# Temporarily downloaded schema used during generation
+schema.json
+
+# Local environment — copy from .env.example and fill in values
+.env

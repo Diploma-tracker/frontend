@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 import { userAtom } from '@/modules/user';
 import { reatomComponent } from '@reatom/react';
 
-import { UserRole } from '@repo/api-types';
+import { UserRole } from '@repo/api/types';
 
 type RoleComponents = {
   admin?: ComponentType;

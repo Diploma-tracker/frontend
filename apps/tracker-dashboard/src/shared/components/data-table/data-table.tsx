@@ -24,10 +24,11 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   dataStatus: AsyncStatusLike;
   numberOfLoadingLines?: number;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  const { columns, data, dataStatus, numberOfLoadingLines = 10 } = props;
+  const { columns, data, dataStatus, numberOfLoadingLines = 10, onRowClick } = props;
 
   const table = useReactTable({
     data,
@@ -113,7 +114,12 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
     const rows = table.getRowModel().rows;
 
     return rows.map((row) => (
-      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+      <TableRow
+        key={row.id}
+        data-state={row.getIsSelected() && 'selected'}
+        onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+        className={onRowClick ? 'cursor-pointer' : undefined}
+      >
         {row.getVisibleCells().map((cell) => {
           const cellData = flexRender(cell.column.columnDef.cell, cell.getContext());
 
