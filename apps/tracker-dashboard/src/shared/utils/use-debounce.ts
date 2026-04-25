@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 
-export function useDebounce(fn: () => void, delay: number, deps: unknown[]) {
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+const DEFAULT_DELAY = 500;
+
+export function useDebounce(fn: () => void, deps: unknown[], delay: number = DEFAULT_DELAY) {
+  const fnRef = useRef(fn);
+  fnRef.current = fn;
 
   useEffect(() => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(fn, delay);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
+    const timer = setTimeout(() => fnRef.current(), delay);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [...deps, delay]);
 }

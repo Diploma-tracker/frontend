@@ -31,13 +31,9 @@ export const TeachersFilters = reatomComponent(function TeachersFilters() {
 
   const [searchInput, setSearchInput] = useState(filter.search ?? '');
 
-  useDebounce(
-    () => {
-      setFilter({ search: searchInput || undefined });
-    },
-    300,
-    [searchInput]
-  );
+  useDebounce(() => {
+    setFilter({ search: searchInput || undefined });
+  }, [searchInput]);
 
   const handleSearchClear = () => {
     setSearchInput('');
