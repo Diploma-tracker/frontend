@@ -2,31 +2,30 @@ import { action, reatomForm, withAsync, wrap } from '@reatom/core';
 import i18n from 'i18next';
 import { z } from 'zod';
 
+import { createAllocationRound } from '@repo/api/allocation-round';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
-
-import { fetchCreateAllocationRound } from '../api';
 
 const t = (key: string) => i18n.t(key);
 
 const schema = z
   .object({
     name: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.nameRequired')),
-    start_at: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.startDateRequired')),
-    end_at: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.endDateRequired')),
+    startAt: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.startDateRequired')),
+    endAt: z.string().min(1, t('projectEnrollment.allocationRound.form.validation.endDateRequired')),
   })
-  .refine((data) => new Date(data.end_at) > new Date(data.start_at), {
+  .refine((data) => new Date(data.endAt) > new Date(data.startAt), {
     message: t('projectEnrollment.allocationRound.form.validation.endDateAfterStart'),
-    path: ['end_at'],
+    path: ['endAt'],
   });
 
 export type CreateAllocationRoundFormValues = z.infer<typeof schema>;
 
 export const createAllocationRoundAction = action(async (dto: CreateAllocationRoundFormValues) => {
   const response = await wrap(
-    fetchCreateAllocationRound({
+    createAllocationRound({
       name: dto.name,
-      start_at: new Date(dto.start_at).toISOString(),
-      end_at: new Date(dto.end_at).toISOString(),
+      startAt: new Date(dto.startAt).toISOString(),
+      endAt: new Date(dto.endAt).toISOString(),
     })
   );
 
@@ -40,8 +39,8 @@ export const createAllocationRoundAction = action(async (dto: CreateAllocationRo
 export const createAllocationRoundForm = reatomForm(
   {
     name: '',
-    start_at: '',
-    end_at: '',
+    startAt: '',
+    endAt: '',
   },
   {
     onSubmit: async (values) => {

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmationModal } from '@/shared/components';
 import { reatomComponent } from '@reatom/react';
 
-import { removeTeacherAction } from '../../../../models';
+import { removeTeachersAction } from '../../../../models';
 
 interface RemoveTeacherModalProps {
   roundId: string;
@@ -19,10 +19,10 @@ export const RemoveTeacherModal = reatomComponent(function RemoveTeacherModal({
   onOpenChange,
 }: RemoveTeacherModalProps) {
   const { t } = useTranslation();
-  const isPending = !!removeTeacherAction.pending();
+  const isPending = !!removeTeachersAction.pending();
 
   const handleConfirm = async () => {
-    await removeTeacherAction({ roundId, teacherId });
+    await removeTeachersAction({ roundId, teacherIds: [teacherId] });
     onOpenChange(false);
   };
 

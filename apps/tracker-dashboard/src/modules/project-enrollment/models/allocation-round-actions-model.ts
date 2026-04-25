@@ -1,15 +1,15 @@
 import { action, withAsync, wrap } from '@reatom/core';
 import i18n from 'i18next';
 
+import { openAllocationRound, closeAllocationRound } from '@repo/api/allocation-round';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
-import { fetchCloseAllocationRound, fetchOpenAllocationRound } from '../api';
 import { allocationRoundListAtom } from './list-allocation-rounds-model';
 
 const t = (key: string) => i18n.t(key);
 
 export const openAllocationRoundAction = action(async (id: string) => {
-  const response = await wrap(fetchOpenAllocationRound(id));
+  const response = await wrap(openAllocationRound(id));
 
   if (!response.ok) {
     throw new Error(response.error?.message ?? t('projectEnrollment.allocationRound.actions.toast.openError'));
@@ -20,7 +20,7 @@ export const openAllocationRoundAction = action(async (id: string) => {
 }, 'openAllocationRoundAction').extend(withAsync());
 
 export const closeAllocationRoundAction = action(async (id: string) => {
-  const response = await wrap(fetchCloseAllocationRound(id));
+  const response = await wrap(closeAllocationRound(id));
 
   if (!response.ok) {
     throw new Error(response.error?.message ?? t('projectEnrollment.allocationRound.actions.toast.closeError'));

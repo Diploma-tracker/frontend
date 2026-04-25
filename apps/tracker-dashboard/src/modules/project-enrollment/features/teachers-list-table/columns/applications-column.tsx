@@ -1,7 +1,7 @@
 import { T } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api-types';
+import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api';
 
 const STATUS_STYLES: Record<SupervisionApplicationStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
@@ -11,7 +11,7 @@ const STATUS_STYLES: Record<SupervisionApplicationStatus, string> = {
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
-  if (!teacher.is_selected) {
+  if (!teacher.isSelected) {
     return <span className="text-muted-foreground">—</span>;
   }
 
@@ -21,8 +21,8 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
     REJECTED: 0,
   };
 
-  for (const app of teacher.applications) {
-    counts[app.status] = (counts[app.status] ?? 0) + 1;
+  for (const app of teacher.applications ?? []) {
+    counts[app.status as SupervisionApplicationStatus] = (counts[app.status as SupervisionApplicationStatus] ?? 0) + 1;
   }
 
   return (

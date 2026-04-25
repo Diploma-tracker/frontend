@@ -16,12 +16,12 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 
 import { teacherListAtom, type TeacherSelectionFilter } from '../../models';
 
-const SELECTION_VALUES = ['all', 'selected', 'not_selected'] as const;
+const SELECTION_VALUES = ['ALL', 'SELECTED', 'NOT_SELECTED'] as const;
 
 const SELECTION_LABEL_KEYS: Record<TeacherSelectionFilter, string> = {
-  all: 'projectEnrollment.teacher.filters.selectionAll',
-  selected: 'projectEnrollment.teacher.filters.selectionSelected',
-  not_selected: 'projectEnrollment.teacher.filters.selectionNotSelected',
+  ALL: 'projectEnrollment.teacher.filters.selectionAll',
+  SELECTED: 'projectEnrollment.teacher.filters.selectionSelected',
+  NOT_SELECTED: 'projectEnrollment.teacher.filters.selectionNotSelected',
 };
 
 interface TeachersFiltersProps {

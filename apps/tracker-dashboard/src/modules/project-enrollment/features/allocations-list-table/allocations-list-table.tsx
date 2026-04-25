@@ -4,7 +4,7 @@ import { DataTable } from '@/shared/components/data-table/data-table';
 import { reatomComponent } from '@reatom/react';
 import { useNavigate } from '@tanstack/react-router';
 
-import type { AllocationRoundDTO } from '@repo/api-types';
+import type { AllocationRoundDTO } from '@repo/api/model';
 
 import { allocationRoundListAtom } from '../../models';
 import { columns } from './columns';

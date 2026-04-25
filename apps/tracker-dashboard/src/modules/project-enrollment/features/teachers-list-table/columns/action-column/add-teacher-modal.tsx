@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmationModal } from '@/shared/components';
 import { reatomComponent } from '@reatom/react';
 
-import { addTeacherAction } from '../../../../models';
+import { addTeachersAction } from '../../../../models';
 
 interface AddTeacherModalProps {
   roundId: string;
@@ -19,10 +19,10 @@ export const AddTeacherModal = reatomComponent(function AddTeacherModal({
   onOpenChange,
 }: AddTeacherModalProps) {
   const { t } = useTranslation();
-  const isPending = !!addTeacherAction.pending();
+  const isPending = !!addTeachersAction.pending();
 
   const handleConfirm = async () => {
-    await addTeacherAction({ roundId, teacherId });
+    await addTeachersAction({ roundId, teacherIds: [teacherId] });
     onOpenChange(false);
   };
 

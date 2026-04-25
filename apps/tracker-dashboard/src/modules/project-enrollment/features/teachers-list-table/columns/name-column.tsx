@@ -8,7 +8,7 @@ export const TeacherNameColumn: ColumnDef<TeacherDTO> = {
   header: () => <T k="projectEnrollment.teacher.table.columns.name" />,
   cell: ({ row }) => (
     <span className="font-medium">
-      {row.original.first_name} {row.original.last_name}
+      {row.original.firstName} {row.original.lastName}
     </span>
   ),
 };

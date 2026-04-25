@@ -20,7 +20,7 @@ import { RemoveTeacherModal } from './remove-teacher-modal';
 // eslint-disable-next-line react-refresh/only-export-components
 const ActionCell = ({ row, roundId }: { row: { original: TeacherDTO }; roundId: string }) => {
   const { t } = useTranslation();
-  const { id, is_selected } = row.original;
+  const { id, isSelected } = row.original;
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [removeModalOpen, setRemoveModalOpen] = useState(false);
 
@@ -33,12 +33,12 @@ const ActionCell = ({ row, roundId }: { row: { original: TeacherDTO }; roundId: 
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {!is_selected && (
+          {!isSelected && (
             <DropdownMenuItem onSelect={() => setAddModalOpen(true)}>
               {t('projectEnrollment.teacher.actions.add')}
             </DropdownMenuItem>
           )}
-          {is_selected && (
+          {isSelected && (
             <DropdownMenuItem variant="destructive" onSelect={() => setRemoveModalOpen(true)}>
               {t('projectEnrollment.teacher.actions.remove')}
             </DropdownMenuItem>
@@ -46,10 +46,10 @@ const ActionCell = ({ row, roundId }: { row: { original: TeacherDTO }; roundId: 
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {!is_selected && (
+      {!isSelected && (
         <AddTeacherModal roundId={roundId} teacherId={id} open={addModalOpen} onOpenChange={setAddModalOpen} />
       )}
-      {is_selected && (
+      {isSelected && (
         <RemoveTeacherModal roundId={roundId} teacherId={id} open={removeModalOpen} onOpenChange={setRemoveModalOpen} />
       )}
     </>

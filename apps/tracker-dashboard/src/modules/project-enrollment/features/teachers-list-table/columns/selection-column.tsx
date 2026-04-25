@@ -6,10 +6,10 @@ import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import type { TeacherDTO } from '../../../models';
 
 export const TeacherSelectionColumn: ColumnDef<TeacherDTO> = {
-  accessorKey: 'is_selected',
+  accessorKey: 'isSelected',
   header: () => <T k="projectEnrollment.teacher.table.columns.selected" />,
   cell: ({ row }) =>
-    row.original.is_selected ? (
+    row.original.isSelected ? (
       <Badge variant="outline" className="border-green-200 bg-green-100 text-green-700">
         <T k="projectEnrollment.teacher.table.selected" />
       </Badge>
