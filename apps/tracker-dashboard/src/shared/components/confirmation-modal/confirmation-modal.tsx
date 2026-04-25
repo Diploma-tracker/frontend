@@ -17,8 +17,8 @@ interface ConfirmationModalProps {
   onOpenChange: (open: boolean) => void;
   title: ReactNode;
   description?: ReactNode;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  confirmLabel?: ReactNode;
+  cancelLabel?: ReactNode;
   confirmVariant?: React.ComponentProps<typeof Button>['variant'];
   isPending?: boolean;
   onConfirm: () => void;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { ConfirmationModal } from '@/shared/components';
 import { DotsThreeVerticalIcon } from '@phosphor-icons/react';
@@ -17,15 +17,16 @@ type ActionVariant = 'default' | 'destructive';
 interface Action<TData> {
   action: (state: TData) => Promise<void>;
   isActive: (state: TData) => boolean;
-  name: string;
+  key: string;
+  lable?: ReactNode;
   variant?: ActionVariant;
   onSuccess?: (state: TData) => void;
   onError?: (state: TData, error: unknown) => void;
   modal?: {
-    title: string;
-    description?: string;
-    confirmLabel?: string;
-    cancelLabel?: string;
+    title: ReactNode;
+    description?: ReactNode;
+    confirmLabel?: ReactNode;
+    cancelLabel?: ReactNode;
     confirmVariant?: React.ComponentProps<typeof Button>['variant'];
     // If true, the confirmation button will show a loading state while the action is being executed.
     enablePandingState?: boolean;
@@ -69,9 +70,9 @@ const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionCellTrig
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {actions.map(({ name, variant }) => (
-          <DropdownMenuItem key={name} variant={variant} onSelect={() => actionOnSelects[name]?.()}>
-            {name}
+        {actions.map(({ key, variant }) => (
+          <DropdownMenuItem key={key} variant={variant} onSelect={() => actionOnSelects[key]?.()}>
+            {key}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -83,15 +84,15 @@ const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionCellTrig
 const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCellTriggerProps<TData>) => {
   const action = actions[0];
   if (!action) return null;
-  const { name, variant } = action;
+  const { key, lable, variant } = action;
 
   const handleClick = () => {
-    actionOnSelects[name]?.();
+    actionOnSelects[key]?.();
   };
 
   return (
     <Button variant={variant} onClick={handleClick}>
-      {name}
+      {lable}
     </Button>
   );
 };
@@ -153,6 +154,10 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
         action.onError?.(state, error);
       }
     };
+
+    if (!action.lable) {
+      action.lable = action.key;
+    }
   }
   options = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
 
@@ -168,11 +173,11 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
 
     const activeActions = actions.filter(({ isActive }) => isActive(state));
     const actionOnSelects = activeActions.reduce(
-      (acc, { name, action, modal }) => {
+      (acc, { key, action, modal }) => {
         if (modal) {
-          acc[name] = () => setModalOpen(name)(true);
+          acc[key] = () => setModalOpen(key)(true);
         } else {
-          acc[name] = () => action(state);
+          acc[key] = () => action(state);
         }
         return acc;
       },
@@ -194,9 +199,9 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
           .filter(({ modal }) => !!modal)
           .map((action) => (
             <ActionConfirmationModal
-              key={action.name}
-              open={isModalOpen(action.name)}
-              onOpenChange={setModalOpen(action.name)}
+              key={action.key}
+              open={isModalOpen(action.key)}
+              onOpenChange={setModalOpen(action.key)}
               action={action}
               state={state}
             ></ActionConfirmationModal>
