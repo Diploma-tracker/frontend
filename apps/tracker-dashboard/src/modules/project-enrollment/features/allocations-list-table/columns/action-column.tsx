@@ -12,7 +12,7 @@ export const ActionColumn: ColumnDef<AllocationRoundDTO> = {
   cell: actionCell<AllocationRoundDTO>([
     {
       key: 'open',
-      lable: <T k="projectEnrollment.allocationRound.actions.open" />,
+      label: <T k="projectEnrollment.allocationRound.actions.open" />,
       isActive: ({ status }) => status === 'DRAFT',
       action: ({ id }) => wrap(openAllocationRoundAction(id)),
       modal: {
@@ -22,7 +22,7 @@ export const ActionColumn: ColumnDef<AllocationRoundDTO> = {
     },
     {
       key: 'close',
-      lable: <T k="projectEnrollment.allocationRound.actions.close" />,
+      label: <T k="projectEnrollment.allocationRound.actions.close" />,
       variant: 'destructive',
       isActive: ({ status }) => status === 'OPEN',
       action: ({ id }) => wrap(closeAllocationRoundAction(id)),

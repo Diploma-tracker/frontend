@@ -18,7 +18,7 @@ interface Action<TData> {
   action: (state: TData) => Promise<void>;
   isActive: (state: TData) => boolean;
   key: string;
-  lable?: ReactNode;
+  label?: ReactNode;
   variant?: ActionVariant;
   onSuccess?: (state: TData) => void;
   onError?: (state: TData, error: unknown) => void;
@@ -29,7 +29,7 @@ interface Action<TData> {
     cancelLabel?: ReactNode;
     confirmVariant?: React.ComponentProps<typeof Button>['variant'];
     // If true, the confirmation button will show a loading state while the action is being executed.
-    enablePandingState?: boolean;
+    enablePendingState?: boolean;
   };
 }
 
@@ -47,7 +47,7 @@ const DEFAULT_ACTIONS_PARAMS: Partial<Action<unknown>> = {
 
 const DEFAULT_MODAL_PARAMS: Partial<Action<unknown>['modal']> = {
   confirmVariant: 'default',
-  enablePandingState: false,
+  enablePendingState: false,
 };
 
 const DEFAULT_OPTIONS: Partial<ActionColumnOptions> = {
@@ -70,9 +70,9 @@ const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionCellTrig
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {actions.map(({ key, variant }) => (
+        {actions.map(({ key, label, variant }) => (
           <DropdownMenuItem key={key} variant={variant} onSelect={() => actionOnSelects[key]?.()}>
-            {key}
+            {label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -84,7 +84,7 @@ const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionCellTrig
 const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCellTriggerProps<TData>) => {
   const action = actions[0];
   if (!action) return null;
-  const { key, lable, variant } = action;
+  const { key, label, variant } = action;
 
   const handleClick = () => {
     actionOnSelects[key]?.();
@@ -92,7 +92,7 @@ const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCellTrigge
 
   return (
     <Button variant={variant} onClick={handleClick}>
-      {lable}
+      {label}
     </Button>
   );
 };
@@ -113,7 +113,7 @@ const ActionConfirmationModal = <TData,>({
   const [isPending, setIsPending] = useState(false);
 
   const handleConfirm = async () => {
-    if (!modal?.enablePandingState) {
+    if (!modal?.enablePendingState) {
       await action.action(state);
       onOpenChange(false);
       return;
@@ -143,22 +143,30 @@ const ActionConfirmationModal = <TData,>({
   );
 };
 
-export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionColumnOptions) => {
-  actions = actions.map((action) => ({ ...DEFAULT_ACTIONS_PARAMS, ...action }));
-  for (const action of actions) {
-    action.action = async (state: TData) => {
+const preprocessActions = <TData,>(actions: Action<TData>[]): Action<TData>[] => {
+  return actions.map((action) => {
+    const newAction = { ...DEFAULT_ACTIONS_PARAMS, ...action };
+    const originalAction = newAction.action;
+
+    newAction.action = async (state: TData) => {
       try {
-        await action.action(state);
-        action.onSuccess?.(state);
+        await originalAction(state);
+        newAction.onSuccess?.(state);
       } catch (error) {
-        action.onError?.(state, error);
+        newAction.onError?.(state, error);
       }
     };
 
-    if (!action.lable) {
-      action.lable = action.key;
+    if (!newAction.label) {
+      newAction.label = newAction.key;
     }
-  }
+
+    return newAction;
+  });
+};
+
+export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionColumnOptions) => {
+  actions = preprocessActions(actions);
   options = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
 
   // eslint-disable-next-line react/display-name

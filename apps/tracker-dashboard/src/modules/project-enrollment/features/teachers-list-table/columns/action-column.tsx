@@ -11,7 +11,7 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
   cell: actionCell([
     {
       key: 'add',
-      lable: <T k="projectEnrollment.teacher.actions.add" />,
+      label: <T k="projectEnrollment.teacher.actions.add" />,
       isActive: ({ isSelected }) => !isSelected,
       action: ({ id }) => wrap(addTeachersAction({ roundId, teacherIds: [id] })),
       modal: {
@@ -21,7 +21,7 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
     },
     {
       key: 'remove',
-      lable: <T k="projectEnrollment.teacher.actions.remove" />,
+      label: <T k="projectEnrollment.teacher.actions.remove" />,
       variant: 'destructive',
       isActive: ({ isSelected }) => isSelected,
       action: ({ id }) => wrap(removeTeachersAction({ roundId, teacherIds: [id] })),
