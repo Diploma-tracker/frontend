@@ -13,6 +13,7 @@ import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
 import { Route as appAppRouteImport } from './routes/(app)/_app'
 import { Route as appAppIndexRouteImport } from './routes/(app)/_app.index'
 import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
+import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
 import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
 import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
@@ -35,6 +36,11 @@ const authAuthLoginRoute = authAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => authAuthRoute,
 } as any)
+const appAppScheduleRoute = appAppScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => appAppRoute,
+} as any)
 const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
   id: '/project-enrollment',
   path: '/project-enrollment',
@@ -55,12 +61,14 @@ const appAppProjectEnrollmentRoundIdRoute =
 
 export interface FileRoutesByFullPath {
   '/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
+  '/schedule': typeof appAppScheduleRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
   '/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRoutesByTo {
+  '/schedule': typeof appAppScheduleRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/(app)/_app': typeof appAppRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(app)/_app/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
+  '/(app)/_app/schedule': typeof appAppScheduleRoute
   '/(auth)/_auth/login': typeof authAuthLoginRoute
   '/(app)/_app/': typeof appAppIndexRoute
   '/(app)/_app/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
@@ -80,17 +89,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/project-enrollment'
+    | '/schedule'
     | '/login'
     | '/'
     | '/project-enrollment/$roundId'
     | '/project-enrollment/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/' | '/project-enrollment/$roundId' | '/project-enrollment'
+  to:
+    | '/schedule'
+    | '/login'
+    | '/'
+    | '/project-enrollment/$roundId'
+    | '/project-enrollment'
   id:
     | '__root__'
     | '/(app)/_app'
     | '/(auth)/_auth'
     | '/(app)/_app/project-enrollment'
+    | '/(app)/_app/schedule'
     | '/(auth)/_auth/login'
     | '/(app)/_app/'
     | '/(app)/_app/project-enrollment/$roundId'
@@ -131,6 +147,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof authAuthLoginRouteImport
       parentRoute: typeof authAuthRoute
+    }
+    '/(app)/_app/schedule': {
+      id: '/(app)/_app/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof appAppScheduleRouteImport
+      parentRoute: typeof appAppRoute
     }
     '/(app)/_app/project-enrollment': {
       id: '/(app)/_app/project-enrollment'
@@ -174,11 +197,13 @@ const appAppProjectEnrollmentRouteWithChildren =
 
 interface appAppRouteChildren {
   appAppProjectEnrollmentRoute: typeof appAppProjectEnrollmentRouteWithChildren
+  appAppScheduleRoute: typeof appAppScheduleRoute
   appAppIndexRoute: typeof appAppIndexRoute
 }
 
 const appAppRouteChildren: appAppRouteChildren = {
   appAppProjectEnrollmentRoute: appAppProjectEnrollmentRouteWithChildren,
+  appAppScheduleRoute: appAppScheduleRoute,
   appAppIndexRoute: appAppIndexRoute,
 }
 

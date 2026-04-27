@@ -36,7 +36,8 @@
       "projects": "Projects",
       "diploma1": "Diploma 1",
       "diploma2": "Diploma 2",
-      "projectEnrollment": "Project Enrollment"
+      "projectEnrollment": "Project Enrollment",
+      "schedule": "Schedule"
     }
   },
   "user": {
@@ -44,6 +45,28 @@
     "password": {
       "show": "Show password",
       "hide": "Hide password"
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "weekView": "Weekly timetable",
+    "pickWeek": "Pick a week",
+    "toolbar": {
+      "today": "Today",
+      "month": "Month",
+      "week": "Week",
+      "day": "Day",
+      "workWeek": "Work week",
+      "fullWeek": "Full week"
+    },
+    "events": {
+      "mathLecture": "Math Lecture",
+      "physicsLab": "Physics Lab",
+      "csSeminar": "CS Seminar",
+      "englishWriting": "English Writing",
+      "projectMeeting": "Project Meeting",
+      "algorithmsLecture": "Algorithms Lecture",
+      "weekendWorkshop": "Weekend Workshop"
     }
   },
   "projectEnrollment": {

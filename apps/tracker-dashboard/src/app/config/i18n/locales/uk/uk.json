@@ -36,7 +36,8 @@
       "projects": "Проєкти",
       "diploma1": "Диплом 1",
       "diploma2": "Диплом 2",
-      "projectEnrollment": "Зарахування до проєктів"
+      "projectEnrollment": "Зарахування до проєктів",
+      "schedule": "Розклад"
     }
   },
   "user": {
@@ -44,6 +45,28 @@
     "password": {
       "show": "Показати пароль",
       "hide": "Сховати пароль"
+    }
+  },
+  "schedule": {
+    "title": "Розклад",
+    "weekView": "Тижневий розклад",
+    "pickWeek": "Обрати тиждень",
+    "toolbar": {
+      "today": "Сьогодні",
+      "month": "Місяць",
+      "week": "Тиждень",
+      "day": "День",
+      "workWeek": "Робочий тиждень",
+      "fullWeek": "Повний тиждень"
+    },
+    "events": {
+      "mathLecture": "Лекція з математики",
+      "physicsLab": "Лабораторна з фізики",
+      "csSeminar": "Семінар з інформатики",
+      "englishWriting": "Письмо англійською",
+      "projectMeeting": "Зустріч проєктної групи",
+      "algorithmsLecture": "Лекція з алгоритмів",
+      "weekendWorkshop": "Суботній воркшоп"
     }
   },
   "projectEnrollment": {
