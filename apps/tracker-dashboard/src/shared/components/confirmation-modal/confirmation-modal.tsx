@@ -20,6 +20,7 @@ interface ConfirmationModalProps {
   confirmLabel?: ReactNode;
   cancelLabel?: ReactNode;
   confirmVariant?: React.ComponentProps<typeof Button>['variant'];
+  confirmIntent?: React.ComponentProps<typeof Button>['intent'];
   isPending?: boolean;
   onConfirm: () => void;
 }
@@ -32,6 +33,7 @@ export const ConfirmationModal = ({
   confirmLabel,
   cancelLabel,
   confirmVariant = 'default',
+  confirmIntent = 'primary',
   isPending = false,
   onConfirm,
 }: ConfirmationModalProps) => {
@@ -46,7 +48,7 @@ export const ConfirmationModal = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>{cancelLabel ?? t('common.confirm.cancel')}</AlertDialogCancel>
-          <Button variant={confirmVariant} disabled={isPending} onClick={onConfirm}>
+          <Button variant={confirmVariant} intent={confirmIntent} disabled={isPending} onClick={onConfirm}>
             {confirmLabel ?? t('common.confirm.proceed')}
           </Button>
         </AlertDialogFooter>
