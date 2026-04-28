@@ -2,11 +2,12 @@ import { T } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api/model';
+import { Badge, type BadgeProps } from '@repo/ui-kit/components/common/data-display/badge';
 
-const STATUS_STYLES: Record<SupervisionApplicationStatus, string> = {
-  PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  ACCEPTED: 'bg-green-100 text-green-700 border-green-200',
-  REJECTED: 'bg-red-100 text-red-700 border-red-200',
+const STATUS_STYLES: Record<SupervisionApplicationStatus, BadgeProps['intent']> = {
+  PENDING: 'pending',
+  ACCEPTED: 'success',
+  REJECTED: 'destructive',
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -28,12 +29,9 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
   return (
     <div className="flex items-center gap-1.5">
       {(['PENDING', 'ACCEPTED', 'REJECTED'] as SupervisionApplicationStatus[]).map((status) => (
-        <span
-          key={status}
-          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[status]}`}
-        >
+        <Badge key={status} variant="outline" intent={STATUS_STYLES[status]}>
           {counts[status]}
-        </span>
+        </Badge>
       ))}
     </div>
   );

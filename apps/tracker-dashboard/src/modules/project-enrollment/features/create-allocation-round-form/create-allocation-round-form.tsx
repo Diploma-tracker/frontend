@@ -49,7 +49,7 @@ export const CreateAllocationRoundForm = reatomComponent(function CreateAllocati
         />
 
         <Field>
-          <Button type="submit" disabled={!submit.ready()}>
+          <Button variant="solid" intent="primary" type="submit" disabled={!submit.ready()}>
             {!submit.ready() ? (
               <CircleNotchIcon className="animate-spin" />
             ) : (
