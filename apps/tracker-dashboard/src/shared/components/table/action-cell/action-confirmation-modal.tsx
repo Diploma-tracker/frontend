@@ -48,6 +48,7 @@ export const ActionConfirmationModal = <TData,>({
       confirmLabel={modal?.confirmLabel}
       cancelLabel={modal?.cancelLabel}
       confirmVariant={modal?.confirmVariant}
+      confirmIntent={modal?.confirmIntent}
     />
   );
 };
