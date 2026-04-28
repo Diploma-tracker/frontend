@@ -1,38 +1,60 @@
 :root {
     --background: #ffffff;
     --foreground: #404040;
+
     --card: #ffffff;
     --card-foreground: #404040;
+
     --popover: #ffffff;
     --popover-foreground: #404040;
-    --primary: #a0001b;
+
+    --primary: #3b82f6;
     --primary-foreground: #ffffff;
+
     --secondary: #f2f2f2;
     --secondary-foreground: #404040;
+
     --muted: #fafafa;
     --muted-foreground: #a1a1a1;
+
     --accent: #f7f7f7;
     --accent-foreground: #404040;
+
+    /* STATUSES  */
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
+
+    --draft: #6b7280;
+    --draft-foreground: #ffffff;
+
+    --success: #17a865;
+    --success-foreground: #ffffff;
+
+    --pending: #e8680f;
+    --pending-foreground: #ffffff;
+
     --border: #f2f2f2;
     --input: #f2f2f2;
-    --ring: #a0001b;
-    --chart-1: #a0001b;
+
+    --ring: #3b82f6;
+
+    /* CHARTS */
+    --chart-1: #3b82f6;
     --chart-2: #6366f1;
     --chart-3: #22c55e;
     --chart-4: #facc15;
     --chart-5: #ef4444;
+
     --sidebar: #fafafa;
     --sidebar-foreground: #404040;
-    --sidebar-primary: #a0001b;
+    --sidebar-primary: #3b82f6;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #e5e5e5;
     --sidebar-accent-foreground: #404040;
     --sidebar-border: #e5e5e5;
-    --sidebar-ring: #a0001b;
+    --sidebar-ring: #3b82f6;
 
-    --font-sans: PT Sans, ui-sans-serif, sans-serif, system-ui;
+    --font-sans: "Source Sans 3", ui-sans-serif, sans-serif, system-ui;
     --font-serif: "Merriweather", serif;
     --font-mono: "Fira Code", monospace;
 
@@ -75,34 +97,52 @@
     --card-foreground: #f3f4f6;
     --popover: #1a1a1a;
     --popover-foreground: #f3f4f6;
-    --primary: #a0001b;
+
+    /* PRIMARY (темная тема — глубокий, спокойный синий) */
+    --primary: #2f5fa3;
     --primary-foreground: #ffffff;
+
     --secondary: #404040;
     --secondary-foreground: #f3f4f6;
     --muted: #262626;
     --muted-foreground: #9ca3af;
     --accent: #262626;
     --accent-foreground: #f3f4f6;
+
+    /* STATUSES  */
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
+
+    --draft: #9ca3af;
+    --draft-foreground: #1a1a1a;
+
+    --success: #1ec978;
+    --success-foreground: #032818;
+
+    --pending: #f97316;
+    --pending-foreground: #1a0a00;
+
     --border: #333333;
     --input: #333333;
-    --ring: #a0001b;
-    --chart-1: #a0001b;
+
+    --ring: #2f5fa3;
+
+    --chart-1: #2f5fa3;
     --chart-2: #60a5fa;
     --chart-3: #34d399;
     --chart-4: #facc15;
     --chart-5: #ef4444;
+
     --sidebar: #181818;
     --sidebar-foreground: #e4e4e4;
-    --sidebar-primary: #a0001b;
+    --sidebar-primary: #2f5fa3;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #303030;
     --sidebar-accent-foreground: #ffffff;
     --sidebar-border: #303030;
-    --sidebar-ring: #a0001b;
+    --sidebar-ring: #2f5fa3;
 
-    --font-sans: PT Sans, ui-sans-serif, sans-serif, system-ui;
+    --font-sans: "Source Sans 3", ui-sans-serif, sans-serif, system-ui;
     --font-serif: "Merriweather", serif;
     --font-mono: "Fira Code", monospace;
 
@@ -151,6 +191,12 @@
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-draft: var(--draft);
+    --color-draft-foreground: var(--draft-foreground);
+    --color-pending: var(--pending);
+    --color-pending-foreground: var(--pending-foreground);
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
