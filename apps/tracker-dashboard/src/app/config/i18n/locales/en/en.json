@@ -128,6 +128,22 @@
         "selectionSelected": "Selected",
         "selectionNotSelected": "Not selected"
       },
+      "applicationsCell": {
+        "overview": {
+          "title": "Applications Overview",
+          "subtitle": "Applications info for this teacher",
+          "totalSuffix": "total"
+        },
+        "empty": {
+          "title": "No Applications",
+          "description": "This teacher hasn't submitted any applications yet."
+        },
+        "status": {
+          "pending": "In Review",
+          "accepted": "Accepted",
+          "rejected": "Rejected"
+        }
+      },
       "actions": {
         "add": "Add to round",
         "remove": "Remove from round",
