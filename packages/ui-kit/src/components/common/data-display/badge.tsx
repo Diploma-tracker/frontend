@@ -6,36 +6,98 @@ import { Slot } from 'radix-ui';
 import { cn } from '../../../lib/utils';
 
 const badgeVariants = cva(
-  'ui:inline-flex ui:w-fit ui:shrink-0 ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:rounded-full ui:border ui:border-transparent ui:px-2 ui:py-0.5 ui:text-xs ui:font-medium ui:whitespace-nowrap ui:transition-[color,box-shadow] ui:focus-visible:border-ring ui:focus-visible:ring-[3px] ui:focus-visible:ring-ring/50 ui:aria-invalid:border-destructive ui:aria-invalid:ring-destructive/20 ui:dark:aria-invalid:ring-destructive/40 ui:[&>svg]:pointer-events-none ui:[&>svg]:size-3',
+  'ui:inline-flex ui:w-fit ui:shrink-0 ui:items-center ui:justify-center ui:gap-1 ui:overflow-hidden ui:rounded-full ui:border ui:px-2 ui:py-0.5 ui:text-xs ui:font-medium ui:whitespace-nowrap ui:transition-all ui:focus-visible:border-ring ui:focus-visible:ring-[3px] ui:focus-visible:ring-ring/50 ui:[&>svg]:pointer-events-none ui:[&>svg]:size-[1em]',
   {
     variants: {
       variant: {
-        default: 'ui:bg-primary ui:text-primary-foreground ui:[a&]:hover:bg-primary/90',
-        secondary: 'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/90',
-        destructive:
-          'ui:bg-destructive ui:text-white ui:focus-visible:ring-destructive/20 ui:dark:bg-destructive/60 ui:dark:focus-visible:ring-destructive/40 ui:[a&]:hover:bg-destructive/90',
-        outline: 'ui:border-border ui:text-foreground ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground',
-        ghost: 'ui:[a&]:hover:bg-accent ui:[a&]:hover:text-accent-foreground',
-        link: 'ui:text-primary ui:underline-offset-4 ui:[a&]:hover:underline',
+        default: 'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/90',
+        filled: 'ui:border-transparent',
+        outline: 'ui:bg-transparent',
+      },
+      intent: {
+        primary: '',
+        destructive: '',
+        success: '',
+        pending: '',
+        draft: '',
       },
     },
+    compoundVariants: [
+      // PRIMARY
+      {
+        variant: 'filled',
+        intent: 'primary',
+        className: 'ui:border-primary/60 ui:bg-primary/20 ui:text-primary',
+      },
+      {
+        variant: 'outline',
+        intent: 'primary',
+        className: 'ui:border-primary ui:text-primary',
+      },
+
+      // DESTRUCTIVE
+      {
+        variant: 'filled',
+        intent: 'destructive',
+        className: 'ui:border-destructive/60 ui:bg-destructive/20 ui:text-destructive',
+      },
+      {
+        variant: 'outline',
+        intent: 'destructive',
+        className: 'ui:border-destructive ui:text-destructive',
+      },
+
+      // SUCCESS
+      {
+        variant: 'filled',
+        intent: 'success',
+        className: 'ui:border-success/60 ui:bg-success/20 ui:text-success',
+      },
+      {
+        variant: 'outline',
+        intent: 'success',
+        className: 'ui:border-success ui:text-success',
+      },
+
+      // PENDING
+      {
+        variant: 'filled',
+        intent: 'pending',
+        className: 'ui:border-pending/60 ui:bg-pending/20 ui:text-pending',
+      },
+      {
+        variant: 'outline',
+        intent: 'pending',
+        className: 'ui:border-pending ui:text-pending',
+      },
+
+      // DRAFT
+      {
+        variant: 'filled',
+        intent: 'draft',
+        className: 'ui:border-draft/60 ui:bg-draft/20 ui:text-draft',
+      },
+      {
+        variant: 'outline',
+        intent: 'draft',
+        className: 'ui:border-draft ui:text-draft',
+      },
+    ],
     defaultVariants: {
       variant: 'default',
+      intent: 'primary',
     },
   }
 );
 
-function Badge({
-  className,
-  variant = 'default',
-  asChild = false,
-  ...props
-}: React.ComponentProps<'span'> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+export interface BadgeProps extends React.ComponentProps<'span'>, VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
+
+function Badge({ className, variant, intent, asChild = false, ...props }: BadgeProps) {
   const Comp = asChild ? Slot.Root : 'span';
 
-  return (
-    <Comp data-slot="badge" data-variant={variant} className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
+  return <Comp data-slot="badge" className={cn(badgeVariants({ variant, intent }), className)} {...props} />;
 }
 
 export { Badge, badgeVariants };
