@@ -1,4 +1,5 @@
 import { T } from '@/shared/components';
+import { Link } from '@tanstack/react-router';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { AllocationRoundDTO } from '../../../models';
@@ -6,5 +7,15 @@ import type { AllocationRoundDTO } from '../../../models';
 export const NameColumn: ColumnDef<AllocationRoundDTO> = {
   accessorKey: 'name',
   header: () => <T k="projectEnrollment.allocationRound.table.columns.name" />,
-  cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
+  cell: ({ row }) => {
+    return (
+      <Link
+        to="/project-enrollment/$roundId"
+        params={{ roundId: row.original.id }}
+        className="-m-2 block cursor-pointer p-2 font-medium"
+      >
+        {row.original.name}
+      </Link>
+    );
+  },
 };
