@@ -8,14 +8,18 @@ import type { TeacherDTO } from '../../../models';
 export const TeacherSelectionColumn: ColumnDef<TeacherDTO> = {
   accessorKey: 'isSelected',
   header: () => <T k="projectEnrollment.teacher.table.columns.selected" />,
-  cell: ({ row }) =>
-    row.original.isSelected ? (
-      <Badge variant="outline" className="border-green-200 bg-green-100 text-green-700">
-        <T k="projectEnrollment.teacher.table.selected" />
+  cell: ({ row }) => {
+    const isSelected = row.original.isSelected;
+
+    const intent = isSelected ? 'success' : 'draft';
+    const text = isSelected
+      ? 'projectEnrollment.teacher.table.selected'
+      : 'projectEnrollment.teacher.table.notSelected';
+
+    return (
+      <Badge variant="filled" intent={intent}>
+        <T k={text} />
       </Badge>
-    ) : (
-      <Badge variant="outline" className="border-neutral-200 bg-neutral-100 text-neutral-600">
-        <T k="projectEnrollment.teacher.table.notSelected" />
-      </Badge>
-    ),
+    );
+  },
 };

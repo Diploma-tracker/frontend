@@ -37,6 +37,8 @@ export const ProjectEnrollmentAdminPage = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
+            variant="solid"
+            intent="primary"
             size="icon-lg"
             className="fixed right-6 bottom-6 z-50 size-14 rounded-full shadow-lg"
             aria-label={t('projectEnrollment.allocationRound.dialog.createAriaLabel')}

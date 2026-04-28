@@ -19,8 +19,12 @@ export const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionC
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {actions.map(({ key, label, variant }) => (
-          <DropdownMenuItem key={key} variant={variant} onSelect={() => actionOnSelects[key]?.()}>
+        {actions.map(({ key, label, intent }) => (
+          <DropdownMenuItem
+            key={key}
+            variant={intent === 'destructive' ? 'destructive' : 'default'}
+            onSelect={() => actionOnSelects[key]?.()}
+          >
             {label}
           </DropdownMenuItem>
         ))}
@@ -32,10 +36,10 @@ export const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionC
 export const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCellTriggerProps<TData>) => {
   const action = actions[0];
   if (!action) return null;
-  const { key, label, variant } = action;
+  const { key, label, variant, size, intent } = action;
 
   return (
-    <Button variant={variant} onClick={() => actionOnSelects[key]?.()}>
+    <Button variant={variant} size={size} intent={intent} onClick={() => actionOnSelects[key]?.()}>
       {label}
     </Button>
   );

@@ -23,13 +23,11 @@ export const ActionColumn: ColumnDef<AllocationRoundDTO> = {
     {
       key: 'close',
       label: <T k="projectEnrollment.allocationRound.actions.close" />,
-      variant: 'destructive',
       isActive: ({ status }) => status === 'OPEN',
       action: ({ id }) => wrap(closeAllocationRoundAction(id)),
       modal: {
         title: <T k="projectEnrollment.allocationRound.actions.confirmClose.title" />,
         description: <T k="projectEnrollment.allocationRound.actions.confirmClose.description" />,
-        confirmVariant: 'destructive',
       },
     },
   ]),

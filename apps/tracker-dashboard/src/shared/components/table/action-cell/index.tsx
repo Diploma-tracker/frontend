@@ -9,8 +9,8 @@ import type { Action, ActionColumnOptions } from './types';
 import { preprocessActions } from './utils';
 
 export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionColumnOptions) => {
-  actions = preprocessActions(actions);
-  options = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
+  const processedActions = preprocessActions(actions);
+  const mergedOptions = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
 
   // eslint-disable-next-line react/display-name
   return ({ row }: { row: Row<TData> }) => {
@@ -21,7 +21,8 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
 
     const isModalOpen = (key: string) => !!modalsOpen[key];
 
-    const activeActions = actions.filter(({ isActive }) => isActive(state));
+    const activeActions = processedActions.filter(({ isActive }) => isActive(state));
+
     const actionOnSelects = activeActions.reduce(
       (acc, { key, action, modal }) => {
         acc[key] = modal ? () => setModalOpen(key)(true) : () => action(state);
@@ -31,10 +32,12 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
     );
 
     const renderActionTrigger = () => {
-      if (options.hideOnEmpty && !activeActions.length) return null;
-      if (options.singleButton && activeActions.length === 1) {
+      if (mergedOptions.hideOnEmpty && !activeActions.length) return null;
+
+      if (mergedOptions.singleButton && activeActions.length === 1) {
         return <ActionCellButton actions={activeActions} actionOnSelects={actionOnSelects} />;
       }
+
       return <ActionCellDropdown actions={activeActions} actionOnSelects={actionOnSelects} />;
     };
 

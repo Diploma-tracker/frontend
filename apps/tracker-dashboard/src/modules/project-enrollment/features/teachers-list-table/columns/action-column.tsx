@@ -1,5 +1,6 @@
 import { T } from '@/shared/components';
 import { actionCell } from '@/shared/components/table/action-cell';
+import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { type ColumnDef } from '@tanstack/react-table';
 
@@ -11,7 +12,9 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
   cell: actionCell([
     {
       key: 'add',
-      label: <T k="projectEnrollment.teacher.actions.add" />,
+      label: <PlusIcon />,
+      variant: 'ghost',
+      size: 'icon-sm',
       isActive: ({ isSelected }) => !isSelected,
       action: ({ id }) => wrap(addTeachersAction({ roundId, teacherIds: [id] })),
       modal: {
@@ -21,13 +24,16 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
     },
     {
       key: 'remove',
-      label: <T k="projectEnrollment.teacher.actions.remove" />,
-      variant: 'destructive',
+      label: <TrashIcon />,
+      variant: 'ghost',
+      intent: 'destructive',
+      size: 'icon-sm',
       isActive: ({ isSelected }) => isSelected,
       action: ({ id }) => wrap(removeTeachersAction({ roundId, teacherIds: [id] })),
       modal: {
         title: <T k="projectEnrollment.teacher.actions.confirmRemove.title" />,
         description: <T k="projectEnrollment.teacher.actions.confirmRemove.description" />,
+        confirmIntent: 'destructive',
       },
     },
   ]),

@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react';
 
-import { Button } from '@repo/ui-kit/components/common/data-display/button';
-
-export type ActionVariant = 'default' | 'destructive';
+import { type ButtonProps } from '@repo/ui-kit/components/common/data-display/button';
 
 export interface Action<TData> {
   action: (state: TData) => Promise<void>;
   isActive: (state: TData) => boolean;
   key: string;
   label?: ReactNode;
-  variant?: ActionVariant;
+  variant?: ButtonProps['variant'];
+  size?: ButtonProps['size'];
+  intent?: ButtonProps['intent'];
   onSuccess?: (state: TData) => void;
   onError?: (state: TData, error: unknown) => void;
   modal?: {
@@ -17,7 +17,8 @@ export interface Action<TData> {
     description?: ReactNode;
     confirmLabel?: ReactNode;
     cancelLabel?: ReactNode;
-    confirmVariant?: React.ComponentProps<typeof Button>['variant'];
+    confirmVariant?: ButtonProps['variant'];
+    confirmIntent?: ButtonProps['intent'];
     // If true, the confirmation button will show a loading state while the action is being executed.
     enablePendingState?: boolean;
   };
