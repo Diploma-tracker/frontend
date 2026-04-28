@@ -15,9 +15,19 @@
 }
 
 /* Column day headers (Mon, Tue, …) */
-.fc .fc-col-header-cell {
-  background-color: var(--secondary) !important;
+.fc .fc-col-header-cell,
+.fc .fc-col-header .fc-timegrid-axis {
+  background-color: var(--accent) !important;
 }
+
+.fc .fc-col-header .fc-day-today {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 10%,
+    var(--accent)
+  ) !important;
+}
+
 .fc .fc-col-header-cell-cushion {
   color: var(--foreground) !important;
   font-size: 0.8125rem !important;
@@ -46,7 +56,11 @@
 
 /* Today highlight */
 .fc .fc-day-today {
-  background-color: color-mix(in srgb, var(--primary) 5%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 10%,
+    transparent
+  ) !important;
 }
 .fc .fc-day-today .fc-col-header-cell-cushion {
   color: var(--primary) !important;
