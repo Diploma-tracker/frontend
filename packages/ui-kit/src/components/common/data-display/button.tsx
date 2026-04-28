@@ -10,15 +10,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
-        destructive:
-          'ui:bg-destructive ui:text-white ui:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:bg-destructive/60 ui:dark:focus-visible:ring-destructive/40',
-        outline:
-          'ui:border ui:bg-background ui:shadow-xs ui:hover:bg-accent ui:hover:text-accent-foreground ui:dark:border-input ui:dark:bg-input/30 ui:dark:hover:bg-input/50',
-        secondary: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
-        ghost: 'ui:hover:bg-accent ui:hover:text-accent-foreground ui:dark:hover:bg-accent/50',
+        default: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
+        solid: '',
+        outline: 'ui:border ui:bg-transparent',
+        ghost: '',
         link: 'ui:text-primary ui:underline-offset-4 ui:hover:underline',
       },
+
+      intent: {
+        primary: '',
+        destructive: '',
+        success: '',
+        neutral: '',
+      },
+
       size: {
         default: 'ui:h-9 ui:px-4 ui:py-2 ui:has-[>svg]:px-3',
         xs: 'ui:h-6 ui:gap-1 ui:rounded-md ui:px-2 ui:text-xs ui:has-[>svg]:px-1.5 ui:[&_svg:not([class*=size-])]:size-3',
@@ -30,23 +35,90 @@ const buttonVariants = cva(
         'icon-lg': 'ui:size-10',
       },
     },
+
+    compoundVariants: [
+      // SOLID
+      {
+        variant: 'solid',
+        intent: 'primary',
+        class: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
+      },
+      {
+        variant: 'solid',
+        intent: 'destructive',
+        class:
+          'ui:bg-destructive ui:text-white ui:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:focus-visible:ring-destructive/40',
+      },
+      {
+        variant: 'solid',
+        intent: 'success',
+        class: 'ui:bg-success ui:text-white ui:hover:bg-success/90',
+      },
+      {
+        variant: 'solid',
+        intent: 'neutral',
+        class: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
+      },
+
+      // OUTLINE
+      {
+        variant: 'outline',
+        intent: 'primary',
+        class: 'ui:border-primary ui:text-primary ui:hover:bg-primary/10',
+      },
+      {
+        variant: 'outline',
+        intent: 'destructive',
+        class: 'ui:border-destructive ui:text-destructive ui:hover:bg-destructive/10',
+      },
+      {
+        variant: 'outline',
+        intent: 'success',
+        class: 'ui:border-success ui:text-success ui:hover:bg-success/10',
+      },
+      {
+        variant: 'outline',
+        intent: 'neutral',
+        class: 'ui:border-border ui:text-foreground ui:hover:bg-accent',
+      },
+
+      // GHOST
+      {
+        variant: 'ghost',
+        intent: 'primary',
+        class: 'ui:text-primary ui:hover:bg-primary/10',
+      },
+      {
+        variant: 'ghost',
+        intent: 'destructive',
+        class: 'ui:text-destructive ui:hover:bg-destructive/10',
+      },
+      {
+        variant: 'ghost',
+        intent: 'success',
+        class: 'ui:text-success ui:hover:bg-success/10',
+      },
+      {
+        variant: 'ghost',
+        intent: 'neutral',
+        class: 'ui:text-foreground ui:hover:bg-accent',
+      },
+    ],
+
     defaultVariants: {
       variant: 'default',
       size: 'default',
+      intent: 'neutral',
     },
   }
 );
 
-function Button({
-  className,
-  variant = 'default',
-  size = 'default',
-  asChild = false,
-  ...props
-}: React.ComponentProps<'button'> &
+export type ButtonProps = React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
-  }) {
+  };
+
+function Button({ className, variant, size, intent, asChild = false, ...props }: ButtonProps) {
   const Comp = asChild ? Slot.Root : 'button';
 
   return (
@@ -54,7 +126,15 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      data-intent={intent}
+      className={cn(
+        buttonVariants({
+          variant,
+          size,
+          intent,
+          className,
+        })
+      )}
       {...props}
     />
   );
