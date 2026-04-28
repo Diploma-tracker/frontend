@@ -17,7 +17,7 @@ import {
 import { Progress } from '@repo/ui-kit/components/common/states/progress';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { teacherApplicationsStatusMap } from '../../../models';
+import { getTeacherApplicationsStats } from '../../../models';
 
 const STATUS_META: Record<
   SupervisionApplicationStatus,
@@ -52,7 +52,7 @@ const STATUS_ORDER: SupervisionApplicationStatus[] = ['PENDING', 'ACCEPTED', 'RE
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
-  const stats = teacherApplicationsStatusMap(teacher.id);
+  const stats = getTeacherApplicationsStats(teacher);
 
   if (!stats) {
     return <span className="text-muted-foreground">—</span>;

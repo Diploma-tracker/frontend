@@ -40,9 +40,7 @@ export const teacherListAtom = asyncList<TeachersFilter, string, PaginatedTeache
   'teachers'
 );
 
-export const teacherApplicationsStatusMap = (teacherId: string) => {
-  const teacher = teacherListAtom.data()?.items.find((t) => t.id === teacherId);
-
+export const getTeacherApplicationsStats = (teacher: TeacherDTO) => {
   if (!teacher?.isSelected) {
     return null;
   }
