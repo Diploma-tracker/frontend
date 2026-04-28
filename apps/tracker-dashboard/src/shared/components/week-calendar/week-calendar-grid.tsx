@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import type { CalendarOptions } from '@fullcalendar/core';
+import type { CalendarOptions, LocaleSingularArg } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -10,11 +11,12 @@ import { Spinner } from '@repo/ui-kit/components/common/states/spinner';
 import { cn } from '@repo/ui-kit/lib/utils';
 
 import { useWeekCalendar } from './context';
+import { getFullCalendarLocale } from './utils';
 
 type WeekCalendarGridProps = Omit<
   CalendarOptions,
   // managed internally by the compound component
-  'ref' | 'plugins' | 'initialView' | 'headerToolbar' | 'weekends'
+  'ref' | 'plugins' | 'initialView' | 'headerToolbar' | 'weekends' | 'locale'
 > & {
   isLoading?: boolean;
   error?: string | null;
@@ -23,12 +25,18 @@ type WeekCalendarGridProps = Omit<
 
 export function WeekCalendarGrid({ isLoading, error, editable = true, ...props }: WeekCalendarGridProps) {
   const { calendarRef, weekView, setIsInteractive } = useWeekCalendar();
+  const { i18n } = useTranslation();
+  const [fcLocale, setFcLocale] = useState<LocaleSingularArg | undefined>(undefined);
 
   const isBlocked = !!isLoading || !!error;
 
   useEffect(() => {
     setIsInteractive(!isBlocked);
   }, [isBlocked, setIsInteractive]);
+
+  useEffect(() => {
+    getFullCalendarLocale().then(setFcLocale);
+  }, [i18n.language]);
 
   return (
     <div className={cn('relative h-full overflow-auto', { 'overflow-hidden': isBlocked })}>
@@ -45,6 +53,7 @@ export function WeekCalendarGrid({ isLoading, error, editable = true, ...props }
         nowIndicator
         editable={editable && !isBlocked}
         selectable={editable && !isBlocked}
+        locale={fcLocale}
         {...props}
       />
 

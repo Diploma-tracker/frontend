@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import FullCalendar from '@fullcalendar/react';
 
@@ -14,6 +15,7 @@ interface WeekCalendarRootProps {
 }
 
 export function WeekCalendarRoot({ children, defaultView = 'work' }: WeekCalendarRootProps) {
+  const { i18n } = useTranslation();
   const calendarRef = useRef<FullCalendar>(null);
   const initialMonday = getMondayOfWeek(new Date());
 
@@ -25,6 +27,12 @@ export function WeekCalendarRoot({ children, defaultView = 'work' }: WeekCalenda
     to: getWeekEnd(initialMonday, defaultView),
   }));
   const [isInteractive, setIsInteractive] = useState(true);
+
+  // Re-format the title when the language changes
+  useEffect(() => {
+    setTitle(formatWeekTitle(currentMonday(), weekView));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language]);
 
   const syncWeek = (monday: Date, view: WeekView = weekView) => {
     setTitle(formatWeekTitle(monday, view));

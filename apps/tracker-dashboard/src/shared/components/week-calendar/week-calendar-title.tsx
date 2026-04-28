@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
+import { getLocale } from '@/shared/utils/format-date';
+
 import { Calendar } from '@repo/ui-kit/components/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui-kit/components/common/floating/popover';
 import { CardTitle } from '@repo/ui-kit/components/common/layout/card';
@@ -7,9 +9,13 @@ import { CardTitle } from '@repo/ui-kit/components/common/layout/card';
 import { useWeekCalendar } from './context';
 
 export function WeekCalendarTitle() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { title, weekRange, pickerOpen, setPickerOpen, setWeekRange, handleDayClick, isInteractive } =
     useWeekCalendar();
+
+  // Re-evaluate on language change
+  void i18n.language;
+  const locale = getLocale();
 
   return (
     <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
@@ -34,6 +40,7 @@ export function WeekCalendarTitle() {
           onDayClick={handleDayClick}
           weekStartsOn={1}
           showOutsideDays
+          locale={locale}
         />
       </PopoverContent>
     </Popover>
