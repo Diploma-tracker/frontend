@@ -186,5 +186,19 @@
         }
       }
     }
+  },
+  "defense": {
+    "loading": "Loading sessions...",
+    "error": "Failed to load sessions.",
+    "session": {
+      "title": "Defense ({{participants}}/{{capacity}})"
+    },
+    "student": {
+      "empty": "You have no defense sessions scheduled."
+    },
+    "round": {
+      "title": "Defense Schedule",
+      "empty": "No defense sessions for this round."
+    }
   }
 }
