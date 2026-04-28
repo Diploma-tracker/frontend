@@ -41,67 +41,68 @@ const buttonVariants = cva(
       {
         variant: 'solid',
         intent: 'primary',
-        class: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
+        className: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
       },
       {
         variant: 'solid',
         intent: 'destructive',
-        class:
-          'ui:bg-destructive ui:text-white ui:hover:bg-destructive/90 ui:focus-visible:ring-destructive/20 ui:dark:focus-visible:ring-destructive/40',
+        className:
+          'ui:bg-destructive ui:text-destructive-foreground ui:hover:bg-destructive/90 ui:focus-visible:ring-destructive/50',
       },
       {
         variant: 'solid',
         intent: 'success',
-        class: 'ui:bg-success ui:text-white ui:hover:bg-success/90',
+        className: 'ui:bg-success ui:text-success-foreground ui:hover:bg-success/90 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'solid',
         intent: 'neutral',
-        class: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
+        className: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
       },
 
       // OUTLINE
       {
         variant: 'outline',
         intent: 'primary',
-        class: 'ui:border-primary ui:text-primary ui:hover:bg-primary/10',
+        className: 'ui:border-primary ui:text-primary ui:hover:bg-primary/10',
       },
       {
         variant: 'outline',
         intent: 'destructive',
-        class: 'ui:border-destructive ui:text-destructive ui:hover:bg-destructive/10',
+        className:
+          'ui:border-destructive ui:text-destructive ui:hover:bg-destructive/10 ui:focus-visible:ring-destructive/50',
       },
       {
         variant: 'outline',
         intent: 'success',
-        class: 'ui:border-success ui:text-success ui:hover:bg-success/10',
+        className: 'ui:border-success ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'outline',
         intent: 'neutral',
-        class: 'ui:border-border ui:text-foreground ui:hover:bg-accent',
+        className: 'ui:border-border ui:text-foreground ui:hover:bg-accent',
       },
 
       // GHOST
       {
         variant: 'ghost',
         intent: 'primary',
-        class: 'ui:text-primary ui:hover:bg-primary/10',
+        className: 'ui:text-primary ui:hover:bg-primary/10',
       },
       {
         variant: 'ghost',
         intent: 'destructive',
-        class: 'ui:text-destructive ui:hover:bg-destructive/10',
+        className: 'ui:text-destructive ui:hover:bg-destructive/10 ui:focus-visible:ring-destructive/50',
       },
       {
         variant: 'ghost',
         intent: 'success',
-        class: 'ui:text-success ui:hover:bg-success/10',
+        className: 'ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'ghost',
         intent: 'neutral',
-        class: 'ui:text-foreground ui:hover:bg-accent',
+        className: 'ui:text-foreground ui:hover:bg-accent',
       },
     ],
 
