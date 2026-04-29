@@ -9,10 +9,12 @@ import { DefenseSessionsGrid } from '../defense-sessions-grid';
 
 interface RoundDefenseSessionsProps {
   roundId: string;
+  onDateClick?: (date: Date) => void;
 }
 
 export const RoundDefenseSessions = reatomComponent(function RoundDefenseSessions({
   roundId,
+  onDateClick,
 }: RoundDefenseSessionsProps) {
   const { t } = useTranslation();
   const status = roundDefenseSessionsAtom.status();
@@ -27,6 +29,7 @@ export const RoundDefenseSessions = reatomComponent(function RoundDefenseSession
       sessions={sessions}
       isLoading={status.isPending}
       error={status.isRejected ? t('defense.error') : null}
+      onDateClick={onDateClick}
     />
   );
 }, 'RoundDefenseSessions');

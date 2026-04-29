@@ -1,7 +1,19 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { PageLayout } from '@/layouts';
-import { RoundDefenseSessions } from '@/modules/defense';
+import { Guard, permissions } from '@/modules/auth';
+import { CreateDefenseSessionForm, RoundDefenseSessions } from '@/modules/defense';
+import { PlusIcon } from '@phosphor-icons/react';
+
+import { Button } from '@repo/ui-kit/components/common/data-display/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@repo/ui-kit/components/common/floating/dialog';
 
 import '@/shared/components/week-calendar/schedule.css';
 
@@ -9,15 +21,49 @@ interface RoundDefenseSchedulePageProps {
   roundId: string;
 }
 
+function ceilToHalfHour(date: Date): Date {
+  const ms = date.getTime();
+  const halfHour = 30 * 60 * 1000;
+  return new Date(Math.ceil(ms / halfHour) * halfHour);
+}
+
 export const RoundDefenseSchedulePage = ({ roundId }: RoundDefenseSchedulePageProps) => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+  const openDialog = (date: Date) => {
+    setSelectedDate(date);
+    setOpen(true);
+  };
+
+  const handleOpenChange = (value: boolean) => {
+    setOpen(value);
+    if (!value) setSelectedDate(undefined);
+  };
 
   return (
-    <PageLayout>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold">{t('defense.round.title')}</h1>
-        <RoundDefenseSessions roundId={roundId} />
-      </div>
+    <PageLayout height="screen">
+      <Guard can={permissions.isAdmin}>
+        <Button
+          size="icon-lg"
+          className="fixed right-6 bottom-6 z-50 size-14 rounded-full shadow-lg"
+          aria-label={t('defense.session.dialog.createAriaLabel')}
+          onClick={() => openDialog(ceilToHalfHour(new Date()))}
+        >
+          <PlusIcon className="size-6" />
+        </Button>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('defense.session.dialog.createTitle')}</DialogTitle>
+              <DialogDescription>{t('defense.session.dialog.createDescription')}</DialogDescription>
+            </DialogHeader>
+            <CreateDefenseSessionForm onSuccess={() => handleOpenChange(false)} initialDate={selectedDate} />
+          </DialogContent>
+        </Dialog>
+      </Guard>
+      <RoundDefenseSessions roundId={roundId} onDateClick={openDialog} />
     </PageLayout>
   );
 };

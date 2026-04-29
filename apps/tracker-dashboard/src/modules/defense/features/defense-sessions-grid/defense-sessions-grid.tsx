@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
 import type { EventContentArg } from '@fullcalendar/core';
+import type { DateClickArg } from '@fullcalendar/interaction';
 
 import type { DefenseSessionDTO } from '../../models';
 import { sessionsToCalendarEvents } from './utils';
@@ -10,9 +11,10 @@ interface DefenseSessionsGridProps {
   sessions: DefenseSessionDTO[];
   isLoading?: boolean;
   error?: string | null;
+  onDateClick?: (date: Date) => void;
 }
 
-export function DefenseSessionsGrid({ sessions, isLoading, error }: DefenseSessionsGridProps) {
+export function DefenseSessionsGrid({ sessions, isLoading, error, onDateClick }: DefenseSessionsGridProps) {
   const { t } = useTranslation();
 
   const events = sessionsToCalendarEvents(sessions, (session) =>
@@ -21,6 +23,8 @@ export function DefenseSessionsGrid({ sessions, isLoading, error }: DefenseSessi
       participants: session.participantCount,
     })
   );
+
+  const handleDateClick = onDateClick ? (arg: DateClickArg) => onDateClick(arg.date) : undefined;
 
   return (
     <WeekCalendar.Root>
@@ -37,6 +41,7 @@ export function DefenseSessionsGrid({ sessions, isLoading, error }: DefenseSessi
           events={events}
           isLoading={isLoading}
           error={error}
+          dateClick={handleDateClick}
           eventContent={(eventInfo: EventContentArg) => <ScheduleEventContent eventInfo={eventInfo} />}
         />
       </div>
