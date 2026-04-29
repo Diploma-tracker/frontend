@@ -13,6 +13,7 @@
     "./types": "./src/types/index.ts",
     "./model": "./src/generated/model/index.ts",
     "./auth": "./src/generated/auth.ts",
+    "./iam": "./src/generated/iam.ts",
     "./allocation-round": "./src/generated/allocation-round.ts",
     "./supervision-application": "./src/generated/supervision-application.ts",
     "./thesis-defense-session": "./src/generated/thesis-defense-session.ts"
