@@ -273,7 +273,7 @@ function MultiSelectTrigger<TOption extends MultiSelectOption>({
   const renderRest = () => {
     if (hiddenCount <= 0) return null;
     return (
-      <Badge variant="secondary" className="h-[calc(1.375rem)] text-xs">
+      <Badge variant="default" className="h-[calc(1.375rem)] text-xs">
         +{hiddenCount}
       </Badge>
     );
