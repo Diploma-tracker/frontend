@@ -48,35 +48,15 @@
     }
   },
   "schedule": {
-    "title": "Schedule",
-    "weekView": "Weekly timetable",
     "pickWeek": "Pick a week",
     "toolbar": {
       "today": "Today",
-      "month": "Month",
-      "week": "Week",
-      "day": "Day",
       "workWeek": "Work week",
       "fullWeek": "Full week"
-    },
-    "events": {
-      "mathLecture": "Math Lecture",
-      "physicsLab": "Physics Lab",
-      "csSeminar": "CS Seminar",
-      "englishWriting": "English Writing",
-      "projectMeeting": "Project Meeting",
-      "algorithmsLecture": "Algorithms Lecture",
-      "weekendWorkshop": "Weekend Workshop"
     }
   },
   "projectEnrollment": {
     "allocationRound": {
-      "status": {
-        "all": "All statuses",
-        "draft": "Draft",
-        "open": "Open",
-        "closed": "Closed"
-      },
       "filters": {
         "statusPlaceholder": "Status"
       },
@@ -146,10 +126,7 @@
       },
       "filters": {
         "searchPlaceholder": "Search by name or email...",
-        "selectionPlaceholder": "Selection",
-        "selectionAll": "All teachers",
-        "selectionSelected": "Selected",
-        "selectionNotSelected": "Not selected"
+        "selectionPlaceholder": "Selection"
       },
       "applicationsCell": {
         "overview": {
@@ -177,28 +154,14 @@
         "confirmRemove": {
           "title": "Remove teacher from round?",
           "description": "This teacher will be removed from the allocation round. This action cannot be undone."
-        },
-        "toast": {
-          "addSuccess": "Teacher added to round successfully!",
-          "addError": "Failed to add teacher. Please try again.",
-          "removeSuccess": "Teacher removed from round successfully!",
-          "removeError": "Failed to remove teacher. Please try again."
         }
       }
     }
   },
   "defense": {
-    "loading": "Loading sessions...",
     "error": "Failed to load sessions.",
     "session": {
       "title": "Defense ({{participants}}/{{capacity}})"
-    },
-    "student": {
-      "empty": "You have no defense sessions scheduled."
-    },
-    "round": {
-      "title": "Defense Schedule",
-      "empty": "No defense sessions for this round."
     }
   }
 }
