@@ -59,7 +59,11 @@ export const RoundDefenseSchedulePage = ({ roundId }: RoundDefenseSchedulePagePr
               <DialogTitle>{t('defense.session.dialog.createTitle')}</DialogTitle>
               <DialogDescription>{t('defense.session.dialog.createDescription')}</DialogDescription>
             </DialogHeader>
-            <CreateDefenseSessionForm onSuccess={() => handleOpenChange(false)} initialDate={selectedDate} />
+            <CreateDefenseSessionForm
+              roundId={roundId}
+              initialDate={selectedDate}
+              onSuccess={() => handleOpenChange(false)}
+            />
           </DialogContent>
         </Dialog>
       </Guard>

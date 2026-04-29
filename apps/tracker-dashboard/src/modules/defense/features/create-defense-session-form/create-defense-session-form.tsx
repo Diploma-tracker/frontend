@@ -14,10 +14,12 @@ import { createDefenseSessionForm } from '../../models/create-defense-session-mo
 interface CreateDefenseSessionFormProps {
   onSuccess?: () => void;
   initialDate?: Date;
+  roundId: string;
 }
 
 export const CreateDefenseSessionForm = reatomComponent(function CreateDefenseSessionForm({
   onSuccess,
+  roundId,
   initialDate,
 }: CreateDefenseSessionFormProps) {
   const { t } = useTranslation();
@@ -29,6 +31,13 @@ export const CreateDefenseSessionForm = reatomComponent(function CreateDefenseSe
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialDate]);
+
+  useEffect(() => {
+    if (roundId) {
+      fields.allocationRoundId.set(roundId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roundId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
