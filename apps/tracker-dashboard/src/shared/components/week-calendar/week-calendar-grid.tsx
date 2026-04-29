@@ -35,7 +35,7 @@ export function WeekCalendarGrid({ isLoading, error, editable = true, ...props }
   }, [isBlocked, setIsInteractive]);
 
   useEffect(() => {
-    getFullCalendarLocale().then(setFcLocale);
+    getFullCalendarLocale().then((locale) => setFcLocale(locale as LocaleSingularArg | undefined));
   }, [i18n.language]);
 
   return (
