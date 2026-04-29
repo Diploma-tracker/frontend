@@ -1,19 +1,38 @@
-import { delay } from '@/shared/utils/delay';
-import { action, withAsync } from '@reatom/core';
+import { action, withAsync, wrap } from '@reatom/core';
+
+import { listUsers } from '@repo/api/iam';
+import type { LoginTokenUserRole, RoleFilter } from '@repo/api/model';
 
 export interface UserOption {
   value: string;
   label: string;
 }
 
-export const loadUserOptions = action(async (query: string): Promise<UserOption[]> => {
-  console.debug('query:', query);
-  await delay(1000);
+const SHOWN_USERS = 5;
 
-  // Return mock user options (replace with actual API call)
-  return [
-    { value: 'user1', label: 'User One' },
-    { value: 'user2', label: 'User Two' },
-    { value: 'user3', label: 'User Three' },
-  ];
+export const loadUserOptions = action(async (query: string, role?: LoginTokenUserRole): Promise<UserOption[]> => {
+  const roleFilterByRole: Record<LoginTokenUserRole, RoleFilter> = {
+    admin: 'ADMIN',
+    staff: 'STAFF',
+    student: 'STUDENT',
+  };
+  const roleFilter = role ? roleFilterByRole[role] : undefined;
+
+  const result = await wrap(
+    listUsers({
+      page: 1,
+      pageSize: SHOWN_USERS,
+      roleFilter,
+      search: query,
+    })
+  );
+
+  if (!result.ok) {
+    return [];
+  }
+
+  return result.data.items.map((u) => ({
+    value: u.id,
+    label: u.firstName + ' ' + u.lastName,
+  }));
 }, 'loadUserOptions').extend(withAsync());

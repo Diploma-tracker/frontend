@@ -29,7 +29,7 @@ export const UserSelectorField = reatomComponent(function UserSelectorField({
     <Field data-invalid={invalid || undefined}>
       {label && <FieldLabel>{label}</FieldLabel>}
 
-      <UserSelector handleChange={handleChange} />
+      <UserSelector role="student" handleChange={handleChange} />
 
       {description && <FieldDescription>{description}</FieldDescription>}
       {error && <FieldError>{error}</FieldError>}
