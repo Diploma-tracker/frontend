@@ -1,5 +1,6 @@
+import { useTranslation } from 'react-i18next';
+
 import { T } from '@/shared/components';
-import { t } from '@/shared/utils/i18n';
 import { calculatePercentage, formatPercentageString } from '@/shared/utils/percentage';
 import { UserCircleDashedIcon } from '@phosphor-icons/react';
 import { type ColumnDef } from '@tanstack/react-table';
@@ -52,6 +53,8 @@ const STATUS_ORDER: SupervisionApplicationStatus[] = ['PENDING', 'ACCEPTED', 'RE
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
+  const { t } = useTranslation();
+
   const stats = getTeacherApplicationsStats(teacher);
 
   if (!stats) {
@@ -80,12 +83,8 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
           <EmptyMedia variant="icon">
             <UserCircleDashedIcon />
           </EmptyMedia>
-          <EmptyTitle>
-            <T k="projectEnrollment.teacher.applicationsCell.empty.title" />
-          </EmptyTitle>
-          <EmptyDescription>
-            <T k="projectEnrollment.teacher.applicationsCell.empty.description" />
-          </EmptyDescription>
+          <EmptyTitle>{t('projectEnrollment.teacher.applicationsCell.empty.title')}</EmptyTitle>
+          <EmptyDescription>{t('projectEnrollment.teacher.applicationsCell.empty.description')}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -98,10 +97,10 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-semibold text-foreground">
-                <T k="projectEnrollment.teacher.applicationsCell.overview.title" />
+                {t('projectEnrollment.teacher.applicationsCell.overview.title')}
               </p>
               <p className="text-sm text-muted-foreground">
-                <T k="projectEnrollment.teacher.applicationsCell.overview.subtitle" />
+                {t('projectEnrollment.teacher.applicationsCell.overview.subtitle')}
               </p>
             </div>
 
