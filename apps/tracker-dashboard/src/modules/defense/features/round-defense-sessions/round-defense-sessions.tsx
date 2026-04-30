@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 

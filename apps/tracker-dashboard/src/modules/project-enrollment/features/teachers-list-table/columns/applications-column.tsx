@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
-import { T } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
+import { T } from '@/shared/utils/i18n';
 import { calculatePercentage, formatPercentageString } from '@/shared/utils/percentage';
 import { UserCircleDashedIcon } from '@phosphor-icons/react';
 import { type ColumnDef } from '@tanstack/react-table';

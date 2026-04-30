@@ -1,7 +1,6 @@
-import { useTranslation } from 'react-i18next';
-
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
 import { CalendarIcon, GraduationCapIcon, ListChecksIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 

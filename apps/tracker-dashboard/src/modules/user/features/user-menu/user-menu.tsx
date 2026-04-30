@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
 import { logoutAction } from '@/modules/auth';
+import { useTranslation } from '@/shared/utils/i18n';
 import { CaretUpDownIcon, SignOutIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 

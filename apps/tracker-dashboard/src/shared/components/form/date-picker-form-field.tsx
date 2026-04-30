@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { ComponentProps } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { getLocale } from '@/shared/utils/format-date';
+import { useTranslation } from '@/shared/utils/i18n';
 import type { FieldAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 

@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from '@/shared/utils/i18n';
 import { CaretRightIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 

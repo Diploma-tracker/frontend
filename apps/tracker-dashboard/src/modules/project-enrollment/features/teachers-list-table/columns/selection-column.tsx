@@ -1,4 +1,4 @@
-import { T } from '@/shared/components';
+import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';

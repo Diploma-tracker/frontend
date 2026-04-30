@@ -1,4 +1,4 @@
-import { T } from '@/shared/components';
+import { T } from '@/shared/utils/i18n';
 import { CalendarIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { type ColumnDef } from '@tanstack/react-table';

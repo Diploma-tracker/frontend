@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
-import { T } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
+import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { Badge, type BadgeProps } from '@repo/ui-kit/components/common/data-display/badge';

@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import {

@@ -1,4 +1,4 @@
-import { T } from '@/shared/components';
+import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { TeacherDTO } from '../../../models';

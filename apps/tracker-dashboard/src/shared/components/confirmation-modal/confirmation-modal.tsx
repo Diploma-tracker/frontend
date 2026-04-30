@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+
+import { useTranslation } from '@/shared/utils/i18n';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {

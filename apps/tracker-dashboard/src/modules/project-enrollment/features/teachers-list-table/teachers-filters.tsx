@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import { useDebounce } from '@/shared/utils/use-debounce';
 import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';

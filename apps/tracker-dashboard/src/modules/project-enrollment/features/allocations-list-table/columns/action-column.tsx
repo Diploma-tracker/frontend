@@ -1,5 +1,5 @@
-import { T } from '@/shared/components';
 import { actionCell } from '@/shared/components/table/action-cell';
+import { T } from '@/shared/utils/i18n';
 import { wrap } from '@reatom/core';
 import { type ColumnDef } from '@tanstack/react-table';
 

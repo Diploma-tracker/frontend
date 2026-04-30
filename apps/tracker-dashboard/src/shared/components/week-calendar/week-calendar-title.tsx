@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
 import { getLocale } from '@/shared/utils/format-date';
+import { useTranslation } from '@/shared/utils/i18n';
 
 import { Calendar } from '@repo/ui-kit/components/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui-kit/components/common/floating/popover';

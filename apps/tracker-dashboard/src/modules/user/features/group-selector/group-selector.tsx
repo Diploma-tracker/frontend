@@ -1,7 +1,6 @@
-import { useTranslation } from 'react-i18next';
-
 import { MultiSelect } from '@/shared/components';
 import { useMultiSelectModalShows } from '@/shared/components/form/multi-select';
+import { useTranslation } from '@/shared/utils/i18n';
 import { wrap } from '@reatom/core';
 
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';

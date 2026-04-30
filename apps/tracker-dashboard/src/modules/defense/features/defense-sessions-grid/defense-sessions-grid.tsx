@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
+import { useTranslation } from '@/shared/utils/i18n';
 import type { EventContentArg } from '@fullcalendar/core';
 import type { DateClickArg } from '@fullcalendar/interaction';
 

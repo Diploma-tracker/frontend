@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { PageLayout } from '@/layouts';
 import { Guard, permissions } from '@/modules/auth';
 import { CreateDefenseSessionForm, RoundDefenseSessions } from '@/modules/defense';
+import { useTranslation } from '@/shared/utils/i18n';
 import { PlusIcon } from '@phosphor-icons/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';

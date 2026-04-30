@@ -11,7 +11,5 @@ export { Container } from './layout/container/container';
 
 export { Logo } from './logo/logo';
 
-export { T } from './t/t';
-
 export { TablePagination } from './table/table-pagination';
 export { actionCell } from './table/action-cell';

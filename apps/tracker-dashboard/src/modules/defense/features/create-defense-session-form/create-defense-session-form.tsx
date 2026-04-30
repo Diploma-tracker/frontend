@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { GroupSelectorField, UserSelectorField } from '@/modules/user';
 import { DatePickerFormField, DurationPickerFormField, TextFormField } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
 import { CircleNotchIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 

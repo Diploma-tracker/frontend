@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from '@/shared/utils/i18n';
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';

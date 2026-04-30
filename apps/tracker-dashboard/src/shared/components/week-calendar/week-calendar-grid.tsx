@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import type { CalendarOptions, LocaleSingularArg } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';

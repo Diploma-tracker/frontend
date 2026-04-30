@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import FullCalendar from '@fullcalendar/react';
 
 import { WeekCalendarContext, type WeekView } from './context';
