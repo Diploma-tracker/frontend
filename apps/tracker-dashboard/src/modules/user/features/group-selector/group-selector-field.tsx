@@ -1,10 +1,10 @@
-import type { GroupOption } from '@/modules/defense';
 import { useSyncArrayFieldWithMultiSelect } from '@/shared/components/form/multi-select';
 import type { FieldArrayAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 
+import type { GroupOption } from '../../models/group-selector-model';
 import { GroupSelector } from './group-selector';
 
 interface GroupSelectorFieldProps {

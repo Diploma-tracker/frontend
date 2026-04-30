@@ -1,10 +1,10 @@
-import type { UserOption } from '@/modules/defense';
 import { useSyncArrayFieldWithMultiSelect } from '@/shared/components/form/multi-select';
 import type { FieldArrayAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 
+import type { UserOption } from '../../models/user-selector-model';
 import { UserSelector } from './user-selector';
 
 interface UserSelectorFieldProps {
