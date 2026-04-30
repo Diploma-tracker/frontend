@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 import { type ButtonProps } from '@repo/ui-kit/components/common/data-display/button';
 
 export interface Action<TData> {
-  action: (state: TData) => Promise<void>;
-  isActive: (state: TData) => boolean;
+  action?: (state: TData) => Promise<void>;
+  link?: (state: TData) => { to: string; params?: Record<string, string | number> };
+  isActive?: (state: TData) => boolean;
   key: string;
   label?: ReactNode;
   variant?: ButtonProps['variant'];
