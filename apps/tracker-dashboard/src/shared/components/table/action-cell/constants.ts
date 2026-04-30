@@ -1,7 +1,7 @@
 import type { Action, ActionColumnOptions } from './types';
 
 export const DEFAULT_ACTIONS_PARAMS: Partial<Action<unknown>> = {
-  isActive: () => false,
+  isActive: () => true,
   variant: 'outline',
   size: 'sm',
 };
