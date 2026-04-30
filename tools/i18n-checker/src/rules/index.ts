@@ -9,7 +9,9 @@ export type { KeyExtractionRule };
 
 /**
  * Build the static set of built-in extraction rules.
- * Rules are fixed — t('key') function calls and <T k="key" /> JSX components.
+ * Rules are fixed:
+ *   - t('key') / k('key') function calls
+ *   - <T k="key" /> JSX components
  *
  * Pass `customRulePaths` only when you need project-specific additions.
  */
@@ -17,7 +19,7 @@ export async function buildRules(
   customRulePaths: string[] = [],
 ): Promise<KeyExtractionRule[]> {
   const rules: KeyExtractionRule[] = [
-    createTFunctionRule(),
+    createTFunctionRule(["t", "k"]),
     createTComponentRule(),
   ];
 

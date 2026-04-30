@@ -15,6 +15,7 @@ interface AuditOptions {
   locale: string[];
   dir: string;
   include: string[];
+  ignore: string[];
   json?: string;
 }
 
@@ -40,6 +41,12 @@ export function registerAuditCommand(program: Command): void {
       collect,
       [],
     )
+    .option(
+      "--ignore <key>",
+      "Key or pattern to exclude from used-key analysis (repeatable, supports * wildcards)",
+      collect,
+      [],
+    )
     .option("--json <path>", "Write results to a JSON file at this path")
     .action(async (opts: AuditOptions) => {
       if (opts.locale.length < 1) {
@@ -53,6 +60,7 @@ export function registerAuditCommand(program: Command): void {
         localeArgs: opts.locale,
         dir: opts.dir,
         include: opts.include,
+        ignore: opts.ignore,
       });
 
       // Scan info

@@ -11,6 +11,8 @@ export interface AuditInput {
   dir: string;
   /** Glob patterns for files to include */
   include: string[];
+  /** Keys (or glob-style patterns) to exclude from used-key analysis */
+  ignore?: string[];
 }
 
 // ---- Output DTOs ----
@@ -44,9 +46,21 @@ export interface AuditResult {
 
 export async function audit(input: AuditInput): Promise<AuditResult> {
   const include = input.include.length > 0 ? input.include : ["**/*.{ts,tsx}"];
+  const ignorePatterns = input.ignore ?? [];
 
   const rules = await buildRules();
-  const usedKeys = await extractUsedKeys({ dir: input.dir, include, rules });
+  let usedKeys = await extractUsedKeys({ dir: input.dir, include, rules });
+
+  // Filter out ignored keys (exact match or simple glob: leading/trailing *)
+  if (ignorePatterns.length > 0) {
+    const filtered = new Set<string>();
+    for (const key of usedKeys) {
+      if (!ignorePatterns.some((p) => matchIgnorePattern(p, key))) {
+        filtered.add(key);
+      }
+    }
+    usedKeys = filtered;
+  }
 
   // Load locales
   const localesInfo: LocaleAuditInfo[] = [];
@@ -102,4 +116,28 @@ export async function audit(input: AuditInput): Promise<AuditResult> {
     localeGaps,
     isClean,
   };
+}
+
+// ---- Helpers ----
+
+/**
+ * Match an ignore pattern against a key.
+ * Supports:
+ *   - exact match: "draft"
+ *   - prefix glob: "foo.*"  (matches "foo.bar", "foo.bar.baz")
+ *   - full glob with leading *: "*foo*" → substring match
+ */
+function matchIgnorePattern(pattern: string, key: string): boolean {
+  if (pattern === key) return true;
+  if (pattern.endsWith(".*")) {
+    const prefix = pattern.slice(0, -2);
+    return key === prefix || key.startsWith(prefix + ".");
+  }
+  if (pattern.startsWith("*") || pattern.endsWith("*")) {
+    const regex = new RegExp(
+      "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$",
+    );
+    return regex.test(key);
+  }
+  return false;
 }
