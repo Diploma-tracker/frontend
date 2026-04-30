@@ -29,9 +29,10 @@ export const TeachersFilters = reatomComponent(function TeachersFilters() {
   const filter = teacherListAtom.filter();
   const setFilter = teacherListAtom.setFilter;
 
-  const [searchInput, setSearchInput] = useState(filter.search ?? '');
+  const [searchInput, setSearchInput] = useState(filter.search);
 
   useDebounce(() => {
+    if (searchInput === undefined) return;
     setFilter({ search: searchInput || undefined });
   }, [searchInput]);
 
