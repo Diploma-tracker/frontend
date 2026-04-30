@@ -14,7 +14,7 @@
     "format:fix": "prettier --write src/ --ignore-unknown",
     "check-types": "tsc --noEmit",
     "i18n:check-locales": "npx tsx ../../tools/i18n-checker/src/cli.ts check-locales --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json",
-    "i18n:audit": "npx tsx ../../tools/i18n-checker/src/cli.ts audit --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json --dir src",
+    "i18n:audit": "npx tsx ../../tools/i18n-checker/src/cli.ts audit --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json --dir src --ignore \"@fullcalendar/*\"",
     "i18n:fix": "npx tsx ../../tools/i18n-checker/src/cli.ts fix --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json --dir src",
     "i18n:fix:write": "npx tsx ../../tools/i18n-checker/src/cli.ts fix --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json --dir src --write"
   },

@@ -130,6 +130,12 @@
           "createSuccess": "Allocation round created successfully!",
           "createError": "Failed to create allocation round. Please try again."
         }
+      },
+      "status": {
+        "draft": "Draft",
+        "open": "Open",
+        "closed": "Closed",
+        "all": "All"
       }
     },
     "teacher": {
@@ -140,11 +146,16 @@
           "selected": "Selection",
           "applications": "Applications",
           "actions": "Actions"
-        }
+        },
+        "selected": "Selected",
+        "notSelected": "Not selected"
       },
       "filters": {
         "searchPlaceholder": "Search by name or email...",
-        "selectionPlaceholder": "Selection"
+        "selectionPlaceholder": "Selection",
+        "selectionAll": "All",
+        "selectionSelected": "Selected",
+        "selectionNotSelected": "Not selected"
       },
       "applicationsCell": {
         "overview": {

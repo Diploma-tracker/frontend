@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@/shared/utils/i18n';
+import { k, useTranslation } from '@/shared/utils/i18n';
 import { useDebounce } from '@/shared/utils/use-debounce';
 import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
@@ -19,9 +19,9 @@ import { teacherListAtom, type TeacherSelectionFilter } from '../../models';
 const SELECTION_VALUES = ['ALL', 'SELECTED', 'NOT_SELECTED'] as const;
 
 const SELECTION_LABEL_KEYS: Record<TeacherSelectionFilter, string> = {
-  ALL: 'projectEnrollment.teacher.filters.selectionAll',
-  SELECTED: 'projectEnrollment.teacher.filters.selectionSelected',
-  NOT_SELECTED: 'projectEnrollment.teacher.filters.selectionNotSelected',
+  ALL: k('projectEnrollment.teacher.filters.selectionAll'),
+  SELECTED: k('projectEnrollment.teacher.filters.selectionSelected'),
+  NOT_SELECTED: k('projectEnrollment.teacher.filters.selectionNotSelected'),
 };
 
 export const TeachersFilters = reatomComponent(function TeachersFilters() {

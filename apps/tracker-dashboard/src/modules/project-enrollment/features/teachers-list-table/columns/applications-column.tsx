@@ -1,4 +1,4 @@
-import { useTranslation } from '@/shared/utils/i18n';
+import { k, useTranslation } from '@/shared/utils/i18n';
 import { T } from '@/shared/utils/i18n';
 import { calculatePercentage, formatPercentageString } from '@/shared/utils/percentage';
 import { UserCircleDashedIcon } from '@phosphor-icons/react';
@@ -29,19 +29,19 @@ const STATUS_META: Record<
   }
 > = {
   PENDING: {
-    labelKey: 'projectEnrollment.teacher.applicationsCell.status.pending',
+    labelKey: k('projectEnrollment.teacher.applicationsCell.status.pending'),
     intent: 'pending',
     textClassName: 'text-pending',
     progressClassName: 'bg-pending/15 [&_[data-slot=progress-indicator]]:bg-pending',
   },
   ACCEPTED: {
-    labelKey: 'projectEnrollment.teacher.applicationsCell.status.accepted',
+    labelKey: k('projectEnrollment.teacher.applicationsCell.status.accepted'),
     intent: 'success',
     textClassName: 'text-success',
     progressClassName: 'bg-success/15 [&_[data-slot=progress-indicator]]:bg-success',
   },
   REJECTED: {
-    labelKey: 'projectEnrollment.teacher.applicationsCell.status.rejected',
+    labelKey: k('projectEnrollment.teacher.applicationsCell.status.rejected'),
     intent: 'destructive',
     textClassName: 'text-destructive',
     progressClassName: 'bg-destructive/15 [&_[data-slot=progress-indicator]]:bg-destructive',

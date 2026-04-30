@@ -14,6 +14,6 @@ export const T = ({ k }: TProps): string => {
 
 export const t = (key: string): string => i18n.t(key);
 
-export const k = (key: string): string => key;
+export const k = <T>(key: T): T => key;
 
 export const useTranslation = useTranslationRaw as () => UseTranslationResponse<'translation', undefined>;

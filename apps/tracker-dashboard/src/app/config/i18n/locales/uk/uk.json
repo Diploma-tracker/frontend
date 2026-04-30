@@ -130,6 +130,12 @@
           "createSuccess": "Раунд розподілу успішно створено!",
           "createError": "Не вдалося створити раунд розподілу. Спробуйте ще раз."
         }
+      },
+      "status": {
+        "draft": "Чернетка",
+        "open": "Відкрито",
+        "closed": "Закрито",
+        "all": "Всі"
       }
     },
     "teacher": {
@@ -140,11 +146,16 @@
           "selected": "Вибір",
           "applications": "Заявки",
           "actions": "Дії"
-        }
+        },
+        "selected": "Обрано",
+        "notSelected": "Не обрано"
       },
       "filters": {
         "searchPlaceholder": "Пошук за імʼям або поштою...",
-        "selectionPlaceholder": "Вибір"
+        "selectionPlaceholder": "Вибір",
+        "selectionAll": "Всі",
+        "selectionSelected": "Обрані",
+        "selectionNotSelected": "Не обрані"
       },
       "applicationsCell": {
         "overview": {

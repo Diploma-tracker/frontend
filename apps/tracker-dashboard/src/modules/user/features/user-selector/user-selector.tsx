@@ -1,6 +1,6 @@
 import { MultiSelect } from '@/shared/components';
 import { useMultiSelectModalShows } from '@/shared/components/form/multi-select';
-import { useTranslation } from '@/shared/utils/i18n';
+import { k, useTranslation } from '@/shared/utils/i18n';
 
 import { LoginTokenUserRole } from '@repo/api/model';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
@@ -11,16 +11,16 @@ interface UserSelectorContentProps {
   role?: LoginTokenUserRole;
 }
 
+const ROLE_TO_ACTOR_NAME: Record<LoginTokenUserRole, string> = {
+  [LoginTokenUserRole.admin]: k('user.roles.admin'),
+  [LoginTokenUserRole.staff]: k('user.roles.staff'),
+  [LoginTokenUserRole.student]: k('user.roles.student'),
+};
+
 export function UserSelectorContent({ role }: UserSelectorContentProps) {
   const { t } = useTranslation();
   const { showSelected, showSuggestions, showEmpty } = useMultiSelectModalShows();
-
-  const roleToActorName: Record<LoginTokenUserRole, string> = {
-    [LoginTokenUserRole.admin]: t('user.roles.admin'),
-    [LoginTokenUserRole.staff]: t('user.roles.staff'),
-    [LoginTokenUserRole.student]: t('user.roles.student'),
-  };
-  const actorName = role ? roleToActorName[role] : '';
+  const actorName = role ? t(ROLE_TO_ACTOR_NAME[role]) : '';
 
   return (
     <>
