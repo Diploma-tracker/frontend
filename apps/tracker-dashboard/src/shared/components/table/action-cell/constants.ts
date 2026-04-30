@@ -2,13 +2,10 @@ import type { Action, ActionColumnOptions } from './types';
 
 export const DEFAULT_ACTIONS_PARAMS: Partial<Action<unknown>> = {
   isActive: () => true,
-  variant: 'outline',
-  size: 'sm',
+  variant: 'default',
 };
 
 export const DEFAULT_MODAL_PARAMS: Partial<Action<unknown>['modal']> = {
-  confirmVariant: 'solid',
-  confirmIntent: 'primary',
   enablePendingState: false,
 };
 

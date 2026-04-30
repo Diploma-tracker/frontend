@@ -4,6 +4,7 @@ import { ConfirmationModal } from '@/shared/components';
 
 import { DEFAULT_MODAL_PARAMS } from './constants';
 import type { Action } from './types';
+import { actionToButton } from './utils';
 
 interface ActionConfirmationModalProps<TData> {
   action: Action<TData>;
@@ -23,12 +24,12 @@ export const ActionConfirmationModal = <TData,>({
 
   const handleConfirm = async () => {
     if (!modal?.enablePendingState) {
-      await action.action(state);
+      await action.action?.(state);
       onOpenChange(false);
       return;
     }
     setIsPending(true);
-    await action.action(state);
+    await action.action?.(state);
     setIsPending(false);
     onOpenChange(false);
   };
@@ -36,6 +37,8 @@ export const ActionConfirmationModal = <TData,>({
   const handleOpenChange = (value: boolean) => {
     if (!isPending) onOpenChange(value);
   };
+
+  const confirmButtonVariant = actionToButton(action.variant, false);
 
   return (
     <ConfirmationModal
@@ -47,8 +50,8 @@ export const ActionConfirmationModal = <TData,>({
       description={modal?.description}
       confirmLabel={modal?.confirmLabel}
       cancelLabel={modal?.cancelLabel}
-      confirmVariant={modal?.confirmVariant}
-      confirmIntent={modal?.confirmIntent}
+      confirmVariant={confirmButtonVariant.variant}
+      confirmIntent={confirmButtonVariant.intent}
     />
   );
 };

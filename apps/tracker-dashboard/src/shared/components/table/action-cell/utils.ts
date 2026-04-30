@@ -1,7 +1,9 @@
 import { router } from '@/app/config/router';
 
+import type { ButtonProps } from '@repo/ui-kit/components/common/data-display/button';
+
 import { DEFAULT_ACTIONS_PARAMS } from './constants';
-import type { Action } from './types';
+import type { Action, ActionVatiant } from './types';
 
 export const preprocessActions = <TData>(actions: Action<TData>[]): Action<TData>[] => {
   return actions.map((action) => {
@@ -29,4 +31,25 @@ export const preprocessActions = <TData>(actions: Action<TData>[]): Action<TData
 
     return newAction;
   });
+};
+
+export const actionToButton = (
+  variant: ActionVatiant | undefined,
+  isIcon: boolean
+): {
+  variant?: ButtonProps['variant'];
+  intent?: ButtonProps['intent'];
+  size?: ButtonProps['size'];
+} => {
+  const isDestructive = variant === 'destructive';
+  const intent = isDestructive ? 'destructive' : 'neutral';
+
+  if (isIcon) {
+    return { variant: 'ghost', intent, size: 'icon-sm' };
+  }
+
+  return {
+    variant: isDestructive ? 'solid' : 'default',
+    intent,
+  };
 };
