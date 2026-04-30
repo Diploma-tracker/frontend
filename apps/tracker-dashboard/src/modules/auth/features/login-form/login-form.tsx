@@ -1,7 +1,6 @@
 // import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
-import { useTranslation } from 'react-i18next';
-
 import { PasswordFormField, TextFormField } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
 import { CircleNotchIcon, MicrosoftOutlookLogoIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 

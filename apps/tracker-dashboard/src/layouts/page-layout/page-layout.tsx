@@ -6,17 +6,19 @@ import { Container } from '@/shared/components';
 
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@repo/ui-kit/components/sidebar';
+import { cn } from '@repo/ui-kit/lib/utils';
 
 interface PageLayoutProps {
   children: ReactNode;
+  height?: 'auto' | 'screen';
 }
 
-export const PageLayout = ({ children }: PageLayoutProps) => {
+export const PageLayout = ({ children, height = 'auto' }: PageLayoutProps) => {
   return (
     <SidebarProvider>
       <AppSidebar />
 
-      <SidebarInset>
+      <SidebarInset className={cn('', { 'flex h-screen max-h-screen flex-col': height === 'screen' })}>
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
@@ -29,9 +31,13 @@ export const PageLayout = ({ children }: PageLayoutProps) => {
           </div>
         </header>
 
-        <main className="flex flex-1 flex-col">
-          <Container className="py-10">{children}</Container>
-        </main>
+        <Container
+          className={cn('flex-1 py-10', {
+            'overflow-hidden': height === 'screen',
+          })}
+        >
+          {children}
+        </Container>
       </SidebarInset>
     </SidebarProvider>
   );

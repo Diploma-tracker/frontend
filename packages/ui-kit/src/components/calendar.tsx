@@ -8,6 +8,7 @@ import {
 } from 'react-day-picker';
 
 import { CaretDownIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
+import { format, type Locale } from 'date-fns';
 
 import { cn } from '../lib/utils';
 import { Button, buttonVariants } from './common/data-display/button';
@@ -20,6 +21,7 @@ function Calendar({
   buttonVariant = 'ghost',
   formatters,
   components,
+  locale,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
@@ -29,6 +31,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      locale={locale}
       className={cn(
         'ui:group/calendar ui:bg-background ui:p-3 ui:[--cell-size:--spacing(8)] ui:in-data-[slot=card-content]:bg-transparent ui:in-data-[slot=popover-content]:bg-transparent',
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
@@ -37,7 +40,7 @@ function Calendar({
       )}
       captionLayout={captionLayout}
       formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString('default', { month: 'short' }),
+        formatMonthDropdown: (date) => format(date, 'LLL', locale ? { locale: locale as Locale } : undefined),
         ...formatters,
       }}
       classNames={{

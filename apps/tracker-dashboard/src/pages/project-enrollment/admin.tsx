@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { PageLayout } from '@/layouts';
 import {
@@ -8,7 +7,8 @@ import {
   AllocationRoundsPagination,
   AllocationsListTable,
 } from '@/modules/project-enrollment';
-import { T } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
+import { T } from '@/shared/utils/i18n';
 import { PlusIcon } from '@phosphor-icons/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';

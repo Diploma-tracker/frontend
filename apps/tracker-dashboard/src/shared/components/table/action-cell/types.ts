@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react';
 
-import { type ButtonProps } from '@repo/ui-kit/components/common/data-display/button';
+export type ActionVatiant = 'default' | 'destructive';
 
 export interface Action<TData> {
-  action: (state: TData) => Promise<void>;
-  isActive: (state: TData) => boolean;
   key: string;
   label?: ReactNode;
-  variant?: ButtonProps['variant'];
-  size?: ButtonProps['size'];
-  intent?: ButtonProps['intent'];
+  icon?: ReactNode;
+  isActive?: (state: TData) => boolean;
+  variant?: ActionVatiant;
+  action?: (state: TData) => Promise<void>;
+  link?: (state: TData) => { to: string; params?: Record<string, string | number> };
   onSuccess?: (state: TData) => void;
   onError?: (state: TData, error: unknown) => void;
   modal?: {
@@ -17,8 +17,6 @@ export interface Action<TData> {
     description?: ReactNode;
     confirmLabel?: ReactNode;
     cancelLabel?: ReactNode;
-    confirmVariant?: ButtonProps['variant'];
-    confirmIntent?: ButtonProps['intent'];
     // If true, the confirmation button will show a loading state while the action is being executed.
     enablePendingState?: boolean;
   };

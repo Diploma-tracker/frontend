@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next';
-
-import { T } from '@/shared/components';
+import { k, useTranslation } from '@/shared/utils/i18n';
+import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { Badge, type BadgeProps } from '@repo/ui-kit/components/common/data-display/badge';
@@ -14,9 +13,9 @@ const STATUS_CLASS: Record<AllocationRoundStatus, BadgeProps['intent']> = {
 };
 
 const STATUS_LABEL_KEY: Record<AllocationRoundStatus, string> = {
-  DRAFT: 'projectEnrollment.allocationRound.status.draft',
-  OPEN: 'projectEnrollment.allocationRound.status.open',
-  CLOSED: 'projectEnrollment.allocationRound.status.closed',
+  DRAFT: k('projectEnrollment.allocationRound.status.draft'),
+  OPEN: k('projectEnrollment.allocationRound.status.open'),
+  CLOSED: k('projectEnrollment.allocationRound.status.closed'),
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import type { RequiredDefined } from '@/shared/utils/types';
 import { type Row } from '@tanstack/react-table';
 
 import { ActionCellButton, ActionCellDropdown } from './action-cell-triggers';
@@ -9,7 +10,7 @@ import type { Action, ActionColumnOptions } from './types';
 import { preprocessActions } from './utils';
 
 export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionColumnOptions) => {
-  const processedActions = preprocessActions(actions);
+  const processedActions = preprocessActions(actions) as RequiredDefined<Action<TData>, 'action' | 'isActive'>[];
   const mergedOptions = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
 
   // eslint-disable-next-line react/display-name

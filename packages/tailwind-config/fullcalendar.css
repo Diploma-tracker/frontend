@@ -1,0 +1,98 @@
+/* FullCalendar theme overrides using design tokens */
+/* Included via @repo/tailwind-config so overrides are available globally */
+
+/* Calendar base */
+.fc {
+  color: var(--foreground) !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* Grid borders */
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: var(--border) !important;
+}
+
+/* Column day headers (Mon, Tue, …) */
+.fc .fc-col-header-cell,
+.fc .fc-col-header .fc-timegrid-axis {
+  background-color: var(--accent) !important;
+}
+
+.fc .fc-col-header .fc-day-today {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 10%,
+    var(--accent)
+  ) !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: var(--foreground) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  padding-block: 0.5rem !important;
+}
+.fc .fc-col-header-cell-cushion:hover {
+  color: var(--primary) !important;
+}
+
+/* Time slot labels */
+.fc .fc-timegrid-slot-label-cushion {
+  color: var(--muted-foreground) !important;
+  font-size: 0.75rem !important;
+}
+
+/* Day numbers (month view fallback) */
+.fc .fc-daygrid-day-number {
+  color: var(--muted-foreground) !important;
+  font-size: 0.8125rem !important;
+  text-decoration: none !important;
+}
+
+/* Today highlight */
+.fc .fc-day-today {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 10%,
+    transparent
+  ) !important;
+}
+.fc .fc-day-today .fc-col-header-cell-cushion {
+  color: var(--primary) !important;
+}
+
+/* Now indicator */
+.fc .fc-timegrid-now-indicator-line {
+  border-color: var(--primary) !important;
+}
+.fc .fc-timegrid-now-indicator-arrow {
+  border-color: var(--primary) !important;
+}
+
+/* Draggable cursor */
+.fc-event:not(.fc-event-mirror) {
+  cursor: grab !important;
+}
+.fc-event.fc-event-dragging {
+  cursor: grabbing !important;
+  opacity: 0.85 !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Strip all default FC event chrome — custom component owns the visuals */
+.fc-event {
+  background: transparent !important;
+  border: none !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.fc-event .fc-event-main {
+  padding: 0 !important;
+  color: inherit !important;
+}

@@ -1,5 +1,5 @@
-import { T } from '@/shared/components';
 import { formatDate } from '@/shared/utils/format-date';
+import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { AllocationRoundDTO } from '../../../models';

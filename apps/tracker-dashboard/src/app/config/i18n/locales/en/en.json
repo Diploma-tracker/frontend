@@ -36,7 +36,8 @@
       "projects": "Projects",
       "diploma1": "Diploma 1",
       "diploma2": "Diploma 2",
-      "projectEnrollment": "Project Enrollment"
+      "projectEnrollment": "Project Enrollment",
+      "schedule": "Schedule"
     }
   },
   "user": {
@@ -44,16 +45,34 @@
     "password": {
       "show": "Show password",
       "hide": "Hide password"
+    },
+    "roles": {
+      "admin": "Admin",
+      "staff": "Staff",
+      "student": "Student"
+    },
+    "selector": {
+      "placeholder": "Select {{name}}",
+      "searchPlaceholder": "Search {{name}}...",
+      "selected": "Selected",
+      "noResults": "No results found.",
+      "startTyping": "Start typing to see suggestions."
+    },
+    "groupSelector": {
+      "placeholder": "Select group",
+      "searchPlaceholder": "Search group..."
+    }
+  },
+  "schedule": {
+    "pickWeek": "Pick a week",
+    "toolbar": {
+      "today": "Today",
+      "workWeek": "Work week",
+      "fullWeek": "Full week"
     }
   },
   "projectEnrollment": {
     "allocationRound": {
-      "status": {
-        "all": "All statuses",
-        "draft": "Draft",
-        "open": "Open",
-        "closed": "Closed"
-      },
       "filters": {
         "statusPlaceholder": "Status"
       },
@@ -63,7 +82,11 @@
           "startDate": "Start date",
           "endDate": "End date",
           "status": "Status",
+          "schedule": "Schedule",
           "actions": "Actions"
+        },
+        "actions": {
+          "viewSchedule": "View schedule"
         }
       },
       "actions": {
@@ -107,24 +130,30 @@
           "createSuccess": "Allocation round created successfully!",
           "createError": "Failed to create allocation round. Please try again."
         }
+      },
+      "status": {
+        "draft": "Draft",
+        "open": "Open",
+        "closed": "Closed",
+        "all": "All"
       }
     },
     "teacher": {
       "table": {
-        "selected": "Selected",
-        "notSelected": "Not selected",
         "columns": {
           "name": "Name",
           "email": "Email",
           "selected": "Selection",
           "applications": "Applications",
           "actions": "Actions"
-        }
+        },
+        "selected": "Selected",
+        "notSelected": "Not selected"
       },
       "filters": {
         "searchPlaceholder": "Search by name or email...",
         "selectionPlaceholder": "Selection",
-        "selectionAll": "All teachers",
+        "selectionAll": "All",
         "selectionSelected": "Selected",
         "selectionNotSelected": "Not selected"
       },
@@ -145,8 +174,6 @@
         }
       },
       "actions": {
-        "add": "Add to round",
-        "remove": "Remove from round",
         "confirmAdd": {
           "title": "Add teacher to round?",
           "description": "This teacher will be included in the allocation round and will be available for student applications."
@@ -154,12 +181,38 @@
         "confirmRemove": {
           "title": "Remove teacher from round?",
           "description": "This teacher will be removed from the allocation round. This action cannot be undone."
+        }
+      }
+    }
+  },
+  "defense": {
+    "error": "Failed to load sessions.",
+    "session": {
+      "title": "Defense ({{participants}}/{{capacity}})",
+      "dialog": {
+        "createTitle": "Create Defense Session",
+        "createDescription": "Fill in the details to schedule a new defense session.",
+        "createAriaLabel": "Create defense session"
+      },
+      "form": {
+        "dateLabel": "Date & time",
+        "datePlaceholder": "Pick date and time",
+        "durationLabel": "Duration",
+        "capacityLabel": "Capacity",
+        "capacityPlaceholder": "e.g. 5",
+        "allowedStudentsLabel": "Allowed students",
+        "groupsLabel": "Allowed groups",
+        "submitButton": "Create session",
+        "validation": {
+          "allocationRoundRequired": "Allocation round is required",
+          "dateRequired": "Date is required",
+          "durationRequired": "Duration is required",
+          "capacityRequired": "Capacity is required",
+          "capacityPositive": "Capacity must be a positive number"
         },
         "toast": {
-          "addSuccess": "Teacher added to round successfully!",
-          "addError": "Failed to add teacher. Please try again.",
-          "removeSuccess": "Teacher removed from round successfully!",
-          "removeError": "Failed to remove teacher. Please try again."
+          "createSuccess": "Defense session created successfully!",
+          "createError": "Failed to create defense session. Please try again."
         }
       }
     }

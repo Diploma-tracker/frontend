@@ -1,0 +1,24 @@
+{
+  "name": "@tools/i18n-checker",
+  "version": "1.0.0",
+  "description": "CLI tool to check i18n locale key consistency and audit used/dead keys",
+  "type": "module",
+  "bin": {
+    "i18n-checker": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "check-locales": "tsx src/cli.ts check-locales",
+    "audit": "tsx src/cli.ts audit"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.0"
+  }
+}

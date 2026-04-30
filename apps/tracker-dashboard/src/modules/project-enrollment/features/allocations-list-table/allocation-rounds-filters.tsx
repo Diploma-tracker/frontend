@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-
+import { k, useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import {
@@ -17,10 +16,10 @@ const STATUS_VALUES = ['ALL', 'DRAFT', 'OPEN', 'CLOSED'] as const;
 type StatusValue = (typeof STATUS_VALUES)[number];
 
 const STATUS_LABEL_KEYS: Record<StatusValue, string> = {
-  ALL: 'projectEnrollment.allocationRound.status.all',
-  DRAFT: 'projectEnrollment.allocationRound.status.draft',
-  OPEN: 'projectEnrollment.allocationRound.status.open',
-  CLOSED: 'projectEnrollment.allocationRound.status.closed',
+  ALL: k('projectEnrollment.allocationRound.status.all'),
+  DRAFT: k('projectEnrollment.allocationRound.status.draft'),
+  OPEN: k('projectEnrollment.allocationRound.status.open'),
+  CLOSED: k('projectEnrollment.allocationRound.status.closed'),
 };
 
 export const AllocationRoundsFilters = reatomComponent(function AllocationRoundsFilters() {
