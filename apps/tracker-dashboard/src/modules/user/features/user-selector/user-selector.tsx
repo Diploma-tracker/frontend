@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { MultiSelect } from '@/shared/components';
 import { useMultiSelectModalShows } from '@/shared/components/form/multi-select';
 
@@ -11,24 +13,25 @@ interface UserSelectorContentProps {
 }
 
 export function UserSelectorContent({ role }: UserSelectorContentProps) {
+  const { t } = useTranslation();
   const { showSelected, showSuggestions, showEmpty } = useMultiSelectModalShows();
 
   const roleToActorName: Record<LoginTokenUserRole, string> = {
-    [LoginTokenUserRole.admin]: 'Admin',
-    [LoginTokenUserRole.staff]: 'Staff',
-    [LoginTokenUserRole.student]: 'Student',
+    [LoginTokenUserRole.admin]: t('user.roles.admin'),
+    [LoginTokenUserRole.staff]: t('user.roles.staff'),
+    [LoginTokenUserRole.student]: t('user.roles.student'),
   };
   const actorName = role ? roleToActorName[role] : '';
 
   return (
     <>
-      <MultiSelect.Trigger visibleChips={2} placeholder={`Select ${actorName}`} />
+      <MultiSelect.Trigger visibleChips={2} placeholder={t('user.selector.placeholder', { name: actorName })} />
       <MultiSelect.Modal>
-        <MultiSelect.Search placeholder={`Search ${actorName}...`} />
+        <MultiSelect.Search placeholder={t('user.selector.searchPlaceholder', { name: actorName })} />
         <div className="flex flex-col gap-1">
           {showSelected && (
             <>
-              <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Selected</p>
+              <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">{t('user.selector.selected')}</p>
               <div className="scroll-py-1 overflow-y-auto p-1">
                 <MultiSelect.SelectedOptions />
               </div>
@@ -41,7 +44,7 @@ export function UserSelectorContent({ role }: UserSelectorContentProps) {
             </div>
           )}
         </div>
-        <MultiSelect.Placeholders />
+        <MultiSelect.Placeholders empty={t('user.selector.noResults')} placeholder={t('user.selector.startTyping')} />
       </MultiSelect.Modal>
     </>
   );

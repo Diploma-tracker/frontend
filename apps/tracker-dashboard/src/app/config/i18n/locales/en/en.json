@@ -45,6 +45,22 @@
     "password": {
       "show": "Show password",
       "hide": "Hide password"
+    },
+    "roles": {
+      "admin": "Admin",
+      "staff": "Staff",
+      "student": "Student"
+    },
+    "selector": {
+      "placeholder": "Select {{name}}",
+      "searchPlaceholder": "Search {{name}}...",
+      "selected": "Selected",
+      "noResults": "No results found.",
+      "startTyping": "Start typing to see suggestions."
+    },
+    "groupSelector": {
+      "placeholder": "Select group",
+      "searchPlaceholder": "Search group..."
     }
   },
   "schedule": {
@@ -66,7 +82,11 @@
           "startDate": "Start date",
           "endDate": "End date",
           "status": "Status",
+          "schedule": "Schedule",
           "actions": "Actions"
+        },
+        "actions": {
+          "viewSchedule": "View schedule"
         }
       },
       "actions": {
@@ -114,8 +134,6 @@
     },
     "teacher": {
       "table": {
-        "selected": "Selected",
-        "notSelected": "Not selected",
         "columns": {
           "name": "Name",
           "email": "Email",
@@ -145,8 +163,6 @@
         }
       },
       "actions": {
-        "add": "Add to round",
-        "remove": "Remove from round",
         "confirmAdd": {
           "title": "Add teacher to round?",
           "description": "This teacher will be included in the allocation round and will be available for student applications."
@@ -161,7 +177,33 @@
   "defense": {
     "error": "Failed to load sessions.",
     "session": {
-      "title": "Defense ({{participants}}/{{capacity}})"
+      "title": "Defense ({{participants}}/{{capacity}})",
+      "dialog": {
+        "createTitle": "Create Defense Session",
+        "createDescription": "Fill in the details to schedule a new defense session.",
+        "createAriaLabel": "Create defense session"
+      },
+      "form": {
+        "dateLabel": "Date & time",
+        "datePlaceholder": "Pick date and time",
+        "durationLabel": "Duration",
+        "capacityLabel": "Capacity",
+        "capacityPlaceholder": "e.g. 5",
+        "allowedStudentsLabel": "Allowed students",
+        "groupsLabel": "Allowed groups",
+        "submitButton": "Create session",
+        "validation": {
+          "allocationRoundRequired": "Allocation round is required",
+          "dateRequired": "Date is required",
+          "durationRequired": "Duration is required",
+          "capacityRequired": "Capacity is required",
+          "capacityPositive": "Capacity must be a positive number"
+        },
+        "toast": {
+          "createSuccess": "Defense session created successfully!",
+          "createError": "Failed to create defense session. Please try again."
+        }
+      }
     }
   }
 }

@@ -45,6 +45,22 @@
     "password": {
       "show": "Показати пароль",
       "hide": "Сховати пароль"
+    },
+    "roles": {
+      "admin": "Адмін",
+      "staff": "Персонал",
+      "student": "Студент"
+    },
+    "selector": {
+      "placeholder": "Обрати {{name}}",
+      "searchPlaceholder": "Пошук {{name}}...",
+      "selected": "Обрані",
+      "noResults": "Результатів не знайдено.",
+      "startTyping": "Почніть вводити текст для пошуку."
+    },
+    "groupSelector": {
+      "placeholder": "Обрати групу",
+      "searchPlaceholder": "Пошук групи..."
     }
   },
   "schedule": {
@@ -66,7 +82,11 @@
           "startDate": "Дата початку",
           "endDate": "Дата завершення",
           "status": "Статус",
+          "schedule": "Розклад",
           "actions": "Дії"
+        },
+        "actions": {
+          "viewSchedule": "Переглянути розклад"
         }
       },
       "actions": {
@@ -114,8 +134,6 @@
     },
     "teacher": {
       "table": {
-        "selected": "Вибрано",
-        "notSelected": "Не вибрано",
         "columns": {
           "name": "Імʼя",
           "email": "Електронна пошта",
@@ -145,8 +163,6 @@
         }
       },
       "actions": {
-        "add": "Додати до раунду",
-        "remove": "Видалити з раунду",
         "confirmAdd": {
           "title": "Додати викладача до раунду?",
           "description": "Цей викладач буде включений до раунду розподілу та стане доступним для заявок студентів."
@@ -161,7 +177,33 @@
   "defense": {
     "error": "Не вдалося завантажити сесії.",
     "session": {
-      "title": "Захист ({{participants}}/{{capacity}})"
+      "title": "Захист ({{participants}}/{{capacity}})",
+      "dialog": {
+        "createTitle": "Створити сесію захисту",
+        "createDescription": "Заповніть деталі для планування нової сесії захисту.",
+        "createAriaLabel": "Створити сесію захисту"
+      },
+      "form": {
+        "dateLabel": "Дата та час",
+        "datePlaceholder": "Оберіть дату та час",
+        "durationLabel": "Тривалість",
+        "capacityLabel": "Місткість",
+        "capacityPlaceholder": "напр. 5",
+        "allowedStudentsLabel": "Дозволені студенти",
+        "groupsLabel": "Дозволені групи",
+        "submitButton": "Створити сесію",
+        "validation": {
+          "allocationRoundRequired": "Раунд розподілу є обов'язковим",
+          "dateRequired": "Дата є обов'язковою",
+          "durationRequired": "Тривалість є обов'язковою",
+          "capacityRequired": "Місткість є обов'язковою",
+          "capacityPositive": "Місткість має бути додатнім числом"
+        },
+        "toast": {
+          "createSuccess": "Сесію захисту успішно створено!",
+          "createError": "Не вдалося створити сесію захисту. Спробуйте ще раз."
+        }
+      }
     }
   }
 }
