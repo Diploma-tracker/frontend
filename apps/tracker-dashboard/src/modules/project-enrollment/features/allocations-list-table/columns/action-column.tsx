@@ -30,5 +30,10 @@ export const ActionColumn: ColumnDef<AllocationRoundDTO> = {
         description: <T k="projectEnrollment.allocationRound.actions.confirmClose.description" />,
       },
     },
+    {
+      key: 'schedule',
+      label: <T k="projectEnrollment.allocationRound.table.actions.viewSchedule" />,
+      link: ({ id }) => ({ to: '/defense/$roundId', params: { roundId: id } }),
+    },
   ]),
 };
