@@ -21,7 +21,7 @@ export const deleteDefenseSessionAction = action(async (sessionId: string) => {
     throw new Error(response.error?.message ?? t('defense.session.toast.deleteError'));
   }
   return response.data;
-}, 'deleteDefenseSessionAction').extend(withAsync());
+}, 'deleteDefenseSessionAction').extend(withAsync({ status: true }));
 
 export interface RescheduleDefenseSessionValues {
   sessionId: string;
@@ -41,7 +41,7 @@ export const rescheduleDefenseSessionAction = action(async (values: RescheduleDe
   }
   toast.success(t('defense.session.toast.rescheduleSuccess'));
   return response.data;
-}, 'rescheduleDefenseSessionAction').extend(withAsync());
+}, 'rescheduleDefenseSessionAction').extend(withAsync({ status: true }));
 
 export interface UpdateDefenseSessionValues {
   sessionId: string;
@@ -67,7 +67,7 @@ export const updateDefenseSessionAction = action(async (values: UpdateDefenseSes
   }
   toast.success(t('defense.session.toast.updateSuccess'));
   return response.data;
-}, 'updateDefenseSessionAction').extend(withAsync());
+}, 'updateDefenseSessionAction').extend(withAsync({ status: true }));
 
 export const registerForDefenseSessionAction = action(async (sessionId: string) => {
   const response = await wrap(registerForDefenseSession(sessionId, {}));
@@ -76,7 +76,7 @@ export const registerForDefenseSessionAction = action(async (sessionId: string) 
   }
   toast.success(t('defense.session.toast.registerSuccess'));
   return response.data;
-}, 'registerForDefenseSessionAction').extend(withAsync());
+}, 'registerForDefenseSessionAction').extend(withAsync({ status: true }));
 
 export const unregisterFromDefenseSessionAction = action(async (sessionId: string) => {
   const response = await wrap(unregisterFromDefenseSession(sessionId));
@@ -85,7 +85,7 @@ export const unregisterFromDefenseSessionAction = action(async (sessionId: strin
   }
   toast.success(t('defense.session.toast.unregisterSuccess'));
   return response.data;
-}, 'unregisterFromDefenseSessionAction').extend(withAsync());
+}, 'unregisterFromDefenseSessionAction').extend(withAsync({ status: true }));
 
 export const defenseSessionDetailsQuery = query(
   async (sessionId: string) => {
@@ -100,3 +100,8 @@ export const defenseSessionDetailsQuery = query(
     ttl: 5 * 60 * 1000, // Cache for 5 minutes
   }
 );
+
+export const isStudentRegisteredForSession = (session: DefenseSessionDetailsDTO | null, studentId: string): boolean => {
+  if (!session || !session.participants) return false;
+  return session.participants.some((participant) => participant.id === studentId);
+};
