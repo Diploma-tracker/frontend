@@ -83,8 +83,8 @@ export const AdminActions = reatomComponent(function AdminActions() {
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('defense.session.dialog.createTitle')}</DialogTitle>
-            <DialogDescription>{t('defense.session.dialog.createDescription')}</DialogDescription>
+            <DialogTitle>{t('defense.session.detail.editModalTitle')}</DialogTitle>
+            <DialogDescription>{t('defense.session.detail.editModalDescription')}</DialogDescription>
           </DialogHeader>
           <EditDefenseSessionForm
             sessionId={sessionId ?? ''}
