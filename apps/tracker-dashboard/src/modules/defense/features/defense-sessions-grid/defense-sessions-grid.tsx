@@ -3,6 +3,7 @@ import { DefenseSessionDetailDialog, defenseSessionDialogAtom } from '@/modules/
 import { userAtom } from '@/modules/user';
 import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
+import { formatDateTime } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
 import { intervalToISODuration } from '@/shared/utils/iso-duration';
 import type { EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
@@ -146,7 +147,7 @@ export const DefenseSessionsGrid = reatomComponent(function DefenseSessionsGrid(
         }}
         title={t('defense.session.reschedule.confirmTitle')}
         description={t('defense.session.reschedule.confirmDescription', {
-          date: pending ? new Date(pending.newDate).toLocaleString() : '',
+          date: pending ? (formatDateTime(pending.newDate) ?? '') : '',
         })}
         confirmLabel={t('defense.session.reschedule.confirmButton')}
         isPending={isRescheduling}

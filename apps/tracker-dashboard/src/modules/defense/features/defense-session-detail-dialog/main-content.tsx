@@ -1,20 +1,10 @@
 import { useQuery } from '@/shared/model/query';
+import { formatDateTime } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
 import { formatDurationToReadable, parseISODuration } from '@/shared/utils/iso-duration';
 import { reatomComponent } from '@reatom/react';
 
 import { defenseSessionDetailsQuery } from '../../models';
-
-function formatDateTime(isoString: string): string {
-  const date = new Date(isoString);
-  return date.toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 export const MainContent = reatomComponent(function MainContent({ sessionId }: { sessionId: string }) {
   const { t } = useTranslation();
