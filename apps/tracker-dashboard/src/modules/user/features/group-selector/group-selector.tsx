@@ -1,15 +1,16 @@
 import { MultiSelect } from '@/shared/components';
-import { useMultiSelect, useMultiSelectModalShows } from '@/shared/components/form/multi-select';
+import { useMultiSelect, useMultiSelectModalShows, type Option } from '@/shared/components/form/multi-select';
 import { useTranslation } from '@/shared/utils/i18n';
+import type { Setter } from '@/shared/utils/types';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
-import { loadGroupOptions, type GroupOption } from '../../models/group-selector-model';
+import { loadGroupOptions } from '../../models/group-selector-model';
 import { GroupInfo } from '../group-info/group-info';
 
-function GroupSelectorOption({ option }: { option: GroupOption }) {
+function GroupSelectorOption({ option }: { option: Option }) {
   const { toggle, isOptionSelected } = useMultiSelect();
   const onClick = () => {
     toggle(option);
@@ -71,13 +72,15 @@ export function GroupSelectorContent() {
 interface GroupSelectorProps {
   disabled?: boolean;
   invalid?: boolean;
-  handleChange: (options: GroupOption[], prev: GroupOption[]) => void;
+  selected: Option[];
+  setSelected: Setter<Option[]>;
 }
 
-export function GroupSelector({ disabled, invalid, handleChange }: GroupSelectorProps) {
+export function GroupSelector({ disabled, invalid, selected, setSelected }: GroupSelectorProps) {
   return (
     <MultiSelect.Root
-      onChange={handleChange}
+      value={selected}
+      setValue={setSelected}
       loadOptions={wrap(loadGroupOptions)}
       disabled={disabled}
       aria-invalid={invalid || undefined}

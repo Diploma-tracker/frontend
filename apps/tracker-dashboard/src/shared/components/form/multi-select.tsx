@@ -1,6 +1,7 @@
 // TODO: refactor
 import * as React from 'react';
 
+import type { Setter } from '@/shared/utils/types';
 import { useDebounce } from '@/shared/utils/use-debounce';
 import { CheckIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import type { FieldArrayAtom } from '@reatom/core';
@@ -13,9 +14,10 @@ import { cn } from '@repo/ui-kit/lib/utils';
 // Types
 // ---------------------------------------------------------------------------
 
-export interface MultiSelectOption {
+export interface Option {
   value: string;
   label: string;
+  extra?: unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -24,28 +26,27 @@ export interface MultiSelectOption {
 
 type MultiSelectStatus = 'idle' | 'loading' | 'error' | 'disabled';
 
-interface MultiSelectContextValue<TOption extends MultiSelectOption> {
+interface MultiSelectContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
   query: string;
   setQuery: (open: string) => void;
   status: MultiSelectStatus;
   searchInputRef: React.RefObject<HTMLInputElement | null>;
-  selected: TOption[];
-  avaliable: TOption[];
-  filterOption: (option: TOption) => boolean;
+  selected: Option[];
+  avaliable: Option[];
+  filterOption: (option: Option) => boolean;
   isOptionSelected: (value: string) => boolean;
   remove: (value: string) => void;
-  add: (option: TOption) => void;
-  toggle: (option: TOption) => void;
+  add: (option: Option) => void;
+  toggle: (option: Option) => void;
   clear: () => void;
   disabled?: boolean;
   'aria-invalid'?: boolean | 'true' | 'false';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MultiSelectContext = React.createContext<MultiSelectContextValue<any> | null>(null);
-export function useMultiSelect<TOption extends MultiSelectOption>(): MultiSelectContextValue<TOption> {
+const MultiSelectContext = React.createContext<MultiSelectContextValue | null>(null);
+export function useMultiSelect(): MultiSelectContextValue {
   const ctx = React.useContext(MultiSelectContext);
   if (!ctx) throw new Error('MultiSelect compound parts must be used inside <MultiSelect.Root>');
   return ctx;
@@ -55,32 +56,33 @@ export function useMultiSelect<TOption extends MultiSelectOption>(): MultiSelect
 // Root
 // ---------------------------------------------------------------------------
 
-export interface MultiSelectRootProps<TOption extends MultiSelectOption> {
-  onChange: (value: TOption[], prev: TOption[]) => void;
-  loadOptions: (query: string) => Promise<TOption[]>;
-  filterOption?: (option: TOption, query: string) => boolean;
+export interface MultiSelectRootProps {
+  value: Option[];
+  setValue: Setter<Option[]>;
+  loadOptions: (query: string) => Promise<Option[]>;
+  filterOption?: (option: Option, query: string) => boolean;
   disabled?: boolean;
   'aria-invalid'?: boolean | 'true' | 'false';
   children: React.ReactNode;
 }
 
-const defaultFilterOption = <TOption extends MultiSelectOption>(option: TOption, query: string) => {
+const defaultFilterOption = (option: Option, query: string) => {
   const label = option.label || option.value;
   return label.toLowerCase().includes(query.toLowerCase());
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectRoot<TOption extends MultiSelectOption = MultiSelectOption>({
-  onChange,
+function MultiSelectRoot({
+  value: selected,
+  setValue: setSelecte,
   loadOptions,
-  filterOption = defaultFilterOption<TOption>,
+  filterOption = defaultFilterOption,
   disabled,
   'aria-invalid': ariaInvalid,
   children,
-}: MultiSelectRootProps<TOption>) {
+}: MultiSelectRootProps) {
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelecte] = React.useState<TOption[]>([]);
-  const [avaliable, setAvaliable] = React.useState<TOption[]>([]);
+  const [avaliable, setAvaliable] = React.useState<Option[]>([]);
   const [query, setQuery] = React.useState('');
   const searchInputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -107,15 +109,6 @@ function MultiSelectRoot<TOption extends MultiSelectOption = MultiSelectOption>(
     return [];
   };
 
-  const prevSelectedRef = React.useRef(selected);
-
-  // Notify parent when selection changes
-  React.useEffect(() => {
-    onChange(selected, prevSelectedRef.current);
-    prevSelectedRef.current = selected;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
-
   // Sync disabled state with status
   React.useEffect(() => {
     if (disabled) {
@@ -140,9 +133,9 @@ function MultiSelectRoot<TOption extends MultiSelectOption = MultiSelectOption>(
 
   const remove = (value: string) => setSelecte((options) => options.filter((o) => o.value !== value));
 
-  const add = (option: TOption) => setSelecte((options) => [...options, option]);
+  const add = (option: Option) => setSelecte((options) => [...options, option]);
 
-  const toggle = (option: TOption) => {
+  const toggle = (option: Option) => {
     setSelecte((options) => {
       const value = option.value;
       const isSelected = options.some((o) => o.value === value);
@@ -155,7 +148,7 @@ function MultiSelectRoot<TOption extends MultiSelectOption = MultiSelectOption>(
 
   const isOptionSelected = (value: string) => selected.some((o) => o.value === value);
 
-  const wrappedFilterOption = (option: TOption) => filterOption(option, query);
+  const wrappedFilterOption = (option: Option) => filterOption(option, query);
 
   const api = {
     open,
@@ -189,7 +182,7 @@ export interface MultiSelectChipProps {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectChip<TOption extends MultiSelectOption>({ option }: { option: TOption }) {
+function MultiSelectChip({ option }: { option: Option }) {
   const { remove, status } = useMultiSelect();
   const onRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -217,12 +210,12 @@ function MultiSelectChip<TOption extends MultiSelectOption>({ option }: { option
 // SelectOption — a single row in the dropdown list
 // ---------------------------------------------------------------------------
 
-export interface MultiSelectOptionItemProps<TOption extends MultiSelectOption> {
-  option: TOption;
+export interface MultiSelectOptionItemProps {
+  option: Option;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectOptionItem<TOption extends MultiSelectOption>({ option }: MultiSelectOptionItemProps<TOption>) {
+function MultiSelectOptionItem({ option }: MultiSelectOptionItemProps) {
   const { toggle, isOptionSelected } = useMultiSelect();
   const onClick = () => {
     toggle(option);
@@ -251,21 +244,21 @@ function MultiSelectOptionItem<TOption extends MultiSelectOption>({ option }: Mu
 // Trigger
 // ---------------------------------------------------------------------------
 
-export interface MultiSelectTriggerProps<TOption extends MultiSelectOption> {
+export interface MultiSelectTriggerProps {
   visibleChips?: number;
   placeholder?: string;
   className?: string;
-  children?: (option: TOption) => React.ReactNode;
+  children?: (option: Option) => React.ReactNode;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectTrigger<TOption extends MultiSelectOption>({
+function MultiSelectTrigger({
   visibleChips = 3,
   placeholder = 'Select...',
   className,
   children = (option) => <MultiSelectChip option={option} />,
-}: MultiSelectTriggerProps<TOption>) {
-  const { selected, setOpen, status, 'aria-invalid': ariaInvalid } = useMultiSelect<TOption>();
+}: MultiSelectTriggerProps) {
+  const { selected, setOpen, status, 'aria-invalid': ariaInvalid } = useMultiSelect();
 
   const visibleOptions = selected.slice(0, visibleChips);
   const hiddenCount = selected.length - visibleOptions.length;
@@ -381,21 +374,21 @@ function MultiSelectModalPlaceholders({
   return null;
 }
 
-interface MultiSelectModalOptionsProps<TOption extends MultiSelectOption> {
+interface MultiSelectModalOptionsProps {
   filter?: boolean;
-  children?: (option: TOption) => React.ReactNode;
+  children?: (option: Option) => React.ReactNode;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectModalSuggestions<TOptoin extends MultiSelectOption>({
+function MultiSelectModalSuggestions({
   filter = false,
   children = (option) => <MultiSelectOptionItem key={option.value} option={option} />,
-}: MultiSelectModalOptionsProps<TOptoin>) {
-  const { avaliable, selected } = useMultiSelect<TOptoin>();
+}: MultiSelectModalOptionsProps) {
+  const { avaliable, selected } = useMultiSelect();
   const { showSuggestions } = useMultiSelectModalShows();
   if (!showSuggestions) return null;
 
-  const filterOption = (option: TOptoin) => {
+  const filterOption = (option: Option) => {
     // Exclude already selected options
     if (selected.some((o) => o.value === option.value)) {
       return false;
@@ -409,11 +402,11 @@ function MultiSelectModalSuggestions<TOptoin extends MultiSelectOption>({
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectModalSelected<TOptoin extends MultiSelectOption>({
+function MultiSelectModalSelected({
   filter = false,
   children = (option) => <MultiSelectOptionItem key={option.value} option={option} />,
-}: MultiSelectModalOptionsProps<TOptoin>) {
-  const { selected, filterOption } = useMultiSelect<TOptoin>();
+}: MultiSelectModalOptionsProps) {
+  const { selected, filterOption } = useMultiSelect();
   const { showSelected } = useMultiSelectModalShows();
   if (!showSelected) return null;
 
@@ -457,9 +450,12 @@ export const MultiSelect = {
   Placeholders: MultiSelectModalPlaceholders,
 };
 
-export const useSyncArrayFieldWithMultiSelect =
-  <TOption extends MultiSelectOption>(field: FieldArrayAtom<string, string>) =>
-  (next: TOption[]) => {
+export const useArrayFieldForMultiSelect = (
+  field: FieldArrayAtom<string, string>
+): [Option[], setValue: Setter<Option[]>] => {
+  const [otherData, setOtherData] = React.useState<Record<string, Omit<Option, 'value'>>>({});
+
+  const handleChange = (next: Option[]) => {
     const nodes = field?.array() ?? [];
     if (!field) return;
 
@@ -469,14 +465,48 @@ export const useSyncArrayFieldWithMultiSelect =
     // Remove deselected: find nodes whose value is no longer in `next`
     for (const node of nodes) {
       if (!values.includes(node())) {
+        setOtherData((prev) => {
+          const newData = { ...prev };
+          delete newData[node()];
+          return newData;
+        });
         field.remove(node);
       }
     }
 
     // Add newly selected: values in `next` not yet in current
-    for (const { value } of next) {
+    for (const { value, label, extra } of next) {
       if (!current.includes(value)) {
+        setOtherData((prev) => ({
+          ...prev,
+          [value]: {
+            label,
+            extra,
+          },
+        }));
         field.create(value);
       }
     }
   };
+
+  const options = (field?.array().map((node) => node()) ?? []).map(
+    (value) =>
+      ({
+        value,
+        ...(otherData[value] ?? {
+          label: value,
+        }),
+      }) as Option
+  );
+
+  const setOptions = (value: Option[] | ((prev: Option[]) => Option[])) => {
+    if (typeof value === 'function') {
+      const next = value(options);
+      handleChange(next);
+    } else {
+      handleChange(value);
+    }
+  };
+
+  return [options, setOptions];
+};

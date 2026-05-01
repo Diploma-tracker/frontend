@@ -1,12 +1,13 @@
 import { MultiSelect } from '@/shared/components';
-import { useMultiSelect, useMultiSelectModalShows } from '@/shared/components/form/multi-select';
+import { useMultiSelect, useMultiSelectModalShows, type Option } from '@/shared/components/form/multi-select';
 import { k, useTranslation } from '@/shared/utils/i18n';
+import type { Setter } from '@/shared/utils/types';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
 
 import { LoginTokenUserRole } from '@repo/api/model';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
-import { loadUserOptions, type UserOption } from '../../models/user-selector-model';
+import { loadUserOptions } from '../../models/user-selector-model';
 import { UserInfo } from '../user-info/user-info';
 
 interface UserSelectorContentProps {
@@ -19,7 +20,7 @@ const ROLE_TO_ACTOR_NAME: Record<LoginTokenUserRole, string> = {
   [LoginTokenUserRole.student]: k('user.roles.student'),
 };
 
-function UserSelectorOption({ option }: { option: UserOption }) {
+function UserSelectorOption({ option }: { option: Option }) {
   const { toggle, isOptionSelected } = useMultiSelect();
   const onClick = () => {
     toggle(option);
@@ -82,16 +83,18 @@ export function UserSelectorContent({ role }: UserSelectorContentProps) {
 interface UserSelectorProps {
   disabled?: boolean;
   invalid?: boolean;
-  handleChange: (options: UserOption[], prev: UserOption[]) => void;
+  selected: Option[];
+  setSelected: Setter<Option[]>;
   role?: LoginTokenUserRole;
 }
 
-export function UserSelector({ disabled, invalid, handleChange, role }: UserSelectorProps) {
+export function UserSelector({ disabled, invalid, selected, setSelected, role }: UserSelectorProps) {
   const loadOptions = (query: string) => loadUserOptions(query, role);
 
   return (
     <MultiSelect.Root
-      onChange={handleChange}
+      value={selected}
+      setValue={setSelected}
       loadOptions={loadOptions}
       disabled={disabled}
       aria-invalid={invalid || undefined}
