@@ -1,6 +1,6 @@
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
 import { useTranslation } from '@/shared/utils/i18n';
-import type { EventContentArg } from '@fullcalendar/core';
+import type { EventClickArg, EventContentArg } from '@fullcalendar/core';
 import type { DateClickArg } from '@fullcalendar/interaction';
 
 import type { DefenseSessionDTO } from '../../models';
@@ -11,9 +11,16 @@ interface DefenseSessionsGridProps {
   isLoading?: boolean;
   error?: string | null;
   onDateClick?: (date: Date) => void;
+  onEventClick?: (session: DefenseSessionDTO) => void;
 }
 
-export function DefenseSessionsGrid({ sessions, isLoading, error, onDateClick }: DefenseSessionsGridProps) {
+export function DefenseSessionsGrid({
+  sessions,
+  isLoading,
+  error,
+  onDateClick,
+  onEventClick,
+}: DefenseSessionsGridProps) {
   const { t } = useTranslation();
 
   const events = sessionsToCalendarEvents(sessions, (session) =>
@@ -24,6 +31,12 @@ export function DefenseSessionsGrid({ sessions, isLoading, error, onDateClick }:
   );
 
   const handleDateClick = onDateClick ? (arg: DateClickArg) => onDateClick(arg.date) : undefined;
+  const handleEventClick = onEventClick
+    ? (arg: EventClickArg) => {
+        const session = arg.event.extendedProps?.session as DefenseSessionDTO | undefined;
+        if (session) onEventClick(session);
+      }
+    : undefined;
 
   return (
     <WeekCalendar.Root>
@@ -41,6 +54,7 @@ export function DefenseSessionsGrid({ sessions, isLoading, error, onDateClick }:
           isLoading={isLoading}
           error={error}
           dateClick={handleDateClick}
+          eventClick={handleEventClick}
           eventContent={(eventInfo: EventContentArg) => <ScheduleEventContent eventInfo={eventInfo} />}
         />
       </div>

@@ -1,0 +1,75 @@
+import { query } from '@/shared/model/query';
+import { t } from '@/shared/utils/i18n';
+import { action, withAsync, wrap } from '@reatom/core';
+
+import type { DefenseSessionDetailsDTO } from '@repo/api/model';
+import { getDefenseSessionDetails } from '@repo/api/thesis-defense-session';
+import {
+  deleteDefenseSession,
+  registerForDefenseSession,
+  rescheduleDefenseSession,
+  unregisterFromDefenseSession,
+} from '@repo/api/thesis-defense-session';
+import { toast } from '@repo/ui-kit/components/common/floating/sonner';
+
+export type { DefenseSessionDetailsDTO };
+
+export const deleteDefenseSessionAction = action(async (sessionId: string) => {
+  const response = await wrap(deleteDefenseSession(sessionId));
+  if (!response.ok) {
+    throw new Error(response.error?.message ?? t('defense.session.toast.deleteError'));
+  }
+  return response.data;
+}, 'deleteDefenseSessionAction').extend(withAsync());
+
+export interface RescheduleDefenseSessionValues {
+  sessionId: string;
+  date?: string | null;
+  duration?: string | null;
+}
+
+export const rescheduleDefenseSessionAction = action(async (values: RescheduleDefenseSessionValues) => {
+  const response = await wrap(
+    rescheduleDefenseSession(values.sessionId, {
+      date: values.date,
+      duration: values.duration,
+    })
+  );
+  if (!response.ok) {
+    throw new Error(response.error?.message ?? t('defense.session.toast.rescheduleError'));
+  }
+  toast.success(t('defense.session.toast.rescheduleSuccess'));
+  return response.data;
+}, 'rescheduleDefenseSessionAction').extend(withAsync());
+
+export const registerForDefenseSessionAction = action(async (sessionId: string) => {
+  const response = await wrap(registerForDefenseSession(sessionId, {}));
+  if (!response.ok) {
+    throw new Error(response.error?.message ?? t('defense.session.toast.registerError'));
+  }
+  toast.success(t('defense.session.toast.registerSuccess'));
+  return response.data;
+}, 'registerForDefenseSessionAction').extend(withAsync());
+
+export const unregisterFromDefenseSessionAction = action(async (sessionId: string) => {
+  const response = await wrap(unregisterFromDefenseSession(sessionId));
+  if (!response.ok) {
+    throw new Error(response.error?.message ?? t('defense.session.toast.unregisterError'));
+  }
+  toast.success(t('defense.session.toast.unregisterSuccess'));
+  return response.data;
+}, 'unregisterFromDefenseSessionAction').extend(withAsync());
+
+export const defenseSessionDetailsQuery = query(
+  async (sessionId: string) => {
+    const response = await wrap(getDefenseSessionDetails(sessionId));
+    if (!response.ok) {
+      throw new Error(response.error?.message ?? 'Failed to fetch defense session details');
+    }
+    return response.data;
+  },
+  'defenseSessionDetailsQuery',
+  {
+    ttl: 5 * 60 * 1000, // Cache for 5 minutes
+  }
+);
