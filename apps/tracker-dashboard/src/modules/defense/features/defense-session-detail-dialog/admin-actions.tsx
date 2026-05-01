@@ -74,6 +74,7 @@ export const AdminActions = reatomComponent(function AdminActions() {
         title={t('defense.session.detail.deleteConfirmTitle')}
         description={t('defense.session.detail.deleteConfirmDescription')}
         confirmLabel={t('defense.session.detail.deleteConfirmButton')}
+        confirmVariant="solid"
         confirmIntent="destructive"
         isPending={isDeleting}
         onConfirm={handleDelete}
