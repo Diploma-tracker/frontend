@@ -1,18 +1,8 @@
 import { useQuery } from '@/shared/model/query';
+import { formatDurationToReadable, parseISODuration } from '@/shared/utils/iso-duration';
 import { reatomComponent } from '@reatom/react';
 
 import { defenseSessionDetailsQuery } from '../../models';
-import { parseDuration } from '../defense-sessions-grid/utils';
-
-function formatDuration(isoDuration: string): string {
-  const ms = parseDuration(isoDuration);
-  const totalMinutes = Math.floor(ms / 60000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
-  if (hours > 0) return `${hours}h`;
-  return `${minutes}m`;
-}
 
 function formatDateTime(isoString: string): string {
   const date = new Date(isoString);
@@ -32,7 +22,7 @@ export const MainContent = reatomComponent(function MainContent({ sessionId }: {
   if (!session) return null;
 
   const participantCount = session.participants?.length ?? 0;
-  const endDate = new Date(new Date(session.date).getTime() + parseDuration(session.duration));
+  const endDate = new Date(new Date(session.date).getTime() + parseISODuration(session.duration));
 
   return (
     <div className="flex flex-col gap-3">
@@ -47,7 +37,7 @@ export const MainContent = reatomComponent(function MainContent({ sessionId }: {
         </div>
         <div>
           <p className="text-muted-foreground">Duration</p>
-          <p className="font-medium">{formatDuration(session.duration)}</p>
+          <p className="font-medium">{formatDurationToReadable(session.duration)}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Capacity</p>

@@ -1,16 +1,6 @@
-import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
+import { parseISODuration } from '@/shared/utils/iso-duration';
 
-/**
- * Parses an ISO 8601 duration string (e.g. "PT1H30M", "PT45M") into milliseconds.
- */
-export function parseDuration(iso: string): number {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return 0;
-  const hours = parseInt(match[1] ?? '0', 10);
-  const minutes = parseInt(match[2] ?? '0', 10);
-  const seconds = parseInt(match[3] ?? '0', 10);
-  return (hours * 3600 + minutes * 60 + seconds) * 1000;
-}
+import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
 
 export interface DefenseSessionCalendarEvent {
   id: string;
@@ -37,7 +27,7 @@ export function sessionsToCalendarEvents(
     }
 
     const start = new Date(startRaw);
-    const durationMs = parseDuration(durationRaw);
+    const durationMs = parseISODuration(durationRaw);
     const end = new Date(start.getTime() + durationMs);
 
     return {
