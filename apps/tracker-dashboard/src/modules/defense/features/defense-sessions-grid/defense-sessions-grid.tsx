@@ -53,8 +53,8 @@ export const DefenseSessionsGrid = reatomComponent(function DefenseSessionsGrid(
       sessionId: session.id,
       open: true,
       isRegistered: false,
-      onDeleted: onEventChange,
-      onUpdated: onEventDelete,
+      onDeleted: onEventDelete,
+      onUpdated: onEventChange,
     });
   };
 
