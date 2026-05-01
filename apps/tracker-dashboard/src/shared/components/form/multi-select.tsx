@@ -74,7 +74,7 @@ const defaultFilterOption = (option: Option, query: string) => {
 // eslint-disable-next-line react-refresh/only-export-components
 function MultiSelectRoot({
   value: selected,
-  setValue: setSelecte,
+  setValue: setSelected,
   loadOptions,
   filterOption = defaultFilterOption,
   disabled,
@@ -131,12 +131,12 @@ function MultiSelectRoot({
     }
   }, [open]);
 
-  const remove = (value: string) => setSelecte((options) => options.filter((o) => o.value !== value));
+  const remove = (value: string) => setSelected((options) => options.filter((o) => o.value !== value));
 
-  const add = (option: Option) => setSelecte((options) => [...options, option]);
+  const add = (option: Option) => setSelected((options) => [...options, option]);
 
   const toggle = (option: Option) => {
-    setSelecte((options) => {
+    setSelected((options) => {
       const value = option.value;
       const isSelected = options.some((o) => o.value === value);
       if (isSelected) {
@@ -165,7 +165,7 @@ function MultiSelectRoot({
     remove,
     add,
     toggle,
-    clear: () => setSelecte([]),
+    clear: () => setSelected([]),
     disabled,
     'aria-invalid': ariaInvalid,
   };
