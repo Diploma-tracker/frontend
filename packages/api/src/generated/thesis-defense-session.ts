@@ -11,6 +11,7 @@ import type {
   DefenseSessionDetailsDTO,
   RegisterForDefenseSessionRequest,
   RescheduleDefenseSessionRequest,
+  UpdateDefenseSessionRequest,
 } from "./model";
 
 import { orvalCustomInstance } from "../orval/mutator";
@@ -47,6 +48,21 @@ export const deleteDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}`,
     method: "DELETE",
+  });
+};
+/**
+ * Partially update a thesis defense session (ADMIN only)
+ * @summary Update defense session
+ */
+export const updateDefenseSession = (
+  defenseSessionId: string,
+  updateDefenseSessionRequest: UpdateDefenseSessionRequest,
+) => {
+  return orvalCustomInstance<void>({
+    url: `/projects/defense-sessions/${defenseSessionId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: updateDefenseSessionRequest,
   });
 };
 /**
@@ -124,6 +140,9 @@ export type GetDefenseSessionDetailsResult = NonNullable<
 >;
 export type DeleteDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof deleteDefenseSession>>
+>;
+export type UpdateDefenseSessionResult = NonNullable<
+  Awaited<ReturnType<typeof updateDefenseSession>>
 >;
 export type RescheduleDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof rescheduleDefenseSession>>

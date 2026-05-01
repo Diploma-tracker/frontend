@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 
 import { GroupSelectorField, UserSelectorField } from '@/modules/user';
 import { DatePickerFormField, DurationPickerFormField, TextFormField } from '@/shared/components';
+import { setArrayField } from '@/shared/model';
+import { useQuery } from '@/shared/model/query';
 import { useTranslation } from '@/shared/utils/i18n';
 import { CircleNotchIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
@@ -9,35 +11,34 @@ import { reatomComponent } from '@reatom/react';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldGroup } from '@repo/ui-kit/components/common/form/field';
 
-import { createDefenseSessionForm } from '../../models/create-defense-session-model';
+import { defenseSessionDetailsQuery } from '../../models';
+import { updateDefenseSessionForm } from '../../models/update-defense-session-model';
 
 interface EditDefenseSessionFormProps {
+  sessionId: string;
   onSuccess?: () => void;
-  initialDate?: Date;
-  roundId: string;
 }
 
 export const EditDefenseSessionForm = reatomComponent(function EditDefenseSessionForm({
+  sessionId,
   onSuccess,
-  roundId,
-  initialDate,
 }: EditDefenseSessionFormProps) {
   const { t } = useTranslation();
-  const { submit, fields } = createDefenseSessionForm;
+  const { submit, fields } = updateDefenseSessionForm;
+  const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
+  const session = data();
 
   useEffect(() => {
-    if (initialDate) {
-      fields.date.set(initialDate.toISOString());
+    if (session) {
+      fields.sessionId.set(session.id);
+      fields.date.set(session.date);
+      fields.duration.set(session.duration);
+      fields.capacity.set(String(session.capacity));
+      setArrayField(fields.allowedStudentIds, session.allowedStudents?.map((s) => s.id) ?? []);
+      setArrayField(fields.allowedGroupIds, session.allowedGroups?.map((g) => g.id) ?? []);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialDate]);
-
-  useEffect(() => {
-    if (roundId) {
-      fields.allocationRoundId.set(roundId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roundId]);
+  }, [session?.id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +72,11 @@ export const EditDefenseSessionForm = reatomComponent(function EditDefenseSessio
 
         <Field>
           <Button type="submit" disabled={!submit.ready()}>
-            {!submit.ready() ? <CircleNotchIcon className="animate-spin" /> : t('defense.session.form.submitButton')}
+            {!submit.ready() ? (
+              <CircleNotchIcon className="animate-spin" />
+            ) : (
+              t('defense.session.detail.rescheduleSubmit')
+            )}
           </Button>
         </Field>
       </FieldGroup>

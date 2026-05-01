@@ -200,8 +200,8 @@
         "durationLabel": "Тривалість",
         "capacityLabel": "Місткість",
         "capacityPlaceholder": "напр. 5",
-        "allowedStudentsLabel": "Дозволені студенти",
-        "groupsLabel": "Дозволені групи",
+        "allowedStudentsLabel": "Запрошені студенти",
+        "groupsLabel": "Запрошені групи",
         "submitButton": "Створити сесію",
         "validation": {
           "allocationRoundRequired": "Раунд розподілу є обов'язковим",
@@ -236,16 +236,18 @@
         "unregisterButton": "Відписатися",
         "participantsLabel": "Учасники",
         "noParticipants": "Ще немає учасників.",
-        "allowedStudentsLabel": "Дозволені студенти",
-        "noAllowedStudents": "Усі студенти дозволені.",
-        "allowedGroupsLabel": "Дозволені групи",
-        "noAllowedGroups": "Усі групи дозволені."
+        "allowedStudentsLabel": "Запрошені студенти",
+        "noAllowedStudents": "Нема запрошених студентів.",
+        "allowedGroupsLabel": "Запрошені групи",
+        "noAllowedGroups": "Нема запрошених груп."
       },
       "toast": {
         "deleteSuccess": "Сесію захисту видалено.",
         "deleteError": "Не вдалося видалити сесію захисту.",
         "rescheduleSuccess": "Сесію захисту перенесено.",
         "rescheduleError": "Не вдалося перенести сесію захисту.",
+        "updateSuccess": "Сесію захисту оновлено.",
+        "updateError": "Не вдалося оновити сесію захисту.",
         "registerSuccess": "Ви успішно записалися на сесію захисту.",
         "registerError": "Не вдалося записатися на сесію захисту.",
         "unregisterSuccess": "Ви успішно відписалися від сесії захисту.",

@@ -9,10 +9,13 @@ export type {
 } from '@repo/api/model';
 export { createDefenseSessionForm, createDefenseSessionAction } from './create-defense-session-model';
 export type { CreateDefenseSessionFormValues } from './create-defense-session-model';
+export { updateDefenseSessionForm } from './update-defense-session-model';
+export type { UpdateDefenseSessionFormValues } from './update-defense-session-model';
 export {
   defenseSessionDetailsQuery,
   deleteDefenseSessionAction,
   registerForDefenseSessionAction,
   unregisterFromDefenseSessionAction,
   rescheduleDefenseSessionAction,
+  updateDefenseSessionAction,
 } from './defense-session-actions-model';

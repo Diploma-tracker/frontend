@@ -88,4 +88,7 @@ export * from "./supervision-application-status";
 export * from "./teacher-dt-o";
 export * from "./unregister-from-defense-session400-extra";
 export * from "./unregister-from-defense-session400";
+export * from "./update-defense-session-request";
+export * from "./update-defense-session400-extra";
+export * from "./update-defense-session400";
 export * from "./user-dt-o";

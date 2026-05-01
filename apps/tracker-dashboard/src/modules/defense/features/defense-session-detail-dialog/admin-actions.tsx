@@ -86,7 +86,7 @@ export const AdminActions = reatomComponent(function AdminActions() {
             <DialogDescription>{t('defense.session.dialog.createDescription')}</DialogDescription>
           </DialogHeader>
           <EditDefenseSessionForm
-            roundId={session?.allocationRoundId ?? ''}
+            sessionId={sessionId ?? ''}
             onSuccess={() => {
               setShowEditModal(false);
               onUpdated?.();
