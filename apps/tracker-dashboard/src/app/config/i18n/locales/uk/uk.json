@@ -241,6 +241,11 @@
         "allowedGroupsLabel": "Запрошені групи",
         "noAllowedGroups": "Нема запрошених груп."
       },
+      "reschedule": {
+        "confirmTitle": "Перенести сесію?",
+        "confirmDescription": "Перемістити цю сесію на {{date}}?",
+        "confirmButton": "Перенести"
+      },
       "toast": {
         "deleteSuccess": "Сесію захисту видалено.",
         "deleteError": "Не вдалося видалити сесію захисту.",

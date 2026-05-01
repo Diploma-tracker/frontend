@@ -241,6 +241,11 @@
         "allowedGroupsLabel": "Allowed groups",
         "noAllowedGroups": "No allowed groups."
       },
+      "reschedule": {
+        "confirmTitle": "Reschedule session?",
+        "confirmDescription": "Move this session to {{date}}?",
+        "confirmButton": "Reschedule"
+      },
       "toast": {
         "deleteSuccess": "Defense session deleted.",
         "deleteError": "Failed to delete defense session.",

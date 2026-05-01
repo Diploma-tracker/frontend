@@ -1,10 +1,17 @@
+import { permissions } from '@/modules/auth';
 import { DefenseSessionDetailDialog, defenseSessionDialogAtom } from '@/modules/defense';
+import { userAtom } from '@/modules/user';
+import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
+import { intervalToISODuration } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
-import type { EventClickArg, EventContentArg } from '@fullcalendar/core';
-import type { DateClickArg } from '@fullcalendar/interaction';
+import type { EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
+import type { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
+import { wrap } from '@reatom/core';
+import { reatomComponent } from '@reatom/react';
 
 import type { DefenseSessionDTO } from '../../models';
+import { pendingDragRescheduleAtom, rescheduleDefenseSessionAction } from '../../models/defense-session-actions-model';
 import { sessionsToCalendarEvents } from './utils';
 
 interface DefenseSessionsGridProps {
@@ -16,7 +23,7 @@ interface DefenseSessionsGridProps {
   onEventDelete?: () => void;
 }
 
-export function DefenseSessionsGrid({
+export const DefenseSessionsGrid = reatomComponent(function DefenseSessionsGrid({
   sessions,
   isLoading,
   error,
@@ -25,8 +32,13 @@ export function DefenseSessionsGrid({
   onEventDelete,
 }: DefenseSessionsGridProps) {
   const { t } = useTranslation();
+  const user = userAtom();
+  const isAdmin = permissions.isAdmin(user);
 
-  const events = sessionsToCalendarEvents(sessions, (session) =>
+  const pending = pendingDragRescheduleAtom();
+  const isRescheduling = rescheduleDefenseSessionAction.status().isPending;
+
+  const events = sessionsToCalendarEvents(sessions, pending, (session) =>
     t('defense.session.title', {
       capacity: session.capacity,
       participants: session.participantCount,
@@ -50,6 +62,57 @@ export function DefenseSessionsGrid({
     if (session) openDetailDialog(session);
   };
 
+  const handleEventDrop = (arg: EventDropArg) => {
+    const session = arg.event.extendedProps?.session as DefenseSessionDTO | undefined;
+    if (!session || !arg.event.start) {
+      arg.revert();
+      return;
+    }
+    pendingDragRescheduleAtom.set({
+      sessionId: session.id,
+      newDate: arg.event.start.toISOString(),
+      revert: arg.revert,
+    });
+  };
+
+  const handleEventResize = (arg: EventResizeDoneArg) => {
+    const session = arg.event.extendedProps?.session as DefenseSessionDTO | undefined;
+    if (!session || !arg.event.start || !arg.event.end) {
+      arg.revert();
+      return;
+    }
+    const isoDuration = intervalToISODuration(arg.event.start, arg.event.end);
+    pendingDragRescheduleAtom.set({
+      sessionId: session.id,
+      newDate: arg.event.start.toISOString(),
+      newDuration: isoDuration,
+      revert: arg.revert,
+    });
+  };
+
+  const handleConfirmReschedule = async () => {
+    if (!pending) return;
+    try {
+      await wrap(
+        rescheduleDefenseSessionAction({
+          sessionId: pending.sessionId,
+          date: pending.newDate,
+          duration: pending.newDuration ?? null,
+        })
+      );
+      pendingDragRescheduleAtom.set(null);
+      onEventChange?.();
+    } catch {
+      pending.revert();
+      pendingDragRescheduleAtom.set(null);
+    }
+  };
+
+  const handleCancelReschedule = () => {
+    pending?.revert();
+    pendingDragRescheduleAtom.set(null);
+  };
+
   return (
     <>
       <WeekCalendar.Root>
@@ -59,20 +122,36 @@ export function DefenseSessionsGrid({
             <WeekCalendar.Title />
             <WeekCalendar.ViewToggle />
           </div>
-
           <WeekCalendar.Grid
-            editable={false}
+            editable={isAdmin}
             height="auto"
             events={events}
             isLoading={isLoading}
             error={error}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
+            eventDrop={isAdmin ? handleEventDrop : undefined}
+            eventResize={isAdmin ? handleEventResize : undefined}
             eventContent={(eventInfo: EventContentArg) => <ScheduleEventContent eventInfo={eventInfo} />}
           />
         </div>
       </WeekCalendar.Root>
+
       <DefenseSessionDetailDialog />
+
+      <ConfirmationModal
+        open={!!pending}
+        onOpenChange={(open) => {
+          if (!open) handleCancelReschedule();
+        }}
+        title={t('defense.session.reschedule.confirmTitle')}
+        description={t('defense.session.reschedule.confirmDescription', {
+          date: pending ? new Date(pending.newDate).toLocaleString() : '',
+        })}
+        confirmLabel={t('defense.session.reschedule.confirmButton')}
+        isPending={isRescheduling}
+        onConfirm={handleConfirmReschedule}
+      />
     </>
   );
-}
+}, 'DefenseSessionsGrid');

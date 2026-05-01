@@ -18,4 +18,6 @@ export {
   unregisterFromDefenseSessionAction,
   rescheduleDefenseSessionAction,
   updateDefenseSessionAction,
+  pendingDragRescheduleAtom,
 } from './defense-session-actions-model';
+export type { PendingDragReschedule } from './defense-session-actions-model';

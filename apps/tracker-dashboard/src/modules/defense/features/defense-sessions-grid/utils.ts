@@ -1,4 +1,4 @@
-import type { DefenseSessionDTO } from '../../models';
+import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
 
 /**
  * Parses an ISO 8601 duration string (e.g. "PT1H30M", "PT45M") into milliseconds.
@@ -25,11 +25,19 @@ export interface DefenseSessionCalendarEvent {
 
 export function sessionsToCalendarEvents(
   sessions: DefenseSessionDTO[],
+  pending: PendingDragReschedule | null,
   getTitle: (session: DefenseSessionDTO) => string
 ): DefenseSessionCalendarEvent[] {
   return sessions.map((session) => {
-    const start = new Date(session.date);
-    const durationMs = parseDuration(session.duration);
+    let startRaw = session.date;
+    let durationRaw = session.duration;
+    if (pending && pending.sessionId === session.id) {
+      startRaw = pending.newDate;
+      durationRaw = pending.newDuration ?? session.duration;
+    }
+
+    const start = new Date(startRaw);
+    const durationMs = parseDuration(durationRaw);
     const end = new Date(start.getTime() + durationMs);
 
     return {

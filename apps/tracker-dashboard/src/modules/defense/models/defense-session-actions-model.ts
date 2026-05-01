@@ -1,6 +1,6 @@
 import { query } from '@/shared/model/query';
 import { t } from '@/shared/utils/i18n';
-import { action, withAsync, wrap } from '@reatom/core';
+import { action, atom, withAsync, wrap } from '@reatom/core';
 
 import type { DefenseSessionDetailsDTO } from '@repo/api/model';
 import {
@@ -105,3 +105,12 @@ export const isStudentRegisteredForSession = (session: DefenseSessionDetailsDTO 
   if (!session || !session.participants) return false;
   return session.participants.some((participant) => participant.id === studentId);
 };
+
+export interface PendingDragReschedule {
+  sessionId: string;
+  newDate: string;
+  newDuration?: string;
+  revert: () => void;
+}
+
+export const pendingDragRescheduleAtom = atom<PendingDragReschedule | null>(null, 'pendingDragRescheduleAtom');
