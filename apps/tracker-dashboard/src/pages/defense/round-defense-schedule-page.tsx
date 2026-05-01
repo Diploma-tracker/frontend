@@ -2,8 +2,7 @@ import { useState } from 'react';
 
 import { PageLayout } from '@/layouts';
 import { Guard, permissions } from '@/modules/auth';
-import { CreateDefenseSessionForm, RoundDefenseSessions } from '@/modules/defense';
-import { DefenseSessionDetailDialog, roundDefenseSessionsAtom, defenseSessionDialogAtom } from '@/modules/defense';
+import { CreateDefenseSessionForm, RoundDefenseSessions, roundDefenseSessionsAtom } from '@/modules/defense';
 import { useTranslation } from '@/shared/utils/i18n';
 import { PlusIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
@@ -51,16 +50,6 @@ export const RoundDefenseSchedulePage = reatomComponent(function RoundDefenseSch
     wrap(roundDefenseSessionsAtom(roundId));
   };
 
-  const openDetailDialog = (session: { id: string }) => {
-    defenseSessionDialogAtom.set({
-      sessionId: session.id,
-      open: true,
-      isRegistered: false,
-      onDeleted: refreshSessions,
-      onUpdated: refreshSessions,
-    });
-  };
-
   return (
     <PageLayout height="screen">
       <Guard can={permissions.isAdmin}>
@@ -87,9 +76,12 @@ export const RoundDefenseSchedulePage = reatomComponent(function RoundDefenseSch
         </Dialog>
       </Guard>
 
-      <DefenseSessionDetailDialog />
-
-      <RoundDefenseSessions roundId={roundId} onDateClick={openDialog} onEventClick={openDetailDialog} />
+      <RoundDefenseSessions
+        roundId={roundId}
+        onDateClick={openDialog}
+        onEventChange={refreshSessions}
+        onEventDelete={refreshSessions}
+      />
     </PageLayout>
   );
 }, 'RoundDefenseSchedulePage');

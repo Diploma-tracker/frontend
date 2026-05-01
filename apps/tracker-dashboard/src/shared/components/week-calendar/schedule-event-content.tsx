@@ -5,7 +5,7 @@ type Props = {
   eventInfo: EventContentArg;
 };
 
-const COLOR_VAR_MAP: Record<string, { bg: string; text: string; bar: string }> = {
+export const COLOR_VAR_MAP: Record<string, { bg: string; text: string; bar: string }> = {
   'fc-event--primary': { bg: 'bg-primary/10', text: 'text-primary', bar: 'bg-primary' },
   'fc-event--chart-2': {
     bg: 'bg-[color-mix(in_srgb,var(--chart-2)_12%,transparent)]',
@@ -27,9 +27,9 @@ const COLOR_VAR_MAP: Record<string, { bg: string; text: string; bar: string }> =
     text: 'text-[var(--chart-5)]',
     bar: 'bg-[var(--chart-5)]',
   },
-};
+} as const;
 
-const FALLBACK = { bg: 'bg-secondary', text: 'text-foreground', bar: 'bg-muted-foreground' };
+export const FALLBACK = { bg: 'bg-secondary', text: 'text-foreground', bar: 'bg-muted-foreground' } as const;
 
 export function ScheduleEventContent({ eventInfo }: Props) {
   const { event } = eventInfo;

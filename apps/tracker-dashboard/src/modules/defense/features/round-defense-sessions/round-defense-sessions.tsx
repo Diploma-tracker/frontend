@@ -5,19 +5,20 @@ import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { roundDefenseSessionsAtom } from '../../models';
-import type { DefenseSessionDTO } from '../../models';
 import { DefenseSessionsGrid } from '../defense-sessions-grid';
 
 interface RoundDefenseSessionsProps {
   roundId: string;
   onDateClick?: (date: Date) => void;
-  onEventClick?: (session: DefenseSessionDTO) => void;
+  onEventChange?: () => void;
+  onEventDelete?: () => void;
 }
 
 export const RoundDefenseSessions = reatomComponent(function RoundDefenseSessions({
   roundId,
   onDateClick,
-  onEventClick,
+  onEventChange,
+  onEventDelete,
 }: RoundDefenseSessionsProps) {
   const { t } = useTranslation();
   const status = roundDefenseSessionsAtom.status();
@@ -33,7 +34,8 @@ export const RoundDefenseSessions = reatomComponent(function RoundDefenseSession
       isLoading={status.isPending}
       error={status.isRejected ? t('defense.error') : null}
       onDateClick={onDateClick}
-      onEventClick={onEventClick}
+      onEventChange={onEventChange}
+      onEventDelete={onEventDelete}
     />
   );
 }, 'RoundDefenseSessions');
