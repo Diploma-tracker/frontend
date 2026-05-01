@@ -1,4 +1,5 @@
 import { useQuery } from '@/shared/model/query';
+import { useTranslation } from '@/shared/utils/i18n';
 import { formatDurationToReadable, parseISODuration } from '@/shared/utils/iso-duration';
 import { reatomComponent } from '@reatom/react';
 
@@ -16,6 +17,7 @@ function formatDateTime(isoString: string): string {
 }
 
 export const MainContent = reatomComponent(function MainContent({ sessionId }: { sessionId: string }) {
+  const { t } = useTranslation();
   const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
   const session = data();
 
@@ -28,26 +30,26 @@ export const MainContent = reatomComponent(function MainContent({ sessionId }: {
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-3 rounded-lg border p-4 text-sm">
         <div>
-          <p className="text-muted-foreground">Start</p>
+          <p className="text-muted-foreground">{t('defense.session.detail.dateLabel')}</p>
           <p className="font-medium">{formatDateTime(session.date)}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">End</p>
+          <p className="text-muted-foreground">{t('defense.session.detail.endLabel')}</p>
           <p className="font-medium">{formatDateTime(endDate.toISOString())}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Duration</p>
+          <p className="text-muted-foreground">{t('defense.session.detail.durationLabel')}</p>
           <p className="font-medium">{formatDurationToReadable(session.duration)}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Capacity</p>
+          <p className="text-muted-foreground">{t('defense.session.detail.capacityLabel')}</p>
           <p className="font-medium">
             {participantCount} / {session.capacity}
           </p>
         </div>
       </div>
       <div className="hidden flex-1 items-center justify-center gap-3 rounded-lg border p-4 text-sm text-muted-foreground sm:flex">
-        More content comming soon...
+        {t('defense.session.detail.contentPlaceholder')}
       </div>
     </div>
   );

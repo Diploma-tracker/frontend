@@ -239,7 +239,8 @@
         "allowedStudentsLabel": "Allowed students",
         "noAllowedStudents": "No allowed students.",
         "allowedGroupsLabel": "Allowed groups",
-        "noAllowedGroups": "No allowed groups."
+        "noAllowedGroups": "No allowed groups.",
+        "contentPlaceholder": "More content coming soon..."
       },
       "reschedule": {
         "confirmTitle": "Reschedule session?",

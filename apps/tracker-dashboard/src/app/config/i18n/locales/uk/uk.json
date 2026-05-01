@@ -239,7 +239,8 @@
         "allowedStudentsLabel": "Запрошені студенти",
         "noAllowedStudents": "Нема запрошених студентів.",
         "allowedGroupsLabel": "Запрошені групи",
-        "noAllowedGroups": "Нема запрошених груп."
+        "noAllowedGroups": "Нема запрошених груп.",
+        "contentPlaceholder": "Більше контенту незабаром..."
       },
       "reschedule": {
         "confirmTitle": "Перенести сесію?",
