@@ -8,6 +8,7 @@ import type {
   CreateDefenseSessionRequest,
   CreateDefenseSessionResponse,
   DefenseSessionDTO,
+  DefenseSessionDetailsDTO,
   RegisterForDefenseSessionRequest,
   RescheduleDefenseSessionRequest,
 } from "./model";
@@ -26,6 +27,16 @@ export const createDefenseSession = (
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: createDefenseSessionRequest,
+  });
+};
+/**
+ * Returns detailed info for a single defense session including participants, allowed students and groups (ADMIN only)
+ * @summary Get defense session details
+ */
+export const getDefenseSessionDetails = (defenseSessionId: string) => {
+  return orvalCustomInstance<DefenseSessionDetailsDTO>({
+    url: `/projects/defense-sessions/${defenseSessionId}`,
+    method: "GET",
   });
 };
 /**
@@ -107,6 +118,9 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 export type CreateDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof createDefenseSession>>
+>;
+export type GetDefenseSessionDetailsResult = NonNullable<
+  Awaited<ReturnType<typeof getDefenseSessionDetails>>
 >;
 export type DeleteDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof deleteDefenseSession>>

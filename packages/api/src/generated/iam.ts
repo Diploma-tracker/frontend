@@ -5,6 +5,8 @@
  * OpenAPI spec version: 0.0.0
  */
 import type {
+  GetGroupByIdDTO,
+  GetUserByIdDTO,
   ListGroupsParams,
   ListUsersParams,
   PaginatedGroupsDTO,
@@ -25,6 +27,16 @@ export const listUsers = (params?: ListUsersParams) => {
   });
 };
 /**
+ * Returns details for a single user by their ID (ADMIN only)
+ * @summary Get user by ID
+ */
+export const getUserById = (userId: string) => {
+  return orvalCustomInstance<GetUserByIdDTO>({
+    url: `/iam/users/${userId}`,
+    method: "GET",
+  });
+};
+/**
  * Returns a paginated list of all groups with optional name search (ADMIN only)
  * @summary List groups
  */
@@ -35,6 +47,16 @@ export const listGroups = (params?: ListGroupsParams) => {
     params,
   });
 };
+/**
+ * Returns details for a single group by its ID (ADMIN only)
+ * @summary Get group by ID
+ */
+export const getGroupById = (groupId: string) => {
+  return orvalCustomInstance<GetGroupByIdDTO>({
+    url: `/iam/groups/${groupId}`,
+    method: "GET",
+  });
+};
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -43,6 +65,12 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 export type ListUsersResult = NonNullable<
   Awaited<ReturnType<typeof listUsers>>
 >;
+export type GetUserByIdResult = NonNullable<
+  Awaited<ReturnType<typeof getUserById>>
+>;
 export type ListGroupsResult = NonNullable<
   Awaited<ReturnType<typeof listGroups>>
+>;
+export type GetGroupByIdResult = NonNullable<
+  Awaited<ReturnType<typeof getGroupById>>
 >;
