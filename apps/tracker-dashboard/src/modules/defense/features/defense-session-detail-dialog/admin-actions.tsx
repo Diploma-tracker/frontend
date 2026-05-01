@@ -41,7 +41,7 @@ export const AdminActions = reatomComponent(function AdminActions() {
       defenseSessionDialogAtom.set((s) => ({ ...s, open: false }));
       onDeleted?.();
     } catch {
-      toast.success(t('defense.session.toast.deleteSuccess'));
+      toast.error(t('defense.session.toast.deleteError'));
     }
   };
 
