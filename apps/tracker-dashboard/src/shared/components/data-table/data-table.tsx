@@ -1,3 +1,7 @@
+import { useState, type ReactNode } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+
+import { HOTKEYS } from '@/shared/constants';
 import { renderByDataStatus, type AsyncStatusLike } from '@/shared/utils/render-by-data-status';
 import { BinocularsIcon, WarningOctagonIcon } from '@phosphor-icons/react';
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from '@tanstack/react-table';
@@ -19,22 +23,62 @@ import {
 } from '@repo/ui-kit/components/common/states/empty';
 import { Skeleton } from '@repo/ui-kit/components/common/states/skeleton';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+import { BulkActionsIsland, type BulkAction } from '../table/bulk-actions-island/bulk-actions-island';
+
+export interface BulkActionsConfig<TData> {
+  entityLabel?: ReactNode | ((count: number) => ReactNode);
+  actions: (selectedRows: TData[]) => BulkAction[];
+}
+
+export interface TableDataConfig<TData> {
   data: TData[];
   dataStatus: AsyncStatusLike;
+  getRowId?: (row: TData) => string;
   numberOfLoadingLines?: number;
+}
+
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  tableDataConfig: TableDataConfig<TData>;
+  bulkActionsConfig?: BulkActionsConfig<TData>;
   onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  const { columns, data, dataStatus, numberOfLoadingLines = 10, onRowClick } = props;
+  const { columns, tableDataConfig, onRowClick, bulkActionsConfig } = props;
+  const { data, dataStatus, getRowId, numberOfLoadingLines = 10 } = tableDataConfig;
+
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
   });
+
+  useHotkeys(HOTKEYS.ESCAPE, () => {
+    if (selectedRows.length === 0) return;
+    table.resetRowSelection();
+  });
+
+  const getActions = () => {
+    if (!bulkActionsConfig) return [];
+
+    const originalRows = selectedRows.map((row) => row.original);
+
+    return bulkActionsConfig.actions(originalRows).map((action) => ({
+      ...action,
+      onClick: async () => {
+        await action.onClick();
+        table.resetRowSelection();
+      },
+    }));
+  };
 
   const renderLoadingState = () => {
     return (
@@ -130,19 +174,30 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   };
 
   const hasData = table.getRowModel().rows.length > 0;
+  const selectedRows = table.getSelectedRowModel().rows;
 
   return (
-    <div className="overflow-hidden rounded-md border">
-      <Table>
-        <TableHeader>{renderTableHeadRows()}</TableHeader>
-        <TableBody>
-          {renderByDataStatus(dataStatus, {
-            fulfilled: hasData ? renderTableBodyRows() : renderTableEmptyState(),
-            pending: renderLoadingState(),
-            rejected: renderErrorState(),
-          })}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      <div className="overflow-hidden rounded-md border">
+        <Table>
+          <TableHeader>{renderTableHeadRows()}</TableHeader>
+          <TableBody>
+            {renderByDataStatus(dataStatus, {
+              fulfilled: hasData ? renderTableBodyRows() : renderTableEmptyState(),
+              pending: renderLoadingState(),
+              rejected: renderErrorState(),
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
+      <BulkActionsIsland
+        visible={selectedRows.length > 0}
+        count={selectedRows.length}
+        actions={getActions()}
+        entityLabel={bulkActionsConfig?.entityLabel}
+        onClear={() => table.resetRowSelection()}
+      />
+    </>
   );
 }

@@ -9,6 +9,9 @@
       "clearDate": "Очистити дату",
       "hours": "Години",
       "minutes": "Хвилини"
+    },
+    "bulkActions": {
+      "selected": "обрано"
     }
   },
   "auth": {
@@ -172,6 +175,14 @@
           "accepted": "Прийнято",
           "rejected": "Відхилено"
         }
+      },
+      "bulkActions": {
+        "entityLabel_one": "Вчителя",
+        "entityLabel_few": "Вчителів",
+        "entityLabel_many": "Вчителів",
+        "entityLabel_other": "Вчителів",
+        "remove": "Видалити",
+        "add": "Додати"
       },
       "actions": {
         "confirmAdd": {
