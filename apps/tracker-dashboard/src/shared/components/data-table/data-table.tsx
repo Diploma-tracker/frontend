@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { useKey } from 'react-use';
 
 import { HOTKEYS } from '@/shared/constants';
 import { renderByDataStatus, type AsyncStatusLike } from '@/shared/utils/render-by-data-status';
@@ -69,10 +69,15 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
 
   const selectedRows = table.getSelectedRowModel().rows;
 
-  useHotkeys(HOTKEYS.ESCAPE, () => {
-    if (selectedRows.length === 0) return;
-    table.resetRowSelection();
-  });
+  useKey(
+    HOTKEYS.ESCAPE,
+    () => {
+      if (selectedRows.length === 0) return;
+      table.resetRowSelection();
+    },
+    {},
+    [rowSelection]
+  );
 
   const getActions = (): BulkAction[] => {
     if (!bulkActionsConfig) return [];

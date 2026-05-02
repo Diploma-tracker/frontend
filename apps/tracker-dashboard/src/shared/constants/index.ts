@@ -1,3 +1,3 @@
 export const HOTKEYS = {
-  ESCAPE: 'esc',
+  ESCAPE: 'Escape',
 };
