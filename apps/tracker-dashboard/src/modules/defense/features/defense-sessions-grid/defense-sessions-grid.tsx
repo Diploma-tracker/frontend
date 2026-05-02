@@ -109,7 +109,8 @@ export const DefenseSessionsGrid = reatomComponent(function DefenseSessionsGrid(
     }
   };
 
-  const handleCancelReschedule = () => {
+  const handleRescheduleModalClose = (open: boolean) => {
+    if (open) return;
     pending?.revert();
     pendingDragRescheduleAtom.set(null);
   };
@@ -142,9 +143,7 @@ export const DefenseSessionsGrid = reatomComponent(function DefenseSessionsGrid(
 
       <ConfirmationModal
         open={!!pending}
-        onOpenChange={(open) => {
-          if (!open) handleCancelReschedule();
-        }}
+        onOpenChange={handleRescheduleModalClose}
         title={t('defense.session.reschedule.confirmTitle')}
         description={t('defense.session.reschedule.confirmDescription', {
           date: pending ? (formatDateTime(pending.newDate) ?? '') : '',

@@ -45,6 +45,12 @@ export const AdminActions = reatomComponent(function AdminActions() {
     }
   };
 
+  const handleEditSuccess = () => {
+    setShowEditModal(false);
+    onUpdated?.();
+    if (sessionId) wrap(revalidate());
+  };
+
   return (
     <>
       <Button variant="outline" onClick={() => setShowEditModal(true)} disabled={!session}>
@@ -86,14 +92,7 @@ export const AdminActions = reatomComponent(function AdminActions() {
             <DialogTitle>{t('defense.session.detail.editModalTitle')}</DialogTitle>
             <DialogDescription>{t('defense.session.detail.editModalDescription')}</DialogDescription>
           </DialogHeader>
-          <EditDefenseSessionForm
-            sessionId={sessionId ?? ''}
-            onSuccess={() => {
-              setShowEditModal(false);
-              onUpdated?.();
-              if (sessionId) revalidate();
-            }}
-          />
+          <EditDefenseSessionForm sessionId={sessionId ?? ''} onSuccess={handleEditSuccess} />
         </DialogContent>
       </Dialog>
     </>
