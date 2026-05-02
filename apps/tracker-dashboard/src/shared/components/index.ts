@@ -12,4 +12,5 @@ export { Container } from './layout/container/container';
 export { Logo } from './logo/logo';
 
 export { TablePagination } from './table/table-pagination';
+export { getRowSelectionColumn } from './table/row-selection-column/row-selection-column';
 export { actionCell } from './table/action-cell';

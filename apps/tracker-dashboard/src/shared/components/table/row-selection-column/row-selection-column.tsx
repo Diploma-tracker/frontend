@@ -2,9 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { Checkbox } from '@repo/ui-kit/components/common/form/checkbox';
 
-import type { TeacherDTO } from '../../../models';
-
-export const RowSelectionColumn: ColumnDef<TeacherDTO> = {
+export const getRowSelectionColumn = <TData,>(): ColumnDef<TData> => ({
   id: 'select',
   header: ({ table }) => (
     <Checkbox
@@ -14,12 +12,12 @@ export const RowSelectionColumn: ColumnDef<TeacherDTO> = {
     />
   ),
   cell: ({ row }) => (
-    <>
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    </>
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+      aria-label="Select row"
+    />
   ),
-};
+  enableSorting: false,
+  enableHiding: false,
+});

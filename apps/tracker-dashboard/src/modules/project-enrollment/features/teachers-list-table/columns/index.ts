@@ -1,3 +1,4 @@
+import { getRowSelectionColumn } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { TeacherDTO } from '../../../models';
@@ -5,11 +6,10 @@ import { createTeacherActionColumn } from './action-column';
 import { TeacherApplicationsColumn } from './applications-column';
 import { TeacherEmailColumn } from './email-column';
 import { TeacherNameColumn } from './name-column';
-import { RowSelectionColumn } from './row-selection-column';
 import { TeacherSelectionColumn } from './selection-column';
 
 export const createTeacherColumns = (roundId: string): ColumnDef<TeacherDTO>[] => [
-  RowSelectionColumn,
+  getRowSelectionColumn(),
   TeacherNameColumn,
   TeacherEmailColumn,
   TeacherSelectionColumn,

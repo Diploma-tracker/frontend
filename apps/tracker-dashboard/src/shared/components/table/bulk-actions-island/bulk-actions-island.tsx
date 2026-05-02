@@ -1,4 +1,5 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
+import { usePrevious } from 'react-use';
 
 import { T } from '@/shared/utils/i18n';
 import { XIcon } from '@phosphor-icons/react';
@@ -25,9 +26,9 @@ type Props = {
 };
 
 export function BulkActionsIsland({ visible, count, actions, entityLabel, onClear }: Props) {
-  const lastCountRef = useRef(count);
+  const lastCount = usePrevious(count) ?? 0;
 
-  const displayCount = count > 0 ? count : lastCountRef.current;
+  const displayCount = count > 0 ? count : lastCount;
   const resolvedEntityLabel = typeof entityLabel === 'function' ? entityLabel(displayCount) : entityLabel;
 
   const label = (
@@ -39,12 +40,6 @@ export function BulkActionsIsland({ visible, count, actions, entityLabel, onClea
   const animation = visible
     ? 'pointer-events-auto translate-y-0 opacity-100'
     : 'pointer-events-none translate-y-6 opacity-0';
-
-  useEffect(() => {
-    if (count > 0) {
-      lastCountRef.current = count;
-    }
-  }, [count]);
 
   return (
     <div
