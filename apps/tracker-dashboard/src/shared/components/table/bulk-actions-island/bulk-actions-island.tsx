@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { usePrevious } from 'react-use';
 
-import { T } from '@/shared/utils/i18n';
+import { useTranslation } from '@/shared/utils/i18n';
 import { XIcon } from '@phosphor-icons/react';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
@@ -26,6 +26,7 @@ type Props = {
 };
 
 export function BulkActionsIsland({ visible, count, actions, entityLabel, onClear }: Props) {
+  const { t } = useTranslation();
   const lastCount = usePrevious(count) ?? 0;
 
   const displayCount = count > 0 ? count : lastCount;
@@ -33,7 +34,7 @@ export function BulkActionsIsland({ visible, count, actions, entityLabel, onClea
 
   const label = (
     <>
-      {displayCount} {resolvedEntityLabel} <T k="common.bulkActions.selected" />
+      {displayCount} {resolvedEntityLabel} {t('common.bulkActions.selected')}
     </>
   );
 
