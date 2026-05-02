@@ -1,4 +1,4 @@
-import { parse, serialize } from 'tinyduration';
+import { parseDuration, serializeDuration } from '@repo/utils/duration';
 
 /**
  * Parses an ISO 8601 duration string into hours and minutes components.
@@ -9,7 +9,7 @@ import { parse, serialize } from 'tinyduration';
  */
 export function parseISODurationComponents(iso: string): { hours: number; minutes: number } {
   if (!iso) return { hours: 0, minutes: 0 };
-  const { hours = 0, minutes = 0 } = parse(iso);
+  const { hours = 0, minutes = 0 } = parseDuration(iso);
   return { hours, minutes };
 }
 
@@ -23,5 +23,5 @@ export function parseISODurationComponents(iso: string): { hours: number; minute
  */
 export function formatISODuration(hours: number, minutes: number): string {
   if (hours === 0 && minutes === 0) return 'PT0M';
-  return serialize({ hours: hours || undefined, minutes: minutes || undefined });
+  return serializeDuration({ hours, minutes });
 }

@@ -29,6 +29,7 @@
     "@reatom/react": "^1000.2.2",
     "@repo/api": "workspace:*",
     "@repo/ui-kit": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-router": "^1.153.2",
     "@tanstack/react-router-devtools": "^1.153.2",
@@ -42,7 +43,6 @@
     "react-dom": "^19.2.0",
     "react-i18next": "^17.0.4",
     "tailwindcss": "^4.1.16",
-    "tinyduration": "^3.4.1",
     "uk": "link:date-fns/locale/uk",
     "zod": "^4.3.6"
   },

@@ -1,8 +1,11 @@
 import { useQuery } from '@/shared/model/query';
 import { formatDateTime } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
-import { formatDurationToReadable, parseISODuration } from '@/shared/utils/iso-duration';
+import { formatDurationToReadable } from '@/shared/utils/iso-duration';
 import { reatomComponent } from '@reatom/react';
+import { add } from 'date-fns';
+
+import { parseDuration } from '@repo/utils/duration';
 
 import { defenseSessionDetailsQuery } from '../../models';
 
@@ -14,7 +17,8 @@ export const MainContent = reatomComponent(function MainContent({ sessionId }: {
   if (!session) return null;
 
   const participantCount = session.participants?.length ?? 0;
-  const endDate = new Date(new Date(session.date).getTime() + parseISODuration(session.duration));
+
+  const endDate = add(new Date(session.date), parseDuration(session.duration));
 
   const renderCell = (label: string, value: string | number | null) => (
     <div>

@@ -3,7 +3,8 @@
 // TODO: refactor and fix issue with input switching and i18n
 import * as React from 'react';
 
-import { formatISODuration, parseISODurationComponents } from '../../../lib/iso-duration';
+import { parseDuration, serializeDuration } from '@repo/utils/duration';
+
 import { cn } from '../../../lib/utils';
 
 function pad(n: number) {
@@ -151,11 +152,11 @@ export function DurationPicker({
   'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
 }: DurationPickerProps) {
-  const { hours, minutes } = parseISODurationComponents(value);
+  const { hours = 0, minutes = 0 } = parseDuration(value);
   const hoursRef = React.useRef<HTMLInputElement>(null);
 
-  const setHours = (h: number) => onChange?.(formatISODuration(h, minutes));
-  const setMinutes = (m: number) => onChange?.(formatISODuration(hours, m));
+  const setHours = (h: number) => onChange?.(serializeDuration({ hours: h, minutes }));
+  const setMinutes = (m: number) => onChange?.(serializeDuration({ hours, minutes: m }));
 
   const isInvalid = ariaInvalid === true || ariaInvalid === 'true';
 

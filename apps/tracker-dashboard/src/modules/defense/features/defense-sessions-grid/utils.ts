@@ -1,4 +1,6 @@
-import { parseISODuration } from '@/shared/utils/iso-duration';
+import { add } from 'date-fns';
+
+import { parseDuration } from '@repo/utils/duration';
 
 import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
 
@@ -27,8 +29,7 @@ export function sessionsToCalendarEvents(
     }
 
     const start = new Date(startRaw);
-    const durationMs = parseISODuration(durationRaw);
-    const end = new Date(start.getTime() + durationMs);
+    const end = add(start, parseDuration(durationRaw));
 
     return {
       id: session.id,

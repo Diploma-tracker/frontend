@@ -5,11 +5,12 @@ import { ConfirmationModal } from '@/shared/components/confirmation-modal/confir
 import { ScheduleEventContent, WeekCalendar } from '@/shared/components/week-calendar';
 import { formatDateTime } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
-import { intervalToISODuration } from '@/shared/utils/iso-duration';
 import type { EventClickArg, EventContentArg, EventDropArg } from '@fullcalendar/core';
 import type { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
+
+import { intervalToISODuration } from '@repo/utils/duration';
 
 import type { DefenseSessionDTO } from '../../models';
 import { pendingDragRescheduleAtom, rescheduleDefenseSessionAction } from '../../models/defense-session-actions-model';
