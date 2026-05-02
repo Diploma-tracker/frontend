@@ -214,6 +214,50 @@
           "createSuccess": "Defense session created successfully!",
           "createError": "Failed to create defense session. Please try again."
         }
+      },
+      "detail": {
+        "title": "Defense Session",
+        "subtitle": "{{participants}} of {{capacity}} spots filled",
+        "dateLabel": "Start",
+        "endLabel": "End",
+        "durationLabel": "Duration",
+        "capacityLabel": "Capacity",
+        "editButton": "Edit",
+        "cancelEditButton": "Cancel Edit",
+        "editModalTitle": "Edit Defense Session",
+        "editModalDescription": "Update the session date and duration.",
+        "deleteButton": "Delete",
+        "deleteConfirmTitle": "Delete defense session?",
+        "deleteConfirmDescription": "This action cannot be undone.",
+        "deleteConfirmButton": "Delete",
+        "rescheduleTitle": "Reschedule Session",
+        "rescheduleSubmit": "Save changes",
+        "registerButton": "Register",
+        "unregisterButton": "Unregister",
+        "participantsLabel": "Participants",
+        "noParticipants": "No participants yet.",
+        "allowedStudentsLabel": "Allowed students",
+        "noAllowedStudents": "No allowed students.",
+        "allowedGroupsLabel": "Allowed groups",
+        "noAllowedGroups": "No allowed groups.",
+        "contentPlaceholder": "More content coming soon..."
+      },
+      "reschedule": {
+        "confirmTitle": "Reschedule session?",
+        "confirmDescription": "Move this session to {{date}}?",
+        "confirmButton": "Reschedule"
+      },
+      "toast": {
+        "deleteSuccess": "Defense session deleted.",
+        "deleteError": "Failed to delete defense session.",
+        "rescheduleSuccess": "Defense session rescheduled.",
+        "rescheduleError": "Failed to reschedule defense session.",
+        "updateSuccess": "Defense session updated.",
+        "updateError": "Failed to update defense session.",
+        "registerSuccess": "Successfully registered for defense session.",
+        "registerError": "Failed to register for defense session.",
+        "unregisterSuccess": "Successfully unregistered from defense session.",
+        "unregisterError": "Failed to unregister from defense session."
       }
     }
   }

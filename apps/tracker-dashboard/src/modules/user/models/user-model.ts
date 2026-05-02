@@ -13,7 +13,7 @@ export type User = {
   avatarUrl?: string;
 };
 
-const NULL_USER: User = {
+export const NULL_USER: User = {
   id: '',
   firstName: '',
   lastName: '',

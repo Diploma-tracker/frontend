@@ -1,16 +1,8 @@
-import type { DefenseSessionDTO } from '../../models';
+import { add } from 'date-fns';
 
-/**
- * Parses an ISO 8601 duration string (e.g. "PT1H30M", "PT45M") into milliseconds.
- */
-export function parseDuration(iso: string): number {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return 0;
-  const hours = parseInt(match[1] ?? '0', 10);
-  const minutes = parseInt(match[2] ?? '0', 10);
-  const seconds = parseInt(match[3] ?? '0', 10);
-  return (hours * 3600 + minutes * 60 + seconds) * 1000;
-}
+import { parseDuration } from '@repo/utils/duration';
+
+import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
 
 export interface DefenseSessionCalendarEvent {
   id: string;
@@ -25,12 +17,19 @@ export interface DefenseSessionCalendarEvent {
 
 export function sessionsToCalendarEvents(
   sessions: DefenseSessionDTO[],
+  pending: PendingDragReschedule | null,
   getTitle: (session: DefenseSessionDTO) => string
 ): DefenseSessionCalendarEvent[] {
   return sessions.map((session) => {
-    const start = new Date(session.date);
-    const durationMs = parseDuration(session.duration);
-    const end = new Date(start.getTime() + durationMs);
+    let startRaw = session.date;
+    let durationRaw = session.duration;
+    if (pending && pending.sessionId === session.id) {
+      startRaw = pending.newDate;
+      durationRaw = pending.newDuration ?? session.duration;
+    }
+
+    const start = new Date(startRaw);
+    const end = add(start, parseDuration(durationRaw));
 
     return {
       id: session.id,

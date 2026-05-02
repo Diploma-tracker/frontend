@@ -200,8 +200,8 @@
         "durationLabel": "Тривалість",
         "capacityLabel": "Місткість",
         "capacityPlaceholder": "напр. 5",
-        "allowedStudentsLabel": "Дозволені студенти",
-        "groupsLabel": "Дозволені групи",
+        "allowedStudentsLabel": "Запрошені студенти",
+        "groupsLabel": "Запрошені групи",
         "submitButton": "Створити сесію",
         "validation": {
           "allocationRoundRequired": "Раунд розподілу є обов'язковим",
@@ -214,6 +214,50 @@
           "createSuccess": "Сесію захисту успішно створено!",
           "createError": "Не вдалося створити сесію захисту. Спробуйте ще раз."
         }
+      },
+      "detail": {
+        "title": "Сесія захисту",
+        "subtitle": "{{participants}} з {{capacity}} місць зайнято",
+        "dateLabel": "Початок",
+        "endLabel": "Кінець",
+        "durationLabel": "Тривалість",
+        "capacityLabel": "Місткість",
+        "editButton": "Редагувати",
+        "cancelEditButton": "Скасувати редагування",
+        "editModalTitle": "Редагувати захист",
+        "editModalDescription": "Оновіть дату та тривалість сесії.",
+        "deleteButton": "Видалити",
+        "deleteConfirmTitle": "Видалити сесію захисту?",
+        "deleteConfirmDescription": "Цю дію неможливо скасувати.",
+        "deleteConfirmButton": "Видалити",
+        "rescheduleTitle": "Перенести сесію",
+        "rescheduleSubmit": "Зберегти зміни",
+        "registerButton": "Записатися",
+        "unregisterButton": "Відписатися",
+        "participantsLabel": "Учасники",
+        "noParticipants": "Ще немає учасників.",
+        "allowedStudentsLabel": "Запрошені студенти",
+        "noAllowedStudents": "Нема запрошених студентів.",
+        "allowedGroupsLabel": "Запрошені групи",
+        "noAllowedGroups": "Нема запрошених груп.",
+        "contentPlaceholder": "Більше контенту незабаром..."
+      },
+      "reschedule": {
+        "confirmTitle": "Перенести сесію?",
+        "confirmDescription": "Перемістити цю сесію на {{date}}?",
+        "confirmButton": "Перенести"
+      },
+      "toast": {
+        "deleteSuccess": "Сесію захисту видалено.",
+        "deleteError": "Не вдалося видалити сесію захисту.",
+        "rescheduleSuccess": "Сесію захисту перенесено.",
+        "rescheduleError": "Не вдалося перенести сесію захисту.",
+        "updateSuccess": "Сесію захисту оновлено.",
+        "updateError": "Не вдалося оновити сесію захисту.",
+        "registerSuccess": "Ви успішно записалися на сесію захисту.",
+        "registerError": "Не вдалося записатися на сесію захисту.",
+        "unregisterSuccess": "Ви успішно відписалися від сесії захисту.",
+        "unregisterError": "Не вдалося відписатися від сесії захисту."
       }
     }
   }

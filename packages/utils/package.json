@@ -1,0 +1,29 @@
+{
+  "name": "@repo/utils",
+  "description": "Shared utility functions for the monorepo",
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./duration": "./src/duration.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src/ --max-warnings 0",
+    "lint:fix": "eslint src/ --fix --max-warnings 0"
+  },
+  "devDependencies": {
+    "@repo/code-tools-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "tinyduration": "^3.4.1"
+  }
+}

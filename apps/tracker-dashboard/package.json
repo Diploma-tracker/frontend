@@ -29,6 +29,7 @@
     "@reatom/react": "^1000.2.2",
     "@repo/api": "workspace:*",
     "@repo/ui-kit": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-router": "^1.153.2",
     "@tanstack/react-router-devtools": "^1.153.2",

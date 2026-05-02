@@ -1,14 +1,13 @@
-import { useSyncArrayFieldWithMultiSelect } from '@/shared/components/form/multi-select';
+import { useArrayFieldForMultiSelect } from '@/shared/components/form/multi-select';
 import type { FieldArrayAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 
-import type { UserOption } from '../../models/user-selector-model';
 import { UserSelector } from './user-selector';
 
 interface UserSelectorFieldProps {
-  field?: FieldArrayAtom<string, string>;
+  field: FieldArrayAtom<string, string>;
   label?: string;
   description?: string;
   disabled?: boolean;
@@ -19,7 +18,7 @@ export const UserSelectorField = reatomComponent(function UserSelectorField({
   label,
   description,
 }: UserSelectorFieldProps) {
-  const handleChange = useSyncArrayFieldWithMultiSelect<UserOption>(field!);
+  const [selected, setSelected] = useArrayFieldForMultiSelect(field);
 
   const fieldValidation = field?.validation();
   const error = fieldValidation?.error as string | undefined;
@@ -29,7 +28,7 @@ export const UserSelectorField = reatomComponent(function UserSelectorField({
     <Field data-invalid={invalid || undefined}>
       {label && <FieldLabel>{label}</FieldLabel>}
 
-      <UserSelector role="student" handleChange={handleChange} />
+      <UserSelector role="student" selected={selected} setSelected={setSelected} />
 
       {description && <FieldDescription>{description}</FieldDescription>}
       {error && <FieldError>{error}</FieldError>}

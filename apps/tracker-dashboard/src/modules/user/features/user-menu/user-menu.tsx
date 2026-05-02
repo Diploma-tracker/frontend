@@ -14,15 +14,13 @@ import {
 import { SidebarMenuButton, useSidebar } from '@repo/ui-kit/components/sidebar';
 
 import { userAtom } from '../../models';
-import { CurrentUserAvatar } from '../user-avatar/current-user-avatar';
+import { UserInfo } from '../user-info/user-info';
 
 export const UserMenu = reatomComponent(function UserMenu() {
   const user = userAtom();
   const { t } = useTranslation();
 
   const { isMobile } = useSidebar();
-
-  const fullName = `${user.firstName} ${user.lastName}`;
 
   const handleLogout = () => {
     logoutAction();
@@ -35,12 +33,7 @@ export const UserMenu = reatomComponent(function UserMenu() {
           size="lg"
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
-          <CurrentUserAvatar />
-
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{fullName}</span>
-            <span className="truncate text-xs">{user.email}</span>
-          </div>
+          <UserInfo userId={user.id} />
           <CaretUpDownIcon className="ml-auto size-4" />
         </SidebarMenuButton>
       </DropdownMenuTrigger>
@@ -52,14 +45,7 @@ export const UserMenu = reatomComponent(function UserMenu() {
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <CurrentUserAvatar />
-
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{fullName}</span>
-              <span className="truncate text-xs">{user.email}</span>
-            </div>
-          </div>
+          <UserInfo userId={user.id} />
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />

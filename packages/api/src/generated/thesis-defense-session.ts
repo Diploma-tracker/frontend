@@ -8,8 +8,10 @@ import type {
   CreateDefenseSessionRequest,
   CreateDefenseSessionResponse,
   DefenseSessionDTO,
+  DefenseSessionDetailsDTO,
   RegisterForDefenseSessionRequest,
   RescheduleDefenseSessionRequest,
+  UpdateDefenseSessionRequest,
 } from "./model";
 
 import { orvalCustomInstance } from "../orval/mutator";
@@ -29,6 +31,16 @@ export const createDefenseSession = (
   });
 };
 /**
+ * Returns detailed info for a single defense session including participants, allowed students and groups (ADMIN only)
+ * @summary Get defense session details
+ */
+export const getDefenseSessionDetails = (defenseSessionId: string) => {
+  return orvalCustomInstance<DefenseSessionDetailsDTO>({
+    url: `/projects/defense-sessions/${defenseSessionId}`,
+    method: "GET",
+  });
+};
+/**
  * Delete a thesis defense session (ADMIN only)
  * @summary Delete defense session
  */
@@ -36,6 +48,21 @@ export const deleteDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}`,
     method: "DELETE",
+  });
+};
+/**
+ * Partially update a thesis defense session (ADMIN only)
+ * @summary Update defense session
+ */
+export const updateDefenseSession = (
+  defenseSessionId: string,
+  updateDefenseSessionRequest: UpdateDefenseSessionRequest,
+) => {
+  return orvalCustomInstance<void>({
+    url: `/projects/defense-sessions/${defenseSessionId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: updateDefenseSessionRequest,
   });
 };
 /**
@@ -108,8 +135,14 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 export type CreateDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof createDefenseSession>>
 >;
+export type GetDefenseSessionDetailsResult = NonNullable<
+  Awaited<ReturnType<typeof getDefenseSessionDetails>>
+>;
 export type DeleteDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof deleteDefenseSession>>
+>;
+export type UpdateDefenseSessionResult = NonNullable<
+  Awaited<ReturnType<typeof updateDefenseSession>>
 >;
 export type RescheduleDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof rescheduleDefenseSession>>
