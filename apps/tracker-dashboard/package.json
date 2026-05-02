@@ -43,6 +43,7 @@
     "react-dom": "^19.2.0",
     "react-hotkeys-hook": "^5.3.0",
     "react-i18next": "^17.0.4",
+    "react-use": "^17.6.0",
     "tailwindcss": "^4.1.16",
     "uk": "link:date-fns/locale/uk",
     "zod": "^4.3.6"
