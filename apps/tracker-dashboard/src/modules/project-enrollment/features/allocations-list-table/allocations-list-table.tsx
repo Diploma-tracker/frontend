@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
-import { DataTable } from '@/shared/components/data-table/data-table';
+import { DataTable, type TableDataConfig } from '@/shared/components/data-table/data-table';
 import { reatomComponent } from '@reatom/react';
 
-import { allocationRoundListAtom } from '../../models';
+import { allocationRoundListAtom, type AllocationRoundDTO } from '../../models';
 import { columns } from './columns';
 
 export const AllocationsListTable = reatomComponent(function AllocationsListTable() {
@@ -11,16 +11,16 @@ export const AllocationsListTable = reatomComponent(function AllocationsListTabl
   const allocationRounds = allocationRoundListAtom.data();
   const filter = allocationRoundListAtom.filter();
 
+  const tableDataConfig: TableDataConfig<AllocationRoundDTO> = {
+    data: allocationRounds?.items ?? [],
+    dataStatus: status,
+    getRowId: (row) => row.id,
+    numberOfLoadingLines: filter.pageSize,
+  };
+
   useEffect(() => {
     allocationRoundListAtom.fetch();
   }, []);
 
-  return (
-    <DataTable
-      columns={columns}
-      data={allocationRounds?.items ?? []}
-      dataStatus={status}
-      numberOfLoadingLines={filter.pageSize}
-    />
-  );
+  return <DataTable columns={columns} tableDataConfig={tableDataConfig} />;
 });

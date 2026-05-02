@@ -9,6 +9,9 @@
       "clearDate": "Clear date",
       "hours": "Hours",
       "minutes": "Minutes"
+    },
+    "bulkActions": {
+      "selected": "selected"
     }
   },
   "auth": {
@@ -172,6 +175,12 @@
           "accepted": "Accepted",
           "rejected": "Rejected"
         }
+      },
+      "bulkActions": {
+        "entityLabel_one": "Teacher",
+        "entityLabel_other": "Teachers",
+        "remove": "Remove",
+        "add": "Add"
       },
       "actions": {
         "confirmAdd": {
