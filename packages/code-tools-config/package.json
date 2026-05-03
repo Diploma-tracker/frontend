@@ -11,6 +11,10 @@
     "./prettier/base": "./prettier/base.js",
     "./prettier/react": "./prettier/react.js"
   },
+  "scripts": {
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.1",

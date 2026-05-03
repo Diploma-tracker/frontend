@@ -1,6 +1,6 @@
-import { config as reactBaseConfig } from "./react-base.js";
-import reactRefresh from "eslint-plugin-react-refresh";
-import { globalIgnores } from "eslint/config";
+import { config as reactBaseConfig } from './react-base.js';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import { globalIgnores } from 'eslint/config';
 
 /**
  * A custom ESLint configuration for apps/packages that use React with Vite.
@@ -8,12 +8,12 @@ import { globalIgnores } from "eslint/config";
  * @type {import("eslint").Linter.Config} */
 export const config = [
   ...reactBaseConfig,
-  globalIgnores(["dist"]),
+  globalIgnores(['dist']),
 
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
     plugins: {
-      "react-refresh": reactRefresh,
+      'react-refresh': reactRefresh,
     },
     rules: {
       ...reactRefresh.configs.vite.rules,
