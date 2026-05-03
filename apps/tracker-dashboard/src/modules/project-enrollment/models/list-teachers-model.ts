@@ -1,4 +1,4 @@
-import { asyncList, type AsyncListPagination } from '@/shared/model/async-list';
+import { type AsyncListPagination, asyncList } from '@/shared/model/async-list';
 
 import { getAllocationRoundTeachers } from '@repo/api/allocation-round';
 import {
@@ -10,12 +10,17 @@ import {
 
 export type { TeacherDTO, TeacherSelectionFilter };
 
-export interface TeachersFilter extends AsyncListPagination, Record<string, unknown> {
+export interface TeachersFilter
+  extends AsyncListPagination, Record<string, unknown> {
   search?: string;
   selectionFilter: TeacherSelectionFilter;
 }
 
-export const teacherListAtom = asyncList<TeachersFilter, string, PaginatedTeachersDTO>(
+export const teacherListAtom = asyncList<
+  TeachersFilter,
+  string,
+  PaginatedTeachersDTO
+>(
   {
     fetch: async (roundId: string, filters: TeachersFilter) => {
       const response = await getAllocationRoundTeachers(roundId, {
@@ -37,7 +42,7 @@ export const teacherListAtom = asyncList<TeachersFilter, string, PaginatedTeache
       selectionFilter: TeacherSelectionFilter.ALL,
     },
   },
-  'teachers'
+  'teachers',
 );
 
 export const getTeacherApplicationsStats = (teacher: TeacherDTO) => {

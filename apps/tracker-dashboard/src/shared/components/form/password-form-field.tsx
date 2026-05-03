@@ -1,10 +1,13 @@
-import { useState, type ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import { EyeIcon, EyeSlashIcon, LockSimpleIcon } from '@phosphor-icons/react';
 
 import { TextFormField } from './text-form-field';
 
-type PasswordFormFieldProps = Omit<ComponentProps<typeof TextFormField>, 'type'> & {
+type PasswordFormFieldProps = Omit<
+  ComponentProps<typeof TextFormField>,
+  'type'
+> & {
   showPasswordAriaLabel: string;
   hidePasswordAriaLabel: string;
 };
@@ -13,7 +16,9 @@ export const PasswordFormField = (props: PasswordFormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const type = showPassword ? 'text' : 'password';
-  const ariaLabel = showPassword ? props.hidePasswordAriaLabel : props.showPasswordAriaLabel;
+  const ariaLabel = showPassword
+    ? props.hidePasswordAriaLabel
+    : props.showPasswordAriaLabel;
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -38,5 +43,12 @@ export const PasswordFormField = (props: PasswordFormFieldProps) => {
     { type: 'custom', content: <LockSimpleIcon /> },
   ];
 
-  return <TextFormField type={type} autoComplete="current-password" addons={addons} {...props} />;
+  return (
+    <TextFormField
+      type={type}
+      autoComplete="current-password"
+      addons={addons}
+      {...props}
+    />
+  );
 };

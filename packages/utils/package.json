@@ -13,14 +13,17 @@
   "scripts": {
     "build": "tsc",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src/ --max-warnings 0",
-    "lint:fix": "eslint src/ --fix --max-warnings 0"
+    "lint": "eslint src/ --fix --max-warnings 0",
+    "lint:check": "eslint src/ --max-warnings 0",
+    "format": "prettier --write src/ --ignore-unknown",
+    "format:check": "prettier --check src/ --ignore-unknown",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@repo/code-tools-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
+    "prettier": "^3.7.4",
     "typescript": "5.9.2"
   },
   "dependencies": {

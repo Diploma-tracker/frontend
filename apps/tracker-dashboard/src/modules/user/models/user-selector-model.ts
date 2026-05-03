@@ -10,29 +10,32 @@ export interface UserOption {
 
 const SHOWN_USERS = 5;
 
-export const loadUserOptions = action(async (query: string, role?: LoginTokenUserRole): Promise<UserOption[]> => {
-  const roleFilterByRole: Record<LoginTokenUserRole, RoleFilter> = {
-    admin: 'ADMIN',
-    staff: 'STAFF',
-    student: 'STUDENT',
-  };
-  const roleFilter = role ? roleFilterByRole[role] : undefined;
+export const loadUserOptions = action(
+  async (query: string, role?: LoginTokenUserRole): Promise<UserOption[]> => {
+    const roleFilterByRole: Record<LoginTokenUserRole, RoleFilter> = {
+      admin: 'ADMIN',
+      staff: 'STAFF',
+      student: 'STUDENT',
+    };
+    const roleFilter = role ? roleFilterByRole[role] : undefined;
 
-  const result = await wrap(
-    listUsers({
-      page: 1,
-      pageSize: SHOWN_USERS,
-      roleFilter,
-      search: query,
-    })
-  );
+    const result = await wrap(
+      listUsers({
+        page: 1,
+        pageSize: SHOWN_USERS,
+        roleFilter,
+        search: query,
+      }),
+    );
 
-  if (!result.ok) {
-    return [];
-  }
+    if (!result.ok) {
+      return [];
+    }
 
-  return result.data.items.map((u) => ({
-    value: u.id,
-    label: u.firstName + ' ' + u.lastName,
-  }));
-}, 'loadUserOptions').extend(withAsync());
+    return result.data.items.map((u) => ({
+      value: u.id,
+      label: u.firstName + ' ' + u.lastName,
+    }));
+  },
+  'loadUserOptions',
+).extend(withAsync());

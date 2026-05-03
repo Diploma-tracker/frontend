@@ -7,7 +7,12 @@ import type { FieldAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { DatePicker } from '@repo/ui-kit/components/common/form/date-picker';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from '@repo/ui-kit/components/common/form/field';
 
 interface DatePickerFormFieldProps extends Omit<
   ComponentProps<typeof DatePicker>,
@@ -18,7 +23,9 @@ interface DatePickerFormFieldProps extends Omit<
   field?: FieldAtom<string>;
 }
 
-export const DatePickerFormField = reatomComponent(function DatePickerFormField(props: DatePickerFormFieldProps) {
+export const DatePickerFormField = reatomComponent(function DatePickerFormField(
+  props: DatePickerFormFieldProps,
+) {
   const { description, label, field, ...datePickerProps } = props;
   const { t } = useTranslation();
 

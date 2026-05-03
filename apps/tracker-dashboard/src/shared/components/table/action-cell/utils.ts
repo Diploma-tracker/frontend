@@ -5,7 +5,9 @@ import type { ButtonProps } from '@repo/ui-kit/components/common/data-display/bu
 import { DEFAULT_ACTIONS_PARAMS } from './constants';
 import type { Action, ActionVatiant } from './types';
 
-export const preprocessActions = <TData>(actions: Action<TData>[]): Action<TData>[] => {
+export const preprocessActions = <TData>(
+  actions: Action<TData>[],
+): Action<TData>[] => {
   return actions.map((action) => {
     const newAction = { ...DEFAULT_ACTIONS_PARAMS, ...action };
     const originalAction = newAction.action;
@@ -35,7 +37,7 @@ export const preprocessActions = <TData>(actions: Action<TData>[]): Action<TData
 
 export const actionToButton = (
   variant: ActionVatiant | undefined,
-  isIcon: boolean
+  isIcon: boolean,
 ): {
   variant?: ButtonProps['variant'];
   intent?: ButtonProps['intent'];

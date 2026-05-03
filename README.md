@@ -59,7 +59,6 @@ Monorepo repository containing the frontend part of the Diploma tracker applicat
 - [Scripts](#root-scripts)
 - [Apps/packages scripts](#appspackages-scripts)
 - [Environment Variables](#environment-variables)
-- [How to build routes](#how-to-build-routes)
 
 ## Requirements
 
@@ -85,13 +84,30 @@ Scripts are run from the repository root.
 
 - `pnpm dev` — run all packages with `dev` via Turbo
 - `pnpm build` — build all packages
-- `pnpm lint` — lint code
-- `pnpm lint:fix` — lint with auto-fixes
-- `pnpm format` — check formatting
-- `pnpm format:fix` — auto-format
+- `pnpm lint` — lint code with auto-fix
+- `pnpm lint:check` — only lint check without auto-fix (good for CI)
+- `pnpm format` — format code with auto-fix
+- `pnpm format:check` — only format check without auto-fix (good for CI)
+- `pnpm format:root` — format only root files (e.g. `README.md`, `turbo.json`, etc.) with auto-fix
+- `pnpm format:check:root` — only format check for root files without auto-fix (good for CI)
 - `pnpm check-types` — type checking
 - `pnpm create:app` — create a new app
 - `pnpm create:package` — create a new package
+
+When creating a new package, add only the scripts relevant to the tooling configured in that package:
+
+| Script         | Required when              | Command                                  |
+| :------------- | :------------------------- | :--------------------------------------- |
+| `lint`         | `eslint.config.*` exists   | `eslint src/ --fix --max-warnings 0`     |
+| `lint:check`   | `eslint.config.*` exists   | `eslint src/ --max-warnings 0`           |
+| `format`       | `prettier.config.*` exists | `prettier --write src/ --ignore-unknown` |
+| `format:check` | `prettier.config.*` exists | `prettier --check src/ --ignore-unknown` |
+| `check-types`  | `tsconfig.json` exists     | `tsc --noEmit`                           |
+
+> [!NOTE]
+> Use `.` instead of `src/` as the target path for packages that have no `src/` directory (e.g. config-only packages).
+
+These scripts are picked up automatically by Turbo via the root `turbo.json` pipeline, so they will run as part of `pnpm lint`, `pnpm format`, and `pnpm check-types` from the repository root.
 
 ### Apps/packages scripts
 
@@ -129,30 +145,3 @@ Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
 | :------------- | :----------------------------------------- |
 | `NODE_ENV`     | Node environment (development, production) |
 | `VITE_API_URL` | URL of the backend API                     |
-
-## How to build routes
-
-Routes are generated based on the file system structure of the `app/routes` directory. To create a new route, simply add a new file in that directory with the appropriate name and export a component from it. The router will automatically pick up the new route and make it available in the application. This is how the Tanstack Router's file-based routing works.
-
-Now project has the next file structure for routes:
-
-```bash
-routes/
-├── __root.tsx
-├── (auth)/
-│   ├── _auth.tsx           ← auth layout
-│   └── _auth.login.tsx     ← /login
-└── (app)/
-    ├── _app.tsx            ← app layout (sidebar + beforeLoad guard)
-    ├── _app.index.tsx      ← /
-    ├── _app.students.tsx   ← /students
-    ├── _app.profile.tsx    ← /profile
-    └── _app.settings/     ← or folder for nested routes
-        ├── index.tsx       ← /settings
-        └── account.tsx     ← /settings/account
-```
-
-> [!NOTE]
->
-> 1. If you need page that belongs to general app layout, so you should place it inside `(app)` folder as presented above.
-> 2. If you need page that should not be wrapped in app layout or group of pages that should have their own layout (for example, auth pages), so you can create a separate group folder for them (like `(auth)` in example above) and place route files there.

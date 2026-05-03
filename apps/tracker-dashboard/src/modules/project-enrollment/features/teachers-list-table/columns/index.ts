@@ -8,7 +8,9 @@ import { TeacherEmailColumn } from './email-column';
 import { TeacherNameColumn } from './name-column';
 import { TeacherSelectionColumn } from './selection-column';
 
-export const createTeacherColumns = (roundId: string): ColumnDef<TeacherDTO>[] => [
+export const createTeacherColumns = (
+  roundId: string,
+): ColumnDef<TeacherDTO>[] => [
   getRowSelectionColumn(),
   TeacherNameColumn,
   TeacherEmailColumn,

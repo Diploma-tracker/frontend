@@ -1,15 +1,18 @@
-import { useState, type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useKey } from 'react-use';
 
 import { HOTKEYS } from '@/shared/constants';
-import { renderByDataStatus, type AsyncStatusLike } from '@/shared/utils/render-by-data-status';
+import {
+  type AsyncStatusLike,
+  renderByDataStatus,
+} from '@/shared/utils/render-by-data-status';
 import { BinocularsIcon, WarningOctagonIcon } from '@phosphor-icons/react';
 import {
+  type ColumnDef,
+  type RowSelectionState,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  type ColumnDef,
-  type RowSelectionState,
 } from '@tanstack/react-table';
 
 import {
@@ -29,7 +32,10 @@ import {
 } from '@repo/ui-kit/components/common/states/empty';
 import { Skeleton } from '@repo/ui-kit/components/common/states/skeleton';
 
-import { BulkActionsIsland, type BulkAction } from '../table/bulk-actions-island/bulk-actions-island';
+import {
+  type BulkAction,
+  BulkActionsIsland,
+} from '../table/bulk-actions-island/bulk-actions-island';
 
 export interface BulkActionsConfig<TData> {
   entityLabel?: ReactNode | ((count: number) => ReactNode);
@@ -52,7 +58,12 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
   const { columns, tableDataConfig, onRowClick, bulkActionsConfig } = props;
-  const { data, dataStatus, getRowId, numberOfLoadingLines = 10 } = tableDataConfig;
+  const {
+    data,
+    dataStatus,
+    getRowId,
+    numberOfLoadingLines = 10,
+  } = tableDataConfig;
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -76,7 +87,7 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
       table.resetRowSelection();
     },
     {},
-    [rowSelection]
+    [rowSelection],
   );
 
   const getActions = (): BulkAction[] => {
@@ -122,7 +133,9 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
                 <WarningOctagonIcon className="text-rose-500" />
               </EmptyMedia>
 
-              <EmptyTitle className="text-rose-700">Something went wrong</EmptyTitle>
+              <EmptyTitle className="text-rose-700">
+                Something went wrong
+              </EmptyTitle>
 
               <EmptyDescription className="text-rose-500">
                 We couldn’t load the data. <br />
@@ -183,7 +196,10 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
         className={onRowClick ? 'cursor-pointer' : undefined}
       >
         {row.getVisibleCells().map((cell) => {
-          const cellData = flexRender(cell.column.columnDef.cell, cell.getContext());
+          const cellData = flexRender(
+            cell.column.columnDef.cell,
+            cell.getContext(),
+          );
 
           return <TableCell key={cell.id}>{cellData}</TableCell>;
         })}
@@ -200,7 +216,9 @@ export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
           <TableHeader>{renderTableHeadRows()}</TableHeader>
           <TableBody>
             {renderByDataStatus(dataStatus, {
-              fulfilled: hasData ? renderTableBodyRows() : renderTableEmptyState(),
+              fulfilled: hasData
+                ? renderTableBodyRows()
+                : renderTableEmptyState(),
               pending: renderLoadingState(),
               rejected: renderErrorState(),
             })}

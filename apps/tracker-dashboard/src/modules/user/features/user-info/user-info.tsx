@@ -8,7 +8,9 @@ interface UserInfoProps {
   userId: string;
 }
 
-export const UserInfo = reatomComponent(function UserInfo({ userId }: UserInfoProps) {
+export const UserInfo = reatomComponent(function UserInfo({
+  userId,
+}: UserInfoProps) {
   const { data } = useQuery(userQuery, userId);
 
   const { firstName, lastName, email } = data()!;
@@ -18,7 +20,9 @@ export const UserInfo = reatomComponent(function UserInfo({ userId }: UserInfoPr
     <div className="flex items-center gap-2 py-1">
       <UserAvatar userId={userId} />
       <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate text-sm leading-tight font-medium">{fullName}</span>
+        <span className="truncate text-sm leading-tight font-medium">
+          {fullName}
+        </span>
         <span className="truncate text-xs text-muted-foreground">{email}</span>
       </div>
     </div>

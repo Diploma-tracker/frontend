@@ -2,7 +2,11 @@ import { useTranslation } from '@/shared/utils/i18n';
 import { CaretRightIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/ui-kit/components/common/layout/collapsible';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@repo/ui-kit/components/common/layout/collapsible';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -41,7 +45,12 @@ export default function AppSidebarMainNav(props: Props) {
       <SidebarMenu>
         {navItems.map((item) =>
           item.items ? (
-            <Collapsible key={item.title} asChild defaultOpen={item.defaultOpen} className="group/collapsible">
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={item.defaultOpen}
+              className="group/collapsible"
+            >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.title}>
@@ -74,7 +83,7 @@ export default function AppSidebarMainNav(props: Props) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          )
+          ),
         )}
       </SidebarMenu>
     </SidebarGroup>

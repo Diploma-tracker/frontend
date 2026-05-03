@@ -14,28 +14,31 @@ interface RoundDefenseSessionsProps {
   onEventDelete?: () => void;
 }
 
-export const RoundDefenseSessions = reatomComponent(function RoundDefenseSessions({
-  roundId,
-  onDateClick,
-  onEventChange,
-  onEventDelete,
-}: RoundDefenseSessionsProps) {
-  const { t } = useTranslation();
-  const status = roundDefenseSessionsAtom.status();
-  const sessions = roundDefenseSessionsAtom.data() ?? [];
+export const RoundDefenseSessions = reatomComponent(
+  function RoundDefenseSessions({
+    roundId,
+    onDateClick,
+    onEventChange,
+    onEventDelete,
+  }: RoundDefenseSessionsProps) {
+    const { t } = useTranslation();
+    const status = roundDefenseSessionsAtom.status();
+    const sessions = roundDefenseSessionsAtom.data() ?? [];
 
-  useEffect(() => {
-    wrap(roundDefenseSessionsAtom(roundId));
-  }, [roundId]);
+    useEffect(() => {
+      wrap(roundDefenseSessionsAtom(roundId));
+    }, [roundId]);
 
-  return (
-    <DefenseSessionsGrid
-      sessions={sessions}
-      isLoading={status.isPending}
-      error={status.isRejected ? t('defense.error') : null}
-      onDateClick={onDateClick}
-      onEventChange={onEventChange}
-      onEventDelete={onEventDelete}
-    />
-  );
-}, 'RoundDefenseSessions');
+    return (
+      <DefenseSessionsGrid
+        sessions={sessions}
+        isLoading={status.isPending}
+        error={status.isRejected ? t('defense.error') : null}
+        onDateClick={onDateClick}
+        onEventChange={onEventChange}
+        onEventDelete={onEventDelete}
+      />
+    );
+  },
+  'RoundDefenseSessions',
+);

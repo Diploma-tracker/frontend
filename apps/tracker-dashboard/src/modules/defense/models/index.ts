@@ -7,7 +7,10 @@ export type {
   DefenseSessionAllowedStudentDTO,
   DefenseSessionAllowedGroupDTO,
 } from '@repo/api/model';
-export { createDefenseSessionForm, createDefenseSessionAction } from './create-defense-session-model';
+export {
+  createDefenseSessionForm,
+  createDefenseSessionAction,
+} from './create-defense-session-model';
 export type { CreateDefenseSessionFormValues } from './create-defense-session-model';
 export { updateDefenseSessionForm } from './update-defense-session-model';
 export type { UpdateDefenseSessionFormValues } from './update-defense-session-model';

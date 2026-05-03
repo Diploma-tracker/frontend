@@ -19,7 +19,7 @@ function Separator({
       orientation={orientation}
       className={cn(
         'ui:shrink-0 ui:bg-border ui:data-[orientation=horizontal]:h-px ui:data-[orientation=horizontal]:w-full ui:data-[orientation=vertical]:h-full ui:data-[orientation=vertical]:w-px',
-        className
+        className,
       )}
       {...props}
     />

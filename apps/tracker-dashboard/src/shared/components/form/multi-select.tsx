@@ -7,7 +7,12 @@ import { CheckIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import type { FieldArrayAtom } from '@reatom/core';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/ui-kit/components/common/floating/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@repo/ui-kit/components/common/floating/dialog';
 import { cn } from '@repo/ui-kit/lib/utils';
 
 // ---------------------------------------------------------------------------
@@ -45,10 +50,15 @@ interface MultiSelectContextValue {
   'aria-invalid'?: boolean | 'true' | 'false';
 }
 
-const MultiSelectContext = React.createContext<MultiSelectContextValue | null>(null);
+const MultiSelectContext = React.createContext<MultiSelectContextValue | null>(
+  null,
+);
 export function useMultiSelect(): MultiSelectContextValue {
   const ctx = React.useContext(MultiSelectContext);
-  if (!ctx) throw new Error('MultiSelect compound parts must be used inside <MultiSelect.Root>');
+  if (!ctx)
+    throw new Error(
+      'MultiSelect compound parts must be used inside <MultiSelect.Root>',
+    );
   return ctx;
 }
 
@@ -131,9 +141,11 @@ function MultiSelectRoot({
     }
   }, [open]);
 
-  const remove = (value: string) => setSelected((options) => options.filter((o) => o.value !== value));
+  const remove = (value: string) =>
+    setSelected((options) => options.filter((o) => o.value !== value));
 
-  const add = (option: Option) => setSelected((options) => [...options, option]);
+  const add = (option: Option) =>
+    setSelected((options) => [...options, option]);
 
   const toggle = (option: Option) => {
     setSelected((options) => {
@@ -146,7 +158,8 @@ function MultiSelectRoot({
     });
   };
 
-  const isOptionSelected = (value: string) => selected.some((o) => o.value === value);
+  const isOptionSelected = (value: string) =>
+    selected.some((o) => o.value === value);
 
   const wrappedFilterOption = (option: Option) => filterOption(option, query);
 
@@ -170,7 +183,11 @@ function MultiSelectRoot({
     'aria-invalid': ariaInvalid,
   };
 
-  return <MultiSelectContext.Provider value={api}>{children}</MultiSelectContext.Provider>;
+  return (
+    <MultiSelectContext.Provider value={api}>
+      {children}
+    </MultiSelectContext.Provider>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -229,7 +246,11 @@ function MultiSelectOptionItem({ option }: MultiSelectOptionItemProps) {
       onClick={onClick}
       className="relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-none select-none hover:bg-accent hover:text-accent-foreground"
     >
-      {isSelected ? <CheckIcon className="size-4 text-primary" /> : <span className="size-4" />}
+      {isSelected ? (
+        <CheckIcon className="size-4 text-primary" />
+      ) : (
+        <span className="size-4" />
+      )}
       {label}
       {isSelected && (
         <span className="absolute right-2 flex size-4 items-center justify-center">
@@ -258,7 +279,12 @@ function MultiSelectTrigger({
   className,
   children = (option) => <MultiSelectChip option={option} />,
 }: MultiSelectTriggerProps) {
-  const { selected, setOpen, status, 'aria-invalid': ariaInvalid } = useMultiSelect();
+  const {
+    selected,
+    setOpen,
+    status,
+    'aria-invalid': ariaInvalid,
+  } = useMultiSelect();
 
   const visibleOptions = selected.slice(0, visibleChips);
   const hiddenCount = selected.length - visibleOptions.length;
@@ -284,7 +310,7 @@ function MultiSelectTrigger({
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
         'disabled:cursor-not-allowed disabled:opacity-50',
         isInvalid && 'border-destructive ring-[3px] ring-destructive/20',
-        className
+        className,
       )}
     >
       {selected.length === 0 ? (
@@ -307,7 +333,9 @@ interface MultiSelectSearchProps {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectSearch({ placeholder = 'Search...' }: MultiSelectSearchProps) {
+function MultiSelectSearch({
+  placeholder = 'Search...',
+}: MultiSelectSearchProps) {
   const { status, query, setQuery, searchInputRef } = useMultiSelect();
 
   return (
@@ -382,7 +410,9 @@ interface MultiSelectModalOptionsProps {
 // eslint-disable-next-line react-refresh/only-export-components
 function MultiSelectModalSuggestions({
   filter = false,
-  children = (option) => <MultiSelectOptionItem key={option.value} option={option} />,
+  children = (option) => (
+    <MultiSelectOptionItem key={option.value} option={option} />
+  ),
 }: MultiSelectModalOptionsProps) {
   const { avaliable, selected } = useMultiSelect();
   const { showSuggestions } = useMultiSelectModalShows();
@@ -404,7 +434,9 @@ function MultiSelectModalSuggestions({
 // eslint-disable-next-line react-refresh/only-export-components
 function MultiSelectModalSelected({
   filter = false,
-  children = (option) => <MultiSelectOptionItem key={option.value} option={option} />,
+  children = (option) => (
+    <MultiSelectOptionItem key={option.value} option={option} />
+  ),
 }: MultiSelectModalOptionsProps) {
   const { selected, filterOption } = useMultiSelect();
   const { showSelected } = useMultiSelectModalShows();
@@ -416,7 +448,10 @@ function MultiSelectModalSelected({
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-function MultiSelectModal({ title = 'Select', children }: MultiSelectModalProps) {
+function MultiSelectModal({
+  title = 'Select',
+  children,
+}: MultiSelectModalProps) {
   const { open, setOpen } = useMultiSelect();
 
   return (
@@ -451,9 +486,11 @@ export const MultiSelect = {
 };
 
 export const useArrayFieldForMultiSelect = (
-  field: FieldArrayAtom<string, string>
+  field: FieldArrayAtom<string, string>,
 ): [Option[], setValue: Setter<Option[]>] => {
-  const [otherData, setOtherData] = React.useState<Record<string, Omit<Option, 'value'>>>({});
+  const [otherData, setOtherData] = React.useState<
+    Record<string, Omit<Option, 'value'>>
+  >({});
 
   const handleChange = (next: Option[]) => {
     const nodes = field?.array() ?? [];
@@ -496,7 +533,7 @@ export const useArrayFieldForMultiSelect = (
         ...(otherData[value] ?? {
           label: value,
         }),
-      }) as Option
+      }) as Option,
   );
 
   const setOptions = (value: Option[] | ((prev: Option[]) => Option[])) => {

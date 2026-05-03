@@ -26,7 +26,11 @@ const DEFAULT_ELLIPSIS_CONFIG: PaginationEllipsisConfig = {
   boundaryEnd: 1,
 };
 
-function buildPageRange(current: number, total: number, config: PaginationEllipsisConfig): (number | 'ellipsis')[] {
+function buildPageRange(
+  current: number,
+  total: number,
+  config: PaginationEllipsisConfig,
+): (number | 'ellipsis')[] {
   const { threshold, siblings, boundaryStart, boundaryEnd } = config;
 
   if (total <= threshold) {
@@ -50,7 +54,11 @@ function buildPageRange(current: number, total: number, config: PaginationEllips
   if (rangeEnd < total - boundaryEnd) pages.push('ellipsis');
 
   // Trailing boundary pages
-  for (let i = Math.max(total - boundaryEnd + 1, boundaryStart + 1); i <= total; i++) {
+  for (
+    let i = Math.max(total - boundaryEnd + 1, boundaryStart + 1);
+    i <= total;
+    i++
+  ) {
     pages.push(i);
   }
 
@@ -64,7 +72,12 @@ export interface TablePaginationProps {
   ellipsis?: Partial<PaginationEllipsisConfig>;
 }
 
-export function TablePagination({ page, totalPages, onPageChange, ellipsis }: TablePaginationProps) {
+export function TablePagination({
+  page,
+  totalPages,
+  onPageChange,
+  ellipsis,
+}: TablePaginationProps) {
   if (totalPages <= 1) return null;
 
   const ellipsisConfig = { ...DEFAULT_ELLIPSIS_CONFIG, ...ellipsis };
@@ -88,17 +101,22 @@ export function TablePagination({ page, totalPages, onPageChange, ellipsis }: Ta
             </PaginationItem>
           ) : (
             <PaginationItem key={p}>
-              <PaginationLink isActive={p === page} onClick={() => onPageChange(p)}>
+              <PaginationLink
+                isActive={p === page}
+                onClick={() => onPageChange(p)}
+              >
                 {p}
               </PaginationLink>
             </PaginationItem>
-          )
+          ),
         )}
 
         <PaginationItem>
           <PaginationNext
             aria-disabled={page >= totalPages}
-            className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}
+            className={
+              page >= totalPages ? 'pointer-events-none opacity-50' : ''
+            }
             onClick={() => onPageChange(page + 1)}
           />
         </PaginationItem>

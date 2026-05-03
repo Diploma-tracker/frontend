@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 
 import { GroupSelectorField, UserSelectorField } from '@/modules/user';
-import { DatePickerFormField, DurationPickerFormField, TextFormField } from '@/shared/components';
+import {
+  DatePickerFormField,
+  DurationPickerFormField,
+  TextFormField,
+} from '@/shared/components';
 import { setArrayField } from '@/shared/model';
 import { useQuery } from '@/shared/model/query';
 import { useTranslation } from '@/shared/utils/i18n';
@@ -19,67 +23,84 @@ interface EditDefenseSessionFormProps {
   onSuccess?: () => void;
 }
 
-export const EditDefenseSessionForm = reatomComponent(function EditDefenseSessionForm({
-  sessionId,
-  onSuccess,
-}: EditDefenseSessionFormProps) {
-  const { t } = useTranslation();
-  const { submit, fields } = updateDefenseSessionForm;
-  const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
-  const session = data();
+export const EditDefenseSessionForm = reatomComponent(
+  function EditDefenseSessionForm({
+    sessionId,
+    onSuccess,
+  }: EditDefenseSessionFormProps) {
+    const { t } = useTranslation();
+    const { submit, fields } = updateDefenseSessionForm;
+    const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
+    const session = data();
 
-  useEffect(() => {
-    if (session) {
-      fields.sessionId.set(session.id);
-      fields.date.set(session.date);
-      fields.duration.set(session.duration);
-      fields.capacity.set(String(session.capacity));
-      setArrayField(fields.allowedStudentIds, session.allowedStudents?.map((s) => s.id) ?? []);
-      setArrayField(fields.allowedGroupIds, session.allowedGroups?.map((g) => g.id) ?? []);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.id]);
+    useEffect(() => {
+      if (session) {
+        fields.sessionId.set(session.id);
+        fields.date.set(session.date);
+        fields.duration.set(session.duration);
+        fields.capacity.set(String(session.capacity));
+        setArrayField(
+          fields.allowedStudentIds,
+          session.allowedStudents?.map((s) => s.id) ?? [],
+        );
+        setArrayField(
+          fields.allowedGroupIds,
+          session.allowedGroups?.map((g) => g.id) ?? [],
+        );
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session?.id]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submit().then(() => onSuccess?.());
-  };
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      submit().then(() => onSuccess?.());
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <FieldGroup>
-        <DatePickerFormField
-          field={fields.date}
-          label={t('defense.session.form.dateLabel')}
-          mode="datetime"
-          placeholder={t('defense.session.form.datePlaceholder')}
-        />
+    return (
+      <form onSubmit={handleSubmit}>
+        <FieldGroup>
+          <DatePickerFormField
+            field={fields.date}
+            label={t('defense.session.form.dateLabel')}
+            mode="datetime"
+            placeholder={t('defense.session.form.datePlaceholder')}
+          />
 
-        <DurationPickerFormField field={fields.duration} label={t('defense.session.form.durationLabel')} />
+          <DurationPickerFormField
+            field={fields.duration}
+            label={t('defense.session.form.durationLabel')}
+          />
 
-        <TextFormField
-          field={fields.capacity}
-          label={t('defense.session.form.capacityLabel')}
-          placeholder={t('defense.session.form.capacityPlaceholder')}
-          type="number"
-          min={1}
-          autoComplete="off"
-        />
+          <TextFormField
+            field={fields.capacity}
+            label={t('defense.session.form.capacityLabel')}
+            placeholder={t('defense.session.form.capacityPlaceholder')}
+            type="number"
+            min={1}
+            autoComplete="off"
+          />
 
-        <UserSelectorField field={fields.allowedStudentIds} label={t('defense.session.form.allowedStudentsLabel')} />
+          <UserSelectorField
+            field={fields.allowedStudentIds}
+            label={t('defense.session.form.allowedStudentsLabel')}
+          />
 
-        <GroupSelectorField field={fields.allowedGroupIds} label={t('defense.session.form.groupsLabel')} />
+          <GroupSelectorField
+            field={fields.allowedGroupIds}
+            label={t('defense.session.form.groupsLabel')}
+          />
 
-        <Field>
-          <Button type="submit" disabled={!submit.ready()}>
-            {!submit.ready() ? (
-              <CircleNotchIcon className="animate-spin" />
-            ) : (
-              t('defense.session.detail.rescheduleSubmit')
-            )}
-          </Button>
-        </Field>
-      </FieldGroup>
-    </form>
-  );
-});
+          <Field>
+            <Button type="submit" disabled={!submit.ready()}>
+              {!submit.ready() ? (
+                <CircleNotchIcon className="animate-spin" />
+              ) : (
+                t('defense.session.detail.rescheduleSubmit')
+              )}
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
+    );
+  },
+);

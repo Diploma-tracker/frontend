@@ -1,6 +1,10 @@
 import { UsersFourIcon } from '@phosphor-icons/react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui-kit/components/common/data-display/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/ui-kit/components/common/data-display/avatar';
 
 type GroupAvatarProps = {
   groupId: string;

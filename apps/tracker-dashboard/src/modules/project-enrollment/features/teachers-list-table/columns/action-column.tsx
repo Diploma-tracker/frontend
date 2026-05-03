@@ -4,9 +4,15 @@ import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { addTeachersAction, removeTeachersAction, type TeacherDTO } from '../../../models';
+import {
+  type TeacherDTO,
+  addTeachersAction,
+  removeTeachersAction,
+} from '../../../models';
 
-export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO> => ({
+export const createTeacherActionColumn = (
+  roundId: string,
+): ColumnDef<TeacherDTO> => ({
   id: 'actions',
   header: () => <T k="projectEnrollment.teacher.table.columns.actions" />,
   cell: actionCell([
@@ -15,10 +21,13 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
       label: <T k="projectEnrollment.teacher.actions.add" />,
       icon: <PlusIcon />,
       isActive: ({ isSelected }) => !isSelected,
-      action: ({ id }) => wrap(addTeachersAction({ roundId, teacherIds: [id] })),
+      action: ({ id }) =>
+        wrap(addTeachersAction({ roundId, teacherIds: [id] })),
       modal: {
         title: <T k="projectEnrollment.teacher.actions.confirmAdd.title" />,
-        description: <T k="projectEnrollment.teacher.actions.confirmAdd.description" />,
+        description: (
+          <T k="projectEnrollment.teacher.actions.confirmAdd.description" />
+        ),
       },
     },
     {
@@ -27,10 +36,13 @@ export const createTeacherActionColumn = (roundId: string): ColumnDef<TeacherDTO
       icon: <TrashIcon />,
       variant: 'destructive',
       isActive: ({ isSelected }) => isSelected,
-      action: ({ id }) => wrap(removeTeachersAction({ roundId, teacherIds: [id] })),
+      action: ({ id }) =>
+        wrap(removeTeachersAction({ roundId, teacherIds: [id] })),
       modal: {
         title: <T k="projectEnrollment.teacher.actions.confirmRemove.title" />,
-        description: <T k="projectEnrollment.teacher.actions.confirmRemove.description" />,
+        description: (
+          <T k="projectEnrollment.teacher.actions.confirmRemove.description" />
+        ),
       },
     },
   ]),

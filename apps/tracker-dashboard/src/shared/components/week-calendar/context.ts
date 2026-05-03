@@ -22,10 +22,12 @@ export type WeekCalendarContextValue = {
   setIsInteractive: (value: boolean) => void;
 };
 
-export const WeekCalendarContext = createContext<WeekCalendarContextValue | null>(null);
+export const WeekCalendarContext =
+  createContext<WeekCalendarContextValue | null>(null);
 
 export function useWeekCalendar(): WeekCalendarContextValue {
   const ctx = useContext(WeekCalendarContext);
-  if (!ctx) throw new Error('useWeekCalendar must be used inside <WeekCalendar>');
+  if (!ctx)
+    throw new Error('useWeekCalendar must be used inside <WeekCalendar>');
   return ctx;
 }

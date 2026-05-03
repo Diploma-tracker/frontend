@@ -1,12 +1,22 @@
 import { k, useTranslation } from '@/shared/utils/i18n';
 import { T } from '@/shared/utils/i18n';
-import { calculatePercentage, formatPercentageString } from '@/shared/utils/percentage';
+import {
+  calculatePercentage,
+  formatPercentageString,
+} from '@/shared/utils/percentage';
 import { UserCircleDashedIcon } from '@phosphor-icons/react';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { SupervisionApplicationStatus, TeacherDTO } from '@repo/api/model';
-import { Badge, type BadgeProps } from '@repo/ui-kit/components/common/data-display/badge';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@repo/ui-kit/components/common/layout/hover-card';
+import {
+  Badge,
+  type BadgeProps,
+} from '@repo/ui-kit/components/common/data-display/badge';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@repo/ui-kit/components/common/layout/hover-card';
 import {
   Empty,
   EmptyDescription,
@@ -32,23 +42,30 @@ const STATUS_META: Record<
     labelKey: k('projectEnrollment.teacher.applicationsCell.status.pending'),
     intent: 'pending',
     textClassName: 'text-pending',
-    progressClassName: 'bg-pending/15 [&_[data-slot=progress-indicator]]:bg-pending',
+    progressClassName:
+      'bg-pending/15 [&_[data-slot=progress-indicator]]:bg-pending',
   },
   ACCEPTED: {
     labelKey: k('projectEnrollment.teacher.applicationsCell.status.accepted'),
     intent: 'success',
     textClassName: 'text-success',
-    progressClassName: 'bg-success/15 [&_[data-slot=progress-indicator]]:bg-success',
+    progressClassName:
+      'bg-success/15 [&_[data-slot=progress-indicator]]:bg-success',
   },
   REJECTED: {
     labelKey: k('projectEnrollment.teacher.applicationsCell.status.rejected'),
     intent: 'destructive',
     textClassName: 'text-destructive',
-    progressClassName: 'bg-destructive/15 [&_[data-slot=progress-indicator]]:bg-destructive',
+    progressClassName:
+      'bg-destructive/15 [&_[data-slot=progress-indicator]]:bg-destructive',
   },
 };
 
-const STATUS_ORDER: SupervisionApplicationStatus[] = ['PENDING', 'ACCEPTED', 'REJECTED'];
+const STATUS_ORDER: SupervisionApplicationStatus[] = [
+  'PENDING',
+  'ACCEPTED',
+  'REJECTED',
+];
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
@@ -82,8 +99,12 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
           <EmptyMedia variant="icon">
             <UserCircleDashedIcon />
           </EmptyMedia>
-          <EmptyTitle>{t('projectEnrollment.teacher.applicationsCell.empty.title')}</EmptyTitle>
-          <EmptyDescription>{t('projectEnrollment.teacher.applicationsCell.empty.description')}</EmptyDescription>
+          <EmptyTitle>
+            {t('projectEnrollment.teacher.applicationsCell.empty.title')}
+          </EmptyTitle>
+          <EmptyDescription>
+            {t('projectEnrollment.teacher.applicationsCell.empty.description')}
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -99,32 +120,57 @@ const ApplicationsCell = ({ teacher }: { teacher: TeacherDTO }) => {
                 {t('projectEnrollment.teacher.applicationsCell.overview.title')}
               </p>
               <p className="text-sm text-muted-foreground">
-                {t('projectEnrollment.teacher.applicationsCell.overview.subtitle')}
+                {t(
+                  'projectEnrollment.teacher.applicationsCell.overview.subtitle',
+                )}
               </p>
             </div>
 
             <Badge className="tabular-nums">
-              {total} {t('projectEnrollment.teacher.applicationsCell.overview.totalSuffix')}
+              {total}{' '}
+              {t(
+                'projectEnrollment.teacher.applicationsCell.overview.totalSuffix',
+              )}
             </Badge>
           </div>
         </div>
         <div className="space-y-3">
-          {statusSummary.map(({ status, label, textClassName, progressClassName, value, percent }) => (
-            <div key={status} className="space-y-1.5">
-              <div className="flex items-center justify-between gap-3">
-                <span className={cn('text-sm font-medium uppercase', textClassName)}>{label}</span>
+          {statusSummary.map(
+            ({
+              status,
+              label,
+              textClassName,
+              progressClassName,
+              value,
+              percent,
+            }) => (
+              <div key={status} className="space-y-1.5">
+                <div className="flex items-center justify-between gap-3">
+                  <span
+                    className={cn(
+                      'text-sm font-medium uppercase',
+                      textClassName,
+                    )}
+                  >
+                    {label}
+                  </span>
 
-                <span className="text-sm text-muted-foreground tabular-nums">
-                  <span className="font-semibold text-foreground">{value}</span>
-                  {' / '}
-                  {total}
-                  <span className="ml-1.5 text-sm">{formatPercentageString(percent)}</span>
-                </span>
+                  <span className="text-sm text-muted-foreground tabular-nums">
+                    <span className="font-semibold text-foreground">
+                      {value}
+                    </span>
+                    {' / '}
+                    {total}
+                    <span className="ml-1.5 text-sm">
+                      {formatPercentageString(percent)}
+                    </span>
+                  </span>
+                </div>
+
+                <Progress value={percent} className={progressClassName} />
               </div>
-
-              <Progress value={percent} className={progressClassName} />
-            </div>
-          ))}
+            ),
+          )}
         </div>
       </>
     );

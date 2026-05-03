@@ -3,9 +3,7 @@
   "compilerOptions": {
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

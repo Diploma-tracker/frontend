@@ -9,6 +9,8 @@ const renderDate = (value: string | null | undefined) =>
 
 export const StartDateColumn: ColumnDef<AllocationRoundDTO> = {
   accessorKey: 'startAt',
-  header: () => <T k="projectEnrollment.allocationRound.table.columns.startDate" />,
+  header: () => (
+    <T k="projectEnrollment.allocationRound.table.columns.startDate" />
+  ),
   cell: ({ row }) => renderDate(row.original.startAt),
 };

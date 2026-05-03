@@ -14,13 +14,18 @@ interface WeekCalendarRootProps {
   defaultView?: WeekView;
 }
 
-export function WeekCalendarRoot({ children, defaultView = 'work' }: WeekCalendarRootProps) {
+export function WeekCalendarRoot({
+  children,
+  defaultView = 'work',
+}: WeekCalendarRootProps) {
   const { i18n } = useTranslation();
   const calendarRef = useRef<FullCalendar>(null);
   const initialMonday = getMondayOfWeek(new Date());
 
   const [weekView, setWeekView] = useState<WeekView>(defaultView);
-  const [title, setTitle] = useState(() => formatWeekTitle(initialMonday, defaultView));
+  const [title, setTitle] = useState(() =>
+    formatWeekTitle(initialMonday, defaultView),
+  );
   const [pickerOpen, setPickerOpen] = useState(false);
   const [weekRange, setWeekRange] = useState(() => ({
     from: initialMonday,
@@ -41,7 +46,9 @@ export function WeekCalendarRoot({ children, defaultView = 'work' }: WeekCalenda
 
   const currentMonday = (): Date => {
     const api = calendarRef.current?.getApi();
-    return api ? getMondayOfWeek(api.view.currentStart) : getMondayOfWeek(new Date());
+    return api
+      ? getMondayOfWeek(api.view.currentStart)
+      : getMondayOfWeek(new Date());
   };
 
   const handlePrev = () => {

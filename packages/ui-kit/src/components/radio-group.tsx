@@ -5,17 +5,29 @@ import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 
 import { cn } from '../lib/utils';
 
-function RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
-  return <RadioGroupPrimitive.Root data-slot="radio-group" className={cn('ui:grid ui:gap-3', className)} {...props} />;
+function RadioGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
+  return (
+    <RadioGroupPrimitive.Root
+      data-slot="radio-group"
+      className={cn('ui:grid ui:gap-3', className)}
+      {...props}
+    />
+  );
 }
 
-function RadioGroupItem({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
+function RadioGroupItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
   return (
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
         'ui:aspect-square ui:size-4 ui:shrink-0 ui:rounded-full ui:border ui:border-input ui:text-primary ui:shadow-xs ui:transition-[color,box-shadow] ui:outline-none ui:focus-visible:border-ring ui:focus-visible:ring-[3px] ui:focus-visible:ring-ring/50 ui:disabled:cursor-not-allowed ui:disabled:opacity-50 ui:aria-invalid:border-destructive ui:aria-invalid:ring-destructive/20 ui:dark:bg-input/30 ui:dark:aria-invalid:ring-destructive/40',
-        className
+        className,
       )}
       {...props}
     >

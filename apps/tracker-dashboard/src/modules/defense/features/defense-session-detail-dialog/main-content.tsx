@@ -9,7 +9,11 @@ import { parseDuration } from '@repo/utils/duration';
 
 import { defenseSessionDetailsQuery } from '../../models';
 
-export const MainContent = reatomComponent(function MainContent({ sessionId }: { sessionId: string }) {
+export const MainContent = reatomComponent(function MainContent({
+  sessionId,
+}: {
+  sessionId: string;
+}) {
   const { t } = useTranslation();
   const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
   const session = data();
@@ -30,10 +34,22 @@ export const MainContent = reatomComponent(function MainContent({ sessionId }: {
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-3 rounded-lg border p-4 text-sm">
-        {renderCell(t('defense.session.detail.dateLabel'), formatDateTime(session.date))}
-        {renderCell(t('defense.session.detail.endLabel'), formatDateTime(endDate.toISOString()))}
-        {renderCell(t('defense.session.detail.durationLabel'), formatDurationToReadable(session.duration))}
-        {renderCell(t('defense.session.detail.capacityLabel'), `${participantCount} / ${session.capacity}`)}
+        {renderCell(
+          t('defense.session.detail.dateLabel'),
+          formatDateTime(session.date),
+        )}
+        {renderCell(
+          t('defense.session.detail.endLabel'),
+          formatDateTime(endDate.toISOString()),
+        )}
+        {renderCell(
+          t('defense.session.detail.durationLabel'),
+          formatDurationToReadable(session.duration),
+        )}
+        {renderCell(
+          t('defense.session.detail.capacityLabel'),
+          `${participantCount} / ${session.capacity}`,
+        )}
       </div>
       <div className="hidden flex-1 items-center justify-center gap-3 rounded-lg border p-4 text-sm text-muted-foreground sm:flex">
         {t('defense.session.detail.contentPlaceholder')}

@@ -3,7 +3,9 @@ import { TeachersListTable } from '@/modules/project-enrollment';
 import { useParams } from '@tanstack/react-router';
 
 export const ProjectEnrollmentRoundAdminPage = () => {
-  const { roundId } = useParams({ from: '/(app)/_app/project-enrollment/$roundId' });
+  const { roundId } = useParams({
+    from: '/(app)/_app/project-enrollment/$roundId',
+  });
 
   return (
     <PageLayout>

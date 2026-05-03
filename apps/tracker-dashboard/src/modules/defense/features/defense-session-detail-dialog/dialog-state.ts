@@ -13,5 +13,5 @@ export const defenseSessionDialogAtom = atom<DefenseSessionDialogState>(
     sessionId: null,
     open: false,
   },
-  'defenseSessionDialogAtom'
+  'defenseSessionDialogAtom',
 );

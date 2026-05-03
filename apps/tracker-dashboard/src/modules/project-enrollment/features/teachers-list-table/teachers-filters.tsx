@@ -12,9 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui-kit/components/common/form/select';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@repo/ui-kit/components/input-group';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@repo/ui-kit/components/input-group';
 
-import { teacherListAtom, type TeacherSelectionFilter } from '../../models';
+import { type TeacherSelectionFilter, teacherListAtom } from '../../models';
 
 const SELECTION_VALUES = ['ALL', 'SELECTED', 'NOT_SELECTED'] as const;
 
@@ -64,9 +69,16 @@ export const TeachersFilters = reatomComponent(function TeachersFilters() {
         )}
       </InputGroup>
 
-      <Select value={filter.selectionFilter} onValueChange={handleSelectionChange}>
+      <Select
+        value={filter.selectionFilter}
+        onValueChange={handleSelectionChange}
+      >
         <SelectTrigger className="w-44">
-          <SelectValue placeholder={t('projectEnrollment.teacher.filters.selectionPlaceholder')} />
+          <SelectValue
+            placeholder={t(
+              'projectEnrollment.teacher.filters.selectionPlaceholder',
+            )}
+          />
         </SelectTrigger>
         <SelectContent>
           {SELECTION_VALUES.map((value) => (

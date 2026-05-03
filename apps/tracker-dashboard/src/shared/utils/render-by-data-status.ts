@@ -46,7 +46,10 @@ type StatusKey = 'pending' | 'rejected' | 'fulfilled';
  * // Action pending → returns pending value
  * renderByDataStatus({ ...status, isPending: true }, { pending: <Spinner />, fulfilled: <Data /> }); // <Spinner />
  */
-export function renderByDataStatus<T>(status: AsyncStatusLike, map: Partial<Record<StatusKey, T>>): T | null {
+export function renderByDataStatus<T>(
+  status: AsyncStatusLike,
+  map: Partial<Record<StatusKey, T>>,
+): T | null {
   if (status.isPending) return map.pending ?? null;
   if (status.isRejected) return map.rejected ?? null;
 

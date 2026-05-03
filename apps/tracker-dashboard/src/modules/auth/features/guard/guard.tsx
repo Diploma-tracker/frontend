@@ -1,4 +1,4 @@
-import { userAtom, type User } from '@/modules/user';
+import { type User, userAtom } from '@/modules/user';
 import { reatomComponent } from '@reatom/react';
 
 interface GuardProps {

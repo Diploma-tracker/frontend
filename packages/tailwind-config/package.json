@@ -9,8 +9,14 @@
     "./tokens": "./tokens.css",
     "./postcss": "./postcss.config.js"
   },
+  "scripts": {
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown"
+  },
   "devDependencies": {
+    "@repo/code-tools-config": "workspace:*",
     "postcss": "^8.5.3",
+    "prettier": "^3.7.4",
     "tailwindcss": "^4.1.5"
   }
 }

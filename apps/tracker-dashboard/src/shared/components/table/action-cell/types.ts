@@ -9,7 +9,10 @@ export interface Action<TData> {
   isActive?: (state: TData) => boolean;
   variant?: ActionVatiant;
   action?: (state: TData) => Promise<void>;
-  link?: (state: TData) => { to: string; params?: Record<string, string | number> };
+  link?: (state: TData) => {
+    to: string;
+    params?: Record<string, string | number>;
+  };
   onSuccess?: (state: TData) => void;
   onError?: (state: TData, error: unknown) => void;
   modal?: {

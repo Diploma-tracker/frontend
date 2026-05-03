@@ -1,6 +1,9 @@
 import { khpiLogo } from '@/shared/assets';
 
-import { Avatar, AvatarImage } from '@repo/ui-kit/components/common/data-display/avatar';
+import {
+  Avatar,
+  AvatarImage,
+} from '@repo/ui-kit/components/common/data-display/avatar';
 
 export const Logo = () => {
   return (

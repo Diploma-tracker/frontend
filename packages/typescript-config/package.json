@@ -5,5 +5,13 @@
   "private": true,
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown"
+  },
+  "devDependencies": {
+    "@repo/code-tools-config": "workspace:*",
+    "prettier": "^3.7.4"
   }
 }

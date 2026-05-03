@@ -13,7 +13,7 @@ export const authTokenAtom = atom<AuthToken>('', 'authToken').extend(
     path: '/',
     secure: true,
     sameSite: 'strict',
-  })
+  }),
 );
 
 export const isAuth = computed(() => Boolean(authTokenAtom()), 'isAuth');

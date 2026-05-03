@@ -2,15 +2,26 @@ import { getLocale } from '@/shared/utils/format-date';
 import { useTranslation } from '@/shared/utils/i18n';
 
 import { Calendar } from '@repo/ui-kit/components/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui-kit/components/common/floating/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@repo/ui-kit/components/common/floating/popover';
 import { CardTitle } from '@repo/ui-kit/components/common/layout/card';
 
 import { useWeekCalendar } from './context';
 
 export function WeekCalendarTitle() {
   const { t, i18n } = useTranslation();
-  const { title, weekRange, pickerOpen, setPickerOpen, setWeekRange, handleDayClick, isInteractive } =
-    useWeekCalendar();
+  const {
+    title,
+    weekRange,
+    pickerOpen,
+    setPickerOpen,
+    setWeekRange,
+    handleDayClick,
+    isInteractive,
+  } = useWeekCalendar();
 
   // Re-evaluate on language change
   void i18n.language;
@@ -24,7 +35,9 @@ export function WeekCalendarTitle() {
           aria-label={t('schedule.pickWeek')}
           disabled={!isInteractive}
         >
-          <CardTitle className="underline-offset-4 hover:underline">{title}</CardTitle>
+          <CardTitle className="underline-offset-4 hover:underline">
+            {title}
+          </CardTitle>
         </button>
       </PopoverTrigger>
       <PopoverContent align="center" className="w-auto p-0">

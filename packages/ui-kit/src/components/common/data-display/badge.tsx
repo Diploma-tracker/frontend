@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
 import { cn } from '../../../lib/utils';
@@ -10,7 +10,8 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/90',
+        default:
+          'ui:bg-secondary ui:text-secondary-foreground ui:[a&]:hover:bg-secondary/90',
         filled: 'ui:border-transparent',
         outline: 'ui:bg-transparent',
       },
@@ -39,7 +40,8 @@ const badgeVariants = cva(
       {
         variant: 'filled',
         intent: 'destructive',
-        className: 'ui:border-destructive/60 ui:bg-destructive/20 ui:text-destructive',
+        className:
+          'ui:border-destructive/60 ui:bg-destructive/20 ui:text-destructive',
       },
       {
         variant: 'outline',
@@ -87,17 +89,30 @@ const badgeVariants = cva(
       variant: 'default',
       intent: 'primary',
     },
-  }
+  },
 );
 
-export interface BadgeProps extends React.ComponentProps<'span'>, VariantProps<typeof badgeVariants> {
+export interface BadgeProps
+  extends React.ComponentProps<'span'>, VariantProps<typeof badgeVariants> {
   asChild?: boolean;
 }
 
-function Badge({ className, variant, intent, asChild = false, ...props }: BadgeProps) {
+function Badge({
+  className,
+  variant,
+  intent,
+  asChild = false,
+  ...props
+}: BadgeProps) {
   const Comp = asChild ? Slot.Root : 'span';
 
-  return <Comp data-slot="badge" className={cn(badgeVariants({ variant, intent }), className)} {...props} />;
+  return (
+    <Comp
+      data-slot="badge"
+      className={cn(badgeVariants({ variant, intent }), className)}
+      {...props}
+    />
+  );
 }
 
 export { Badge, badgeVariants };

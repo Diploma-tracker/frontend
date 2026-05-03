@@ -7,10 +7,16 @@ export const AppTheme = {
 export type AppTheme = (typeof AppTheme)[keyof typeof AppTheme];
 
 const getSystemTheme = (): AppTheme =>
-  window.matchMedia('(prefers-color-scheme: dark)').matches ? AppTheme.Dark : AppTheme.Light;
+  window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? AppTheme.Dark
+    : AppTheme.Light;
 
-export const themeAtom = atom<AppTheme>(getSystemTheme(), 'themeAtom').extend(withLocalStorage({ key: 'theme' }));
+export const themeAtom = atom<AppTheme>(getSystemTheme(), 'themeAtom').extend(
+  withLocalStorage({ key: 'theme' }),
+);
 
 export const toggleTheme = () => {
-  themeAtom.set((current) => (current === AppTheme.Light ? AppTheme.Dark : AppTheme.Light));
+  themeAtom.set((current) =>
+    current === AppTheme.Light ? AppTheme.Dark : AppTheme.Light,
+  );
 };

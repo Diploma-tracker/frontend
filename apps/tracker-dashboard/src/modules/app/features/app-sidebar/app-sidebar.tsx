@@ -1,7 +1,11 @@
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import { CalendarIcon, GraduationCapIcon, ListChecksIcon } from '@phosphor-icons/react';
+import {
+  CalendarIcon,
+  GraduationCapIcon,
+  ListChecksIcon,
+} from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
 import {
@@ -58,8 +62,12 @@ export const AppSidebar = () => {
                 <Logo />
 
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="truncate font-medium">{t('sidebar.title')}</span>
-                  <span className="truncate text-xs">{t('sidebar.subtitle')}</span>
+                  <span className="truncate font-medium">
+                    {t('sidebar.title')}
+                  </span>
+                  <span className="truncate text-xs">
+                    {t('sidebar.subtitle')}
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>

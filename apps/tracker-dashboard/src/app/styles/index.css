@@ -6,7 +6,9 @@
 :root {
   --container-padding-x: 1em;
   --container-width: 1600px;
-  --container-real-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+  --container-real-width: calc(
+    var(--container-width) + var(--container-padding-x) * 2
+  );
 }
 
 @layer base {

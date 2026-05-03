@@ -3,7 +3,12 @@ import type { ComponentProps, ReactNode } from 'react';
 import type { FieldAtom } from '@reatom/core';
 import { bindField, reatomComponent } from '@reatom/react';
 
-import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from '@repo/ui-kit/components/common/form/field';
 import {
   InputGroup,
   InputGroupAddon,
@@ -44,7 +49,11 @@ type Addon = TextAddon | ActionAddon | CustomAddon;
 const renderAddon = (addon: Addon): ReactNode => {
   switch (addon.type) {
     case 'text':
-      return <InputGroupText className="text-xs text-muted-foreground">{addon.text}</InputGroupText>;
+      return (
+        <InputGroupText className="text-xs text-muted-foreground">
+          {addon.text}
+        </InputGroupText>
+      );
     case 'action':
       return addon.render(InputGroupButton);
     case 'custom':
@@ -54,7 +63,9 @@ const renderAddon = (addon: Addon): ReactNode => {
   }
 };
 
-export const TextFormField = reatomComponent(function TextFormField(props: TextFormFieldProps) {
+export const TextFormField = reatomComponent(function TextFormField(
+  props: TextFormFieldProps,
+) {
   const { description, label, addons = [], field, ...inputProps } = props;
 
   const fieldValidation = field?.validation();

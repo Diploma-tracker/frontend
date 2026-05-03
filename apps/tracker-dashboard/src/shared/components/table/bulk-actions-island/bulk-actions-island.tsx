@@ -5,7 +5,10 @@ import { useTranslation } from '@/shared/utils/i18n';
 import { XIcon } from '@phosphor-icons/react';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
-import { Button, type ButtonProps } from '@repo/ui-kit/components/common/data-display/button';
+import {
+  Button,
+  type ButtonProps,
+} from '@repo/ui-kit/components/common/data-display/button';
 import { Card } from '@repo/ui-kit/components/common/layout/card';
 import { cn } from '@repo/ui-kit/lib/utils';
 
@@ -25,12 +28,19 @@ type Props = {
   onClear?: () => void;
 };
 
-export function BulkActionsIsland({ visible, count, actions, entityLabel, onClear }: Props) {
+export function BulkActionsIsland({
+  visible,
+  count,
+  actions,
+  entityLabel,
+  onClear,
+}: Props) {
   const { t } = useTranslation();
   const lastCount = usePrevious(count) ?? 0;
 
   const displayCount = count > 0 ? count : lastCount;
-  const resolvedEntityLabel = typeof entityLabel === 'function' ? entityLabel(displayCount) : entityLabel;
+  const resolvedEntityLabel =
+    typeof entityLabel === 'function' ? entityLabel(displayCount) : entityLabel;
 
   const label = (
     <>
@@ -44,7 +54,10 @@ export function BulkActionsIsland({ visible, count, actions, entityLabel, onClea
 
   return (
     <div
-      className={cn('fixed bottom-4 left-1/2 z-50 w-full max-w-3xl -translate-x-1/2 px-4 transition-all', animation)}
+      className={cn(
+        'fixed bottom-4 left-1/2 z-50 w-full max-w-3xl -translate-x-1/2 px-4 transition-all',
+        animation,
+      )}
     >
       <Card className="flex-row flex-wrap items-center justify-between gap-4 px-4 py-3 shadow-lg">
         <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { parse, serialize, type Duration } from "tinyduration";
+import { parse, serialize, type Duration } from 'tinyduration';
 
 export type { Duration };
 
@@ -8,12 +8,7 @@ export type { Duration };
  */
 export function normalizeDuration(duration: Duration): Duration {
   const { years = 0, months = 0, weeks = 0 } = duration;
-  let {
-    days = 0,
-    hours = 0,
-    minutes = 0,
-    seconds = 0,
-  } = duration;
+  let { days = 0, hours = 0, minutes = 0, seconds = 0 } = duration;
 
   if (seconds >= 60) {
     minutes += Math.floor(seconds / 60);
@@ -53,7 +48,7 @@ export function serializeDuration(duration: Duration): string {
   const cleaned: Duration = Object.fromEntries(
     Object.entries(duration).filter(([, v]) => v !== undefined && v !== 0),
   ) as Duration;
-  if (Object.keys(cleaned).length === 0) return "PT0S";
+  if (Object.keys(cleaned).length === 0) return 'PT0S';
   return serialize(cleaned);
 }
 
@@ -65,6 +60,6 @@ export function serializeDuration(duration: Duration): string {
  */
 export function intervalToISODuration(start: Date, end: Date): string {
   const totalSeconds = Math.round((end.getTime() - start.getTime()) / 1000);
-  if (totalSeconds === 0) return "PT0S";
+  if (totalSeconds === 0) return 'PT0S';
   return serializeDuration(normalizeDuration({ seconds: totalSeconds }));
 }

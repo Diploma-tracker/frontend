@@ -16,7 +16,10 @@ export const LangSelect = () => {
   };
 
   return (
-    <Select value={i18n.resolvedLanguage || i18n.language} onValueChange={handleLangChange}>
+    <Select
+      value={i18n.resolvedLanguage || i18n.language}
+      onValueChange={handleLangChange}
+    >
       <SelectTrigger
         size="sm"
         className="border-none bg-transparent! shadow-none hover:bg-accent hover:text-accent-foreground dark:bg-transparent! dark:hover:bg-accent/50!"

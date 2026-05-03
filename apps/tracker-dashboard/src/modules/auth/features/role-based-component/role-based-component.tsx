@@ -22,7 +22,8 @@ export function roleBasedComponent(roleComponents: RoleComponents) {
   return reatomComponent(function RoleBasedComponent() {
     const { role } = userAtom();
     const key = roleToKey[role];
-    const Component = (key ? roleComponents[key] : undefined) ?? roleComponents.default;
+    const Component =
+      (key ? roleComponents[key] : undefined) ?? roleComponents.default;
 
     if (!Component) {
       return null;

@@ -30,10 +30,10 @@
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "build:components": "pnpm clean && tsc",
     "build:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
-    "lint": "eslint src/ --max-warnings 0",
-    "lint:fix": "eslint src/ --fix --max-warnings 0",
-    "format": "prettier --check src/ --ignore-unknown",
-    "format:fix": "prettier --write src/ --ignore-unknown",
+    "lint": "eslint src/ --fix --max-warnings 0",
+    "lint:check": "eslint src/ --max-warnings 0",
+    "format": "prettier --write src/ --ignore-unknown",
+    "format:check": "prettier --check src/ --ignore-unknown",
     "check-types": "tsc --noEmit"
   },
   "peerDependencies": {

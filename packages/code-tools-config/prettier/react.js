@@ -1,31 +1,34 @@
-import baseConfig from "./base.js";
+import baseConfig from './base.js';
 
-/**
- * @see https://prettier.io/docs/configuration
 /** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
 const config = {
   ...baseConfig,
+
   plugins: [
-    "@trivago/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss",
+    '@trivago/prettier-plugin-sort-imports',
+    'prettier-plugin-tailwindcss',
   ],
-  trailingComma: "es5",
+
+  // Prettier React Options
   bracketSpacing: true,
-  arrowParens: "always",
+  arrowParens: 'always',
   jsxSingleQuote: false,
   bracketSameLine: false,
-  // Tailwind Prettier Plugin Options
-  tailwindFunctions: ["clsx", "cva"],
-  // Sort Imports Plugin Options
+
+  // Tailwind Options
+  tailwindFunctions: ['clsx', 'cva'],
+
+  // Sort Imports Options
   importOrder: [
-    "<BUILTIN_MODULES>", // 1. Built-in utilities
-    "^react(-.*)?$", // 2. React libraries
-    "<THIRD_PARTY_MODULES>", // 3. Third-party modules
-    "^@repo/(.*)$", // 4. Turborepo packages
-    "^[./]", // 5. Other modules (relative imports)
-    "\\.(css|scss|sass|less)$", // 6. Styles
+    '<BUILTIN_MODULES>',
+    '^react(-.*)?$',
+    '<THIRD_PARTY_MODULES>',
+    '^@repo/(.*)$',
+    '^[./]',
+    '\\.(css|scss|sass|less)$',
   ],
   importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
 };
 
 export default config;

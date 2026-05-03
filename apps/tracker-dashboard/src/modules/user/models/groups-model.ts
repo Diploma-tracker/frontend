@@ -26,5 +26,5 @@ export const groupQuery = query<string, Group>(
   'groupQuery',
   {
     placeholder: NULL_GROUP,
-  }
+  },
 );

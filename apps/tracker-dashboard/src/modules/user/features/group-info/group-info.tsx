@@ -8,7 +8,9 @@ interface GroupInfoProps {
   groupId: string;
 }
 
-export const GroupInfo = reatomComponent(function GroupInfo({ groupId }: GroupInfoProps) {
+export const GroupInfo = reatomComponent(function GroupInfo({
+  groupId,
+}: GroupInfoProps) {
   const { data } = useQuery(groupQuery, groupId);
 
   const { name } = data()!;

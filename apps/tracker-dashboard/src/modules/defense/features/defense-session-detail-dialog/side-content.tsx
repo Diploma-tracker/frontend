@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { UserInfo, GroupInfo } from '@/modules/user';
+import { GroupInfo, UserInfo } from '@/modules/user';
 import { useQuery } from '@/shared/model/query';
 import { useTranslation } from '@/shared/utils/i18n';
 import { UsersFourIcon, UsersIcon } from '@phosphor-icons/react';
@@ -39,7 +39,11 @@ function SideSection({
   );
 }
 
-export const SideContent = reatomComponent(function SideContent({ sessionId }: { sessionId: string }) {
+export const SideContent = reatomComponent(function SideContent({
+  sessionId,
+}: {
+  sessionId: string;
+}) {
   const { t } = useTranslation();
   const { data } = useQuery(defenseSessionDetailsQuery, sessionId);
   const session = data();

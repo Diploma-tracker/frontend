@@ -7,20 +7,23 @@ import { reatomComponent } from '@reatom/react';
 import { studentDefenseSessionsAtom } from '../../models';
 import { DefenseSessionsGrid } from '../defense-sessions-grid';
 
-export const StudentDefenseSessions = reatomComponent(function StudentDefenseSessions() {
-  const { t } = useTranslation();
-  const status = studentDefenseSessionsAtom.status();
-  const sessions = studentDefenseSessionsAtom.data() ?? [];
+export const StudentDefenseSessions = reatomComponent(
+  function StudentDefenseSessions() {
+    const { t } = useTranslation();
+    const status = studentDefenseSessionsAtom.status();
+    const sessions = studentDefenseSessionsAtom.data() ?? [];
 
-  useEffect(() => {
-    wrap(studentDefenseSessionsAtom());
-  }, []);
+    useEffect(() => {
+      wrap(studentDefenseSessionsAtom());
+    }, []);
 
-  return (
-    <DefenseSessionsGrid
-      sessions={sessions}
-      isLoading={status.isPending}
-      error={status.isRejected ? t('defense.error') : null}
-    />
-  );
-}, 'StudentDefenseSessions');
+    return (
+      <DefenseSessionsGrid
+        sessions={sessions}
+        isLoading={status.isPending}
+        error={status.isRejected ? t('defense.error') : null}
+      />
+    );
+  },
+  'StudentDefenseSessions',
+);

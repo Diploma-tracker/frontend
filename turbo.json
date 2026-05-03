@@ -3,66 +3,34 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "!.next/cache/**"
-      ],
-      "env": [
-        "MODE",
-        "DEV",
-        "PROD",
-        "SSR",
-        "BASE_URL"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["MODE", "DEV", "PROD", "SSR", "BASE_URL"]
+    },
+    "lint:check": {
+      "outputs": []
     },
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ]
+      "cache": false
     },
-    "lint:fix": {
-      "dependsOn": [
-        "^lint:fix"
-      ]
-    },
-    "check-types": {
-      "dependsOn": [
-        "^check-types"
-      ]
+    "format:check": {
+      "outputs": []
     },
     "format": {
       "cache": false
     },
-    "format:fix": {
-      "dependsOn": [
-        "^format:fix"
-      ],
-      "cache": false
+    "check-types": {
+      "dependsOn": ["^check-types"]
     },
     "generate": {
       "cache": false,
-      "outputs": [
-        "src/generated/**"
-      ]
+      "outputs": ["src/generated/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": [
-        "MODE",
-        "DEV",
-        "PROD",
-        "SSR",
-        "BASE_URL"
-      ]
+      "env": ["MODE", "DEV", "PROD", "SSR", "BASE_URL"]
     }
   }
 }
