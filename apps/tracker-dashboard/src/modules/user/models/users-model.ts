@@ -19,5 +19,5 @@ export const userQuery = query<string, User>(
   'userQuery',
   {
     placeholder: NULL_USER,
-  }
+  },
 );

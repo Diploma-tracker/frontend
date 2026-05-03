@@ -1,6 +1,6 @@
 import { formatDuration } from 'date-fns';
 
-import { parseDuration, normalizeDuration } from '@repo/utils/duration';
+import { normalizeDuration, parseDuration } from '@repo/utils/duration';
 
 import { getLocale } from './locale';
 

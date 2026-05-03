@@ -1,7 +1,10 @@
 // import MicrosoftLogo from '@/shared/assets/icons/microsoft-logo.svg?react';
 import { PasswordFormField, TextFormField } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import { CircleNotchIcon, MicrosoftOutlookLogoIcon } from '@phosphor-icons/react';
+import {
+  CircleNotchIcon,
+  MicrosoftOutlookLogoIcon,
+} from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -24,7 +27,9 @@ export const LoginForm = reatomComponent(function LoginForm() {
       <FieldGroup>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">{t('auth.login.title')}</h1>
-          <p className="text-balance text-muted-foreground">{t('auth.login.subtitle')}</p>
+          <p className="text-balance text-muted-foreground">
+            {t('auth.login.subtitle')}
+          </p>
         </div>
 
         <TextFormField
@@ -51,8 +56,17 @@ export const LoginForm = reatomComponent(function LoginForm() {
         />
 
         <Field>
-          <Button variant="solid" intent="primary" type="submit" disabled={!submit.ready()}>
-            {!submit.ready() ? <CircleNotchIcon className="ml-2 animate-spin" /> : t('auth.login.loginButton')}
+          <Button
+            variant="solid"
+            intent="primary"
+            type="submit"
+            disabled={!submit.ready()}
+          >
+            {!submit.ready() ? (
+              <CircleNotchIcon className="ml-2 animate-spin" />
+            ) : (
+              t('auth.login.loginButton')
+            )}
           </Button>
         </Field>
 

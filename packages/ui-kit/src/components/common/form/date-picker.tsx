@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CalendarIcon, ClockIcon, XIcon } from '@phosphor-icons/react';
-import { format, type Locale } from 'date-fns';
+import { type Locale, format } from 'date-fns';
 
 import { cn } from '../../../lib/utils';
 import { Calendar } from '../../calendar';
@@ -68,7 +68,12 @@ function DatePickerTriggerContent({
   const renderIcon = () => {
     if (clearable && value && !disabled) {
       return (
-        <span role="button" className="ui:cursor-pointer" aria-label={clearDateLabel} onClick={handleClear}>
+        <span
+          role="button"
+          className="ui:cursor-pointer"
+          aria-label={clearDateLabel}
+          onClick={handleClear}
+        >
           <XIcon className="ui:size-4 ui:opacity-50 ui:hover:opacity-100" />
         </span>
       );
@@ -82,7 +87,9 @@ function DatePickerTriggerContent({
   return (
     <>
       {value ? (
-        <span className="ui:flex-1 ui:truncate">{format(value, displayFormat, { locale })}</span>
+        <span className="ui:flex-1 ui:truncate">
+          {format(value, displayFormat, { locale })}
+        </span>
       ) : (
         <span>{placeholder}</span>
       )}
@@ -99,14 +106,20 @@ interface DatePickerCalendarProps {
   onSelect: (date: Date | undefined) => void;
 }
 
-function DatePickerCalendar({ value, minDate, maxDate, locale, onSelect }: DatePickerCalendarProps) {
+function DatePickerCalendar({
+  value,
+  minDate,
+  maxDate,
+  locale,
+  onSelect,
+}: DatePickerCalendarProps) {
   const isDisabled = React.useCallback(
     (date: Date) => {
       if (minDate && date < minDate) return true;
       if (maxDate && date > maxDate) return true;
       return false;
     },
-    [minDate, maxDate]
+    [minDate, maxDate],
   );
 
   return (
@@ -129,7 +142,11 @@ interface DatePickerTimeSelectorProps {
   onTimeChange: (type: 'hours' | 'minutes', value: string) => void;
 }
 
-function DatePickerTimeSelector({ time, labels, onTimeChange }: DatePickerTimeSelectorProps) {
+function DatePickerTimeSelector({
+  time,
+  labels,
+  onTimeChange,
+}: DatePickerTimeSelectorProps) {
   const hoursLabel = labels?.hours ?? 'Hours';
   const minutesLabel = labels?.minutes ?? 'Minutes';
   return (
@@ -145,7 +162,9 @@ function DatePickerTimeSelector({ time, labels, onTimeChange }: DatePickerTimeSe
             className="ui:text-center"
             aria-label={hoursLabel}
           />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">{hoursLabel}</span>
+          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">
+            {hoursLabel}
+          </span>
         </div>
 
         <div className="ui:flex-1">
@@ -158,7 +177,9 @@ function DatePickerTimeSelector({ time, labels, onTimeChange }: DatePickerTimeSe
             className="ui:text-center"
             aria-label={minutesLabel}
           />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">{minutesLabel}</span>
+          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">
+            {minutesLabel}
+          </span>
         </div>
       </div>
     </div>
@@ -218,7 +239,10 @@ export function DatePicker({
     const n = parseInt(raw, 10);
     if (isNaN(n)) return;
 
-    const clamped = type === 'hours' ? Math.min(23, Math.max(0, n)) : Math.min(59, Math.max(0, n));
+    const clamped =
+      type === 'hours'
+        ? Math.min(23, Math.max(0, n))
+        : Math.min(59, Math.max(0, n));
     const next = { ...time, [type]: clamped };
     setTime(next);
 
@@ -246,7 +270,7 @@ export function DatePicker({
           aria-invalid={ariaInvalid}
           className={cn(
             'ui:w-full ui:justify-between ui:text-left ui:font-normal ui:data-[empty=true]:text-muted-foreground',
-            className
+            className,
           )}
         >
           <DatePickerTriggerContent
@@ -273,7 +297,13 @@ export function DatePicker({
             onSelect={handleDateSelect}
           />
         </div>
-        {mode === 'datetime' && <DatePickerTimeSelector time={time} labels={labels} onTimeChange={handleTimeChange} />}
+        {mode === 'datetime' && (
+          <DatePickerTimeSelector
+            time={time}
+            labels={labels}
+            onTimeChange={handleTimeChange}
+          />
+        )}
       </PopoverContent>
     </Popover>
   );

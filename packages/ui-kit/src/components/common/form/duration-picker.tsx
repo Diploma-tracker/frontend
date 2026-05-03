@@ -126,13 +126,21 @@ function Segment({
       }}
       onWheel={(e) => {
         e.preventDefault();
-        onChange(e.deltaY < 0 ? (value >= max ? min : clamp(value + 1)) : value <= min ? max : clamp(value - 1));
+        onChange(
+          e.deltaY < 0
+            ? value >= max
+              ? min
+              : clamp(value + 1)
+            : value <= min
+              ? max
+              : clamp(value - 1),
+        );
       }}
       className={cn(
         'ui:w-8 ui:bg-transparent ui:text-center ui:text-sm ui:tabular-nums ui:outline-none ui:select-none',
         'ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
         'ui:rounded-sm ui:transition-colors',
-        'ui:focus:bg-primary ui:focus:text-primary-foreground'
+        'ui:focus:bg-primary ui:focus:text-primary-foreground',
       )}
     />
   );
@@ -155,8 +163,10 @@ export function DurationPicker({
   const { hours = 0, minutes = 0 } = parseDuration(value);
   const hoursRef = React.useRef<HTMLInputElement>(null);
 
-  const setHours = (h: number) => onChange?.(serializeDuration({ hours: h, minutes }));
-  const setMinutes = (m: number) => onChange?.(serializeDuration({ hours, minutes: m }));
+  const setHours = (h: number) =>
+    onChange?.(serializeDuration({ hours: h, minutes }));
+  const setMinutes = (m: number) =>
+    onChange?.(serializeDuration({ hours, minutes: m }));
 
   const isInvalid = ariaInvalid === true || ariaInvalid === 'true';
 
@@ -172,9 +182,10 @@ export function DurationPicker({
         'ui:has-[[data-slot=input-group-control]:focus]:ring-[3px] ui:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
         'ui:has-[[data-slot=input-group-control]:focus]:ring-ring/50 ui:has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50',
         'ui:dark:bg-input/30',
-        isInvalid && 'ui:border-destructive ui:ring-[3px] ui:ring-destructive/20 ui:dark:ring-destructive/40',
+        isInvalid &&
+          'ui:border-destructive ui:ring-[3px] ui:ring-destructive/20 ui:dark:ring-destructive/40',
         disabled && 'ui:cursor-not-allowed ui:opacity-50',
-        className
+        className,
       )}
       onClick={() => hoursRef.current?.focus()}
     >
@@ -210,7 +221,9 @@ export function DurationPicker({
       />
 
       {/* Unit label */}
-      <span className="ui:pointer-events-none ui:ml-2 ui:text-xs ui:text-muted-foreground ui:select-none">hh:mm</span>
+      <span className="ui:pointer-events-none ui:ml-2 ui:text-xs ui:text-muted-foreground ui:select-none">
+        hh:mm
+      </span>
     </div>
   );
 }

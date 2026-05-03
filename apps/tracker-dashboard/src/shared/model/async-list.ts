@@ -5,7 +5,11 @@ const DEFAULT_FILTERS = {
   pageSize: 10,
 } as AsyncListPagination;
 
-export type AsyncListCreationOptions<TFetchParams, TData, TFilters extends AsyncListPagination> = {
+export type AsyncListCreationOptions<
+  TFetchParams,
+  TData,
+  TFilters extends AsyncListPagination,
+> = {
   fetch: (params: TFetchParams, filters: TFilters) => Promise<TData>;
   defaultFilters?: TFilters;
   noParams?: boolean;
@@ -20,9 +24,22 @@ export function asyncList<
   TFilters extends AsyncListPagination = AsyncListPagination,
   TFetchParams = unknown,
   TData = unknown,
->({ fetch, defaultFilters, noParams = false }: AsyncListCreationOptions<TFetchParams, TData, TFilters>, name: string) {
-  const filterAtom = atom<TFilters>(defaultFilters || (DEFAULT_FILTERS as TFilters), `${name}FilterAtom`);
-  const lastParamsAtom = atom<TFetchParams | null>(null, `${name}LastParamsAtom`);
+>(
+  {
+    fetch,
+    defaultFilters,
+    noParams = false,
+  }: AsyncListCreationOptions<TFetchParams, TData, TFilters>,
+  name: string,
+) {
+  const filterAtom = atom<TFilters>(
+    defaultFilters || (DEFAULT_FILTERS as TFilters),
+    `${name}FilterAtom`,
+  );
+  const lastParamsAtom = atom<TFetchParams | null>(
+    null,
+    `${name}LastParamsAtom`,
+  );
 
   const fetchDataAction = action(async (params: TFetchParams) => {
     lastParamsAtom.set(params);

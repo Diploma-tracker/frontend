@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
-import { ProvidersComposer, type ProviderEntry } from './composer';
+import { type ProviderEntry, ProvidersComposer } from './composer';
 
 export const createProviders = (providers: ProviderEntry[]) => {
   const CombinedProviders = ({ children }: PropsWithChildren) => (

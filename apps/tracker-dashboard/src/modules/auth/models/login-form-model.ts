@@ -24,7 +24,9 @@ export const loginForm = reatomForm(
   {
     onSubmit: async (values) => {
       try {
-        await wrap(loginAction({ credential: values.email, password: values.password }));
+        await wrap(
+          loginAction({ credential: values.email, password: values.password }),
+        );
         router.navigate({ to: '/' });
         toast.success(t('auth.login.toast.loginSuccess'));
       } catch (error) {
@@ -35,5 +37,5 @@ export const loginForm = reatomForm(
     schema: loginSchema,
     validateOnBlur: true,
     name: 'loginForm',
-  }
+  },
 );

@@ -17,7 +17,10 @@ import {
 } from '@repo/ui-kit/components/common/floating/dialog';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
-import { defenseSessionDetailsQuery, deleteDefenseSessionAction } from '../../models/defense-session-actions-model';
+import {
+  defenseSessionDetailsQuery,
+  deleteDefenseSessionAction,
+} from '../../models/defense-session-actions-model';
 import { EditDefenseSessionForm } from '../edit-defense-session-form';
 import { defenseSessionDialogAtom } from './dialog-state';
 
@@ -25,7 +28,10 @@ export const AdminActions = reatomComponent(function AdminActions() {
   const { t } = useTranslation();
   const { onDeleted, onUpdated, sessionId } = defenseSessionDialogAtom();
 
-  const { data, revalidate } = useQuery(defenseSessionDetailsQuery, sessionId ?? '');
+  const { data, revalidate } = useQuery(
+    defenseSessionDetailsQuery,
+    sessionId ?? '',
+  );
   const session = data();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -53,7 +59,11 @@ export const AdminActions = reatomComponent(function AdminActions() {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setShowEditModal(true)} disabled={!session}>
+      <Button
+        variant="outline"
+        onClick={() => setShowEditModal(true)}
+        disabled={!session}
+      >
         <PencilIcon className="size-4" />
         {t('defense.session.detail.editButton')}
       </Button>
@@ -89,10 +99,17 @@ export const AdminActions = reatomComponent(function AdminActions() {
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('defense.session.detail.editModalTitle')}</DialogTitle>
-            <DialogDescription>{t('defense.session.detail.editModalDescription')}</DialogDescription>
+            <DialogTitle>
+              {t('defense.session.detail.editModalTitle')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('defense.session.detail.editModalDescription')}
+            </DialogDescription>
           </DialogHeader>
-          <EditDefenseSessionForm sessionId={sessionId ?? ''} onSuccess={handleEditSuccess} />
+          <EditDefenseSessionForm
+            sessionId={sessionId ?? ''}
+            onSuccess={handleEditSuccess}
+          />
         </DialogContent>
       </Dialog>
     </>

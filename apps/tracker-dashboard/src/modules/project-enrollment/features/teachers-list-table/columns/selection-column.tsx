@@ -28,5 +28,7 @@ const SelectionBadgeCell = ({ isSelected }: SelectionBadgeCellProps) => {
 export const TeacherSelectionColumn: ColumnDef<TeacherDTO> = {
   accessorKey: 'isSelected',
   header: () => <T k="projectEnrollment.teacher.table.columns.selected" />,
-  cell: ({ row }) => <SelectionBadgeCell isSelected={row.original.isSelected} />,
+  cell: ({ row }) => (
+    <SelectionBadgeCell isSelected={row.original.isSelected} />
+  ),
 };

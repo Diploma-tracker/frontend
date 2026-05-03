@@ -66,9 +66,9 @@ const buildEslintCommands = (filenames) => {
     .map(([pkg, files]) => {
       const pkgAbsPath = path.join(ROOT, pkg);
       const relFiles = files
-        .map((f) => `"${path.relative(pkgAbsPath, f)}"`)
+        .map((f) => `"${path.relative(pkgAbsPath, f).replace(/\$/g, "\\$")}"`)
         .join(" ");
-      return `sh -c 'cd "${pkgAbsPath}" && pnpm exec eslint --fix --max-warnings 0 ${relFiles}'`;
+      return `sh -c 'cd "${pkgAbsPath}" && node_modules/.bin/eslint --fix --max-warnings 0 ${relFiles}'`;
     });
 };
 

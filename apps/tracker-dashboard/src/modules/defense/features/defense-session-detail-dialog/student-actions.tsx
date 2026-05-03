@@ -19,7 +19,10 @@ import { defenseSessionDialogAtom } from './dialog-state';
 export const StudentActions = reatomComponent(function StudentActions() {
   const { t } = useTranslation();
   const { onUpdated, sessionId } = defenseSessionDialogAtom();
-  const { data, revalidate } = useQuery(defenseSessionDetailsQuery, sessionId ?? '');
+  const { data, revalidate } = useQuery(
+    defenseSessionDetailsQuery,
+    sessionId ?? '',
+  );
   const user = userAtom();
   const session = data();
 
@@ -49,7 +52,12 @@ export const StudentActions = reatomComponent(function StudentActions() {
 
   if (isRegistered) {
     return (
-      <Button variant="outline" intent="destructive" onClick={handleUnregister} disabled={isUnregistering}>
+      <Button
+        variant="outline"
+        intent="destructive"
+        onClick={handleUnregister}
+        disabled={isUnregistering}
+      >
         {isUnregistering ? (
           <Spinner />
         ) : (
@@ -63,7 +71,10 @@ export const StudentActions = reatomComponent(function StudentActions() {
   }
 
   return (
-    <Button onClick={handleRegister} disabled={isRegistering || !session || isFull}>
+    <Button
+      onClick={handleRegister}
+      disabled={isRegistering || !session || isFull}
+    >
       {isRegistering ? (
         <Spinner />
       ) : (

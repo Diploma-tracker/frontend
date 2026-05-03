@@ -1,6 +1,9 @@
 import { useTranslation } from '@/shared/utils/i18n';
 
-import { ToggleGroup, ToggleGroupItem } from '@repo/ui-kit/components/toggle-group';
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@repo/ui-kit/components/toggle-group';
 
 import { useWeekCalendar } from './context';
 

@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react';
 
 const DEFAULT_DELAY = 500;
 
-export function useDebounce(fn: () => void, deps: unknown[], delay: number = DEFAULT_DELAY) {
+export function useDebounce(
+  fn: () => void,
+  deps: unknown[],
+  delay: number = DEFAULT_DELAY,
+) {
   const fnRef = useRef(fn);
   fnRef.current = fn;
 

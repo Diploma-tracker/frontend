@@ -6,6 +6,12 @@ export const Container = (props: ComponentProps<'div'>) => {
   const { className, ...rest } = props;
 
   return (
-    <div {...rest} className={cn('mx-auto w-full max-w-(--container-width) px-(--container-padding-x)', className)} />
+    <div
+      {...rest}
+      className={cn(
+        'mx-auto w-full max-w-(--container-width) px-(--container-padding-x)',
+        className,
+      )}
+    />
   );
 };

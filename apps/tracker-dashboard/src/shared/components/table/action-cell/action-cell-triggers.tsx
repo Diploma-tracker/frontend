@@ -11,7 +11,10 @@ import {
 import type { ActionCellTriggerProps } from './types';
 import { actionToButton } from './utils';
 
-export const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionCellTriggerProps<TData>) => {
+export const ActionCellDropdown = <TData,>({
+  actions,
+  actionOnSelects,
+}: ActionCellTriggerProps<TData>) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,7 +24,11 @@ export const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionC
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {actions.map(({ key, label, variant }) => (
-          <DropdownMenuItem key={key} variant={variant} onSelect={() => actionOnSelects[key]?.()}>
+          <DropdownMenuItem
+            key={key}
+            variant={variant}
+            onSelect={() => actionOnSelects[key]?.()}
+          >
             {label}
           </DropdownMenuItem>
         ))}
@@ -30,7 +37,10 @@ export const ActionCellDropdown = <TData,>({ actions, actionOnSelects }: ActionC
   );
 };
 
-export const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCellTriggerProps<TData>) => {
+export const ActionCellButton = <TData,>({
+  actions,
+  actionOnSelects,
+}: ActionCellTriggerProps<TData>) => {
   const action = actions[0];
   if (!action) return null;
   const { key, label, variant, icon } = action;
@@ -41,7 +51,10 @@ export const ActionCellButton = <TData,>({ actions, actionOnSelects }: ActionCel
   };
 
   return (
-    <Button {...actionToButton(variant, !!icon)} onClick={() => actionOnSelects[key]?.()}>
+    <Button
+      {...actionToButton(variant, !!icon)}
+      onClick={() => actionOnSelects[key]?.()}
+    >
       {renderLabel()}
     </Button>
   );

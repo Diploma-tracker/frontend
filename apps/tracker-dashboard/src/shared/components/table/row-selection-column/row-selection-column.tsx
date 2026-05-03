@@ -6,7 +6,10 @@ export const getRowSelectionColumn = <TData,>(): ColumnDef<TData> => ({
   id: 'select',
   header: ({ table }) => (
     <Checkbox
-      checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+      checked={
+        table.getIsAllPageRowsSelected() ||
+        (table.getIsSomePageRowsSelected() && 'indeterminate')
+      }
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       aria-label="Select all"
     />

@@ -1,13 +1,22 @@
 import { useEffect } from 'react';
 
 import { TablePagination } from '@/shared/components';
-import { DataTable, type BulkActionsConfig, type TableDataConfig } from '@/shared/components/data-table/data-table';
+import {
+  type BulkActionsConfig,
+  DataTable,
+  type TableDataConfig,
+} from '@/shared/components/data-table/data-table';
 import { T, useTranslation } from '@/shared/utils/i18n';
 import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
-import { addTeachersAction, removeTeachersAction, teacherListAtom, type TeacherDTO } from '../../models';
+import {
+  type TeacherDTO,
+  addTeachersAction,
+  removeTeachersAction,
+  teacherListAtom,
+} from '../../models';
 import { createTeacherColumns } from './columns';
 import { TeachersFilters } from './teachers-filters';
 
@@ -15,7 +24,9 @@ interface TeachersListTableProps {
   roundId: string;
 }
 
-export const TeachersListTable = reatomComponent(function TeachersListTable({ roundId }: TeachersListTableProps) {
+export const TeachersListTable = reatomComponent(function TeachersListTable({
+  roundId,
+}: TeachersListTableProps) {
   const { t } = useTranslation();
   const status = teacherListAtom.status();
   const teachers = teacherListAtom.data();
@@ -33,7 +44,8 @@ export const TeachersListTable = reatomComponent(function TeachersListTable({ ro
   };
 
   const bulkActionsConfig: BulkActionsConfig<TeacherDTO> = {
-    entityLabel: (count) => t('projectEnrollment.teacher.bulkActions.entityLabel', { count }),
+    entityLabel: (count) =>
+      t('projectEnrollment.teacher.bulkActions.entityLabel', { count }),
     actions: (selectedTeachers) => {
       const teacherIds = selectedTeachers.map((t) => t.id);
 
@@ -73,8 +85,16 @@ export const TeachersListTable = reatomComponent(function TeachersListTable({ ro
   return (
     <div className="flex flex-col gap-4">
       <TeachersFilters />
-      <DataTable columns={columns} tableDataConfig={tableDataConfig} bulkActionsConfig={bulkActionsConfig} />
-      <TablePagination page={filter.page} totalPages={totalPages} onPageChange={handlePageChange} />
+      <DataTable
+        columns={columns}
+        tableDataConfig={tableDataConfig}
+        bulkActionsConfig={bulkActionsConfig}
+      />
+      <TablePagination
+        page={filter.page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 });

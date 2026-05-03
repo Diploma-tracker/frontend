@@ -60,4 +60,7 @@ export const k = <T>(key: T): T => key;
  *   return <p>{t('common.save')}</p>;
  * };
  */
-export const useTranslation = useTranslationRaw as () => UseTranslationResponse<'translation', undefined>;
+export const useTranslation = useTranslationRaw as () => UseTranslationResponse<
+  'translation',
+  undefined
+>;

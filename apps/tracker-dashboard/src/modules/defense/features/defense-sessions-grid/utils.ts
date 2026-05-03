@@ -18,7 +18,7 @@ export interface DefenseSessionCalendarEvent {
 export function sessionsToCalendarEvents(
   sessions: DefenseSessionDTO[],
   pending: PendingDragReschedule | null,
-  getTitle: (session: DefenseSessionDTO) => string
+  getTitle: (session: DefenseSessionDTO) => string,
 ): DefenseSessionCalendarEvent[] {
   return sessions.map((session) => {
     let startRaw = session.date;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 
 import { cn } from '../../../lib/utils';
 
@@ -17,30 +17,47 @@ const alertVariants = cva(
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 );
 
-function Alert({ className, variant, ...props }: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
-  return <div data-slot="alert" role="alert" className={cn(alertVariants({ variant }), className)} {...props} />;
+function Alert({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
+  return (
+    <div
+      data-slot="alert"
+      role="alert"
+      className={cn(alertVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
 function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="alert-title"
-      className={cn('ui:col-start-2 ui:line-clamp-1 ui:min-h-4 ui:font-medium ui:tracking-tight', className)}
+      className={cn(
+        'ui:col-start-2 ui:line-clamp-1 ui:min-h-4 ui:font-medium ui:tracking-tight',
+        className,
+      )}
       {...props}
     />
   );
 }
 
-function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) {
+function AlertDescription({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="alert-description"
       className={cn(
         'ui:col-start-2 ui:grid ui:justify-items-start ui:gap-1 ui:text-sm ui:text-muted-foreground ui:[&_p]:leading-relaxed',
-        className
+        className,
       )}
       {...props}
     />

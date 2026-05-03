@@ -2,7 +2,12 @@ import { useArrayFieldForMultiSelect } from '@/shared/components/form/multi-sele
 import type { FieldArrayAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
-import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from '@repo/ui-kit/components/common/form/field';
 
 import { UserSelector } from './user-selector';
 
@@ -28,7 +33,11 @@ export const UserSelectorField = reatomComponent(function UserSelectorField({
     <Field data-invalid={invalid || undefined}>
       {label && <FieldLabel>{label}</FieldLabel>}
 
-      <UserSelector role="student" selected={selected} setSelected={setSelected} />
+      <UserSelector
+        role="student"
+        selected={selected}
+        setSelected={setSelected}
+      />
 
       {description && <FieldDescription>{description}</FieldDescription>}
       {error && <FieldError>{error}</FieldError>}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
 import { cn } from '../../../lib/utils';
@@ -10,7 +10,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
+        default:
+          'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
         solid: '',
         outline: 'ui:border ui:bg-transparent',
         ghost: '',
@@ -30,8 +31,10 @@ const buttonVariants = cva(
         sm: 'ui:h-8 ui:gap-1.5 ui:rounded-md ui:px-3 ui:has-[>svg]:px-2.5',
         lg: 'ui:h-10 ui:rounded-md ui:px-6 ui:has-[>svg]:px-4',
         icon: 'ui:size-9',
-        'icon-xss': 'ui:size-4 ui:rounded-md ui:[&_svg:not([class*=size-])]:size-3',
-        'icon-xs': 'ui:size-6 ui:rounded-md ui:[&_svg:not([class*=size-])]:size-3',
+        'icon-xss':
+          'ui:size-4 ui:rounded-md ui:[&_svg:not([class*=size-])]:size-3',
+        'icon-xs':
+          'ui:size-6 ui:rounded-md ui:[&_svg:not([class*=size-])]:size-3',
         'icon-sm': 'ui:size-8',
         'icon-lg': 'ui:size-10',
       },
@@ -42,7 +45,8 @@ const buttonVariants = cva(
       {
         variant: 'solid',
         intent: 'primary',
-        className: 'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
+        className:
+          'ui:bg-primary ui:text-primary-foreground ui:hover:bg-primary/90',
       },
       {
         variant: 'solid',
@@ -53,12 +57,14 @@ const buttonVariants = cva(
       {
         variant: 'solid',
         intent: 'success',
-        className: 'ui:bg-success ui:text-success-foreground ui:hover:bg-success/90 ui:focus-visible:ring-success/50',
+        className:
+          'ui:bg-success ui:text-success-foreground ui:hover:bg-success/90 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'solid',
         intent: 'neutral',
-        className: 'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
+        className:
+          'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
       },
 
       // OUTLINE
@@ -76,7 +82,8 @@ const buttonVariants = cva(
       {
         variant: 'outline',
         intent: 'success',
-        className: 'ui:border-success ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
+        className:
+          'ui:border-success ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'outline',
@@ -93,12 +100,14 @@ const buttonVariants = cva(
       {
         variant: 'ghost',
         intent: 'destructive',
-        className: 'ui:text-destructive ui:hover:bg-destructive/10 ui:focus-visible:ring-destructive/50',
+        className:
+          'ui:text-destructive ui:hover:bg-destructive/10 ui:focus-visible:ring-destructive/50',
       },
       {
         variant: 'ghost',
         intent: 'success',
-        className: 'ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
+        className:
+          'ui:text-success ui:hover:bg-success/10 ui:focus-visible:ring-success/50',
       },
       {
         variant: 'ghost',
@@ -112,7 +121,7 @@ const buttonVariants = cva(
       size: 'default',
       intent: 'neutral',
     },
-  }
+  },
 );
 
 export type ButtonProps = React.ComponentProps<'button'> &
@@ -120,7 +129,14 @@ export type ButtonProps = React.ComponentProps<'button'> &
     asChild?: boolean;
   };
 
-function Button({ className, variant, size, intent, asChild = false, ...props }: ButtonProps) {
+function Button({
+  className,
+  variant,
+  size,
+  intent,
+  asChild = false,
+  ...props
+}: ButtonProps) {
   const Comp = asChild ? Slot.Root : 'button';
 
   return (
@@ -135,7 +151,7 @@ function Button({ className, variant, size, intent, asChild = false, ...props }:
           size,
           intent,
           className,
-        })
+        }),
       )}
       {...props}
     />

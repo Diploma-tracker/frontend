@@ -9,8 +9,14 @@ import { DEFAULT_OPTIONS } from './constants';
 import type { Action, ActionColumnOptions } from './types';
 import { preprocessActions } from './utils';
 
-export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionColumnOptions) => {
-  const processedActions = preprocessActions(actions) as RequiredDefined<Action<TData>, 'action' | 'isActive'>[];
+export const actionCell = <TData,>(
+  actions: Action<TData>[],
+  options?: ActionColumnOptions,
+) => {
+  const processedActions = preprocessActions(actions) as RequiredDefined<
+    Action<TData>,
+    'action' | 'isActive'
+  >[];
   const mergedOptions = { ...DEFAULT_OPTIONS, ...(options ?? {}) };
 
   // eslint-disable-next-line react/display-name
@@ -18,28 +24,41 @@ export const actionCell = <TData,>(actions: Action<TData>[], options?: ActionCol
     const state = row.original;
     const [modalsOpen, setModalsOpen] = useState<Record<string, boolean>>({});
 
-    const setModalOpen = (key: string) => (value: boolean) => setModalsOpen((prev) => ({ ...prev, [key]: value }));
+    const setModalOpen = (key: string) => (value: boolean) =>
+      setModalsOpen((prev) => ({ ...prev, [key]: value }));
 
     const isModalOpen = (key: string) => !!modalsOpen[key];
 
-    const activeActions = processedActions.filter(({ isActive }) => isActive(state));
+    const activeActions = processedActions.filter(({ isActive }) =>
+      isActive(state),
+    );
 
     const actionOnSelects = activeActions.reduce(
       (acc, { key, action, modal }) => {
         acc[key] = modal ? () => setModalOpen(key)(true) : () => action(state);
         return acc;
       },
-      {} as Record<string, () => void>
+      {} as Record<string, () => void>,
     );
 
     const renderActionTrigger = () => {
       if (mergedOptions.hideOnEmpty && !activeActions.length) return null;
 
       if (mergedOptions.singleButton && activeActions.length === 1) {
-        return <ActionCellButton actions={activeActions} actionOnSelects={actionOnSelects} />;
+        return (
+          <ActionCellButton
+            actions={activeActions}
+            actionOnSelects={actionOnSelects}
+          />
+        );
       }
 
-      return <ActionCellDropdown actions={activeActions} actionOnSelects={actionOnSelects} />;
+      return (
+        <ActionCellDropdown
+          actions={activeActions}
+          actionOnSelects={actionOnSelects}
+        />
+      );
     };
 
     return (

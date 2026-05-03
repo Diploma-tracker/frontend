@@ -8,11 +8,15 @@ import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 const schema = z.object({
   sessionId: z.string().min(1),
   date: z.string().min(1, t('defense.session.form.validation.dateRequired')),
-  duration: z.string().min(1, t('defense.session.form.validation.durationRequired')),
+  duration: z
+    .string()
+    .min(1, t('defense.session.form.validation.durationRequired')),
   capacity: z
     .string()
     .min(1, t('defense.session.form.validation.capacityRequired'))
-    .refine((v) => Number(v) > 0, { message: t('defense.session.form.validation.capacityPositive') }),
+    .refine((v) => Number(v) > 0, {
+      message: t('defense.session.form.validation.capacityPositive'),
+    }),
   allowedStudentIds: z.array(z.string()),
   allowedGroupIds: z.array(z.string()),
 });
@@ -37,7 +41,7 @@ export const updateDefenseSessionForm = reatomForm(
           capacity: Number(values.capacity),
           allowedStudentIds: values.allowedStudentIds,
           allowedGroupIds: values.allowedGroupIds,
-        })
+        }),
       );
       if (!response.ok) {
         toast.error(t('defense.session.toast.updateError'));
@@ -51,5 +55,5 @@ export const updateDefenseSessionForm = reatomForm(
     keepErrorOnChange: false,
     resetOnSubmit: false,
     name: 'updateDefenseSessionForm',
-  }
+  },
 );

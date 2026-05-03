@@ -2,7 +2,12 @@ import { useArrayFieldForMultiSelect } from '@/shared/components/form/multi-sele
 import type { FieldArrayAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
-import { Field, FieldDescription, FieldError, FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from '@repo/ui-kit/components/common/form/field';
 
 import { GroupSelector } from './group-selector';
 

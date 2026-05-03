@@ -22,7 +22,9 @@ export interface QueryInstance<TParams, TResult> {
 
 type DataStatus = 'idle' | 'loading' | 'error';
 
-export type Query<TParams, TResult> = (params: TParams) => QueryInstance<TParams, TResult>;
+export type Query<TParams, TResult> = (
+  params: TParams,
+) => QueryInstance<TParams, TResult>;
 
 const DEFAULT_OPTIONS: Partial<QueryOptions<unknown, unknown>> = {
   getKey: (params: unknown) => JSON.stringify(params),
@@ -32,13 +34,16 @@ const DEFAULT_OPTIONS: Partial<QueryOptions<unknown, unknown>> = {
 export const query = <TParams, TResult>(
   fetcher: (params: TParams) => Promise<TResult>,
   name: string,
-  options?: QueryOptions<TParams, TResult>
+  options?: QueryOptions<TParams, TResult>,
 ): Query<TParams, TResult> => {
-  const mergedOptions = { ...DEFAULT_OPTIONS, ...(options ?? {}) } as Required<QueryOptions<TParams, TResult>>;
+  const mergedOptions = { ...DEFAULT_OPTIONS, ...(options ?? {}) } as Required<
+    QueryOptions<TParams, TResult>
+  >;
   const { getKey, placeholder, ttl } = mergedOptions;
 
   const createExpiresAt = () => (ttl ? Date.now() + ttl : null);
-  const isExpired = (expiresAt: number | null) => expiresAt !== null && Date.now() > expiresAt;
+  const isExpired = (expiresAt: number | null) =>
+    expiresAt !== null && Date.now() > expiresAt;
 
   type CacheAtomData = {
     data: TResult | null;
@@ -53,23 +58,28 @@ export const query = <TParams, TResult>(
       status: 'idle',
     } as CacheAtomData;
 
-    return atom<CacheAtomData>(initState, `${name}.cacheAtom.${key}`).extend((target) => ({
-      isValid: () => !isExpired(target().expiresAt),
-      setLoading: () => {
-        target.set((prev) => ({ ...prev, status: 'loading' }));
-      },
-      setError: () => {
-        target.set((prev) => ({ ...prev, status: 'error' }));
-      },
-      setNewData: (data: TResult) => {
-        target.set({ data, expiresAt: createExpiresAt(), status: 'idle' });
-      },
-    }));
+    return atom<CacheAtomData>(initState, `${name}.cacheAtom.${key}`).extend(
+      (target) => ({
+        isValid: () => !isExpired(target().expiresAt),
+        setLoading: () => {
+          target.set((prev) => ({ ...prev, status: 'loading' }));
+        },
+        setError: () => {
+          target.set((prev) => ({ ...prev, status: 'error' }));
+        },
+        setNewData: (data: TResult) => {
+          target.set({ data, expiresAt: createExpiresAt(), status: 'idle' });
+        },
+      }),
+    );
   };
 
   type CacheAtom = ReturnType<typeof createCacheAtom>;
 
-  const cacheAtoms = atom<Record<string, CacheAtom>>({}, `${name}.cacheAtoms`).extend((target) => ({
+  const cacheAtoms = atom<Record<string, CacheAtom>>(
+    {},
+    `${name}.cacheAtoms`,
+  ).extend((target) => ({
     get: (params: TParams) => {
       const key = getKey(params);
 
@@ -127,7 +137,10 @@ export const query = <TParams, TResult>(
   };
 };
 
-export const useQuery = <TParams, TResult>(query: Query<TParams, TResult>, params: TParams) => {
+export const useQuery = <TParams, TResult>(
+  query: Query<TParams, TResult>,
+  params: TParams,
+) => {
   const instance = query(params);
   const { fetch, _options } = instance;
   const currentKey = _options.getKey(params);

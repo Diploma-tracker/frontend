@@ -6,37 +6,50 @@ import { thesisDefenseSession } from '@repo/api';
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
 const schema = z.object({
-  allocationRoundId: z.string().min(1, t('defense.session.form.validation.allocationRoundRequired')),
+  allocationRoundId: z
+    .string()
+    .min(1, t('defense.session.form.validation.allocationRoundRequired')),
   date: z.string().min(1, t('defense.session.form.validation.dateRequired')),
-  duration: z.string().min(1, t('defense.session.form.validation.durationRequired')),
+  duration: z
+    .string()
+    .min(1, t('defense.session.form.validation.durationRequired')),
   capacity: z
     .string()
     .min(1, t('defense.session.form.validation.capacityRequired'))
-    .refine((v) => Number(v) > 0, { message: t('defense.session.form.validation.capacityPositive') }),
+    .refine((v) => Number(v) > 0, {
+      message: t('defense.session.form.validation.capacityPositive'),
+    }),
   allowedStudentIds: z.array(z.string()),
   allowedGroupIds: z.array(z.string()),
 });
 
 export type CreateDefenseSessionFormValues = z.infer<typeof schema>;
 
-export const createDefenseSessionAction = action(async (dto: CreateDefenseSessionFormValues) => {
-  const response = await wrap(
-    thesisDefenseSession.createDefenseSession({
-      allocationRoundId: dto.allocationRoundId,
-      date: dto.date,
-      duration: dto.duration,
-      capacity: Number(dto.capacity),
-      allowedStudentIds: dto.allowedStudentIds.length > 0 ? dto.allowedStudentIds : undefined,
-      allowedGroupIds: dto.allowedGroupIds.length > 0 ? dto.allowedGroupIds : undefined,
-    })
-  );
+export const createDefenseSessionAction = action(
+  async (dto: CreateDefenseSessionFormValues) => {
+    const response = await wrap(
+      thesisDefenseSession.createDefenseSession({
+        allocationRoundId: dto.allocationRoundId,
+        date: dto.date,
+        duration: dto.duration,
+        capacity: Number(dto.capacity),
+        allowedStudentIds:
+          dto.allowedStudentIds.length > 0 ? dto.allowedStudentIds : undefined,
+        allowedGroupIds:
+          dto.allowedGroupIds.length > 0 ? dto.allowedGroupIds : undefined,
+      }),
+    );
 
-  if (!response.ok) {
-    throw new Error(response.error?.message ?? t('defense.session.form.toast.createError'));
-  }
+    if (!response.ok) {
+      throw new Error(
+        response.error?.message ?? t('defense.session.form.toast.createError'),
+      );
+    }
 
-  return response.data;
-}, 'createDefenseSessionAction').extend(withAsync());
+    return response.data;
+  },
+  'createDefenseSessionAction',
+).extend(withAsync());
 
 export const createDefenseSessionForm = reatomForm(
   {
@@ -63,5 +76,5 @@ export const createDefenseSessionForm = reatomForm(
     keepErrorOnChange: false,
     resetOnSubmit: true,
     name: 'createDefenseSessionForm',
-  }
+  },
 );

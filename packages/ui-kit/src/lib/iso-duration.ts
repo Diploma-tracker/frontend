@@ -7,7 +7,10 @@ import { parseDuration, serializeDuration } from '@repo/utils/duration';
  * parseISODurationComponents('PT1H30M') // { hours: 1, minutes: 30 }
  * parseISODurationComponents('PT45M')   // { hours: 0, minutes: 45 }
  */
-export function parseISODurationComponents(iso: string): { hours: number; minutes: number } {
+export function parseISODurationComponents(iso: string): {
+  hours: number;
+  minutes: number;
+} {
   if (!iso) return { hours: 0, minutes: 0 };
   const { hours = 0, minutes = 0 } = parseDuration(iso);
   return { hours, minutes };

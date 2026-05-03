@@ -1,5 +1,5 @@
 import { univerImg } from '@/shared/assets';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
 import { Card, CardContent } from '@repo/ui-kit/components/common/layout/card';
 
@@ -22,7 +22,11 @@ function Authlayout() {
               <Outlet />
 
               <div className="relative hidden bg-muted md:block">
-                <img src={univerImg} alt="Image" className="absolute inset-0 h-full w-full object-cover" />
+                <img
+                  src={univerImg}
+                  alt="Image"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
               </div>
             </CardContent>
           </Card>

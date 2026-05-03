@@ -4,7 +4,10 @@ export function calculatePercentage(part: number, total: number): number {
   return (part / total) * 100;
 }
 
-export function formatPercentageString(percentValue: number, decimals: number = 0): string {
+export function formatPercentageString(
+  percentValue: number,
+  decimals: number = 0,
+): string {
   const ratio = percentValue / 100;
 
   const formatter = new Intl.NumberFormat(undefined, {

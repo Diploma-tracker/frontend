@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import { PageLayout } from '@/layouts';
 import {
-  CreateAllocationRoundForm,
   AllocationRoundsFilters,
   AllocationRoundsPagination,
   AllocationsListTable,
+  CreateAllocationRoundForm,
 } from '@/modules/project-enrollment';
 import { useTranslation } from '@/shared/utils/i18n';
 import { T } from '@/shared/utils/i18n';
@@ -41,7 +41,9 @@ export const ProjectEnrollmentAdminPage = () => {
             intent="primary"
             size="icon-lg"
             className="fixed right-6 bottom-6 z-50 size-14 rounded-full shadow-lg"
-            aria-label={t('projectEnrollment.allocationRound.dialog.createAriaLabel')}
+            aria-label={t(
+              'projectEnrollment.allocationRound.dialog.createAriaLabel',
+            )}
           >
             <PlusIcon className="size-6" />
           </Button>

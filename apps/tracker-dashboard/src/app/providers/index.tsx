@@ -8,7 +8,10 @@ import type { AppRouterContext } from '../config/router';
 import { router } from '../config/router';
 import { createProviders } from './providers-composer';
 
-type RouterProviderProps = Omit<Parameters<typeof RouterProvider>[0], 'context'> & {
+type RouterProviderProps = Omit<
+  Parameters<typeof RouterProvider>[0],
+  'context'
+> & {
   context: AppRouterContext;
 };
 

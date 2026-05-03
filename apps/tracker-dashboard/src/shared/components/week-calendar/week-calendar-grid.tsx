@@ -23,10 +23,17 @@ type WeekCalendarGridProps = Omit<
   editable?: boolean;
 };
 
-export function WeekCalendarGrid({ isLoading, error, editable = true, ...props }: WeekCalendarGridProps) {
+export function WeekCalendarGrid({
+  isLoading,
+  error,
+  editable = true,
+  ...props
+}: WeekCalendarGridProps) {
   const { calendarRef, weekView, setIsInteractive } = useWeekCalendar();
   const { i18n } = useTranslation();
-  const [fcLocale, setFcLocale] = useState<LocaleSingularArg | undefined>(undefined);
+  const [fcLocale, setFcLocale] = useState<LocaleSingularArg | undefined>(
+    undefined,
+  );
 
   const isBlocked = !!isLoading || !!error;
 
@@ -35,11 +42,17 @@ export function WeekCalendarGrid({ isLoading, error, editable = true, ...props }
   }, [isBlocked, setIsInteractive]);
 
   useEffect(() => {
-    getFullCalendarLocale().then((locale) => setFcLocale(locale as LocaleSingularArg | undefined));
+    getFullCalendarLocale().then((locale) =>
+      setFcLocale(locale as LocaleSingularArg | undefined),
+    );
   }, [i18n.language]);
 
   return (
-    <div className={cn('relative h-full overflow-auto', { 'overflow-hidden': isBlocked })}>
+    <div
+      className={cn('relative h-full overflow-auto', {
+        'overflow-hidden': isBlocked,
+      })}
+    >
       <FullCalendar
         ref={calendarRef}
         plugins={[timeGridPlugin, interactionPlugin]}

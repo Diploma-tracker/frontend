@@ -2,9 +2,15 @@ import { k, useTranslation } from '@/shared/utils/i18n';
 import { T } from '@/shared/utils/i18n';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { Badge, type BadgeProps } from '@repo/ui-kit/components/common/data-display/badge';
+import {
+  Badge,
+  type BadgeProps,
+} from '@repo/ui-kit/components/common/data-display/badge';
 
-import type { AllocationRoundDTO, AllocationRoundStatus } from '../../../models';
+import type {
+  AllocationRoundDTO,
+  AllocationRoundStatus,
+} from '../../../models';
 
 const STATUS_CLASS: Record<AllocationRoundStatus, BadgeProps['intent']> = {
   DRAFT: 'draft',
@@ -30,6 +36,8 @@ const StatusCell = ({ status }: { status: AllocationRoundStatus }) => {
 
 export const StatusColumn: ColumnDef<AllocationRoundDTO> = {
   accessorKey: 'status',
-  header: () => <T k="projectEnrollment.allocationRound.table.columns.status" />,
+  header: () => (
+    <T k="projectEnrollment.allocationRound.table.columns.status" />
+  ),
   cell: ({ row }) => <StatusCell status={row.original.status} />,
 };

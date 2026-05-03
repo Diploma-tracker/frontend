@@ -47,13 +47,20 @@ export const ConfirmationModal = ({
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
+          {description && (
+            <AlertDialogDescription>{description}</AlertDialogDescription>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel} disabled={isPending}>
             {cancelLabel ?? t('common.confirm.cancel')}
           </AlertDialogCancel>
-          <Button variant={confirmVariant} intent={confirmIntent} disabled={isPending} onClick={onConfirm}>
+          <Button
+            variant={confirmVariant}
+            intent={confirmIntent}
+            disabled={isPending}
+            onClick={onConfirm}
+          >
             {confirmLabel ?? t('common.confirm.proceed')}
           </Button>
         </AlertDialogFooter>

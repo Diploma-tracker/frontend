@@ -10,7 +10,8 @@ export const ThemeSwitcher = reatomComponent(function ThemeSwitcher() {
   const theme = themeAtom();
   const isLight = theme === AppTheme.Light;
 
-  const iconClassName = 'absolute inset-0 transition-transform duration-500 ease-in-out';
+  const iconClassName =
+    'absolute inset-0 transition-transform duration-500 ease-in-out';
 
   return (
     <Button
@@ -20,11 +21,23 @@ export const ThemeSwitcher = reatomComponent(function ThemeSwitcher() {
       aria-label="Toggle theme"
       className="relative grid place-items-center overflow-hidden"
     >
-      <div className={cn(iconClassName, 'grid place-items-center', isLight ? 'rotate-0' : '-rotate-90 opacity-0')}>
+      <div
+        className={cn(
+          iconClassName,
+          'grid place-items-center',
+          isLight ? 'rotate-0' : '-rotate-90 opacity-0',
+        )}
+      >
         <SunIcon />
       </div>
 
-      <div className={cn(iconClassName, 'grid place-items-center', isLight ? 'rotate-90 opacity-0' : 'rotate-0')}>
+      <div
+        className={cn(
+          iconClassName,
+          'grid place-items-center',
+          isLight ? 'rotate-90 opacity-0' : 'rotate-0',
+        )}
+      >
         <MoonIcon />
       </div>
     </Button>

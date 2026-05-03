@@ -8,7 +8,10 @@ export type ProvidersComposerProps = {
   children: ReactNode;
 };
 
-export const ProvidersComposer = ({ providers, children }: ProvidersComposerProps) => {
+export const ProvidersComposer = ({
+  providers,
+  children,
+}: ProvidersComposerProps) => {
   return (providers as ProviderEntry[]).reduceRight((acc, entry) => {
     if (Array.isArray(entry)) {
       const [Provider, props] = entry;

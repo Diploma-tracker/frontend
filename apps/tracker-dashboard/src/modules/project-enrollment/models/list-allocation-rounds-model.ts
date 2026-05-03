@@ -1,15 +1,24 @@
-import { asyncList, type AsyncListPagination } from '@/shared/model/async-list';
+import { type AsyncListPagination, asyncList } from '@/shared/model/async-list';
 
 import { getAllocationRounds } from '@repo/api/allocation-round';
-import type { AllocationRoundDTO, AllocationRoundStatus, PaginatedAllocationRoundsDTO } from '@repo/api/model';
+import type {
+  AllocationRoundDTO,
+  AllocationRoundStatus,
+  PaginatedAllocationRoundsDTO,
+} from '@repo/api/model';
 
 export type { AllocationRoundDTO, AllocationRoundStatus };
 
-export interface AllocationRoundsFilter extends AsyncListPagination, Record<string, unknown> {
+export interface AllocationRoundsFilter
+  extends AsyncListPagination, Record<string, unknown> {
   statusFilter: 'ALL' | AllocationRoundStatus;
 }
 
-export const allocationRoundListAtom = asyncList<AllocationRoundsFilter, void, PaginatedAllocationRoundsDTO>(
+export const allocationRoundListAtom = asyncList<
+  AllocationRoundsFilter,
+  void,
+  PaginatedAllocationRoundsDTO
+>(
   {
     fetch: async (_: void, filters: AllocationRoundsFilter) => {
       const response = await getAllocationRounds({
@@ -18,7 +27,9 @@ export const allocationRoundListAtom = asyncList<AllocationRoundsFilter, void, P
         statusFilter: filters.statusFilter,
       });
       if (!response.ok) {
-        throw new Error(response.error?.message ?? 'Failed to fetch allocation rounds');
+        throw new Error(
+          response.error?.message ?? 'Failed to fetch allocation rounds',
+        );
       }
       return response.data;
     },
@@ -29,5 +40,5 @@ export const allocationRoundListAtom = asyncList<AllocationRoundsFilter, void, P
     },
     noParams: true,
   },
-  'allocationRounds'
+  'allocationRounds',
 );
