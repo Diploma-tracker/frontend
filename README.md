@@ -88,6 +88,8 @@ Scripts are run from the repository root.
 - `pnpm lint:check` — only lint check without auto-fix (good for CI)
 - `pnpm format` — format code with auto-fix
 - `pnpm format:check` — only format check without auto-fix (good for CI)
+- `pnpm format:root` — format only root files (e.g. `README.md`, `turbo.json`, etc.) with auto-fix
+- `pnpm format:check:root` — only format check for root files without auto-fix (good for CI)
 - `pnpm check-types` — type checking
 - `pnpm create:app` — create a new app
 - `pnpm create:package` — create a new package

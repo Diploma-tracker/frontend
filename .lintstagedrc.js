@@ -73,13 +73,26 @@ const buildEslintCommands = (filenames) => {
 };
 
 /**
- * Runs `prettier --write` across all matched staged files in a single pass.
+ * Runs `prettier --write` from within each package directory so package-local
+ * `.prettierignore` files are respected. Generated files are excluded.
  *
  * @param {readonly string[]} filenames - Absolute paths provided by lint-staged
- * @returns {string} The prettier command
+ * @returns {string[]} Shell commands – one per affected package
  */
-const buildPrettierCommand = (filenames) =>
-  `prettier --write ${filenames.map((f) => `"${f}"`).join(" ")}`;
+const buildPrettierCommand = (filenames) => {
+  const toFormat = filenames.filter((f) => !isGenerated(f));
+  if (!toFormat.length) return [];
+
+  const groups = groupByPackage(toFormat);
+
+  return Object.entries(groups).map(([pkg, files]) => {
+    const pkgAbsPath = pkg === "." ? ROOT : path.join(ROOT, pkg);
+    const relFiles = files
+      .map((f) => `"${path.relative(pkgAbsPath, f).replace(/\$/g, "\\$")}"`)
+      .join(" ");
+    return `sh -c 'cd "${pkgAbsPath}" && prettier --write ${relFiles}'`;
+  });
+};
 
 /** @type {import('lint-staged').Configuration} */
 module.exports = {

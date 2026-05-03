@@ -8,8 +8,10 @@
     "create:package": "turbo generate workspace --type package",
     "lint:check": "turbo run lint:check",
     "lint": "turbo run lint",
-    "format:check": "turbo run format:check",
-    "format": "turbo run format",
+    "format:check": "pnpm run format:check:root && turbo run format:check",
+    "format": "pnpm run format:root && turbo run format",
+    "format:check:root": "prettier --check \"./*.{js,cjs,mjs,json,md,yaml,yml}\" \"./.*.{js,cjs,mjs,json,yaml,yml}\" --ignore-unknown",
+    "format:root": "prettier --write \"./*.{js,cjs,mjs,json,md,yaml,yml}\" \"./.*.{js,cjs,mjs,json,yaml,yml}\" --ignore-unknown",
     "check-types": "turbo run check-types",
     "generate": "turbo run generate",
     "prepare": "husky"
