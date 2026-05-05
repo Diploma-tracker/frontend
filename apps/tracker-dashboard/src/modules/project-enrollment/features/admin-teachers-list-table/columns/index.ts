@@ -2,10 +2,12 @@ import { getRowSelectionColumn } from '@/shared/components';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import type { TeacherDTO } from '../../../models';
+import {
+  TeacherApplicationsColumn,
+  TeacherEmailColumn,
+  TeacherNameColumn,
+} from '../../teacher-table';
 import { createTeacherActionColumn } from './action-column';
-import { TeacherApplicationsColumn } from './applications-column';
-import { TeacherEmailColumn } from './email-column';
-import { TeacherNameColumn } from './name-column';
 import { TeacherSelectionColumn } from './selection-column';
 
 //TODO: hide selection column when allocation round is not in "draft" status

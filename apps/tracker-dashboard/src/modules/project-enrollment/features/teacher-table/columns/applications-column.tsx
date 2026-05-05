@@ -1,5 +1,4 @@
-import { k, useTranslation } from '@/shared/utils/i18n';
-import { T } from '@/shared/utils/i18n';
+import { T, k, useTranslation } from '@/shared/utils/i18n';
 import {
   calculatePercentage,
   formatPercentageString,
