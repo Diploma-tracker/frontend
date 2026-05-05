@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { GroupDTO } from "./group-dt-o";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { GroupDTO } from './group-dt-o';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawPaginatedGroupsDTO {
   items: GroupDTO[];

@@ -9,9 +9,10 @@
  * @nullable
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
-export type RawListUsers400Extra =
+export type RawGetSupervisionApplicantsForTeacher400Extra =
   | { [key: string]: unknown }
   | unknown[]
   | null;
 
-export type ListUsers400Extra = CamelCaseKeys<RawListUsers400Extra>;
+export type GetSupervisionApplicantsForTeacher400Extra =
+  CamelCaseKeys<RawGetSupervisionApplicantsForTeacher400Extra>;

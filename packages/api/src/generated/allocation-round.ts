@@ -10,21 +10,23 @@ import type {
   CreateAllocationRoundResponse,
   GetAllocationRoundTeachersParams,
   GetAllocationRoundsParams,
+  GetSupervisionApplicantsForTeacherParams,
   PaginatedAllocationRoundsDTO,
+  PaginatedSupervisionApplicantsDTO,
   PaginatedTeachersDTO,
   RemoveTeachersFromAllocationRoundRequest,
-} from "./model";
+} from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
- * Returns a paginated list of all allocation rounds (ADMIN only)
+ * Returns a paginated list of all allocation rounds
  * @summary List allocation rounds
  */
 export const getAllocationRounds = (params?: GetAllocationRoundsParams) => {
   return orvalCustomInstance<PaginatedAllocationRoundsDTO>({
     url: `/projects/allocation-rounds`,
-    method: "GET",
+    method: 'GET',
     params,
   });
 };
@@ -37,8 +39,8 @@ export const createAllocationRound = (
 ) => {
   return orvalCustomInstance<CreateAllocationRoundResponse>({
     url: `/projects/allocation-rounds`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: createAllocationRoundRequest,
   });
 };
@@ -49,7 +51,7 @@ export const createAllocationRound = (
 export const openAllocationRound = (allocationRoundId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/allocation-rounds/${allocationRoundId}/open`,
-    method: "POST",
+    method: 'POST',
   });
 };
 /**
@@ -59,7 +61,7 @@ export const openAllocationRound = (allocationRoundId: string) => {
 export const closeAllocationRound = (allocationRoundId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/allocation-rounds/${allocationRoundId}/close`,
-    method: "POST",
+    method: 'POST',
   });
 };
 /**
@@ -72,7 +74,7 @@ export const getAllocationRoundTeachers = (
 ) => {
   return orvalCustomInstance<PaginatedTeachersDTO>({
     url: `/projects/allocation-rounds/${allocationRoundId}/teachers`,
-    method: "GET",
+    method: 'GET',
     params,
   });
 };
@@ -86,8 +88,8 @@ export const addTeachersToAllocationRound = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/allocation-rounds/${allocationRoundId}/teachers`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: addTeachersToAllocationRoundRequest,
   });
 };
@@ -101,9 +103,23 @@ export const removeTeachersFromAllocationRound = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/allocation-rounds/${allocationRoundId}/teachers`,
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
     data: removeTeachersFromAllocationRoundRequest,
+  });
+};
+/**
+ * Returns a paginated list of students who sent supervision applications to the current teacher in a given allocation round (TEACHER only).
+ * @summary List supervision applicants for teacher
+ */
+export const getSupervisionApplicantsForTeacher = (
+  allocationRoundId: string,
+  params?: GetSupervisionApplicantsForTeacherParams,
+) => {
+  return orvalCustomInstance<PaginatedSupervisionApplicantsDTO>({
+    url: `/projects/allocation-rounds/${allocationRoundId}/supervision-applicants`,
+    method: 'GET',
+    params,
   });
 };
 
@@ -131,4 +147,7 @@ export type AddTeachersToAllocationRoundResult = NonNullable<
 >;
 export type RemoveTeachersFromAllocationRoundResult = NonNullable<
   Awaited<ReturnType<typeof removeTeachersFromAllocationRound>>
+>;
+export type GetSupervisionApplicantsForTeacherResult = NonNullable<
+  Awaited<ReturnType<typeof getSupervisionApplicantsForTeacher>>
 >;

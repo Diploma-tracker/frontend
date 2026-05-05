@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { OpenAllocationRound400Extra } from "./open-allocation-round400-extra";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { OpenAllocationRound400Extra } from './open-allocation-round400-extra';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 /**
  * Validation Exception

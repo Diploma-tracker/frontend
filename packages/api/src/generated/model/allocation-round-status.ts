@@ -9,7 +9,7 @@ export type AllocationRoundStatus =
   (typeof AllocationRoundStatus)[keyof typeof AllocationRoundStatus];
 
 export const AllocationRoundStatus = {
-  DRAFT: "DRAFT",
-  OPEN: "OPEN",
-  CLOSED: "CLOSED",
+  DRAFT: 'DRAFT',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
 } as const;

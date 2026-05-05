@@ -9,7 +9,7 @@ export type SelectionFilter =
   (typeof SelectionFilter)[keyof typeof SelectionFilter];
 
 export const SelectionFilter = {
-  ALL: "ALL",
-  SELECTED: "SELECTED",
-  NOT_SELECTED: "NOT_SELECTED",
+  ALL: 'ALL',
+  SELECTED: 'SELECTED',
+  NOT_SELECTED: 'NOT_SELECTED',
 } as const;

@@ -4,9 +4,9 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { LoginRequest, LoginResponse } from "./model";
+import type { LoginRequest, LoginResponse } from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
  * Authenticate user with email/username and password
@@ -15,8 +15,8 @@ import { orvalCustomInstance } from "../orval/mutator";
 export const login = (loginRequest: LoginRequest) => {
   return orvalCustomInstance<LoginResponse>({
     url: `/auth/login`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: loginRequest,
   });
 };

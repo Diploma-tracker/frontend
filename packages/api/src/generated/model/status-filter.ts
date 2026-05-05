@@ -8,8 +8,8 @@
 export type StatusFilter = (typeof StatusFilter)[keyof typeof StatusFilter];
 
 export const StatusFilter = {
-  ALL: "ALL",
-  DRAFT: "DRAFT",
-  OPEN: "OPEN",
-  CLOSED: "CLOSED",
+  ALL: 'ALL',
+  DRAFT: 'DRAFT',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
 } as const;

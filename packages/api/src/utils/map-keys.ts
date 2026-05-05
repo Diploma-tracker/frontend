@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 export const mapKeys = (obj: any, map: (name: string) => string): any => {
   const mapNested = (name: string) => mapKeys(name, map);

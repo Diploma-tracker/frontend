@@ -4,16 +4,16 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { HealthResponse } from "./model";
+import type { HealthResponse } from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
  * Returns the current health status of the API
  * @summary Health check
  */
 export const healthHealthCheck = () => {
-  return orvalCustomInstance<HealthResponse>({ url: `/health`, method: "GET" });
+  return orvalCustomInstance<HealthResponse>({ url: `/health`, method: 'GET' });
 };
 
 type AwaitedInput<T> = PromiseLike<T> | T;

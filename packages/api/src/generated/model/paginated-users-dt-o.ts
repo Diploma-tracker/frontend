@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { UserDTO } from "./user-dt-o";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { UserDTO } from './user-dt-o';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawPaginatedUsersDTO {
   items: UserDTO[];

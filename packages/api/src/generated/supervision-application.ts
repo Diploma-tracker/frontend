@@ -7,9 +7,9 @@
 import type {
   CreateSupervisionApplicationRequest,
   CreateSupervisionApplicationResponse,
-} from "./model";
+} from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
  * Create a new supervision application to a teacher within an allocation round (STUDENT only)
@@ -20,8 +20,8 @@ export const createSupervisionApplication = (
 ) => {
   return orvalCustomInstance<CreateSupervisionApplicationResponse>({
     url: `/projects/supervision-applications`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: createSupervisionApplicationRequest,
   });
 };
@@ -34,7 +34,7 @@ export const acceptSupervisionApplication = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/supervision-applications/${supervisionApplicationId}/accept`,
-    method: "POST",
+    method: 'POST',
   });
 };
 /**
@@ -46,7 +46,7 @@ export const rejectSupervisionApplication = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/supervision-applications/${supervisionApplicationId}/reject`,
-    method: "POST",
+    method: 'POST',
   });
 };
 

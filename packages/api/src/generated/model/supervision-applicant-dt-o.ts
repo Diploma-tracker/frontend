@@ -4,16 +4,18 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { ApplicationStudentDTO } from './application-student-dt-o';
 import type { SupervisionApplicationStatus } from './supervision-application-status';
 import type { CamelCaseKeys } from '../../utils/camel-case';
 
-export interface RawApplicationDTO {
-  id: string;
-  student: ApplicationStudentDTO;
+export interface RawSupervisionApplicantDTO {
+  application_id: string;
+  student_id: string;
+  student_email: string;
+  student_first_name: string;
+  student_last_name: string;
   status: SupervisionApplicationStatus;
   created_at: string;
   decided_at?: string | null;
 }
 
-export type ApplicationDTO = CamelCaseKeys<RawApplicationDTO>;
+export type SupervisionApplicantDTO = CamelCaseKeys<RawSupervisionApplicantDTO>;

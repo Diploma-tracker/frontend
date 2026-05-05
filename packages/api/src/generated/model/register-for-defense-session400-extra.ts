@@ -8,7 +8,7 @@
 /**
  * @nullable
  */
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawRegisterForDefenseSession400Extra =
   | { [key: string]: unknown }
   | unknown[]

@@ -9,12 +9,11 @@ import type {
   CreateDefenseSessionResponse,
   DefenseSessionDTO,
   DefenseSessionDetailsDTO,
-  RegisterForDefenseSessionRequest,
   RescheduleDefenseSessionRequest,
   UpdateDefenseSessionRequest,
-} from "./model";
+} from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
  * Create a new thesis defense session (ADMIN only)
@@ -25,8 +24,8 @@ export const createDefenseSession = (
 ) => {
   return orvalCustomInstance<CreateDefenseSessionResponse>({
     url: `/projects/defense-sessions`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: createDefenseSessionRequest,
   });
 };
@@ -37,7 +36,7 @@ export const createDefenseSession = (
 export const getDefenseSessionDetails = (defenseSessionId: string) => {
   return orvalCustomInstance<DefenseSessionDetailsDTO>({
     url: `/projects/defense-sessions/${defenseSessionId}`,
-    method: "GET",
+    method: 'GET',
   });
 };
 /**
@@ -47,7 +46,7 @@ export const getDefenseSessionDetails = (defenseSessionId: string) => {
 export const deleteDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}`,
-    method: "DELETE",
+    method: 'DELETE',
   });
 };
 /**
@@ -60,8 +59,8 @@ export const updateDefenseSession = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}`,
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     data: updateDefenseSessionRequest,
   });
 };
@@ -75,8 +74,8 @@ export const rescheduleDefenseSession = (
 ) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}/reschedule`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     data: rescheduleDefenseSessionRequest,
   });
 };
@@ -84,15 +83,10 @@ export const rescheduleDefenseSession = (
  * Register the current student for a thesis defense session (STUDENT only)
  * @summary Register for defense session
  */
-export const registerForDefenseSession = (
-  defenseSessionId: string,
-  registerForDefenseSessionRequest: RegisterForDefenseSessionRequest,
-) => {
+export const registerForDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}/register`,
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    data: registerForDefenseSessionRequest,
+    method: 'POST',
   });
 };
 /**
@@ -102,7 +96,7 @@ export const registerForDefenseSession = (
 export const unregisterFromDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}/unregister`,
-    method: "POST",
+    method: 'POST',
   });
 };
 /**
@@ -114,7 +108,7 @@ export const listDefenseSessionsForAllocationRound = (
 ) => {
   return orvalCustomInstance<DefenseSessionDTO[]>({
     url: `/projects/defense-sessions/by-allocation-round/${allocationRoundId}`,
-    method: "GET",
+    method: 'GET',
   });
 };
 /**
@@ -124,7 +118,7 @@ export const listDefenseSessionsForAllocationRound = (
 export const listDefenseSessionsForStudent = () => {
   return orvalCustomInstance<DefenseSessionDTO[]>({
     url: `/projects/defense-sessions/my`,
-    method: "GET",
+    method: 'GET',
   });
 };
 

@@ -177,6 +177,9 @@ importers:
         specifier: ^4.18.1
         version: 4.18.1
     devDependencies:
+      "@repo/code-tools-config":
+        specifier: workspace:*
+        version: link:../code-tools-config
       "@types/lodash":
         specifier: ^4.17.24
         version: 4.17.24
@@ -186,6 +189,9 @@ importers:
       orval:
         specifier: ^8.8.1
         version: 8.8.1(prettier@3.7.4)(typescript@5.9.3)
+      prettier:
+        specifier: ^3.7.4
+        version: 3.7.4
 
   packages/code-tools-config:
     devDependencies:

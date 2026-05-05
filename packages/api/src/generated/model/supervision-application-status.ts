@@ -9,7 +9,7 @@ export type SupervisionApplicationStatus =
   (typeof SupervisionApplicationStatus)[keyof typeof SupervisionApplicationStatus];
 
 export const SupervisionApplicationStatus = {
-  PENDING: "PENDING",
-  ACCEPTED: "ACCEPTED",
-  REJECTED: "REJECTED",
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
 } as const;

@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.0.0
  */
 
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { CamelCaseKeys } from '../../utils/camel-case';
 export interface RawCreateSupervisionApplicationRequest {
   teacher_id: string;
   allocation_round_id: string;
