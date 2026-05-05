@@ -1,4 +1,5 @@
 import { actionCell } from '@/shared/components/table/action-cell';
+import type { Action } from '@/shared/components/table/action-cell/types';
 import { T } from '@/shared/utils/i18n';
 import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
@@ -12,10 +13,8 @@ import {
 
 export const createTeacherActionColumn = (
   roundId: string,
-): ColumnDef<TeacherDTO> => ({
-  id: 'actions',
-  header: () => <T k="projectEnrollment.teacher.table.columns.actions" />,
-  cell: actionCell([
+): ColumnDef<TeacherDTO> => {
+  const actions: Action<TeacherDTO>[] = [
     {
       key: 'add',
       label: <T k="projectEnrollment.teacher.actions.add" />,
@@ -45,5 +44,11 @@ export const createTeacherActionColumn = (
         ),
       },
     },
-  ]),
-});
+  ];
+
+  return {
+    id: 'actions',
+    header: () => <T k="projectEnrollment.teacher.table.columns.actions" />,
+    cell: actionCell(actions),
+  };
+};
