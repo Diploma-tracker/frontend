@@ -1,20 +1,41 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useDebounce as useReactUseDebounce } from 'react-use';
 
-const DEFAULT_DELAY = 500;
+const DEFAULT_DELAY = 300;
 
-//TODO: rewrite to this one in code
-//TODO: https://streamich.github.io/react-use/?path=/story/side-effects-usedebounce--docs
+interface DebounceOptions {
+  /**
+   * Whether to invoke the function on the first render. If set to `true`, the function will be called immediately on the first render, and then debounced for subsequent calls.
+   * @default false
+   */
+  invokeOnStart?: boolean;
+}
+
 export function useDebounce(
   fn: () => void,
   deps: unknown[],
   delay: number = DEFAULT_DELAY,
+  options: DebounceOptions = {},
 ) {
-  const fnRef = useRef(fn);
-  fnRef.current = fn;
+  const { invokeOnStart = false } = options;
 
-  useEffect(() => {
-    const timer = setTimeout(() => fnRef.current(), delay);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, delay]);
+  const isFirstRender = useRef(true);
+
+  const [isReady, cancel] = useReactUseDebounce(
+    () => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+
+        if (!invokeOnStart) {
+          return;
+        }
+      }
+
+      fn();
+    },
+    delay,
+    deps,
+  );
+
+  return [isReady, cancel] as const;
 }
