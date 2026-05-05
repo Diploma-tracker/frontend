@@ -15,13 +15,14 @@ interface StaffTeachersListTableProps {
   roundId: string;
 }
 
+const columns = createStaffTeacherColumns();
+
 export const StaffTeachersListTable = reatomComponent(
   function StaffTeachersListTable({ roundId }: StaffTeachersListTableProps) {
     const status = teacherListAtom.status();
     const teachers = teacherListAtom.data();
     const filter = teacherListAtom.filter();
 
-    const columns = createStaffTeacherColumns();
     const totalPages = teachers
       ? Math.ceil(teachers.total / filter.pageSize)
       : 0;

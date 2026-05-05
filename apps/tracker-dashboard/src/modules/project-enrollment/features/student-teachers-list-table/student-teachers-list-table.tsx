@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { TablePagination } from '@/shared/components';
 import {
@@ -23,7 +23,11 @@ export const StudentTeachersListTable = reatomComponent(
     const teachers = teacherListAtom.data();
     const filter = teacherListAtom.filter();
 
-    const columns = createStudentTeacherColumns(roundId);
+    const columns = useMemo(
+      () => createStudentTeacherColumns(roundId),
+      [roundId],
+    );
+
     const totalPages = teachers
       ? Math.ceil(teachers.total / filter.pageSize)
       : 0;

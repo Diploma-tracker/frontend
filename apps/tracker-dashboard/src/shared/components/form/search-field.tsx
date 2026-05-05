@@ -8,6 +8,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from '@repo/ui-kit/components/input-group';
+import { cn } from '@repo/ui-kit/lib/utils';
 
 interface SearchFieldProps extends Omit<
   ComponentProps<typeof InputGroupInput>,
@@ -16,21 +17,19 @@ interface SearchFieldProps extends Omit<
   value: string;
   onChange: (value: string) => void;
   onClear?: () => void;
+  className?: string;
 }
 
-export const SearchField = ({
-  value,
-  onChange,
-  onClear,
-  ...inputProps
-}: SearchFieldProps) => {
+export const SearchField = (props: SearchFieldProps) => {
+  const { value, onChange, onClear, className, ...inputProps } = props;
+
   const handleClear = () => {
     onChange('');
     onClear?.();
   };
 
   return (
-    <InputGroup className="w-64">
+    <InputGroup className={cn('w-64', className)}>
       <InputGroupAddon align="inline-start">
         <MagnifyingGlassIcon />
       </InputGroupAddon>

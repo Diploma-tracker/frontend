@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { userAtom } from '@/modules/user';
 import {
@@ -18,7 +18,7 @@ export const AllocationsListTable = reatomComponent(
     const allocationRounds = allocationRoundListAtom.data();
     const filter = allocationRoundListAtom.filter();
 
-    const columns = createAllocationRoundColumns(user);
+    const columns = useMemo(() => createAllocationRoundColumns(user), [user]);
 
     const tableDataConfig: TableDataConfig<AllocationRoundDTO> = {
       data: allocationRounds?.items ?? [],
