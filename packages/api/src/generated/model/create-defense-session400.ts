@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { CreateDefenseSession400Extra } from "./create-defense-session400-extra";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { CreateDefenseSession400Extra } from './create-defense-session400-extra';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 /**
  * Validation Exception

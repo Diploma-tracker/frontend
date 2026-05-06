@@ -1,5 +1,7 @@
 export { ConfirmationModal } from './confirmation-modal/confirmation-modal';
+export { DetailsModal } from './details-modal/details-modal';
 
+export { SearchField } from './form/search-field';
 export { TextFormField } from './form/text-form-field';
 export { PasswordFormField } from './form/password-form-field';
 export { DatePickerFormField } from './form/date-picker-form-field';

@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { RoleFilter } from "./role-filter";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { RoleFilter } from './role-filter';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export type RawListUsersParams = {
   page?: number;

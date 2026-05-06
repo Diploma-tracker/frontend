@@ -13,7 +13,7 @@
     "format:check:root": "prettier --check \"./*.{js,cjs,mjs,json,md,yaml,yml}\" \"./.*.{js,cjs,mjs,json,yaml,yml}\" --ignore-unknown",
     "format:root": "prettier --write \"./*.{js,cjs,mjs,json,md,yaml,yml}\" \"./.*.{js,cjs,mjs,json,yaml,yml}\" --ignore-unknown",
     "check-types": "turbo run check-types",
-    "generate": "turbo run generate",
+    "generate": "turbo run generate && turbo run format --filter=@repo/api",
     "prepare": "husky"
   },
   "devDependencies": {

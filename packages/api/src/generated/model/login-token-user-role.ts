@@ -9,7 +9,7 @@ export type LoginTokenUserRole =
   (typeof LoginTokenUserRole)[keyof typeof LoginTokenUserRole];
 
 export const LoginTokenUserRole = {
-  admin: "admin",
-  staff: "staff",
-  student: "student",
+  admin: 'admin',
+  staff: 'staff',
+  student: 'student',
 } as const;

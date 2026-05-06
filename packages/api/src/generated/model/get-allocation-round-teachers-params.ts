@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { SelectionFilter } from "./selection-filter";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { SelectionFilter } from './selection-filter';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export type RawGetAllocationRoundTeachersParams = {
   page?: number;

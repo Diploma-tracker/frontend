@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { ApplicationDTO } from "./application-dt-o";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { ApplicationDTO } from './application-dt-o';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawTeacherDTO {
   id: string;

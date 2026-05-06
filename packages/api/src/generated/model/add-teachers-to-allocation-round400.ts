@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { AddTeachersToAllocationRound400Extra } from "./add-teachers-to-allocation-round400-extra";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { AddTeachersToAllocationRound400Extra } from './add-teachers-to-allocation-round400-extra';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 /**
  * Validation Exception

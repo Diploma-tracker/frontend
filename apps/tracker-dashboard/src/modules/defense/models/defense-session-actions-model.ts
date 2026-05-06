@@ -83,7 +83,7 @@ export const updateDefenseSessionAction = action(
 
 export const registerForDefenseSessionAction = action(
   async (sessionId: string) => {
-    const response = await wrap(registerForDefenseSession(sessionId, {}));
+    const response = await wrap(registerForDefenseSession(sessionId));
     if (!response.ok) {
       throw new Error(
         response.error?.message ?? t('defense.session.toast.registerError'),

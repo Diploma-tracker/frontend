@@ -50,6 +50,7 @@ export const ActionCellButton = <TData,>({
     return label;
   };
 
+  //TODO: add tooltip when button has only icon and label is hidden
   return (
     <Button
       {...actionToButton(variant, !!icon)}

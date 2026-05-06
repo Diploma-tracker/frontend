@@ -8,8 +8,8 @@
 export type RoleFilter = (typeof RoleFilter)[keyof typeof RoleFilter];
 
 export const RoleFilter = {
-  ALL: "ALL",
-  STUDENT: "STUDENT",
-  STAFF: "STAFF",
-  ADMIN: "ADMIN",
+  ALL: 'ALL',
+  STUDENT: 'STUDENT',
+  STAFF: 'STAFF',
+  ADMIN: 'ADMIN',
 } as const;

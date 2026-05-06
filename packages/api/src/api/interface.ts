@@ -9,7 +9,7 @@ export type ApiResponse<T> =
   | { ok: false; data: null; error: ApiError };
 
 export interface ApiRequestConfig {
-  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   data?: unknown;
   params?: Record<string, unknown>;
   headers?: Record<string, string>;

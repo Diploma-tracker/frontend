@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { ListUsers400Extra } from "./list-users400-extra";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { ListUsers400Extra } from './list-users400-extra';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 /**
  * Validation Exception

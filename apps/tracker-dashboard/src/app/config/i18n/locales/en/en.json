@@ -75,6 +75,42 @@
     }
   },
   "projectEnrollment": {
+    "pages": {
+      "admin": {
+        "title": "Manage Enrollment Round",
+        "description": "Review and manage teachers participating in this allocation round. You can add or remove teachers and track student application activity."
+      },
+      "staff": {
+        "title": "Enrollment Round Overview",
+        "description": "Browse all teachers included in this allocation round and monitor the status of student applications.",
+        "applicantsSection": {
+          "title": "Your student Applications",
+          "description": "Review and manage supervision applications submitted by students to you for this allocation round."
+        },
+        "teachersSection": {
+          "title": "Participating Teachers",
+          "description": "View and manage the list of teachers participating in this allocation round."
+        }
+      },
+      "student": {
+        "title": "Find a Supervisor",
+        "description": "Browse available supervisors for this enrollment round and submit an application to the teacher you would like to work with on your thesis."
+      }
+    },
+    "listPages": {
+      "admin": {
+        "title": "Allocation Rounds",
+        "description": "Manage all allocation rounds for diploma project enrollment. Create new rounds, set their schedule, and control which rounds are open for student applications."
+      },
+      "staff": {
+        "title": "Allocation Rounds",
+        "description": "Browse all allocation rounds and monitor their current status. Open a round to view the list of participating teachers and student application activity."
+      },
+      "student": {
+        "title": "Enrollment Rounds",
+        "description": "Select an active enrollment round to browse available supervisors and submit your application for diploma project supervision."
+      }
+    },
     "allocationRound": {
       "filters": {
         "statusPlaceholder": "Status"
@@ -183,6 +219,11 @@
         "add": "Add"
       },
       "actions": {
+        "apply": "Apply",
+        "confirmApply": {
+          "title": "Apply to this teacher?",
+          "description": "Your supervision application will be submitted to this teacher. You can track its status in your applications."
+        },
         "confirmAdd": {
           "title": "Add teacher to round?",
           "description": "This teacher will be included in the allocation round and will be available for student applications."
@@ -191,6 +232,49 @@
           "title": "Remove teacher from round?",
           "description": "This teacher will be removed from the allocation round. This action cannot be undone."
         }
+      }
+    },
+    "supervisionApplicants": {
+      "table": {
+        "columns": {
+          "studentName": "Student",
+          "studentEmail": "Email",
+          "status": "Status",
+          "appliedAt": "Applied at",
+          "actions": "Actions"
+        },
+        "status": {
+          "pending": "Pending",
+          "accepted": "Accepted",
+          "rejected": "Rejected"
+        }
+      },
+      "actions": {
+        "accept": "Accept",
+        "reject": "Reject",
+        "confirmAccept": {
+          "title": "Accept application?",
+          "description": "The student will be notified that their supervision application has been accepted."
+        },
+        "confirmReject": {
+          "title": "Reject application?",
+          "description": "The student will be notified that their supervision application has been rejected. This action cannot be undone."
+        },
+        "toast": {
+          "createSuccess": "Application submitted successfully!",
+          "createError": "Failed to submit application. Please try again.",
+          "acceptSuccess": "Application accepted successfully!",
+          "acceptError": "Failed to accept application. Please try again.",
+          "rejectSuccess": "Application rejected.",
+          "rejectError": "Failed to reject application. Please try again."
+        }
+      },
+      "filters": {
+        "statusPlaceholder": "Status",
+        "statusAll": "All",
+        "statusPending": "Pending",
+        "statusAccepted": "Accepted",
+        "statusRejected": "Rejected"
       }
     }
   },

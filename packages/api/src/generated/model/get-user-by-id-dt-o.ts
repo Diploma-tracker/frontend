@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { LoginTokenUserRole } from "./login-token-user-role";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { LoginTokenUserRole } from './login-token-user-role';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawGetUserByIdDTO {
   id: string;

@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.0.0
  */
 
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { CamelCaseKeys } from '../../utils/camel-case';
 export interface RawRemoveTeachersFromAllocationRoundRequest {
   teacher_ids: string[];
 }

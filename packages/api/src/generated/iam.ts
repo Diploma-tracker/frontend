@@ -11,9 +11,9 @@ import type {
   ListUsersParams,
   PaginatedGroupsDTO,
   PaginatedUsersDTO,
-} from "./model";
+} from './model';
 
-import { orvalCustomInstance } from "../orval/mutator";
+import { orvalCustomInstance } from '../orval/mutator';
 
 /**
  * Returns a paginated list of all users with optional search and role filter (ADMIN only)
@@ -22,7 +22,7 @@ import { orvalCustomInstance } from "../orval/mutator";
 export const listUsers = (params?: ListUsersParams) => {
   return orvalCustomInstance<PaginatedUsersDTO>({
     url: `/iam/users`,
-    method: "GET",
+    method: 'GET',
     params,
   });
 };
@@ -33,7 +33,7 @@ export const listUsers = (params?: ListUsersParams) => {
 export const getUserById = (userId: string) => {
   return orvalCustomInstance<GetUserByIdDTO>({
     url: `/iam/users/${userId}`,
-    method: "GET",
+    method: 'GET',
   });
 };
 /**
@@ -43,7 +43,7 @@ export const getUserById = (userId: string) => {
 export const listGroups = (params?: ListGroupsParams) => {
   return orvalCustomInstance<PaginatedGroupsDTO>({
     url: `/iam/groups`,
-    method: "GET",
+    method: 'GET',
     params,
   });
 };
@@ -54,7 +54,7 @@ export const listGroups = (params?: ListGroupsParams) => {
 export const getGroupById = (groupId: string) => {
   return orvalCustomInstance<GetGroupByIdDTO>({
     url: `/iam/groups/${groupId}`,
-    method: "GET",
+    method: 'GET',
   });
 };
 

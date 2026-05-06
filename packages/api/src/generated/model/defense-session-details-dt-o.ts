@@ -4,10 +4,10 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { DefenseSessionAllowedGroupDTO } from "./defense-session-allowed-group-dt-o";
-import type { DefenseSessionAllowedStudentDTO } from "./defense-session-allowed-student-dt-o";
-import type { DefenseSessionParticipantDTO } from "./defense-session-participant-dt-o";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { DefenseSessionAllowedGroupDTO } from './defense-session-allowed-group-dt-o';
+import type { DefenseSessionAllowedStudentDTO } from './defense-session-allowed-student-dt-o';
+import type { DefenseSessionParticipantDTO } from './defense-session-participant-dt-o';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawDefenseSessionDetailsDTO {
   id: string;

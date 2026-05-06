@@ -4,8 +4,8 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { AllocationRoundStatus } from "./allocation-round-status";
-import type { CamelCaseKeys } from "../../utils/camel-case";
+import type { AllocationRoundStatus } from './allocation-round-status';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawAllocationRoundDTO {
   id: string;

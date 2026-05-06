@@ -1,16 +1,9 @@
 import { roleBasedComponent } from '@/modules/auth';
+import { DetailsModal } from '@/shared/components';
 import { useQuery } from '@/shared/model/query';
 import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@repo/ui-kit/components/common/floating/dialog';
 import { Spinner } from '@repo/ui-kit/components/common/states/spinner';
 
 import { defenseSessionDetailsQuery } from '../../models';
@@ -44,36 +37,31 @@ export const DefenseSessionDetailDialog = reatomComponent(
     };
 
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-h-[90vh] w-full max-w-[calc(100%-2rem)] overflow-y-auto sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{t('defense.session.detail.title')}</DialogTitle>
-            {session && (
-              <DialogDescription>
-                {t('defense.session.detail.subtitle', {
-                  participants: participants.length,
-                  capacity: session.capacity,
-                })}
-              </DialogDescription>
-            )}
-          </DialogHeader>
-
-          {isFetching || !session ? (
-            <div className="flex items-center justify-center py-12">
-              <Spinner className="size-8 text-muted-foreground" />
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-[1fr_260px]">
-              <MainContent sessionId={session.id} />
-              <SideContent sessionId={session.id} />
-            </div>
-          )}
-
-          <DialogFooter>
-            <RoleActions />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DetailsModal
+        open={open}
+        onOpenChange={handleOpenChange}
+        title={t('defense.session.detail.title')}
+        description={
+          session
+            ? t('defense.session.detail.subtitle', {
+                participants: participants.length,
+                capacity: session.capacity,
+              })
+            : undefined
+        }
+        footer={<RoleActions />}
+      >
+        {isFetching || !session ? (
+          <div className="flex items-center justify-center py-12">
+            <Spinner className="size-8 text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-[1fr_260px]">
+            <MainContent sessionId={session.id} />
+            <SideContent sessionId={session.id} />
+          </div>
+        )}
+      </DetailsModal>
     );
   },
 );

@@ -1,16 +1,16 @@
-import type { AxiosInstance } from "axios";
-import _ from "lodash";
-import axios from "axios";
+import type { AxiosInstance } from 'axios';
+import _ from 'lodash';
+import axios from 'axios';
 
-import type { BackendErrorResponse } from "../types/error";
-import { mapKeys } from "../utils/map-keys";
+import type { BackendErrorResponse } from '../types/error';
+import { mapKeys } from '../utils/map-keys';
 
 import type {
   ApiError,
   ApiRequestConfig,
   ApiResponse,
   IApiClient,
-} from "./interface";
+} from './interface';
 
 export interface AxiosAdapterConfig {
   baseURL?: string;
@@ -43,11 +43,11 @@ export class AxiosAdapter implements IApiClient {
   }
 
   setToken(token: string): void {
-    this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    this.client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
   removeToken(): void {
-    delete this.client.defaults.headers.common["Authorization"];
+    delete this.client.defaults.headers.common['Authorization'];
   }
 
   async request<T>(
@@ -57,7 +57,7 @@ export class AxiosAdapter implements IApiClient {
     try {
       const response = await this.client.request({
         url,
-        method: config.method || "GET",
+        method: config.method || 'GET',
         data: config.data,
         params: config.params,
         headers: config.headers,
@@ -74,14 +74,14 @@ export class AxiosAdapter implements IApiClient {
       const backendData = error.response.data as BackendErrorResponse;
 
       return {
-        message: backendData.detail || "Server Error",
+        message: backendData.detail || 'Server Error',
         status: backendData.status_code || error.response.status,
         extra: backendData.extra || {},
       };
     }
 
     return {
-      message: error instanceof Error ? error.message : "Unknown Network Error",
+      message: error instanceof Error ? error.message : 'Unknown Network Error',
       status: 0,
       extra: {},
     };
