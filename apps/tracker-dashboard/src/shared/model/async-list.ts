@@ -40,6 +40,12 @@ export function asyncList<
     null,
     `${name}LastParamsAtom`,
   );
+  const stateAtom = atom<{ isInit: boolean }>(
+    {
+      isInit: true,
+    },
+    `${name}StateAtom`,
+  );
 
   const fetchDataAction = action(async (params: TFetchParams) => {
     lastParamsAtom.set(params);
@@ -59,6 +65,12 @@ export function asyncList<
 
   effect(async () => {
     filterAtom();
+
+    if (stateAtom().isInit) {
+      stateAtom.set({ isInit: false });
+      return;
+    }
+
     await wrap(revalidateAction());
   }, `${name}FilterEffect`);
 
