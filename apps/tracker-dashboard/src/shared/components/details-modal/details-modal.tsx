@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@repo/ui-kit/components/common/floating/dialog';
+import { cn } from '@repo/ui-kit/lib/utils';
 
 interface DetailsModalProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface DetailsModalProps {
   description?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
+  className?: string;
 }
 
 export const DetailsModal = ({
@@ -25,10 +27,16 @@ export const DetailsModal = ({
   description,
   footer,
   children,
+  className,
 }: DetailsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-full max-w-[calc(100%-2rem)] overflow-y-auto sm:max-w-4xl">
+      <DialogContent
+        className={cn(
+          'max-h-[90vh] w-full max-w-[calc(100%-2rem)] overflow-y-auto xl:max-w-4xl',
+          className,
+        )}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
