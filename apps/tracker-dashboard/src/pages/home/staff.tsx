@@ -1,5 +1,10 @@
 import { PageLayout } from '@/layouts';
+import { UserGreeting } from '@/shared/components';
 
 export const StaffHomePage = () => {
-  return <PageLayout>Staff Home Page</PageLayout>;
+  return (
+    <PageLayout>
+      <UserGreeting />
+    </PageLayout>
+  );
 };

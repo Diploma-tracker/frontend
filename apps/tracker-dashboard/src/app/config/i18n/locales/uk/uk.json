@@ -12,6 +12,12 @@
     },
     "bulkActions": {
       "selected": "обрано"
+    },
+    "greeting": {
+      "morning": "Доброго ранку",
+      "afternoon": "Доброго дня",
+      "evening": "Доброго вечора",
+      "night": "Доброї ночі"
     }
   },
   "auth": {
