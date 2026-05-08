@@ -5,7 +5,7 @@ import type { TeacherDTO } from '../../../models';
 import {
   TeacherApplicationsColumn,
   TeacherEmailColumn,
-  TeacherNameColumn,
+  TeacherNameWithDetailsModalColumn,
 } from '../../teacher-table';
 import { createTeacherActionColumn } from './action-column';
 import { TeacherSelectionColumn } from './selection-column';
@@ -15,7 +15,7 @@ export const createTeacherColumns = (
   roundId: string,
 ): ColumnDef<TeacherDTO>[] => [
   getRowSelectionColumn(),
-  TeacherNameColumn,
+  TeacherNameWithDetailsModalColumn,
   TeacherEmailColumn,
   TeacherSelectionColumn,
   TeacherApplicationsColumn,

@@ -218,6 +218,25 @@
         "remove": "Remove",
         "add": "Add"
       },
+      "detailsModal": {
+        "title": "Details",
+        "teacherLabel": "Teacher",
+        "totalApplications": "Total applications",
+        "sections": {
+          "accepted": {
+            "title": "Accepted",
+            "emptyTitle": "No accepted applications"
+          },
+          "pending": {
+            "title": "Pending",
+            "emptyTitle": "No pending applications"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "emptyTitle": "No rejected applications"
+          }
+        }
+      },
       "actions": {
         "apply": "Apply",
         "confirmApply": {

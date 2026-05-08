@@ -220,6 +220,25 @@
         "remove": "Видалити",
         "add": "Додати"
       },
+      "detailsModal": {
+        "title": "Детальна інформація",
+        "teacherLabel": "Викладач",
+        "totalApplications": "Усього заявок",
+        "sections": {
+          "accepted": {
+            "title": "Викладач прийняв",
+            "emptyTitle": "Прийняті заявки відсутні"
+          },
+          "pending": {
+            "title": "Очікують рішення",
+            "emptyTitle": "Заявки на розгляді відсутні"
+          },
+          "rejected": {
+            "title": "Викладач відхилив",
+            "emptyTitle": "Відхилені заявки відсутні"
+          }
+        }
+      },
       "actions": {
         "apply": "Подати заявку",
         "confirmApply": {

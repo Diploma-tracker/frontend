@@ -3,6 +3,8 @@
 @import 'tailwindcss';
 @import '@repo/tailwind-config';
 
+/* //TODO: create reusable typography using html tags */
+
 :root {
   --container-padding-x: 1em;
   --container-width: 1600px;
@@ -25,4 +27,38 @@
   * {
     @apply border-border outline-ring/50;
   }
+}
+
+/* Global scrollbar styles (Firefox + WebKit) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) var(--accent);
+}
+
+*::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--accent);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  min-height: 2rem;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--foreground);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--accent);
 }
