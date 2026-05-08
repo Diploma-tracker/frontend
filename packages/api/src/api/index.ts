@@ -3,6 +3,7 @@ import { AxiosAdapter } from './axios-adapter';
 
 export * from './interface';
 
+//TODO: we should standartize business errors to provide structural information in  toasts not just errors.
 export const API = new AxiosAdapter({
   mapKeys: {
     from: _.camelCase,
