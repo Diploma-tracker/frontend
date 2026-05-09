@@ -9,20 +9,20 @@ import {
   FieldLabel,
 } from '@repo/ui-kit/components/common/form/field';
 
-import { UserSelector } from './user-selector';
+import { UsersSelector } from './users-selector';
 
-interface UserSelectorFieldProps {
+interface UsersSelectorFieldProps {
   field: FieldArrayAtom<string, string>;
   label?: string;
   description?: string;
   disabled?: boolean;
 }
 
-export const UserSelectorField = reatomComponent(function UserSelectorField({
+export const UsersSelectorField = reatomComponent(function UsersSelectorField({
   field,
   label,
   description,
-}: UserSelectorFieldProps) {
+}: UsersSelectorFieldProps) {
   const [selected, setSelected] = useArrayFieldForMultiSelect(field);
 
   const fieldValidation = field?.validation();
@@ -33,7 +33,7 @@ export const UserSelectorField = reatomComponent(function UserSelectorField({
     <Field data-invalid={invalid || undefined}>
       {label && <FieldLabel>{label}</FieldLabel>}
 
-      <UserSelector
+      <UsersSelector
         role="student"
         selected={selected}
         setSelected={setSelected}

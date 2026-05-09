@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { GroupSelectorField, UserSelectorField } from '@/modules/user';
+import { GroupsSelectorField, UsersSelectorField } from '@/modules/user';
 import {
   DatePickerFormField,
   DurationPickerFormField,
@@ -80,12 +80,12 @@ export const EditDefenseSessionForm = reatomComponent(
             autoComplete="off"
           />
 
-          <UserSelectorField
+          <UsersSelectorField
             field={fields.allowedStudentIds}
             label={t('defense.session.form.allowedStudentsLabel')}
           />
 
-          <GroupSelectorField
+          <GroupsSelectorField
             field={fields.allowedGroupIds}
             label={t('defense.session.form.groupsLabel')}
           />

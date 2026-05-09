@@ -4,27 +4,17 @@ import {
   useMultiSelect,
   useMultiSelectModalShows,
 } from '@/shared/components/form/multi-select';
-import { k, useTranslation } from '@/shared/utils/i18n';
+import { useTranslation } from '@/shared/utils/i18n';
 import type { Setter } from '@/shared/utils/types';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
+import { wrap } from '@reatom/core';
 
-import { LoginTokenUserRole } from '@repo/api/model';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
-import { loadUserOptions } from '../../models/user-selector-model';
-import { UserInfo } from '../user-info/user-info';
+import { loadGroupOptions } from '../../models/group-selector-model';
+import { GroupInfo } from '../group-info/group-info';
 
-interface UserSelectorContentProps {
-  role?: LoginTokenUserRole;
-}
-
-const ROLE_TO_ACTOR_NAME: Record<LoginTokenUserRole, string> = {
-  [LoginTokenUserRole.admin]: k('user.roles.admin'),
-  [LoginTokenUserRole.staff]: k('user.roles.staff'),
-  [LoginTokenUserRole.student]: k('user.roles.student'),
-};
-
-function UserSelectorOption({ option }: { option: Option }) {
+function GroupsSelectorOption({ option }: { option: Option }) {
   const { toggle, isOptionSelected } = useMultiSelect();
   const onClick = () => {
     toggle(option);
@@ -42,7 +32,7 @@ function UserSelectorOption({ option }: { option: Option }) {
       ) : (
         <span className="size-4" />
       )}
-      <UserInfo userId={option.value} />
+      <GroupInfo groupId={option.value} />
       {isSelected && (
         <span className="absolute right-2 flex size-4 items-center justify-center">
           <XIcon className="size-3.5 text-muted-foreground" />
@@ -52,23 +42,20 @@ function UserSelectorOption({ option }: { option: Option }) {
   );
 }
 
-export function UserSelectorContent({ role }: UserSelectorContentProps) {
+export function GroupsSelectorContent() {
   const { t } = useTranslation();
   const { showSelected, showSuggestions, showEmpty } =
     useMultiSelectModalShows();
-  const actorName = role ? t(ROLE_TO_ACTOR_NAME[role]) : '';
 
   return (
     <>
       <MultiSelect.Trigger
         visibleChips={2}
-        placeholder={t('user.selector.placeholder', { name: actorName })}
+        placeholder={t('user.groupSelector.placeholder')}
       />
       <MultiSelect.Modal>
         <MultiSelect.Search
-          placeholder={t('user.selector.searchPlaceholder', {
-            name: actorName,
-          })}
+          placeholder={t('user.groupSelector.searchPlaceholder')}
         />
         <div className="flex flex-col gap-1">
           {showSelected && (
@@ -79,7 +66,7 @@ export function UserSelectorContent({ role }: UserSelectorContentProps) {
               <div className="scroll-py-1 overflow-y-auto p-1">
                 <MultiSelect.SelectedOptions>
                   {(option) => (
-                    <UserSelectorOption key={option.value} option={option} />
+                    <GroupsSelectorOption key={option.value} option={option} />
                   )}
                 </MultiSelect.SelectedOptions>
               </div>
@@ -90,7 +77,7 @@ export function UserSelectorContent({ role }: UserSelectorContentProps) {
             <div className="scroll-py-1 overflow-y-auto p-1">
               <MultiSelect.Suggestions filter>
                 {(option) => (
-                  <UserSelectorOption key={option.value} option={option} />
+                  <GroupsSelectorOption key={option.value} option={option} />
                 )}
               </MultiSelect.Suggestions>
             </div>
@@ -105,32 +92,28 @@ export function UserSelectorContent({ role }: UserSelectorContentProps) {
   );
 }
 
-interface UserSelectorProps {
+interface GroupsSelectorProps {
   disabled?: boolean;
   invalid?: boolean;
   selected: Option[];
   setSelected: Setter<Option[]>;
-  role?: LoginTokenUserRole;
 }
 
-export function UserSelector({
+export function GroupsSelector({
   disabled,
   invalid,
   selected,
   setSelected,
-  role,
-}: UserSelectorProps) {
-  const loadOptions = (query: string) => loadUserOptions(query, role);
-
+}: GroupsSelectorProps) {
   return (
     <MultiSelect.Root
       value={selected}
       setValue={setSelected}
-      loadOptions={loadOptions}
+      loadOptions={wrap(loadGroupOptions)}
       disabled={disabled}
       aria-invalid={invalid || undefined}
     >
-      <UserSelectorContent role={role} />
+      <GroupsSelectorContent />
     </MultiSelect.Root>
   );
 }
