@@ -2,6 +2,7 @@ import { type AsyncListPagination, asyncList } from '@/shared/model/async-list';
 
 import { getAllocationRoundTeachers } from '@repo/api/allocation-round';
 import {
+  type ApplicationDTO,
   type PaginatedTeachersDTO,
   SupervisionApplicationStatus,
   type TeacherDTO,
@@ -15,6 +16,16 @@ export interface TeachersFilter
   search?: string;
   selectionFilter: TeacherSelectionFilter;
 }
+
+type GroupedApplications = Record<
+  SupervisionApplicationStatus,
+  ApplicationDTO[]
+>;
+
+type ApplicationsStats = {
+  countByStatus: Record<SupervisionApplicationStatus, number>;
+  groupedApplications: GroupedApplications;
+};
 
 export const teacherListAtom = asyncList<
   TeachersFilter,
@@ -50,17 +61,33 @@ export const getTeacherApplicationsStats = (teacher: TeacherDTO) => {
     return null;
   }
 
-  const countByStatus: Record<SupervisionApplicationStatus, number> = {
-    PENDING: 0,
-    ACCEPTED: 0,
-    REJECTED: 0,
+  const initialState: ApplicationsStats = {
+    countByStatus: {
+      PENDING: 0,
+      ACCEPTED: 0,
+      REJECTED: 0,
+    },
+
+    groupedApplications: {
+      PENDING: [],
+      ACCEPTED: [],
+      REJECTED: [],
+    },
   };
 
-  for (const app of teacher.applications ?? []) {
-    countByStatus[app.status as SupervisionApplicationStatus] += 1;
-  }
+  const aggregate = (acc: ApplicationsStats, application: ApplicationDTO) => {
+    const status = application.status as SupervisionApplicationStatus;
 
-  const total = teacher.applications?.length ?? 0;
+    acc.countByStatus[status] += 1;
+    acc.groupedApplications[status].push(application);
 
-  return { countByStatus, total };
+    return acc;
+  };
+
+  const result = (teacher.applications ?? []).reduce(aggregate, initialState);
+
+  return {
+    ...result,
+    total: teacher.applications?.length ?? 0,
+  };
 };

@@ -29,7 +29,7 @@ import {
   EmptyTitle,
 } from '@repo/ui-kit/components/common/states/empty';
 
-import { type TeacherDTO } from '../../../models';
+import { type TeacherDTO, getTeacherApplicationsStats } from '../../../models';
 
 // eslint-disable-next-line react-refresh/only-export-components
 const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
@@ -37,16 +37,17 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
 
   const [open, setOpen] = useState(false);
 
-  const acceptedStudentApplications =
-    teacher.applications?.filter((app) => app.status === 'ACCEPTED') ?? [];
+  const stats = getTeacherApplicationsStats(teacher);
 
-  const rejectedStudentApplications =
-    teacher.applications?.filter((app) => app.status === 'REJECTED') ?? [];
+  if (!stats) {
+    return (
+      <div>
+        {teacher.firstName} {teacher.lastName}
+      </div>
+    );
+  }
 
-  const pendingStudentApplications =
-    teacher.applications?.filter((app) => app.status === 'PENDING') ?? [];
-
-  const totalApplications = teacher.applications?.length ?? 0;
+  const { groupedApplications, total } = stats;
 
   const handleOpenModal = () => {
     setOpen(true);
@@ -99,12 +100,13 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onClick={handleOpenModal}
-        className="-m-2 block cursor-pointer p-2 font-medium"
+        className="-m-2 flex w-full cursor-pointer p-2 text-left font-medium hover:underline"
       >
         {teacher.firstName} {teacher.lastName}
-      </div>
+      </button>
 
       <DetailsModal
         open={open}
@@ -127,7 +129,7 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
 
               <Badge className="tabular-nums">
                 {t('projectEnrollment.teacher.detailsModal.totalApplications')}:{' '}
-                {totalApplications}
+                {total}
               </Badge>
             </div>
           </div>
@@ -144,12 +146,12 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
                   </p>
                 </div>
                 <Badge intent="success" className="tabular-nums">
-                  {acceptedStudentApplications.length}
+                  {groupedApplications.ACCEPTED.length}
                 </Badge>
               </div>
 
               {renderApplicationsList(
-                acceptedStudentApplications,
+                groupedApplications.ACCEPTED,
                 t(
                   'projectEnrollment.teacher.detailsModal.sections.accepted.emptyTitle',
                 ),
@@ -168,12 +170,12 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
                   </p>
                 </div>
                 <Badge intent="pending" className="tabular-nums">
-                  {pendingStudentApplications.length}
+                  {groupedApplications.PENDING.length}
                 </Badge>
               </div>
 
               {renderApplicationsList(
-                pendingStudentApplications,
+                groupedApplications.PENDING,
                 t(
                   'projectEnrollment.teacher.detailsModal.sections.pending.emptyTitle',
                 ),
@@ -192,12 +194,12 @@ const NameCell = ({ teacher }: { teacher: TeacherDTO }) => {
                   </p>
                 </div>
                 <Badge intent="destructive" className="tabular-nums">
-                  {rejectedStudentApplications.length}
+                  {groupedApplications.REJECTED.length}
                 </Badge>
               </div>
 
               {renderApplicationsList(
-                rejectedStudentApplications,
+                groupedApplications.REJECTED,
                 t(
                   'projectEnrollment.teacher.detailsModal.sections.rejected.emptyTitle',
                 ),

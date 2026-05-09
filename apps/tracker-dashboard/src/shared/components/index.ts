@@ -5,7 +5,6 @@ export { SearchField } from './form/search-field';
 export { TextFormField } from './form/text-form-field';
 export { PasswordFormField } from './form/password-form-field';
 export { DatePickerFormField } from './form/date-picker-form-field';
-export { UserGreeting } from './user-greeting/user-greeting';
 export { DurationPickerFormField } from './form/duration-picker-form-field';
 export { MultiSelect } from './form/multi-select';
 export type { Option } from './form/multi-select';

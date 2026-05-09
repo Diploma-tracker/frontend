@@ -12,7 +12,7 @@ export const NameColumn: ColumnDef<AllocationRoundDTO> = {
       <Link
         to="/project-enrollment/$roundId"
         params={{ roundId: row.original.id }}
-        className="-m-2 block cursor-pointer p-2 font-medium"
+        className="-m-2 block cursor-pointer p-2 font-medium hover:underline"
       >
         {row.original.name}
       </Link>

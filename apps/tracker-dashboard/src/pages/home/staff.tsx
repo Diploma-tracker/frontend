@@ -1,5 +1,5 @@
 import { PageLayout } from '@/layouts';
-import { UserGreeting } from '@/shared/components';
+import { UserGreeting } from '@/modules/user';
 
 export const StaffHomePage = () => {
   return (
