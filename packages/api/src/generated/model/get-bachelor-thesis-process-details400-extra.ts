@@ -9,10 +9,10 @@
  * @nullable
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
-export type RawRegisterForDefenseSession400Extra =
+export type RawGetBachelorThesisProcessDetails400Extra =
   | { [key: string]: unknown }
   | unknown[]
   | null;
 
-export type RegisterForDefenseSession400Extra =
-  CamelCaseKeys<RawRegisterForDefenseSession400Extra>;
+export type GetBachelorThesisProcessDetails400Extra =
+  CamelCaseKeys<RawGetBachelorThesisProcessDetails400Extra>;

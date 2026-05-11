@@ -80,26 +80,6 @@ export const rescheduleDefenseSession = (
   });
 };
 /**
- * Register the current student for a thesis defense session (STUDENT only)
- * @summary Register for defense session
- */
-export const registerForDefenseSession = (defenseSessionId: string) => {
-  return orvalCustomInstance<void>({
-    url: `/projects/defense-sessions/${defenseSessionId}/register`,
-    method: 'POST',
-  });
-};
-/**
- * Unregister the current student from a thesis defense session (STUDENT only)
- * @summary Unregister from defense session
- */
-export const unregisterFromDefenseSession = (defenseSessionId: string) => {
-  return orvalCustomInstance<void>({
-    url: `/projects/defense-sessions/${defenseSessionId}/unregister`,
-    method: 'POST',
-  });
-};
-/**
  * Returns all defense sessions belonging to an allocation round (ADMIN only)
  * @summary List defense sessions for allocation round
  */
@@ -140,12 +120,6 @@ export type UpdateDefenseSessionResult = NonNullable<
 >;
 export type RescheduleDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof rescheduleDefenseSession>>
->;
-export type RegisterForDefenseSessionResult = NonNullable<
-  Awaited<ReturnType<typeof registerForDefenseSession>>
->;
-export type UnregisterFromDefenseSessionResult = NonNullable<
-  Awaited<ReturnType<typeof unregisterFromDefenseSession>>
 >;
 export type ListDefenseSessionsForAllocationRoundResult = NonNullable<
   Awaited<ReturnType<typeof listDefenseSessionsForAllocationRound>>

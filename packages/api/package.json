@@ -18,7 +18,8 @@
     "./iam": "./src/generated/iam.ts",
     "./allocation-round": "./src/generated/allocation-round.ts",
     "./supervision-application": "./src/generated/supervision-application.ts",
-    "./thesis-defense-session": "./src/generated/thesis-defense-session.ts"
+    "./thesis-defense-session": "./src/generated/thesis-defense-session.ts",
+    "./bachelor-thesis-process": "./src/sdk/bachelor-thesis-process.ts"
   },
   "devDependencies": {
     "@repo/code-tools-config": "workspace:*",
