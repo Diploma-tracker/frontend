@@ -15,7 +15,7 @@ export interface QueryInstance<TParams, TResult> {
   data: () => TResult | null;
   status: () => DataStatus;
   getByKey: (params: TParams) => TResult | null;
-  fetch: () => Promise<void>;
+  fetch: () => Promise<TResult>;
   revalidate: () => Promise<void>;
   _options: RequiredDefined<QueryOptions<TParams, TResult>, 'getKey'>;
 }
@@ -110,10 +110,12 @@ export const query = <TParams, TResult>(
   const fetchAction = action(async (params: TParams) => {
     const cacheAtom = cacheAtoms.get(params);
 
-    if (cacheAtom.isValid()) return;
-    if (cacheAtom().status === 'loading') return;
+    if (cacheAtom.isValid() || cacheAtom().status === 'loading') {
+      return cacheAtom().data!;
+    }
 
     await wrap(revalidateAction(params));
+    return cacheAtom().data!;
   }, `${name}.fetchAction`);
 
   const getByKey = (params: TParams): TResult | null => {
