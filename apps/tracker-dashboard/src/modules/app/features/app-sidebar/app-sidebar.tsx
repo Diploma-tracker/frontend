@@ -3,6 +3,7 @@ import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
 import {
   CalendarIcon,
+  FilesIcon,
   GraduationCapIcon,
   ListChecksIcon,
 } from '@phosphor-icons/react';
@@ -39,6 +40,11 @@ export const AppSidebar = () => {
           url: '#',
         },
       ],
+    },
+    {
+      title: t('sidebar.nav.thesisProcess'),
+      url: '/thesis-process',
+      icon: FilesIcon,
     },
     {
       title: t('sidebar.nav.projectEnrollment'),
