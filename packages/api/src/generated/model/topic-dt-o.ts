@@ -5,7 +5,10 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface TopicDTO {
+import type { CamelCaseKeys } from '../../utils/camel-case';
+export interface RawTopicDTO {
   en: string;
   uk: string;
 }
+
+export type TopicDTO = CamelCaseKeys<RawTopicDTO>;

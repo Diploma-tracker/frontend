@@ -4,16 +4,19 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { TopicDTO } from './topic-dt-o';
 import type { FileDTO } from './file-dt-o';
+import type { TopicDTO } from './topic-dt-o';
+import type { CamelCaseKeys } from '../../utils/camel-case';
 
-export interface ThesisDataDTO {
-  topic: TopicDTO | null;
-  thesisArchive: FileDTO | null;
-  thesisReport: FileDTO | null;
-  internshipReport: FileDTO | null;
-  plagiarismReport: FileDTO | null;
-  reviewReport: FileDTO | null;
-  grade: number | null;
-  gradeLetter: string | null;
+export interface RawThesisDataDTO {
+  topic?: TopicDTO | null;
+  thesis_archive?: FileDTO | null;
+  thesis_report?: FileDTO | null;
+  internship_report?: FileDTO | null;
+  plagiarism_report?: FileDTO | null;
+  review_report?: FileDTO | null;
+  grade?: number | null;
+  grade_letter?: string | null;
 }
+
+export type ThesisDataDTO = CamelCaseKeys<RawThesisDataDTO>;

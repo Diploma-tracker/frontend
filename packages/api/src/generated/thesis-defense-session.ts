@@ -65,6 +65,26 @@ export const updateDefenseSession = (
   });
 };
 /**
+ * Register the current student for a thesis defense session (STUDENT only)
+ * @summary Register for defense session
+ */
+export const registerForDefenseSession = (defenseSessionId: string) => {
+  return orvalCustomInstance<void>({
+    url: `/projects/defense-sessions/${defenseSessionId}/register`,
+    method: 'POST',
+  });
+};
+/**
+ * Unregister the current student from a thesis defense session (STUDENT only)
+ * @summary Unregister from defense session
+ */
+export const unregisterFromDefenseSession = (defenseSessionId: string) => {
+  return orvalCustomInstance<void>({
+    url: `/projects/defense-sessions/${defenseSessionId}/unregister`,
+    method: 'POST',
+  });
+};
+/**
  * Update the date and/or duration of a thesis defense session (ADMIN only)
  * @summary Reschedule defense session
  */
@@ -117,6 +137,12 @@ export type DeleteDefenseSessionResult = NonNullable<
 >;
 export type UpdateDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof updateDefenseSession>>
+>;
+export type RegisterForDefenseSessionResult = NonNullable<
+  Awaited<ReturnType<typeof registerForDefenseSession>>
+>;
+export type UnregisterFromDefenseSessionResult = NonNullable<
+  Awaited<ReturnType<typeof unregisterFromDefenseSession>>
 >;
 export type RescheduleDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof rescheduleDefenseSession>>

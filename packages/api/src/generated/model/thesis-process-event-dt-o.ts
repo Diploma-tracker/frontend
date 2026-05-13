@@ -22,6 +22,7 @@ import type { RejectThesisMaterialsEventPayload } from './reject-thesis-material
 import type { RejectTopicByAdminEventPayload } from './reject-topic-by-admin-event-payload';
 import type { RejectTopicBySupervisorEventPayload } from './reject-topic-by-supervisor-event-payload';
 import type { ThesisDefenseEventPayload } from './thesis-defense-event-payload';
+import type { UnregisterDefenseEventPayload } from './unregister-defense-event-payload';
 import type { UploadInternshipReportEventPayload } from './upload-internship-report-event-payload';
 import type { UploadReviewReportEventPayload } from './upload-review-report-event-payload';
 import type { UploadThesisMaterialsEventPayload } from './upload-thesis-materials-event-payload';
@@ -50,6 +51,7 @@ export interface RawThesisProcessEventDTO {
     | RejectPreDefenseEventPayload
     | UploadReviewReportEventPayload
     | RegisterDefenseEventPayload
+    | UnregisterDefenseEventPayload
     | ThesisDefenseEventPayload;
 }
 

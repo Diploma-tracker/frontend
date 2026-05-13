@@ -6,10 +6,10 @@
  */
 
 import type { CamelCaseKeys } from '../../utils/camel-case';
-export interface RawRegisterDefenseEventPayload {
-  name: 'REGISTER_DEFENSE';
+export interface RawUnregisterDefenseEventPayload {
+  name: 'UNREGISTER_DEFENSE';
   defense_session_id: string;
 }
 
-export type RegisterDefenseEventPayload =
-  CamelCaseKeys<RawRegisterDefenseEventPayload>;
+export type UnregisterDefenseEventPayload =
+  CamelCaseKeys<RawUnregisterDefenseEventPayload>;

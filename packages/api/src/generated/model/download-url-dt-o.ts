@@ -6,9 +6,8 @@
  */
 
 import type { CamelCaseKeys } from '../../utils/camel-case';
-export interface RawFileDTO {
-  file_id: string;
-  version: number;
+export interface RawDownloadUrlDTO {
+  url: string;
 }
 
-export type FileDTO = CamelCaseKeys<RawFileDTO>;
+export type DownloadUrlDTO = CamelCaseKeys<RawDownloadUrlDTO>;

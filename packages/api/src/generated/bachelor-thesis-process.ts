@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type {
+  DownloadUrlDTO,
   PendingOperationInitializationDTO,
   ProcessDetailsDTO,
   ThesisProcessEventDTO,
@@ -46,7 +47,6 @@ export const getBachelorThesisProcessDetails = (processId: string) => {
     method: 'GET',
   });
 };
-
 /**
  * Returns a presigned download URL for a versioned file in the process
  * @summary Get file download URL
@@ -55,7 +55,7 @@ export const downloadBachelorThesisProcessFile = (
   processId: string,
   fileId: string,
 ) => {
-  return orvalCustomInstance<{ url: string }>({
+  return orvalCustomInstance<DownloadUrlDTO>({
     url: `/projects/bachelor-thesis-process/${processId}/download-file/${fileId}`,
     method: 'GET',
   });
