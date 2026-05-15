@@ -9,7 +9,7 @@ import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawUploadInternshipReportEventPayload {
   name: 'UPLOAD_INTERNSHIP_REPORT';
-  internship_report: FileField;
+  internship_report?: FileField;
 }
 
 export type UploadInternshipReportEventPayload =

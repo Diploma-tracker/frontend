@@ -9,7 +9,7 @@ import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawApprovePlagiarismCheckEventPayload {
   name: 'APPROVE_PLAGIARISM_CHECK';
-  plagiarism_report: FileField;
+  plagiarism_report?: FileField;
 }
 
 export type ApprovePlagiarismCheckEventPayload =

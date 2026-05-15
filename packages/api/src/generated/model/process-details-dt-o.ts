@@ -11,6 +11,7 @@ import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawProcessDetailsDTO {
   id: string;
+  allocation_round_id?: string | null;
   actors: ActorDTO[];
   stages: StageDTO[];
   data: ThesisDataDTO;

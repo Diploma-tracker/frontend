@@ -9,8 +9,8 @@ import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawFixPreDefenseIssuesEventPayload {
   name: 'FIX_PRE_DEFENSE_ISSUES';
-  thesis_materials_archive: FileField;
-  thesis_report: FileField;
+  thesis_materials_archive?: FileField | null;
+  thesis_report?: FileField | null;
 }
 
 export type FixPreDefenseIssuesEventPayload =

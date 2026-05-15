@@ -10,7 +10,9 @@ import type {
   CreateAllocationRoundResponse,
   GetAllocationRoundTeachersParams,
   GetAllocationRoundsParams,
+  GetSupervisionApplicantsForTeacherParams,
   PaginatedAllocationRoundsDTO,
+  PaginatedSupervisionApplicantsDTO,
   PaginatedTeachersDTO,
   RemoveTeachersFromAllocationRoundRequest,
 } from './model';
@@ -18,7 +20,7 @@ import type {
 import { orvalCustomInstance } from '../orval/mutator';
 
 /**
- * Returns a paginated list of all allocation rounds (ADMIN only)
+ * Returns a paginated list of all allocation rounds
  * @summary List allocation rounds
  */
 export const getAllocationRounds = (params?: GetAllocationRoundsParams) => {
@@ -106,6 +108,20 @@ export const removeTeachersFromAllocationRound = (
     data: removeTeachersFromAllocationRoundRequest,
   });
 };
+/**
+ * Returns a paginated list of students who sent supervision applications to the current teacher in a given allocation round (TEACHER only).
+ * @summary List supervision applicants for teacher
+ */
+export const getSupervisionApplicantsForTeacher = (
+  allocationRoundId: string,
+  params?: GetSupervisionApplicantsForTeacherParams,
+) => {
+  return orvalCustomInstance<PaginatedSupervisionApplicantsDTO>({
+    url: `/projects/allocation-rounds/${allocationRoundId}/supervision-applicants`,
+    method: 'GET',
+    params,
+  });
+};
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -131,4 +147,7 @@ export type AddTeachersToAllocationRoundResult = NonNullable<
 >;
 export type RemoveTeachersFromAllocationRoundResult = NonNullable<
   Awaited<ReturnType<typeof removeTeachersFromAllocationRound>>
+>;
+export type GetSupervisionApplicantsForTeacherResult = NonNullable<
+  Awaited<ReturnType<typeof getSupervisionApplicantsForTeacher>>
 >;

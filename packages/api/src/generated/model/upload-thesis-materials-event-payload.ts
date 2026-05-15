@@ -9,8 +9,8 @@ import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export interface RawUploadThesisMaterialsEventPayload {
   name: 'UPLOAD_THESIS_MATERIALS';
-  thesis_materials_archive: FileField;
-  thesis_report: FileField;
+  thesis_materials_archive?: FileField;
+  thesis_report?: FileField;
 }
 
 export type UploadThesisMaterialsEventPayload =
