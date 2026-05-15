@@ -39,6 +39,7 @@ export interface Actor {
 
 export interface ProjectProcess {
   id: string;
+  allocationRoundId: string;
   actors: Actor[];
   stages: Stage[];
   data: ThesisDataDTO;
@@ -54,6 +55,7 @@ function userRoleInThesisProcess(
 
 const NULL_PROCESS: ProjectProcess = {
   id: '',
+  allocationRoundId: '',
   actors: [],
   stages: [],
   data: {
@@ -94,6 +96,7 @@ export const fetchBachalorThesisProcess = computed(
     const data = response.data;
     const process: ProjectProcess = {
       id: data.id,
+      allocationRoundId: data.allocationRoundId ?? '',
       actors: data.actors.map((a) => ({
         userId: a.id,
         role: a.role as ThesisRole,
