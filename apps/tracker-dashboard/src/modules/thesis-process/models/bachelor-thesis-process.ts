@@ -110,12 +110,21 @@ export const fetchBachalorThesisProcess = computed(
       data: data.data,
     };
 
+    let selectedStageId = process.stages[0]?.id ?? null;
+    let isAllCompleted = true;
     for (const stage of process.stages) {
+      if (stage.status !== 'completed') {
+        isAllCompleted = false;
+      }
       if (stage.status === 'active') {
-        selectedStage.set(stage.id);
+        selectedStageId = stage.id;
         break;
       }
     }
+    if (isAllCompleted) {
+      selectedStageId = process.stages[process.stages.length - 1]?.id ?? null;
+    }
+    selectedStage.set(selectedStageId ?? '');
 
     return process;
   },
