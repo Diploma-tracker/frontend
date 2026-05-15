@@ -9,23 +9,8 @@ import {
   fetchBachalorThesisProcess,
   selectedStage,
 } from '../../models/bachelor-thesis-process';
+import { STAGE_LABELS } from './constants';
 import { InfoDot, ProjectSection } from './general';
-
-interface StageConfig {
-  title: string;
-}
-
-const STAGE_CONFIG: Record<string, StageConfig> = {
-  init_process: { title: 'Ініціалізація процесу' },
-  topic_approval: { title: 'Узгодження теми' },
-  design: { title: 'Етап проєктування' },
-  internship: { title: 'Переддипломна практика' },
-  plagiarism_check: { title: 'Перевірка на плагіат' },
-  defense_registration: { title: 'Запис на захист' },
-  pre_defense: { title: 'Передзахист' },
-  review: { title: 'Рецензія проєкту' },
-  thesis_defense: { title: 'Захист ДП' },
-};
 
 interface StageRowProps {
   stage: Stage;
@@ -35,7 +20,7 @@ const StageRow = reatomComponent(function StageRow({ stage }: StageRowProps) {
   const { t, formatDate } = useTranslation();
   const selected = selectedStage();
   const isSelected = selected === stage.id;
-  const title = t(STAGE_CONFIG[stage.id]?.title ?? stage.id);
+  const title = t(STAGE_LABELS[stage.id] ?? stage.id);
 
   const handleSelect = () => {
     selectedStage.set(stage.id);

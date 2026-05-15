@@ -5,7 +5,11 @@ import {
 } from '@phosphor-icons/react';
 import { CircleDashedIcon } from '@phosphor-icons/react/dist/ssr';
 
+import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import { Spinner } from '@repo/ui-kit/components/common/states/spinner';
+
+import type { Stage } from '../../models/bachelor-thesis-process';
+import { STATUS_LABELS } from './constants';
 
 const InfoDotVariant = {
   completed: 'completed',
@@ -43,6 +47,15 @@ export const InfoDot = ({ variant }: { variant: InfoDotVariant }) => {
     ),
   };
   return icons[variant] ?? null;
+};
+
+export const StatusBadge = ({ status }: { status: Stage['status'] }) => {
+  const statusInfo = STATUS_LABELS[status] ?? STATUS_LABELS.waiting;
+  return (
+    <Badge variant="filled" intent={statusInfo.intent}>
+      {statusInfo.label}
+    </Badge>
+  );
 };
 
 interface ProjectSectionProps {

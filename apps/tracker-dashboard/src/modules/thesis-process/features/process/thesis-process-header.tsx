@@ -1,53 +1,68 @@
-import { ClockIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import { Progress } from '@repo/ui-kit/components/common/states/progress';
 
 import {
-  fetchBachalorThesisProcess,
-  selectedStage,
+  activeStages,
+  processProgress,
+  thesisData,
 } from '../../models/bachelor-thesis-process';
-
-const STAGE_LABELS: Record<string, string> = {
-  topic_approval: 'Узгодження теми',
-  design: 'Проєктування',
-  internship: 'Переддипломна практика',
-  plagiarism_check: 'Перевірка на плагіат',
-  defense_registration: 'Запис на захист',
-  pre_defense: 'Передзахист',
-  review: 'Рецензія',
-  thesis_defense: 'Захист ДП',
-};
+import { STAGE_LABELS } from './constants';
+import { StatusBadge } from './general';
 
 export const ThesisProcessHeader = reatomComponent(
   function ThesisProcessHeader() {
-    const process = fetchBachalorThesisProcess.data();
-    const activeStageId = selectedStage();
+    const data = thesisData();
+    const {
+      total,
+      status,
+      completed,
+      percentage: progress,
+    } = processProgress();
 
-    const stages = process?.stages ?? [];
-    const total = stages.length;
-    const completed = stages.filter((s) => s.status === 'completed').length;
-    const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const activeStageLabels = activeStages().map(
+      (s) => STAGE_LABELS[s.id] ?? s.id,
+    );
 
-    const activeStage = stages.find((s) => s.id === activeStageId);
-    const activeLabel = activeStageId
-      ? (STAGE_LABELS[activeStageId] ?? activeStageId)
-      : '—';
-    const deadline = activeStage?.deadline ?? null;
+    if (!data) return null;
+    const {
+      data: { topic },
+    } = data;
+
+    const title = topic ? `${topic.uk} / ${topic.en}` : 'Диплома робота';
+
+    const renderActiveStages = () => {
+      if (activeStageLabels.length === 0) {
+        return (
+          <span className="text-sm text-muted-foreground">
+            Немає активних етапів
+          </span>
+        );
+      }
+
+      return (
+        <>
+          <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
+            Поточні етапи:
+          </span>
+          {activeStageLabels.map((label) => (
+            <Badge key={label} variant="filled" intent="primary">
+              {label}
+            </Badge>
+          ))}
+        </>
+      );
+    };
 
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="mb-2 flex items-center gap-2">
-              <Badge variant="filled" intent="pending">
-                В роботі
-              </Badge>
+              <StatusBadge status={status} />
             </div>
-            <h1 className="mb-3 text-lg leading-snug font-semibold">
-              Дипломний проєкт
-            </h1>
+            <h1 className="mb-3 text-lg leading-snug font-semibold">{title}</h1>
           </div>
 
           <div className="min-w-[120px] shrink-0 text-right">
@@ -56,23 +71,12 @@ export const ThesisProcessHeader = reatomComponent(
             </p>
             <p className="text-3xl font-bold">{progress}%</p>
             <Progress value={progress} className="mt-1 ml-auto w-28" />
-            {deadline && (
-              <p className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
-                <ClockIcon size={12} />
-                Дедлайн: {deadline}
-              </p>
-            )}
           </div>
         </div>
 
         <div className="mt-4 flex items-center justify-between border-t pt-4">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
-              Поточний етап:
-            </span>
-            <Badge variant="filled" intent="pending">
-              {activeLabel}
-            </Badge>
+            {renderActiveStages()}
           </div>
           <span className="text-sm text-muted-foreground">
             {completed} / {total} етапів завершено

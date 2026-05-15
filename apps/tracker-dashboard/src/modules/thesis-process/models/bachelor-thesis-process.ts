@@ -1,21 +1,22 @@
 import { type User, userAtom } from '@/modules/user';
+import { calculatePercentage } from '@/shared/utils/percentage';
 import { action, atom, computed, withAsyncData, wrap } from '@reatom/core';
 
 import { bachelorThesisProcess } from '@repo/api';
 import type { ThesisDataDTO } from '@repo/api';
 import { LoginTokenUserRole } from '@repo/api/model';
 
-const StageStatus = {
+const Status = {
   active: 'active',
   completed: 'completed',
   waiting: 'waiting',
 } as const;
 
-type StageStatus = keyof typeof StageStatus;
+type Status = keyof typeof Status;
 
 export interface Stage {
   id: string;
-  status: StageStatus; // top level status of the stage
+  status: Status; // top level status of the stage
   state: string | null; // e.g. full status like "pending review", "approved", "rejected" etc.
   deadline: string | null;
 }
@@ -103,7 +104,7 @@ export const fetchBachalorThesisProcess = computed(
       })),
       stages: data.stages.map((s) => ({
         id: s.id,
-        status: s.status as StageStatus,
+        status: s.status as Status,
         state: s.state ?? null,
         deadline: s.deadline ?? null,
       })),
@@ -145,6 +146,28 @@ export const activeStages = computed(() => {
   const process = fetchBachalorThesisProcess.data();
   return process?.stages.filter((stage) => stage.status === 'active') ?? [];
 }, 'activeStages');
+
+export const processProgress = computed(() => {
+  const process = fetchBachalorThesisProcess.data();
+  if (!process)
+    return {
+      status: 'waiting' as Status,
+      total: 0,
+      completed: 0,
+      percentage: 0,
+    };
+  const total = process.stages.length;
+  const completed = process.stages.filter(
+    (s) => s.status === 'completed',
+  ).length;
+  const isCompleted = total > 0 && completed === total;
+  return {
+    status: (isCompleted ? 'completed' : 'active') as Status,
+    total,
+    completed,
+    percentage: calculatePercentage(completed, total),
+  };
+}, 'progress');
 
 export const userRole = computed(() => {
   const process = fetchBachalorThesisProcess.data();

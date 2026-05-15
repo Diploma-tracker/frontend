@@ -1,11 +1,7 @@
-import { k, useTranslation } from '@/shared/utils/i18n';
+import { useTranslation } from '@/shared/utils/i18n';
 import { ClockIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
-import {
-  Badge,
-  type BadgeProps,
-} from '@repo/ui-kit/components/common/data-display/badge';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
 import type { Stage } from '../../models/bachelor-thesis-process';
@@ -13,6 +9,8 @@ import {
   selectedStageDetail,
   thesisData,
 } from '../../models/bachelor-thesis-process';
+import { STAGE_LABELS, getStageStateLabel } from './constants';
+import { StatusBadge } from './general';
 import { DefenseRegistrationPanel } from './stage-panels/defense-registration-panel';
 import { DesignPanel } from './stage-panels/design-panel';
 import { InitProcessPanel } from './stage-panels/init-process-panel';
@@ -22,33 +20,6 @@ import { PreDefensePanel } from './stage-panels/pre-defense-panel';
 import { ReviewPanel } from './stage-panels/review-panel';
 import { ThesisDefensePanel } from './stage-panels/thesis-defense-panel';
 import { TopicApprovalPanel } from './stage-panels/topic-approval-panel';
-
-type StageStatus = Stage['status'];
-
-interface StageConfig {
-  title: string;
-}
-
-const STAGE_CONFIG: Record<string, StageConfig> = {
-  init_process: { title: 'Ініціалізація процесу' },
-  topic_approval: { title: 'Узгодження теми' },
-  design: { title: 'Етап проєктування' },
-  internship: { title: 'Переддипломна практика' },
-  plagiarism_check: { title: 'Перевірка на плагіат' },
-  defense_registration: { title: 'Запис на захист' },
-  pre_defense: { title: 'Передзахист' },
-  review: { title: 'Рецензія проєкту' },
-  thesis_defense: { title: 'Захист ДП' },
-};
-
-const statusLabel: Record<
-  StageStatus,
-  { label: string; intent: BadgeProps['intent'] }
-> = {
-  active: { label: k('active'), intent: 'primary' },
-  completed: { label: k('completed'), intent: 'success' },
-  waiting: { label: k('wating'), intent: 'pending' },
-};
 
 // ---------------------------------------------------------------------------
 // Per-stage panel (always rendered; panels gate their own actions)
@@ -101,26 +72,21 @@ export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
     );
   }
 
-  const config = STAGE_CONFIG[stage.id];
-  const title = config?.title ?? stage.id;
-  const statusInfo = statusLabel[stage.status] ?? statusLabel.waiting;
+  const title = t(STAGE_LABELS[stage.id] ?? stage.id);
   const panel = <StagePanel stageId={stage.id} stage={stage} />;
+  const state = getStageStateLabel(stage);
 
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 px-5 py-4">
         <div>
-          <h2 className="text-base font-semibold">{t(title)}</h2>
-          {stage.state && (
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {stage.state}
-            </p>
+          <h2 className="text-base font-semibold">{title}</h2>
+          {state && (
+            <p className="mt-0.5 text-sm text-muted-foreground">{t(state)}</p>
           )}
         </div>
-        <Badge variant="filled" intent={statusInfo.intent}>
-          {statusInfo.label}
-        </Badge>
+        <StatusBadge status={stage.status} />
       </div>
 
       <Separator />

@@ -6,16 +6,8 @@ import {
   type Actor,
   fetchBachalorThesisProcess,
 } from '../../models/bachelor-thesis-process';
+import { ROLE_LABELS } from './constants';
 import { ProjectSection } from './general';
-
-const ROLE_LABELS: Record<string, string> = {
-  student: 'Студент',
-  supervisor: 'Науковий керівник',
-  plagiarism_supervisor: 'Перевіряючий антиплагіату',
-  internship_supervisor: 'Керівник практики',
-  commission_member: 'Член комісії',
-  reviewer: 'Рецензент',
-};
 
 const ActorRow = reatomComponent(function ActorRow({
   actor,
