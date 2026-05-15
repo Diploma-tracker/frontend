@@ -3,7 +3,6 @@
  */
 import React from 'react';
 
-import { UploadSimpleIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
@@ -28,12 +27,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@repo/ui-kit/components/common/floating/dialog';
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from '@repo/ui-kit/components/common/form/field';
-import { Input } from '@repo/ui-kit/components/common/form/input';
 
 import {
   type Stage,
@@ -240,90 +233,6 @@ export function ActionDialog({
   );
 }
 
-// ---------------------------------------------------------------------------
-// FileInputField  (controlled single-file input)
-// ---------------------------------------------------------------------------
-interface FileInputFieldProps {
-  label: string;
-  description?: string;
-  accept?: string;
-  value: File | null;
-  onChange: (file: File | null) => void;
-}
-
-export function FileInputField({
-  label,
-  description,
-  accept,
-  value,
-  onChange,
-}: FileInputFieldProps) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.files?.[0] ?? null);
-  };
-
-  return (
-    <Field>
-      <FieldLabel>{label}</FieldLabel>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className="shrink-0 gap-1.5"
-          onClick={() => inputRef.current?.click()}
-        >
-          <UploadSimpleIcon size={14} />
-          {value ? value.name : 'Обрати файл'}
-        </Button>
-        {value && (
-          <span className="max-w-[140px] truncate text-xs text-muted-foreground">
-            {value.name}
-          </span>
-        )}
-      </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        className="hidden"
-        onChange={handleChange}
-      />
-      {description && <FieldDescription>{description}</FieldDescription>}
-    </Field>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// TextInputField  (controlled text input)
-// ---------------------------------------------------------------------------
-interface TextInputFieldProps {
-  label: string;
-  placeholder?: string;
-  value: string;
-  onChange: (value: string) => void;
-}
-
-export function TextInputField({
-  label,
-  placeholder,
-  value,
-  onChange,
-}: TextInputFieldProps) {
-  return (
-    <Field>
-      <FieldLabel>{label}</FieldLabel>
-      <Input
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </Field>
-  );
-}
-
 interface Action {
   name: string;
   isActive: (state: Stage['state'] | null) => boolean;
@@ -333,14 +242,19 @@ interface Action {
 
 interface ActionsSectionProps {
   state: Stage['state'] | null;
+  status?: Stage['status'];
   actions: Action[];
 }
 
 export const ActionsSection = reatomComponent(function ActionsSection({
   state,
+  status,
   actions,
 }: ActionsSectionProps) {
   const role = userRole();
+
+  if (status !== undefined && status !== 'active') return null;
+
   const isRoleAllowed = (actionRole?: ThesisRole) => {
     if (!actionRole) return true; // No role restriction
     return actionRole === role;

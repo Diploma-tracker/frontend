@@ -6,6 +6,7 @@
  */
 import { useEffectOnce } from 'react-use';
 
+import { TextFormField } from '@/shared/components';
 import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -25,7 +26,6 @@ import {
   ConfirmationModal,
   DataItem,
   StageDescription,
-  TextInputField,
 } from './common';
 
 const STATE_LABELS: Record<string, string> = {
@@ -84,12 +84,12 @@ const SubmitTopicAction = ({ processId }: { processId: string }) => {
         submitLabel="Надіслати на розгляд"
         onSubmit={submit}
       >
-        <TextInputField
+        <TextFormField
           label="Тема (українською)"
           placeholder="Назва теми..."
           field={fields.topicUk}
         />
-        <TextInputField
+        <TextFormField
           label="Topic (English)"
           placeholder="Topic title..."
           field={fields.topicEn}

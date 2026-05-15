@@ -6,6 +6,7 @@
  */
 import { useEffectOnce } from 'react-use';
 
+import { FileInputField } from '@/shared/components/form/file-form-field';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -24,7 +25,6 @@ import {
   ActionsSection,
   ConfirmationModal,
   DataItem,
-  FileInputField,
   FileLink,
   StageDescription,
 } from './common';
