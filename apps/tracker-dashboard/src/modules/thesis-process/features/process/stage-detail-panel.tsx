@@ -2,7 +2,6 @@ import { k, useTranslation } from '@/shared/utils/i18n';
 import { ClockIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
-import type { ThesisDataDTO } from '@repo/api';
 import {
   Badge,
   type BadgeProps,
@@ -11,7 +10,6 @@ import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
 import type { Stage } from '../../models/bachelor-thesis-process';
 import {
-  bachalorThesisProcessId,
   selectedStageDetail,
   thesisData,
 } from '../../models/bachelor-thesis-process';
@@ -59,85 +57,24 @@ const statusLabel: Record<
 interface StagePanelProps {
   stageId: string;
   stage: Stage;
-  state: string | null;
-  processId: string;
-  status: StageStatus;
-  data: ThesisDataDTO | null;
 }
 
-function StagePanel({
-  stageId,
-  stage,
-  state,
-  processId,
-  status,
-  data,
-}: StagePanelProps) {
-  switch (stageId) {
-    case 'init_process':
-      return <InitProcessPanel processId={processId} stage={stage} />;
-    case 'topic_approval':
-      return (
-        <TopicApprovalPanel
-          processId={processId}
-          status={status}
-          state={state}
-          data={data}
-        />
-      );
-    case 'design':
-      return (
-        <DesignPanel
-          processId={processId}
-          status={status}
-          state={state}
-          data={data}
-        />
-      );
-    case 'internship':
-      return (
-        <InternshipPanel
-          processId={processId}
-          status={status}
-          state={state}
-          data={data}
-        />
-      );
-    case 'plagiarism_check':
-      return (
-        <PlagiarismPanel
-          processId={processId}
-          status={status}
-          state={state}
-          data={data}
-        />
-      );
-    case 'pre_defense':
-      return (
-        <PreDefensePanel
-          processId={processId}
-          status={status}
-          state={state}
-          data={data}
-        />
-      );
-    case 'review':
-      return <ReviewPanel processId={processId} status={status} data={data} />;
-    case 'defense_registration':
-      return (
-        <DefenseRegistrationPanel
-          processId={processId}
-          status={status}
-          state={state}
-        />
-      );
-    case 'thesis_defense':
-      return (
-        <ThesisDefensePanel processId={processId} status={status} data={data} />
-      );
-    default:
-      return null;
-  }
+const STAGE_PANELS: Record<string, React.ComponentType<{ stage: Stage }>> = {
+  init_process: InitProcessPanel,
+  topic_approval: TopicApprovalPanel,
+  design: DesignPanel,
+  internship: InternshipPanel,
+  plagiarism_check: PlagiarismPanel,
+  pre_defense: PreDefensePanel,
+  review: ReviewPanel,
+  defense_registration: DefenseRegistrationPanel,
+  thesis_defense: ThesisDefensePanel,
+};
+
+function StagePanel({ stageId, stage }: StagePanelProps) {
+  const PanelComponent = STAGE_PANELS[stageId] ?? null;
+  if (!PanelComponent) return null;
+  return <PanelComponent stage={stage} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -147,7 +84,6 @@ function StagePanel({
 export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
   const { t, formatDate } = useTranslation();
   const stage = selectedStageDetail();
-  const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   if (!thesis) {
     return (
@@ -165,21 +101,10 @@ export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
     );
   }
 
-  const { data } = thesis;
-
   const config = STAGE_CONFIG[stage.id];
   const title = config?.title ?? stage.id;
   const statusInfo = statusLabel[stage.status] ?? statusLabel.waiting;
-  const panel = (
-    <StagePanel
-      stageId={stage.id}
-      stage={stage}
-      state={stage.state}
-      processId={processId}
-      status={stage.status}
-      data={data}
-    />
-  );
+  const panel = <StagePanel stageId={stage.id} stage={stage} />;
 
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-sm">

@@ -11,13 +11,14 @@ import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
 
-import type { ThesisDataDTO } from '@repo/api';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 
 import {
   type Stage,
   ThesisRole,
+  bachalorThesisProcessId,
   sendProcessEvent,
+  thesisData,
 } from '../../../models/bachelor-thesis-process';
 import {
   ActionButtons,
@@ -29,9 +30,7 @@ import {
 } from './common';
 
 interface ReviewPanelProps {
-  processId: string;
   stage: Stage;
-  data: ThesisDataDTO | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -102,10 +101,12 @@ const UploadReviewAction = ({ processId }: { processId: string }) => {
 // ---------------------------------------------------------------------------
 
 export const ReviewPanel = reatomComponent(function ReviewPanel({
-  processId,
   stage,
-  data,
 }: ReviewPanelProps) {
+  const processId = bachalorThesisProcessId();
+  const thesis = thesisData();
+  const data = thesis?.data ?? null;
+
   return (
     <div className="flex flex-col gap-4">
       <StageDescription

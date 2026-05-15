@@ -11,13 +11,14 @@ import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
 
-import type { ThesisDataDTO } from '@repo/api';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 
 import {
   type Stage,
   ThesisRole,
+  bachalorThesisProcessId,
   sendProcessEvent,
+  thesisData,
 } from '../../../models/bachelor-thesis-process';
 import {
   ActionButtons,
@@ -35,9 +36,7 @@ const STATE_LABELS: Record<string, string> = {
 };
 
 interface TopicApprovalPanelProps {
-  processId: string;
   stage: Stage;
-  data: ThesisDataDTO | null;
 }
 
 const chooseTopicSchema = z.object({
@@ -163,10 +162,12 @@ const AdminReviewAction = ({ processId }: { processId: string }) => (
 );
 
 export const TopicApprovalPanel = reatomComponent(function TopicApprovalPanel({
-  processId,
   stage,
-  data,
 }: TopicApprovalPanelProps) {
+  const processId = bachalorThesisProcessId();
+  const thesis = thesisData();
+  const data = thesis?.data ?? null;
+
   return (
     <div className="flex flex-col gap-4">
       <StageDescription

@@ -11,13 +11,14 @@ import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
 
-import type { ThesisDataDTO } from '@repo/api';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 
 import {
   type Stage,
   ThesisRole,
+  bachalorThesisProcessId,
   sendProcessEvent,
+  thesisData,
 } from '../../../models/bachelor-thesis-process';
 import {
   ActionButtons,
@@ -28,9 +29,7 @@ import {
 } from './common';
 
 interface ThesisDefensePanelProps {
-  processId: string;
   stage: Stage;
-  data: ThesisDataDTO | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -105,10 +104,12 @@ const DefenseGradeAction = reatomComponent(function DefenseGradeAction({
 // ---------------------------------------------------------------------------
 
 export const ThesisDefensePanel = reatomComponent(function ThesisDefensePanel({
-  processId,
   stage,
-  data,
 }: ThesisDefensePanelProps) {
+  const processId = bachalorThesisProcessId();
+  const thesis = thesisData();
+  const data = thesis?.data ?? null;
+
   return (
     <div className="flex flex-col gap-4">
       <StageDescription

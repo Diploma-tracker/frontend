@@ -19,6 +19,7 @@ import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
   type Stage,
   ThesisRole,
+  bachalorThesisProcessId,
   sendProcessEvent,
   thesisData,
 } from '../../../models/bachelor-thesis-process';
@@ -31,7 +32,6 @@ import {
 } from './common';
 
 interface InitProcessPanelProps {
-  processId: string;
   stage: Stage;
 }
 
@@ -139,9 +139,9 @@ const InitAction = ({ processId }: { processId: string }) => {
 };
 
 export const InitProcessPanel = reatomComponent(function InitProcessPanel({
-  processId,
   stage,
 }: InitProcessPanelProps) {
+  const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const actors = thesis?.actors ?? [];
   const [actorsNames, setActorsNames] = React.useState<Record<string, string>>(
