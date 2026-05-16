@@ -149,23 +149,27 @@ export const activeStages = computed(() => {
 
 export const processProgress = computed(() => {
   const process = fetchBachalorThesisProcess.data();
-  if (!process)
+  if (!process) {
     return {
       status: 'waiting' as Status,
       total: 0,
       completed: 0,
       percentage: 0,
     };
+  }
+
   const total = process.stages.length;
   const completed = process.stages.filter(
     (s) => s.status === 'completed',
   ).length;
+
   const isCompleted = total > 0 && completed === total;
+
   return {
     status: (isCompleted ? 'completed' : 'active') as Status,
     total,
     completed,
-    percentage: calculatePercentage(completed, total),
+    percentage: calculatePercentage(completed, total, 0),
   };
 }, 'progress');
 

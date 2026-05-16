@@ -22,23 +22,26 @@ export const ThesisProcessHeader = reatomComponent(
       completed,
       percentage: progress,
     } = processProgress();
+
     const activeStageLabels = activeStages().map(
       (s) => STAGE_LABELS[s.id] ?? s.id,
     );
+
     if (!data) return null;
-    const {
-      data: { topic },
-    } = data;
+    const { topic } = data.data;
     const title = topic
       ? `${topic.uk} / ${topic.en}`
       : t('thesisProcess.header.defaultTitle');
+
     const renderActiveStages = () => {
-      if (activeStageLabels.length === 0)
+      if (activeStageLabels.length === 0) {
         return (
           <span className="text-sm text-muted-foreground">
             {t('thesisProcess.header.noActiveStages')}
           </span>
         );
+      }
+
       return (
         <>
           <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
@@ -52,6 +55,7 @@ export const ThesisProcessHeader = reatomComponent(
         </>
       );
     };
+
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
