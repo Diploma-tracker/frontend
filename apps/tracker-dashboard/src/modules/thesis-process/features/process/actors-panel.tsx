@@ -32,9 +32,12 @@ const ActorRow = reatomComponent(function ActorRow({
 export const ActorsPanel = reatomComponent(function ActorsPanel() {
   const data = fetchBachalorThesisProcess.data();
   const status = fetchBachalorThesisProcess.status();
-
+  const { t } = useTranslation();
   return (
-    <ProjectSection title="Actors" isLoading={status.isPending}>
+    <ProjectSection
+      title={t('thesisProcess.panels.actors')}
+      isLoading={status.isPending}
+    >
       {data?.actors.map((actor) => (
         <ActorRow key={actor.role} actor={actor} />
       ))}

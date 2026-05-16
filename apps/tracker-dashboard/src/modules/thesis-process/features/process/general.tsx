@@ -1,3 +1,4 @@
+import { useTranslation } from '@/shared/utils/i18n';
 import {
   CheckCircleIcon,
   CircleIcon,
@@ -50,10 +51,12 @@ export const InfoDot = ({ variant }: { variant: InfoDotVariant }) => {
 };
 
 export const StatusBadge = ({ status }: { status: Stage['status'] }) => {
+  const { t } = useTranslation();
   const statusInfo = STATUS_LABELS[status] ?? STATUS_LABELS.waiting;
+
   return (
     <Badge variant="filled" intent={statusInfo.intent}>
-      {statusInfo.label}
+      {t(statusInfo.label)}
     </Badge>
   );
 };

@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -29,11 +30,6 @@ import {
   FileLink,
   StageDescription,
 } from './common';
-
-const STATE_LABELS: Record<string, string> = {
-  plagiarism_supervisor_check: 'Перевірка керівником антиплагіату',
-  student_reupload_thesis: 'Студент виправляє та повторно завантажує',
-};
 
 interface PlagiarismPanelProps {
   stage: Stage;
@@ -120,6 +116,7 @@ const PlagiarismSupervisorCheckAction = ({
 }: {
   processId: string;
 }) => {
+  const { t } = useTranslation();
   const { fields, submit } = approvePlagiarismForm;
 
   useEffectOnce(() => {
@@ -129,27 +126,33 @@ const PlagiarismSupervisorCheckAction = ({
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Затвердити (з звітом)</Button>}
-        title="Затвердження перевірки антиплагіату"
-        submitLabel="Затвердити"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.plagiarism.approveWithReportButton')}
+          </Button>
+        }
+        title={t('thesisProcess.plagiarism.dialogTitle')}
+        submitLabel={t('thesisProcess.plagiarism.submitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Звіт антиплагіату"
+          label={t('thesisProcess.plagiarism.plagiarismReportFieldLabel')}
           accept=".pdf"
           field={fields.plagiarismReport}
-          description="Необхідний для затвердження"
+          description={t(
+            'thesisProcess.plagiarism.plagiarismReportDescription',
+          )}
         />
       </ActionDialog>
       <ConfirmationModal
         trigger={
           <Button size="sm" variant="outline">
-            Відхилити
+            {t('thesisProcess.plagiarism.rejectButton')}
           </Button>
         }
-        title="Відхилити перевірку?"
-        description="Студент отримає завдання виправити роботу."
-        confirmLabel="Відхилити"
+        title={t('thesisProcess.plagiarism.confirmReject')}
+        description={t('thesisProcess.plagiarism.rejectDescription')}
+        confirmLabel={t('thesisProcess.plagiarism.rejectButton')}
         onConfirm={() =>
           sendProcessEvent({
             processId,
@@ -162,6 +165,7 @@ const PlagiarismSupervisorCheckAction = ({
 };
 
 const ReuploadThesisAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = fixPlagiarismIssuesForm;
 
   useEffectOnce(() => {
@@ -171,18 +175,22 @@ const ReuploadThesisAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Повторно завантажити</Button>}
-        title="Виправлення та повторне завантаження"
-        submitLabel="Надіслати повторно"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.plagiarism.reuploadButton')}
+          </Button>
+        }
+        title={t('thesisProcess.plagiarism.reuploadDialogTitle')}
+        submitLabel={t('thesisProcess.plagiarism.reuploadSubmitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Архів матеріалів (виправлений)"
+          label={t('thesisProcess.plagiarism.archiveFieldLabel')}
           accept=".zip,.rar,.7z"
           field={fields.thesisMaterialsArchive}
         />
         <FileInputField
-          label="Звіт (виправлений)"
+          label={t('thesisProcess.plagiarism.reportFieldLabel')}
           accept=".pdf,.doc,.docx"
           field={fields.thesisReport}
         />
@@ -198,6 +206,7 @@ const ReuploadThesisAction = ({ processId }: { processId: string }) => {
 export const PlagiarismPanel = reatomComponent(function PlagiarismPanel({
   stage,
 }: PlagiarismPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -205,17 +214,14 @@ export const PlagiarismPanel = reatomComponent(function PlagiarismPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Перевірка дипломної роботи на плагіат. Відповідальний завантажує звіт антиплагіату."
-        responsible="Керівник антиплагіату → Студент (при відхиленні)"
-        stateLabel={
-          stage.state ? (STATE_LABELS[stage.state] ?? stage.state) : null
-        }
+        description={t('thesisProcess.plagiarism.description')}
+        responsible={t('thesisProcess.plagiarism.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Архів матеріалів"
+          label={t('thesisProcess.plagiarism.archiveLabel')}
           value={
             data?.thesisArchive ? (
               <FileLink
@@ -229,7 +235,7 @@ export const PlagiarismPanel = reatomComponent(function PlagiarismPanel({
           }
         />
         <DataItem
-          label="Звіт"
+          label={t('thesisProcess.plagiarism.reportLabel')}
           value={
             data?.thesisReport ? (
               <FileLink
@@ -243,7 +249,7 @@ export const PlagiarismPanel = reatomComponent(function PlagiarismPanel({
           }
         />
         <DataItem
-          label="Звіт антиплагіату"
+          label={t('thesisProcess.plagiarism.plagiarismReportLabel')}
           value={
             data?.plagiarismReport ? (
               <FileLink

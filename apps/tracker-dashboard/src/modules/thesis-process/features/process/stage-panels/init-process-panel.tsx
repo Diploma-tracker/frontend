@@ -9,6 +9,7 @@ import { useEffectOnce } from 'react-use';
 
 import { UserSelectorField } from '@/modules/user';
 import { userQuery } from '@/modules/user';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -34,15 +35,6 @@ import {
 interface InitProcessPanelProps {
   stage: Stage;
 }
-
-const ROLE_LABELS: Record<string, string> = {
-  student: 'Студент',
-  supervisor: 'Науковий керівник',
-  plagiarism_supervisor: 'Перевіряючий антиплагіату',
-  internship_supervisor: 'Керівник практики',
-  commission_member: 'Член комісії',
-  reviewer: 'Рецензент',
-};
 
 const DISPLAYED_ROLES = [
   'student',
@@ -97,6 +89,7 @@ export const initProcessForm = reatomForm(
 
 const InitAction = ({ processId }: { processId: string }) => {
   const [open, setOpen] = React.useState(false);
+  const { t } = useTranslation();
   const { fields, submit } = initProcessForm;
 
   useEffectOnce(() => {
@@ -106,30 +99,34 @@ const InitAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Призначити ролі</Button>}
-        title="Призначення ролей"
-        submitLabel="Підтвердити та перейти далі"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.initProcess.assignRolesButton')}
+          </Button>
+        }
+        title={t('thesisProcess.initProcess.dialogTitle')}
+        submitLabel={t('thesisProcess.initProcess.submitLabel')}
         onSubmit={submit}
         open={open}
         onOpenChange={setOpen}
       >
         <UserSelectorField
-          label="Перевіряючий антиплагіату"
+          label={t('thesisProcess.initProcess.plagiarismSupervisorLabel')}
           field={fields.plagiarismSupervisor}
           role={LoginTokenUserRole.staff}
         />
         <UserSelectorField
-          label="Керівник практики"
+          label={t('thesisProcess.initProcess.internshipSupervisorLabel')}
           field={fields.internshipSupervisor}
           role={LoginTokenUserRole.staff}
         />
         <UserSelectorField
-          label="Член комісії"
+          label={t('thesisProcess.initProcess.commissionMemberLabel')}
           field={fields.commissionMember}
           role={LoginTokenUserRole.staff}
         />
         <UserSelectorField
-          label="Рецензент"
+          label={t('thesisProcess.initProcess.reviewerLabel')}
           field={fields.reviewer}
           role={LoginTokenUserRole.staff}
         />
@@ -141,6 +138,7 @@ const InitAction = ({ processId }: { processId: string }) => {
 export const InitProcessPanel = reatomComponent(function InitProcessPanel({
   stage,
 }: InitProcessPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const actors = thesis?.actors ?? [];
@@ -178,8 +176,8 @@ export const InitProcessPanel = reatomComponent(function InitProcessPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Адміністратор призначає відповідальних осіб для кожного етапу дипломного процесу."
-        responsible="Адміністратор"
+        description={t('thesisProcess.initProcess.description')}
+        responsible={t('thesisProcess.initProcess.responsible')}
       />
 
       {/* Data section — always shown */}
@@ -187,7 +185,7 @@ export const InitProcessPanel = reatomComponent(function InitProcessPanel({
         {DISPLAYED_ROLES.map((role) => (
           <DataItem
             key={role}
-            label={ROLE_LABELS[role] ?? role}
+            label={t(`thesisProcess.roles.${role}`)}
             value={actorByRole[role] ?? '—'}
           />
         ))}

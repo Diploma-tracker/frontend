@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useTranslation } from '@/shared/utils/i18n';
 import { ClockIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
@@ -48,6 +50,34 @@ function StagePanel({ stageId, stage }: StagePanelProps) {
   return <PanelComponent stage={stage} />;
 }
 
+interface StageDetailsContextValue {
+  stage: Stage;
+}
+const stageDetailsContext =
+  React.createContext<StageDetailsContextValue | null>(null);
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useStageDetailsContext = (): StageDetailsContextValue => {
+  const context = React.useContext(stageDetailsContext);
+  if (!context) {
+    throw new Error(
+      'useStageDetailsContext must be used within a StageDetailPanel',
+    );
+  }
+  return context;
+};
+
+const StageDetailsProvider: React.FC<{
+  stage: Stage;
+  children: React.ReactNode;
+}> = ({ stage, children }) => {
+  return (
+    <stageDetailsContext.Provider value={{ stage }}>
+      {children}
+    </stageDetailsContext.Provider>
+  );
+};
+
 // ---------------------------------------------------------------------------
 // Main panel
 // ---------------------------------------------------------------------------
@@ -59,7 +89,7 @@ export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
   if (!thesis) {
     return (
       <div className="flex h-48 items-center justify-center rounded-xl border bg-card text-sm text-muted-foreground shadow-sm">
-        Не вдалося завантажити дані процесу
+        {t('thesisProcess.panels.noProcess')}
       </div>
     );
   }
@@ -67,7 +97,7 @@ export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
   if (!stage) {
     return (
       <div className="flex h-48 items-center justify-center rounded-xl border bg-card text-sm text-muted-foreground shadow-sm">
-        Оберіть етап для перегляду деталей
+        {t('thesisProcess.panels.noStage')}
       </div>
     );
   }
@@ -77,42 +107,44 @@ export const StageDetailPanel = reatomComponent(function StageDetailPanel() {
   const state = getStageStateLabel(stage);
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 px-5 py-4">
-        <div>
-          <h2 className="text-base font-semibold">{title}</h2>
-          {state && (
-            <p className="mt-0.5 text-sm text-muted-foreground">{t(state)}</p>
-          )}
+    <StageDetailsProvider stage={stage}>
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 px-5 py-4">
+          <div>
+            <h2 className="text-base font-semibold">{title}</h2>
+            {state && (
+              <p className="mt-0.5 text-sm text-muted-foreground">{t(state)}</p>
+            )}
+          </div>
+          <StatusBadge status={stage.status} />
         </div>
-        <StatusBadge status={stage.status} />
-      </div>
 
-      <Separator />
+        <Separator />
 
-      {/* Deadline */}
-      <div className="px-5 py-4 text-sm">
-        <p className="mb-1 text-[10px] tracking-wider text-muted-foreground uppercase">
-          Дедлайн
-        </p>
-        <div className="flex items-center gap-1.5">
-          <ClockIcon size={14} className="text-muted-foreground" />
-          <span>
-            {stage.deadline
-              ? (formatDate(stage.deadline) ?? stage.deadline)
-              : '—'}
-          </span>
+        {/* Deadline */}
+        <div className="px-5 py-4 text-sm">
+          <p className="mb-1 text-[10px] tracking-wider text-muted-foreground uppercase">
+            {t('thesisProcess.panels.deadline')}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <ClockIcon size={14} className="text-muted-foreground" />
+            <span>
+              {stage.deadline
+                ? (formatDate(stage.deadline) ?? stage.deadline)
+                : '—'}
+            </span>
+          </div>
         </div>
-      </div>
 
-      {/* Stage panel — always rendered */}
-      {panel && (
-        <>
-          <Separator />
-          <div className="px-5 py-4">{panel}</div>
-        </>
-      )}
-    </div>
+        {/* Stage panel — always rendered */}
+        {panel && (
+          <>
+            <Separator />
+            <div className="px-5 py-4">{panel}</div>
+          </>
+        )}
+      </div>
+    </StageDetailsProvider>
   );
 });

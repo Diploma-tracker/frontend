@@ -66,9 +66,12 @@ const StageRow = reatomComponent(function StageRow({ stage }: StageRowProps) {
 export const StagesPanel = reatomComponent(function StagesPanel() {
   const data = fetchBachalorThesisProcess.data();
   const status = fetchBachalorThesisProcess.status();
-
+  const { t } = useTranslation();
   return (
-    <ProjectSection title="Stages" isLoading={status.isPending}>
+    <ProjectSection
+      title={t('thesisProcess.panels.stages')}
+      isLoading={status.isPending}
+    >
       {data?.stages.map((stage) => (
         <StageRow key={stage.id} stage={stage} />
       ))}

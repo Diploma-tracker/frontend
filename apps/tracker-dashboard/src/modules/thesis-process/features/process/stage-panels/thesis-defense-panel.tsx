@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { TextFormField } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -72,6 +73,7 @@ const DefenseGradeAction = reatomComponent(function DefenseGradeAction({
 }: {
   processId: string;
 }) {
+  const { t } = useTranslation();
   const { fields, submit } = thesisDefenseForm;
 
   useEffectOnce(() => {
@@ -81,14 +83,18 @@ const DefenseGradeAction = reatomComponent(function DefenseGradeAction({
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Виставити оцінку</Button>}
-        title="Результат захисту"
-        submitLabel="Виставити оцінку та завершити"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.thesisDefense.assignGradeButton')}
+          </Button>
+        }
+        title={t('thesisProcess.thesisDefense.dialogTitle')}
+        submitLabel={t('thesisProcess.thesisDefense.submitLabel')}
         onSubmit={submit}
       >
         <TextFormField
-          placeholder={'Введіть оцінку (0–100)...'}
-          label={'Оцінка (0–100)'}
+          placeholder={t('thesisProcess.thesisDefense.gradePlaceholder')}
+          label={t('thesisProcess.thesisDefense.gradeFieldLabel')}
           type={'number'}
           min={0}
           max={100}
@@ -106,6 +112,7 @@ const DefenseGradeAction = reatomComponent(function DefenseGradeAction({
 export const ThesisDefensePanel = reatomComponent(function ThesisDefensePanel({
   stage,
 }: ThesisDefensePanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -113,21 +120,24 @@ export const ThesisDefensePanel = reatomComponent(function ThesisDefensePanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Фінальний захист дипломної роботи перед комісією. Керівник виставляє оцінку."
-        responsible="Керівник / Комісія"
+        description={t('thesisProcess.thesisDefense.description')}
+        responsible={t('thesisProcess.thesisDefense.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Оцінка"
+          label={t('thesisProcess.thesisDefense.gradeLabel')}
           value={
             data?.grade !== null && data?.grade !== undefined
               ? String(data.grade)
               : '—'
           }
         />
-        <DataItem label="Літера" value={data?.gradeLetter ?? '—'} />
+        <DataItem
+          label={t('thesisProcess.thesisDefense.gradeLetterLabel')}
+          value={data?.gradeLetter ?? '—'}
+        />
       </div>
 
       <ActionsSection

@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { TextFormField } from '@/shared/components';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -28,12 +29,6 @@ import {
   DataItem,
   StageDescription,
 } from './common';
-
-const STATE_LABELS: Record<string, string> = {
-  student_upload_topic: 'Студент вводить тему',
-  supervisor_review_topic: 'На перевірці керівника',
-  admin_review_topic: 'На перевірці адміністратора',
-};
 
 interface TopicApprovalPanelProps {
   stage: Stage;
@@ -69,6 +64,7 @@ export const chooseTopicForm = reatomForm(
 );
 
 const SubmitTopicAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = chooseTopicForm;
 
   useEffectOnce(() => {
@@ -78,19 +74,23 @@ const SubmitTopicAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Подати тему</Button>}
-        title="Введіть тему дипломної роботи"
-        submitLabel="Надіслати на розгляд"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.topicApproval.submitTopicButton')}
+          </Button>
+        }
+        title={t('thesisProcess.topicApproval.dialogTitle')}
+        submitLabel={t('thesisProcess.topicApproval.submitLabel')}
         onSubmit={submit}
       >
         <TextFormField
-          label="Тема (українською)"
-          placeholder="Назва теми..."
+          label={t('thesisProcess.topicApproval.topicUkLabel')}
+          placeholder={t('thesisProcess.topicApproval.topicUkPlaceholder')}
           field={fields.topicUk}
         />
         <TextFormField
-          label="Topic (English)"
-          placeholder="Topic title..."
+          label={t('thesisProcess.topicApproval.topicEnLabel')}
+          placeholder={t('thesisProcess.topicApproval.topicEnPlaceholder')}
           field={fields.topicEn}
         />
       </ActionDialog>
@@ -98,72 +98,89 @@ const SubmitTopicAction = ({ processId }: { processId: string }) => {
   );
 };
 
-const SupervisorReviewAction = ({ processId }: { processId: string }) => (
-  <ActionButtons>
-    <ConfirmationModal
-      trigger={<Button size="sm">Затвердити</Button>}
-      title="Затвердити тему?"
-      confirmLabel="Затвердити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'APPROVE_TOPIC_BY_SUPERVISOR' },
-        })
-      }
-    />
-    <ConfirmationModal
-      trigger={
-        <Button size="sm" variant="outline">
-          Відхилити
-        </Button>
-      }
-      title="Відхилити тему?"
-      description="Студент отримає завдання обрати нову тему."
-      confirmLabel="Відхилити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'REJECT_TOPIC_BY_SUPERVISOR' },
-        })
-      }
-    />
-  </ActionButtons>
-);
+const SupervisorReviewAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
+  return (
+    <ActionButtons>
+      <ConfirmationModal
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.topicApproval.approveButton')}
+          </Button>
+        }
+        title={t('thesisProcess.topicApproval.confirmApproveSupervisor')}
+        confirmLabel={t('thesisProcess.topicApproval.approveButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'APPROVE_TOPIC_BY_SUPERVISOR' },
+          })
+        }
+      />
+      <ConfirmationModal
+        trigger={
+          <Button size="sm" variant="outline">
+            {t('thesisProcess.topicApproval.rejectButton')}
+          </Button>
+        }
+        title={t('thesisProcess.topicApproval.confirmRejectSupervisor')}
+        description={t(
+          'thesisProcess.topicApproval.rejectDescriptionSupervisor',
+        )}
+        confirmLabel={t('thesisProcess.topicApproval.rejectButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'REJECT_TOPIC_BY_SUPERVISOR' },
+          })
+        }
+      />
+    </ActionButtons>
+  );
+};
 
-const AdminReviewAction = ({ processId }: { processId: string }) => (
-  <ActionButtons>
-    <ConfirmationModal
-      trigger={<Button size="sm">Затвердити</Button>}
-      title="Затвердити тему (адміністратор)?"
-      confirmLabel="Затвердити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'APPROVE_TOPIC_BY_ADMIN' },
-        })
-      }
-    />
-    <ConfirmationModal
-      trigger={
-        <Button size="sm" variant="outline">
-          Відхилити
-        </Button>
-      }
-      title="Відхилити тему (адміністратор)?"
-      confirmLabel="Відхилити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'REJECT_TOPIC_BY_ADMIN' },
-        })
-      }
-    />
-  </ActionButtons>
-);
+const AdminReviewAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
+  return (
+    <ActionButtons>
+      <ConfirmationModal
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.topicApproval.approveButton')}
+          </Button>
+        }
+        title={t('thesisProcess.topicApproval.confirmApproveAdmin')}
+        confirmLabel={t('thesisProcess.topicApproval.approveButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'APPROVE_TOPIC_BY_ADMIN' },
+          })
+        }
+      />
+      <ConfirmationModal
+        trigger={
+          <Button size="sm" variant="outline">
+            {t('thesisProcess.topicApproval.rejectButton')}
+          </Button>
+        }
+        title={t('thesisProcess.topicApproval.confirmRejectAdmin')}
+        confirmLabel={t('thesisProcess.topicApproval.rejectButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'REJECT_TOPIC_BY_ADMIN' },
+          })
+        }
+      />
+    </ActionButtons>
+  );
+};
 
 export const TopicApprovalPanel = reatomComponent(function TopicApprovalPanel({
   stage,
 }: TopicApprovalPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -171,17 +188,20 @@ export const TopicApprovalPanel = reatomComponent(function TopicApprovalPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Студент обирає та погоджує тему дипломної роботи з керівником і адміністратором."
-        responsible="Студент → Керівник → Адміністратор"
-        stateLabel={
-          stage.state ? (STATE_LABELS[stage.state] ?? stage.state) : null
-        }
+        description={t('thesisProcess.topicApproval.description')}
+        responsible={t('thesisProcess.topicApproval.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
-        <DataItem label="Тема (укр)" value={data?.topic?.uk ?? '—'} />
-        <DataItem label="Topic (EN)" value={data?.topic?.en ?? '—'} />
+        <DataItem
+          label={t('thesisProcess.topicApproval.topicUkLabel')}
+          value={data?.topic?.uk ?? '—'}
+        />
+        <DataItem
+          label={t('thesisProcess.topicApproval.topicEnLabel')}
+          value={data?.topic?.en ?? '—'}
+        />
       </div>
 
       <ActionsSection

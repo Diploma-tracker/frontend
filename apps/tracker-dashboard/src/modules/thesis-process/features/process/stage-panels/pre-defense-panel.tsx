@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -29,11 +30,6 @@ import {
   FileLink,
   StageDescription,
 } from './common';
-
-const STATE_LABELS: Record<string, string> = {
-  commission_review: 'На розгляді комісії',
-  student_reupload_thesis: 'Студент виправляє зауваження',
-};
 
 interface PreDefensePanelProps {
   stage: Stage;
@@ -85,34 +81,43 @@ export const fixPreDefenseIssuesForm = reatomForm(
 // Action sub-components
 // ---------------------------------------------------------------------------
 
-const CommissionReviewAction = ({ processId }: { processId: string }) => (
-  <ActionButtons>
-    <ConfirmationModal
-      trigger={<Button size="sm">Допустити до захисту</Button>}
-      title="Допустити до захисту?"
-      description="Студент буде допущений до фінального захисту."
-      confirmLabel="Допустити"
-      onConfirm={() =>
-        sendProcessEvent({ processId, event: { name: 'APPROVE_PRE_DEFENSE' } })
-      }
-    />
-    <ConfirmationModal
-      trigger={
-        <Button size="sm" variant="outline">
-          Відхилити
-        </Button>
-      }
-      title="Відхилити матеріали?"
-      description="Студент отримає завдання виправити зауваження."
-      confirmLabel="Відхилити"
-      onConfirm={() =>
-        sendProcessEvent({ processId, event: { name: 'REJECT_PRE_DEFENSE' } })
-      }
-    />
-  </ActionButtons>
-);
+const CommissionReviewAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
+  return (
+    <ActionButtons>
+      <ConfirmationModal
+        trigger={
+          <Button size="sm">{t('thesisProcess.preDefense.admitButton')}</Button>
+        }
+        title={t('thesisProcess.preDefense.confirmAdmit')}
+        description={t('thesisProcess.preDefense.admitDescription')}
+        confirmLabel={t('thesisProcess.preDefense.confirmAdmitButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'APPROVE_PRE_DEFENSE' },
+          })
+        }
+      />
+      <ConfirmationModal
+        trigger={
+          <Button size="sm" variant="outline">
+            {t('thesisProcess.preDefense.rejectButton')}
+          </Button>
+        }
+        title={t('thesisProcess.preDefense.confirmReject')}
+        description={t('thesisProcess.preDefense.rejectDescription')}
+        confirmLabel={t('thesisProcess.preDefense.rejectButton')}
+        onConfirm={() =>
+          sendProcessEvent({ processId, event: { name: 'REJECT_PRE_DEFENSE' } })
+        }
+      />
+    </ActionButtons>
+  );
+};
 
 const ReuploadThesisAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = fixPreDefenseIssuesForm;
 
   useEffectOnce(() => {
@@ -122,18 +127,20 @@ const ReuploadThesisAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Виправити та надіслати</Button>}
-        title="Виправлення зауважень комісії"
-        submitLabel="Надіслати на повторний розгляд"
+        trigger={
+          <Button size="sm">{t('thesisProcess.preDefense.fixButton')}</Button>
+        }
+        title={t('thesisProcess.preDefense.fixDialogTitle')}
+        submitLabel={t('thesisProcess.preDefense.fixSubmitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Архів матеріалів (виправлений)"
+          label={t('thesisProcess.preDefense.archiveFieldLabel')}
           accept=".zip,.rar,.7z"
           field={fields.thesisMaterialsArchive}
         />
         <FileInputField
-          label="Звіт (виправлений)"
+          label={t('thesisProcess.preDefense.reportFieldLabel')}
           accept=".pdf,.doc,.docx"
           field={fields.thesisReport}
         />
@@ -149,6 +156,7 @@ const ReuploadThesisAction = ({ processId }: { processId: string }) => {
 export const PreDefensePanel = reatomComponent(function PreDefensePanel({
   stage,
 }: PreDefensePanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -156,17 +164,14 @@ export const PreDefensePanel = reatomComponent(function PreDefensePanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Комісія розглядає матеріали дипломної роботи та приймає рішення про допуск до захисту."
-        responsible="Член комісії → Студент (при відхиленні)"
-        stateLabel={
-          stage.state ? (STATE_LABELS[stage.state] ?? stage.state) : null
-        }
+        description={t('thesisProcess.preDefense.description')}
+        responsible={t('thesisProcess.preDefense.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Архів матеріалів"
+          label={t('thesisProcess.preDefense.archiveLabel')}
           value={
             data?.thesisArchive ? (
               <FileLink
@@ -180,7 +185,7 @@ export const PreDefensePanel = reatomComponent(function PreDefensePanel({
           }
         />
         <DataItem
-          label="Звіт"
+          label={t('thesisProcess.preDefense.reportLabel')}
           value={
             data?.thesisReport ? (
               <FileLink

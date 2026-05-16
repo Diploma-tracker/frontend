@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -29,11 +30,6 @@ import {
   FileLink,
   StageDescription,
 } from './common';
-
-const STATE_LABELS: Record<string, string> = {
-  student_upload_internship_report: 'Студент завантажує звіт',
-  practice_supervisor_review: 'На перевірці керівника практики',
-};
 
 interface InternshipPanelProps {
   stage: Stage;
@@ -70,6 +66,7 @@ export const uploadInternshipReportForm = reatomForm(
 );
 
 const UploadReportAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = uploadInternshipReportForm;
 
   useEffectOnce(() => {
@@ -79,13 +76,17 @@ const UploadReportAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Завантажити звіт</Button>}
-        title="Завантаження звіту з практики"
-        submitLabel="Надіслати на перевірку"
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.internship.uploadButton')}
+          </Button>
+        }
+        title={t('thesisProcess.internship.dialogTitle')}
+        submitLabel={t('thesisProcess.internship.submitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Звіт з практики"
+          label={t('thesisProcess.internship.reportFieldLabel')}
           accept=".pdf,.doc,.docx"
           field={fields.internshipReport}
         />
@@ -98,39 +99,43 @@ const PracticeSupervisorReviewAction = ({
   processId,
 }: {
   processId: string;
-}) => (
-  <ActionButtons>
-    <ConfirmationModal
-      trigger={<Button size="sm">Затвердити</Button>}
-      title="Затвердити звіт з практики?"
-      confirmLabel="Затвердити"
-      onConfirm={() =>
-        sendProcessEvent({ processId, event: { name: 'APPROVE_INTERNSHIP' } })
-      }
-    />
-    <ConfirmationModal
-      trigger={
-        <Button size="sm" variant="outline">
-          Відхилити
-        </Button>
-      }
-      title="Відхилити звіт?"
-      description="Студент отримає завдання виправити та повторно завантажити."
-      confirmLabel="Відхилити"
-      onConfirm={() =>
-        sendProcessEvent({ processId, event: { name: 'REJECT_INTERNSHIP' } })
-      }
-    />
-  </ActionButtons>
-);
-
-// ---------------------------------------------------------------------------
-// Panel
-// ---------------------------------------------------------------------------
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ActionButtons>
+      <ConfirmationModal
+        trigger={
+          <Button size="sm">
+            {t('thesisProcess.internship.approveButton')}
+          </Button>
+        }
+        title={t('thesisProcess.internship.confirmApprove')}
+        confirmLabel={t('thesisProcess.internship.approveButton')}
+        onConfirm={() =>
+          sendProcessEvent({ processId, event: { name: 'APPROVE_INTERNSHIP' } })
+        }
+      />
+      <ConfirmationModal
+        trigger={
+          <Button size="sm" variant="outline">
+            {t('thesisProcess.internship.rejectButton')}
+          </Button>
+        }
+        title={t('thesisProcess.internship.confirmReject')}
+        description={t('thesisProcess.internship.rejectDescription')}
+        confirmLabel={t('thesisProcess.internship.rejectButton')}
+        onConfirm={() =>
+          sendProcessEvent({ processId, event: { name: 'REJECT_INTERNSHIP' } })
+        }
+      />
+    </ActionButtons>
+  );
+};
 
 export const InternshipPanel = reatomComponent(function InternshipPanel({
   stage,
 }: InternshipPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -138,17 +143,14 @@ export const InternshipPanel = reatomComponent(function InternshipPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Студент завантажує звіт з переддипломної практики для підтвердження керівником."
-        responsible="Студент → Керівник практики"
-        stateLabel={
-          stage.state ? (STATE_LABELS[stage.state] ?? stage.state) : null
-        }
+        description={t('thesisProcess.internship.description')}
+        responsible={t('thesisProcess.internship.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Звіт з практики"
+          label={t('thesisProcess.internship.reportLabel')}
           value={
             data?.internshipReport ? (
               <FileLink

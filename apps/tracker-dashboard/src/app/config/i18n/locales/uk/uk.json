@@ -39,6 +39,7 @@
       "projects": "Проєкти",
       "diploma1": "Диплом 1",
       "diploma2": "Диплом 2",
+      "thesisProcess": "Процес ДП",
       "projectEnrollment": "Зарахування до проєктів",
       "schedule": "Розклад"
     }
@@ -213,6 +214,7 @@
         }
       },
       "bulkActions": {
+        "entityLabel": "Вчителів",
         "entityLabel_one": "Вчителя",
         "entityLabel_few": "Вчителів",
         "entityLabel_many": "Вчителів",
@@ -222,6 +224,8 @@
       },
       "actions": {
         "apply": "Подати заявку",
+        "add": "Додати",
+        "remove": "Видалити",
         "confirmApply": {
           "title": "Подати заявку цьому викладачу?",
           "description": "Ваша заявка на наукове керівництво буде надіслана цьому викладачу. Ви зможете відстежити її статус у своїх заявках."
@@ -278,6 +282,233 @@
         "statusAccepted": "Прийняті",
         "statusRejected": "Відхилені"
       }
+    }
+  },
+  "thesisProcess": {
+    "roles": {
+      "student": "Студент",
+      "supervisor": "Науковий керівник",
+      "plagiarism_supervisor": "Перевіряючий антиплагіату",
+      "internship_supervisor": "Керівник практики",
+      "commission_member": "Член комісії",
+      "reviewer": "Рецензент"
+    },
+    "stages": {
+      "init_process": "Ініціалізація процесу",
+      "topic_approval": "Узгодження теми",
+      "design": "Етап проєктування",
+      "internship": "Переддипломна практика",
+      "plagiarism_check": "Перевірка на плагіат",
+      "defense_registration": "Запис на захист",
+      "pre_defense": "Передзахист",
+      "review": "Рецензія проєкту",
+      "thesis_defense": "Захист ДП"
+    },
+    "stageStates": {
+      "init_process": {
+        "start": "Процес розпочато",
+        "admin_init_process": "Призначення ролей адміністратором",
+        "end": "Ініціалізацію завершено"
+      },
+      "topic_approval": {
+        "start": "Узгодження теми розпочато",
+        "student_upload_topic": "Очікується завантаження теми студентом",
+        "supervisor_review_topic": "Очікується перевірка теми керівником",
+        "admin_review_topic": "Очікується затвердження теми адміністратором",
+        "end": "Тему затверджено"
+      },
+      "design": {
+        "start": "Проєктування розпочато",
+        "student_upload_thesis": "Очікується завантаження матеріалів",
+        "supervisor_review_thesis": "Очікується перевірка керівником",
+        "end": "Проєктування затверджено"
+      },
+      "internship": {
+        "start": "Практику розпочато",
+        "student_upload_internship_report": "Очікується завантаження звіту",
+        "practice_supervisor_review": "Очікується перевірка керівником практики",
+        "end": "Звіт з практики затверджено"
+      },
+      "plagiarism_check": {
+        "start": "Перевірку антиплагіату розпочато",
+        "plagiarism_supervisor_check": "Очікується перевірка антиплагіату",
+        "student_reupload_thesis": "Очікується повторне завантаження студентом",
+        "end": "Перевірку антиплагіату пройдено"
+      },
+      "defense_registration": {
+        "start": "Реєстрацію на захист розпочато",
+        "student_register_defense": "Очікується вибір дати захисту",
+        "registered": "Реєстрацію підтверджено",
+        "end": "Фазу реєстрації завершено"
+      },
+      "pre_defense": {
+        "start": "Передзахист розпочато",
+        "commission_review": "Очікується розгляд членом комісії",
+        "student_reupload_thesis": "Очікується завантаження виправленої роботи",
+        "end": "Передзахист затверджено"
+      },
+      "review": {
+        "start": "Етап рецензії розпочато",
+        "reviewer_upload_report": "Очікується завантаження рецензії",
+        "end": "Рецензію подано"
+      },
+      "thesis_defense": {
+        "start": "Захист ДП розпочато",
+        "supervisor_add_grade": "Очікується виставлення оцінки керівником",
+        "end": "Захист ДП завершено"
+      }
+    },
+    "status": {
+      "active": "Активний",
+      "completed": "Завершено",
+      "waiting": "Очікування"
+    },
+    "header": {
+      "defaultTitle": "Дипломна робота",
+      "progress": "Прогрес",
+      "noActiveStages": "Немає активних етапів",
+      "currentStages": "Поточні етапи:",
+      "stagesCompleted": "{{completed}} / {{total}} етапів завершено"
+    },
+    "panels": {
+      "actors": "Учасники",
+      "stages": "Етапи",
+      "deadline": "Дедлайн",
+      "actions": "Дії",
+      "noProcess": "Не вдалося завантажити дані процесу",
+      "noStage": "Оберіть етап для перегляду деталей"
+    },
+    "common": {
+      "loading": "Завантаження...",
+      "confirm": "Підтвердити",
+      "cancel": "Скасувати",
+      "openFile": "Відкрити файл",
+      "responsible": "Відповідальний:",
+      "status": "Статус:"
+    },
+    "initProcess": {
+      "description": "Адміністратор призначає відповідальних осіб для кожного етапу дипломного процесу.",
+      "responsible": "Адміністратор",
+      "assignRolesButton": "Призначити ролі",
+      "dialogTitle": "Призначення ролей",
+      "submitLabel": "Підтвердити та перейти далі",
+      "plagiarismSupervisorLabel": "Перевіряючий антиплагіату",
+      "internshipSupervisorLabel": "Керівник практики",
+      "commissionMemberLabel": "Член комісії",
+      "reviewerLabel": "Рецензент"
+    },
+    "topicApproval": {
+      "description": "Студент обирає та погоджує тему дипломної роботи з керівником і адміністратором.",
+      "responsible": "Студент → Керівник → Адміністратор",
+      "topicUkLabel": "Тема (укр)",
+      "topicEnLabel": "Topic (EN)",
+      "submitTopicButton": "Подати тему",
+      "dialogTitle": "Введіть тему дипломної роботи",
+      "submitLabel": "Надіслати на розгляд",
+      "topicUkPlaceholder": "Назва теми...",
+      "topicEnPlaceholder": "Topic title...",
+      "approveButton": "Затвердити",
+      "rejectButton": "Відхилити",
+      "confirmApproveSupervisor": "Затвердити тему?",
+      "confirmRejectSupervisor": "Відхилити тему?",
+      "rejectDescriptionSupervisor": "Студент отримає завдання обрати нову тему.",
+      "confirmApproveAdmin": "Затвердити тему (адміністратор)?",
+      "confirmRejectAdmin": "Відхилити тему (адміністратор)?"
+    },
+    "design": {
+      "description": "Студент завантажує архів матеріалів та звіт дипломної роботи для перевірки керівником.",
+      "responsible": "Студент → Керівник",
+      "archiveLabel": "Архів матеріалів",
+      "reportLabel": "Звіт",
+      "uploadButton": "Завантажити матеріали",
+      "dialogTitle": "Завантаження матеріалів проєктування",
+      "submitLabel": "Надіслати на перевірку",
+      "archiveFieldLabel": "Архів матеріалів дипломної роботи",
+      "reportFieldLabel": "Звіт",
+      "confirmApprove": "Затвердити матеріали?",
+      "approveDescription": "Ви підтверджуєте, що матеріали відповідають вимогам.",
+      "confirmReject": "Відхилити матеріали?",
+      "rejectDescription": "Студент отримає завдання виправити та повторно завантажити.",
+      "approveButton": "Затвердити",
+      "rejectButton": "Відхилити"
+    },
+    "internship": {
+      "description": "Студент завантажує звіт з переддипломної практики для підтвердження керівником.",
+      "responsible": "Студент → Керівник практики",
+      "reportLabel": "Звіт з практики",
+      "uploadButton": "Завантажити звіт",
+      "dialogTitle": "Завантаження звіту з практики",
+      "submitLabel": "Надіслати на перевірку",
+      "reportFieldLabel": "Звіт з практики",
+      "confirmApprove": "Затвердити звіт з практики?",
+      "confirmReject": "Відхилити звіт?",
+      "rejectDescription": "Студент отримає завдання виправити та повторно завантажити.",
+      "approveButton": "Затвердити",
+      "rejectButton": "Відхилити"
+    },
+    "plagiarism": {
+      "description": "Перевірка дипломної роботи на плагіат. Відповідальний завантажує звіт антиплагіату.",
+      "responsible": "Керівник антиплагіату → Студент (при відхиленні)",
+      "archiveLabel": "Архів матеріалів",
+      "reportLabel": "Звіт",
+      "plagiarismReportLabel": "Звіт антиплагіату",
+      "approveWithReportButton": "Затвердити (з звітом)",
+      "dialogTitle": "Затвердження перевірки антиплагіату",
+      "submitLabel": "Затвердити",
+      "plagiarismReportFieldLabel": "Звіт антиплагіату",
+      "plagiarismReportDescription": "Необхідний для затвердження",
+      "rejectButton": "Відхилити",
+      "confirmReject": "Відхилити перевірку?",
+      "rejectDescription": "Студент отримає завдання виправити роботу.",
+      "reuploadButton": "Повторно завантажити",
+      "reuploadDialogTitle": "Виправлення та повторне завантаження",
+      "reuploadSubmitLabel": "Надіслати повторно",
+      "archiveFieldLabel": "Архів матеріалів (виправлений)",
+      "reportFieldLabel": "Звіт (виправлений)"
+    },
+    "preDefense": {
+      "description": "Комісія розглядає матеріали дипломної роботи та приймає рішення про допуск до захисту.",
+      "responsible": "Член комісії → Студент (при відхиленні)",
+      "archiveLabel": "Архів матеріалів",
+      "reportLabel": "Звіт",
+      "admitButton": "Допустити до захисту",
+      "confirmAdmit": "Допустити до захисту?",
+      "admitDescription": "Студент буде допущений до фінального захисту.",
+      "confirmAdmitButton": "Допустити",
+      "rejectButton": "Відхилити",
+      "confirmReject": "Відхилити матеріали?",
+      "rejectDescription": "Студент отримає завдання виправити зауваження.",
+      "fixButton": "Виправити та надіслати",
+      "fixDialogTitle": "Виправлення зауважень комісії",
+      "fixSubmitLabel": "Надіслати на повторний розгляд",
+      "archiveFieldLabel": "Архів матеріалів (виправлений)",
+      "reportFieldLabel": "Звіт (виправлений)"
+    },
+    "defenseRegistration": {
+      "description": "Студент записується на одну з доступних сесій захисту дипломної роботи.",
+      "responsible": "Студент",
+      "sessionLabel": "Сесія захисту",
+      "openCalendarButton": "Відкрити календар"
+    },
+    "review": {
+      "description": "Рецензент готує та завантажує офіційну рецензію на дипломну роботу.",
+      "responsible": "Рецензент",
+      "reviewLabel": "Рецензія",
+      "uploadButton": "Завантажити рецензію",
+      "dialogTitle": "Завантаження рецензії",
+      "submitLabel": "Надіслати рецензію",
+      "reviewFieldLabel": "Рецензія (файл)"
+    },
+    "thesisDefense": {
+      "description": "Фінальний захист дипломної роботи перед комісією. Керівник виставляє оцінку.",
+      "responsible": "Керівник / Комісія",
+      "gradeLabel": "Оцінка",
+      "gradeLetterLabel": "Літера",
+      "assignGradeButton": "Виставити оцінку",
+      "dialogTitle": "Результат захисту",
+      "submitLabel": "Виставити оцінку та завершити",
+      "gradePlaceholder": "Введіть оцінку (0–100)...",
+      "gradeFieldLabel": "Оцінка (0–100)"
     }
   },
   "defense": {

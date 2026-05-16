@@ -3,6 +3,7 @@
  */
 import React from 'react';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
@@ -64,6 +65,7 @@ interface FileLinkProps {
 
 export function FileLink({ processId, fileId, label }: FileLinkProps) {
   const [loading, setLoading] = React.useState(false);
+  const { t } = useTranslation();
 
   const handleClick = async () => {
     setLoading(true);
@@ -89,7 +91,9 @@ export function FileLink({ processId, fileId, label }: FileLinkProps) {
       disabled={loading}
       className="text-sm text-primary underline underline-offset-2 disabled:opacity-50"
     >
-      {loading ? 'Завантаження...' : (label ?? 'Відкрити файл')}
+      {loading
+        ? t('thesisProcess.common.loading')
+        : (label ?? t('thesisProcess.common.openFile'))}
     </button>
   );
 }
@@ -111,28 +115,23 @@ export function SectionTitle({ children }: { children: React.ReactNode }) {
 interface StageDescriptionProps {
   description: string;
   responsible?: string;
-  /** Human-readable label for the current inner state */
-  stateLabel?: string | null;
 }
 
 export function StageDescription({
   description,
   responsible,
-  stateLabel,
 }: StageDescriptionProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-2 text-sm text-muted-foreground">
       <p>{description}</p>
       {responsible && (
         <p className="text-xs">
-          <span className="font-medium text-foreground">Відповідальний: </span>
+          <span className="font-medium text-foreground">
+            {t('thesisProcess.common.responsible')}{' '}
+          </span>
           {responsible}
-        </p>
-      )}
-      {stateLabel && (
-        <p className="text-xs">
-          <span className="font-medium text-foreground">Статус: </span>
-          {stateLabel}
         </p>
       )}
     </div>
@@ -165,9 +164,10 @@ export function ConfirmationModal({
   trigger,
   title,
   description,
-  confirmLabel = 'Підтвердити',
+  confirmLabel,
   onConfirm,
 }: ConfirmationModalProps) {
+  const { t } = useTranslation();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
@@ -179,9 +179,11 @@ export function ConfirmationModal({
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Скасувати</AlertDialogCancel>
+          <AlertDialogCancel>
+            {t('thesisProcess.common.cancel')}
+          </AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>
-            {confirmLabel}
+            {confirmLabel ?? t('thesisProcess.common.confirm')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -208,13 +210,14 @@ export function ActionDialog({
   trigger,
   title,
   children,
-  submitLabel = 'Підтвердити',
+  submitLabel,
   canSubmit = true,
   loading = false,
   onSubmit,
   open,
   onOpenChange,
 }: ActionDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -225,7 +228,9 @@ export function ActionDialog({
         <div className="flex flex-col gap-3">{children}</div>
         <DialogFooter>
           <Button size="sm" disabled={!canSubmit || loading} onClick={onSubmit}>
-            {loading ? 'Зачекайте...' : submitLabel}
+            {loading
+              ? t('thesisProcess.common.loading')
+              : (submitLabel ?? t('thesisProcess.common.confirm'))}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -252,6 +257,7 @@ export const ActionsSection = reatomComponent(function ActionsSection({
   actions,
 }: ActionsSectionProps) {
   const role = userRole();
+  const { t } = useTranslation();
 
   if (status !== undefined && status !== 'active') return null;
 
@@ -267,7 +273,7 @@ export const ActionsSection = reatomComponent(function ActionsSection({
 
   return (
     <>
-      <SectionTitle>Дії</SectionTitle>
+      <SectionTitle>{t('thesisProcess.panels.actions')}</SectionTitle>
       {activeActions.map((action) => action.component)}
     </>
   );

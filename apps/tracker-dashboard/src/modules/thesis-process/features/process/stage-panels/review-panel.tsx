@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -72,6 +73,7 @@ export const uploadReviewReportForm = reatomForm(
 // ---------------------------------------------------------------------------
 
 const UploadReviewAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = uploadReviewReportForm;
 
   useEffectOnce(() => {
@@ -81,13 +83,15 @@ const UploadReviewAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Завантажити рецензію</Button>}
-        title="Завантаження рецензії"
-        submitLabel="Надіслати рецензію"
+        trigger={
+          <Button size="sm">{t('thesisProcess.review.uploadButton')}</Button>
+        }
+        title={t('thesisProcess.review.dialogTitle')}
+        submitLabel={t('thesisProcess.review.submitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Рецензія (файл)"
+          label={t('thesisProcess.review.reviewFieldLabel')}
           accept=".pdf,.doc,.docx"
           field={fields.reviewReport}
         />
@@ -103,6 +107,7 @@ const UploadReviewAction = ({ processId }: { processId: string }) => {
 export const ReviewPanel = reatomComponent(function ReviewPanel({
   stage,
 }: ReviewPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -110,14 +115,14 @@ export const ReviewPanel = reatomComponent(function ReviewPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Рецензент готує та завантажує офіційну рецензію на дипломну роботу."
-        responsible="Рецензент"
+        description={t('thesisProcess.review.description')}
+        responsible={t('thesisProcess.review.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Рецензія"
+          label={t('thesisProcess.review.reviewLabel')}
           value={
             data?.reviewReport ? (
               <FileLink

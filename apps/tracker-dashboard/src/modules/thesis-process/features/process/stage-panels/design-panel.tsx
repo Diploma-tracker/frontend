@@ -7,6 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -29,11 +30,6 @@ import {
   FileLink,
   StageDescription,
 } from './common';
-
-const STATE_LABELS: Record<string, string> = {
-  student_upload_thesis: 'Студент завантажує матеріали',
-  supervisor_review_thesis: 'На перевірці керівника',
-};
 
 interface DesignPanelProps {
   stage: Stage;
@@ -73,6 +69,7 @@ export const uploadThesisMaterialsForm = reatomForm(
 );
 
 const UploadMaterialsAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
   const { fields, submit } = uploadThesisMaterialsForm;
 
   useEffectOnce(() => {
@@ -82,18 +79,20 @@ const UploadMaterialsAction = ({ processId }: { processId: string }) => {
   return (
     <ActionButtons>
       <ActionDialog
-        trigger={<Button size="sm">Завантажити матеріали</Button>}
-        title="Завантаження матеріалів проєктування"
-        submitLabel="Надіслати на перевірку"
+        trigger={
+          <Button size="sm">{t('thesisProcess.design.uploadButton')}</Button>
+        }
+        title={t('thesisProcess.design.dialogTitle')}
+        submitLabel={t('thesisProcess.design.submitLabel')}
         onSubmit={submit}
       >
         <FileInputField
-          label="Архів матеріалів дипломної роботи"
+          label={t('thesisProcess.design.archiveFieldLabel')}
           accept=".zip,.rar,.7z"
           field={fields.thesisMaterialsArchive}
         />
         <FileInputField
-          label="Звіт"
+          label={t('thesisProcess.design.reportFieldLabel')}
           accept=".pdf,.doc,.docx"
           field={fields.thesisReport}
         />
@@ -102,42 +101,48 @@ const UploadMaterialsAction = ({ processId }: { processId: string }) => {
   );
 };
 
-const SupervisorReviewAction = ({ processId }: { processId: string }) => (
-  <ActionButtons>
-    <ConfirmationModal
-      trigger={<Button size="sm">Затвердити</Button>}
-      title="Затвердити матеріали?"
-      description="Ви підтверджуєте, що матеріали відповідають вимогам."
-      confirmLabel="Затвердити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'APPROVE_THESIS_MATERIALS' },
-        })
-      }
-    />
-    <ConfirmationModal
-      trigger={
-        <Button size="sm" variant="outline">
-          Відхилити
-        </Button>
-      }
-      title="Відхилити матеріали?"
-      description="Студент отримає завдання виправити та повторно завантажити."
-      confirmLabel="Відхилити"
-      onConfirm={() =>
-        sendProcessEvent({
-          processId,
-          event: { name: 'REJECT_THESIS_MATERIALS' },
-        })
-      }
-    />
-  </ActionButtons>
-);
+const SupervisorReviewAction = ({ processId }: { processId: string }) => {
+  const { t } = useTranslation();
+  return (
+    <ActionButtons>
+      <ConfirmationModal
+        trigger={
+          <Button size="sm">{t('thesisProcess.design.approveButton')}</Button>
+        }
+        title={t('thesisProcess.design.confirmApprove')}
+        description={t('thesisProcess.design.approveDescription')}
+        confirmLabel={t('thesisProcess.design.approveButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'APPROVE_THESIS_MATERIALS' },
+          })
+        }
+      />
+      <ConfirmationModal
+        trigger={
+          <Button size="sm" variant="outline">
+            {t('thesisProcess.design.rejectButton')}
+          </Button>
+        }
+        title={t('thesisProcess.design.confirmReject')}
+        description={t('thesisProcess.design.rejectDescription')}
+        confirmLabel={t('thesisProcess.design.rejectButton')}
+        onConfirm={() =>
+          sendProcessEvent({
+            processId,
+            event: { name: 'REJECT_THESIS_MATERIALS' },
+          })
+        }
+      />
+    </ActionButtons>
+  );
+};
 
 export const DesignPanel = reatomComponent(function DesignPanel({
   stage,
 }: DesignPanelProps) {
+  const { t } = useTranslation();
   const processId = bachalorThesisProcessId();
   const thesis = thesisData();
   const data = thesis?.data ?? null;
@@ -145,17 +150,14 @@ export const DesignPanel = reatomComponent(function DesignPanel({
   return (
     <div className="flex flex-col gap-4">
       <StageDescription
-        description="Студент завантажує архів матеріалів та звіт дипломної роботи для перевірки керівником."
-        responsible="Студент → Керівник"
-        stateLabel={
-          stage.state ? (STATE_LABELS[stage.state] ?? stage.state) : null
-        }
+        description={t('thesisProcess.design.description')}
+        responsible={t('thesisProcess.design.responsible')}
       />
 
       {/* Data section — always shown */}
       <div className="flex flex-col gap-2">
         <DataItem
-          label="Архів матеріалів"
+          label={t('thesisProcess.design.archiveLabel')}
           value={
             data?.thesisArchive ? (
               <FileLink
@@ -169,7 +171,7 @@ export const DesignPanel = reatomComponent(function DesignPanel({
           }
         />
         <DataItem
-          label="Звіт"
+          label={t('thesisProcess.design.reportLabel')}
           value={
             data?.thesisReport ? (
               <FileLink

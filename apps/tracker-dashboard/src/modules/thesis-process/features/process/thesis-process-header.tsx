@@ -1,3 +1,4 @@
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
@@ -13,6 +14,7 @@ import { StatusBadge } from './general';
 
 export const ThesisProcessHeader = reatomComponent(
   function ThesisProcessHeader() {
+    const { t } = useTranslation();
     const data = thesisData();
     const {
       total,
@@ -20,41 +22,36 @@ export const ThesisProcessHeader = reatomComponent(
       completed,
       percentage: progress,
     } = processProgress();
-
     const activeStageLabels = activeStages().map(
       (s) => STAGE_LABELS[s.id] ?? s.id,
     );
-
     if (!data) return null;
     const {
       data: { topic },
     } = data;
-
-    const title = topic ? `${topic.uk} / ${topic.en}` : 'Диплома робота';
-
+    const title = topic
+      ? `${topic.uk} / ${topic.en}`
+      : t('thesisProcess.header.defaultTitle');
     const renderActiveStages = () => {
-      if (activeStageLabels.length === 0) {
+      if (activeStageLabels.length === 0)
         return (
           <span className="text-sm text-muted-foreground">
-            Немає активних етапів
+            {t('thesisProcess.header.noActiveStages')}
           </span>
         );
-      }
-
       return (
         <>
           <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
-            Поточні етапи:
+            {t('thesisProcess.header.currentStages')}
           </span>
           {activeStageLabels.map((label) => (
             <Badge key={label} variant="filled" intent="primary">
-              {label}
+              {t(label)}
             </Badge>
           ))}
         </>
       );
     };
-
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
@@ -64,22 +61,20 @@ export const ThesisProcessHeader = reatomComponent(
             </div>
             <h1 className="mb-3 text-lg leading-snug font-semibold">{title}</h1>
           </div>
-
           <div className="min-w-[120px] shrink-0 text-right">
             <p className="mb-0.5 text-[10px] tracking-wider text-muted-foreground uppercase">
-              Прогрес
+              {t('thesisProcess.header.progress')}
             </p>
             <p className="text-3xl font-bold">{progress}%</p>
             <Progress value={progress} className="mt-1 ml-auto w-28" />
           </div>
         </div>
-
         <div className="mt-4 flex items-center justify-between border-t pt-4">
           <div className="flex items-center gap-2 text-sm">
             {renderActiveStages()}
           </div>
           <span className="text-sm text-muted-foreground">
-            {completed} / {total} етапів завершено
+            {t('thesisProcess.header.stagesCompleted', { completed, total })}
           </span>
         </div>
       </div>
