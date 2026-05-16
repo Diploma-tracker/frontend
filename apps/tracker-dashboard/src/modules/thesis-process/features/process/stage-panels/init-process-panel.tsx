@@ -196,7 +196,7 @@ export const InitProcessPanel = reatomComponent(function InitProcessPanel({
         actions={[
           {
             name: 'init',
-            isActive: (state) => state === 'start',
+            isActive: (state) => state === 'admin_init_process',
             role: ThesisRole.admin,
             component: <InitAction processId={processId} />,
           },
