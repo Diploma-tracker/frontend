@@ -1,5 +1,10 @@
 import { PageLayout } from '@/layouts';
+import { UserGreeting } from '@/modules/user';
 
 export const StudentHomePage = () => {
-  return <PageLayout>Student Home Page</PageLayout>;
+  return (
+    <PageLayout>
+      <UserGreeting />
+    </PageLayout>
+  );
 };

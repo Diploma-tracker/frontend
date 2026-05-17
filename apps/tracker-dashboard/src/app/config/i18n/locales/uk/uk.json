@@ -13,6 +13,12 @@
     "bulkActions": {
       "selected": "обрано"
     },
+    "greeting": {
+      "morning": "Доброго ранку",
+      "afternoon": "Доброго дня",
+      "evening": "Доброго вечора",
+      "night": "Доброї ночі"
+    },
     "validation": {
       "atLeastOneFileRequired": "Потрібно завантажити хоча б один файл"
     },
@@ -227,6 +233,25 @@
         "entityLabel_other": "Вчителів",
         "remove": "Видалити",
         "add": "Додати"
+      },
+      "detailsModal": {
+        "title": "Детальна інформація",
+        "teacherLabel": "Викладач",
+        "totalApplications": "Усього заявок",
+        "sections": {
+          "accepted": {
+            "title": "Викладач прийняв",
+            "emptyTitle": "Прийняті заявки відсутні"
+          },
+          "pending": {
+            "title": "Очікують рішення",
+            "emptyTitle": "Заявки на розгляді відсутні"
+          },
+          "rejected": {
+            "title": "Викладач відхилив",
+            "emptyTitle": "Відхилені заявки відсутні"
+          }
+        }
       },
       "actions": {
         "apply": "Подати заявку",

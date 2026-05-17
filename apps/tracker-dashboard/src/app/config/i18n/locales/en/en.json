@@ -13,6 +13,12 @@
     "bulkActions": {
       "selected": "selected"
     },
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good night"
+    },
     "validation": {
       "atLeastOneFileRequired": "At least one file must be uploaded"
     },
@@ -227,6 +233,25 @@
         "entityLabel_many": "Teachers",
         "remove": "Remove",
         "add": "Add"
+      },
+      "detailsModal": {
+        "title": "Details",
+        "teacherLabel": "Teacher",
+        "totalApplications": "Total applications",
+        "sections": {
+          "accepted": {
+            "title": "Accepted",
+            "emptyTitle": "No accepted applications"
+          },
+          "pending": {
+            "title": "Pending",
+            "emptyTitle": "No pending applications"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "emptyTitle": "No rejected applications"
+          }
+        }
       },
       "actions": {
         "apply": "Apply",

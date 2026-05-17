@@ -1,3 +1,4 @@
+export { UserGreeting } from './user-greeting/user-greeting';
 export { CurrentUserAvatar } from './user-avatar/current-user-avatar';
 export { UserAvatar } from './user-avatar/user-avatar';
 export { GroupAvatar } from './group-avatar/group-avatar';

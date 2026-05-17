@@ -4,11 +4,11 @@ import type { TeacherDTO } from '../../../models';
 import {
   TeacherApplicationsColumn,
   TeacherEmailColumn,
-  TeacherNameColumn,
+  TeacherNameWithDetailsModalColumn,
 } from '../../teacher-table';
 
 export const createStaffTeacherColumns = (): ColumnDef<TeacherDTO>[] => [
-  TeacherNameColumn,
+  TeacherNameWithDetailsModalColumn,
   TeacherEmailColumn,
   TeacherApplicationsColumn,
 ];
