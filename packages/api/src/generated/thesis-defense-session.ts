@@ -65,21 +65,6 @@ export const updateDefenseSession = (
   });
 };
 /**
- * Update the date and/or duration of a thesis defense session (ADMIN only)
- * @summary Reschedule defense session
- */
-export const rescheduleDefenseSession = (
-  defenseSessionId: string,
-  rescheduleDefenseSessionRequest: RescheduleDefenseSessionRequest,
-) => {
-  return orvalCustomInstance<void>({
-    url: `/projects/defense-sessions/${defenseSessionId}/reschedule`,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    data: rescheduleDefenseSessionRequest,
-  });
-};
-/**
  * Register the current student for a thesis defense session (STUDENT only)
  * @summary Register for defense session
  */
@@ -97,6 +82,21 @@ export const unregisterFromDefenseSession = (defenseSessionId: string) => {
   return orvalCustomInstance<void>({
     url: `/projects/defense-sessions/${defenseSessionId}/unregister`,
     method: 'POST',
+  });
+};
+/**
+ * Update the date and/or duration of a thesis defense session (ADMIN only)
+ * @summary Reschedule defense session
+ */
+export const rescheduleDefenseSession = (
+  defenseSessionId: string,
+  rescheduleDefenseSessionRequest: RescheduleDefenseSessionRequest,
+) => {
+  return orvalCustomInstance<void>({
+    url: `/projects/defense-sessions/${defenseSessionId}/reschedule`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: rescheduleDefenseSessionRequest,
   });
 };
 /**
@@ -138,14 +138,14 @@ export type DeleteDefenseSessionResult = NonNullable<
 export type UpdateDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof updateDefenseSession>>
 >;
-export type RescheduleDefenseSessionResult = NonNullable<
-  Awaited<ReturnType<typeof rescheduleDefenseSession>>
->;
 export type RegisterForDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof registerForDefenseSession>>
 >;
 export type UnregisterFromDefenseSessionResult = NonNullable<
   Awaited<ReturnType<typeof unregisterFromDefenseSession>>
+>;
+export type RescheduleDefenseSessionResult = NonNullable<
+  Awaited<ReturnType<typeof rescheduleDefenseSession>>
 >;
 export type ListDefenseSessionsForAllocationRoundResult = NonNullable<
   Awaited<ReturnType<typeof listDefenseSessionsForAllocationRound>>

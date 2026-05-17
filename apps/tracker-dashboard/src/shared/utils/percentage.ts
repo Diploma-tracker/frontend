@@ -1,7 +1,14 @@
-export function calculatePercentage(part: number, total: number): number {
+export function calculatePercentage(
+  part: number,
+  total: number,
+  decimals?: number,
+): number {
   if (!total || total === 0) return 0;
 
-  return (part / total) * 100;
+  const value = (part / total) * 100;
+
+  if (decimals === undefined) return value;
+  return parseFloat(value.toFixed(decimals));
 }
 
 export function formatPercentageString(

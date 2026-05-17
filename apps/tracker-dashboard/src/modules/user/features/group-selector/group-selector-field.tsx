@@ -1,5 +1,5 @@
-import { useArrayFieldForMultiSelect } from '@/shared/components/form/multi-select';
-import type { FieldArrayAtom } from '@reatom/core';
+import type { Setter } from '@/shared/utils/types';
+import type { FieldAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import {
@@ -12,7 +12,7 @@ import {
 import { GroupSelector } from './group-selector';
 
 interface GroupSelectorFieldProps {
-  field: FieldArrayAtom<string, string>;
+  field: FieldAtom<string>;
   label?: string;
   description?: string;
   disabled?: boolean;
@@ -23,7 +23,10 @@ export const GroupSelectorField = reatomComponent(function GroupSelectorField({
   label,
   description,
 }: GroupSelectorFieldProps) {
-  const [selected, setSelected] = useArrayFieldForMultiSelect(field);
+  const value = field.value();
+  const setValue = ((newValue: string | null) => {
+    field.set(newValue || '');
+  }) as Setter<string | null>;
 
   const fieldValidation = field?.validation();
   const error = fieldValidation?.error as string | undefined;
@@ -33,7 +36,7 @@ export const GroupSelectorField = reatomComponent(function GroupSelectorField({
     <Field data-invalid={invalid || undefined}>
       {label && <FieldLabel>{label}</FieldLabel>}
 
-      <GroupSelector selected={selected} setSelected={setSelected} />
+      <GroupSelector value={value} setValue={setValue} />
 
       {description && <FieldDescription>{description}</FieldDescription>}
       {error && <FieldError>{error}</FieldError>}

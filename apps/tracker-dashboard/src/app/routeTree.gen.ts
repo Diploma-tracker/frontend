@@ -16,6 +16,7 @@ import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
 import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
 import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
+import { Route as appAppThesisProcessProcessIdRouteImport } from './routes/(app)/_app.thesis-process.$processId'
 import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
 import { Route as appAppDefenseRoundIdRouteImport } from './routes/(app)/_app.defense.$roundId'
 
@@ -53,6 +54,12 @@ const appAppProjectEnrollmentIndexRoute =
     path: '/',
     getParentRoute: () => appAppProjectEnrollmentRoute,
   } as any)
+const appAppThesisProcessProcessIdRoute =
+  appAppThesisProcessProcessIdRouteImport.update({
+    id: '/thesis-process/$processId',
+    path: '/thesis-process/$processId',
+    getParentRoute: () => appAppRoute,
+  } as any)
 const appAppProjectEnrollmentRoundIdRoute =
   appAppProjectEnrollmentRoundIdRouteImport.update({
     id: '/$roundId',
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/': typeof appAppIndexRoute
   '/defense/$roundId': typeof appAppDefenseRoundIdRoute
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -80,6 +88,7 @@ export interface FileRoutesByTo {
   '/': typeof appAppIndexRoute
   '/defense/$roundId': typeof appAppDefenseRoundIdRoute
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/project-enrollment': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRoutesById {
@@ -92,6 +101,7 @@ export interface FileRoutesById {
   '/(app)/_app/': typeof appAppIndexRoute
   '/(app)/_app/defense/$roundId': typeof appAppDefenseRoundIdRoute
   '/(app)/_app/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
+  '/(app)/_app/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/(app)/_app/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
 }
 export interface FileRouteTypes {
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/'
     | '/defense/$roundId'
     | '/project-enrollment/$roundId'
+    | '/thesis-process/$processId'
     | '/project-enrollment/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -111,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/defense/$roundId'
     | '/project-enrollment/$roundId'
+    | '/thesis-process/$processId'
     | '/project-enrollment'
   id:
     | '__root__'
@@ -122,6 +134,7 @@ export interface FileRouteTypes {
     | '/(app)/_app/'
     | '/(app)/_app/defense/$roundId'
     | '/(app)/_app/project-enrollment/$roundId'
+    | '/(app)/_app/thesis-process/$processId'
     | '/(app)/_app/project-enrollment/'
   fileRoutesById: FileRoutesById
 }
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppProjectEnrollmentIndexRouteImport
       parentRoute: typeof appAppProjectEnrollmentRoute
     }
+    '/(app)/_app/thesis-process/$processId': {
+      id: '/(app)/_app/thesis-process/$processId'
+      path: '/thesis-process/$processId'
+      fullPath: '/thesis-process/$processId'
+      preLoaderRoute: typeof appAppThesisProcessProcessIdRouteImport
+      parentRoute: typeof appAppRoute
+    }
     '/(app)/_app/project-enrollment/$roundId': {
       id: '/(app)/_app/project-enrollment/$roundId'
       path: '/$roundId'
@@ -219,6 +239,7 @@ interface appAppRouteChildren {
   appAppScheduleRoute: typeof appAppScheduleRoute
   appAppIndexRoute: typeof appAppIndexRoute
   appAppDefenseRoundIdRoute: typeof appAppDefenseRoundIdRoute
+  appAppThesisProcessProcessIdRoute: typeof appAppThesisProcessProcessIdRoute
 }
 
 const appAppRouteChildren: appAppRouteChildren = {
@@ -226,6 +247,7 @@ const appAppRouteChildren: appAppRouteChildren = {
   appAppScheduleRoute: appAppScheduleRoute,
   appAppIndexRoute: appAppIndexRoute,
   appAppDefenseRoundIdRoute: appAppDefenseRoundIdRoute,
+  appAppThesisProcessProcessIdRoute: appAppThesisProcessProcessIdRoute,
 }
 
 const appAppRouteWithChildren =

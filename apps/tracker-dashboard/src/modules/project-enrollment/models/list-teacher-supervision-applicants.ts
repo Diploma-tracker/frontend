@@ -2,16 +2,16 @@ import { type AsyncListPagination, asyncList } from '@/shared/model/async-list';
 
 import { getSupervisionApplicantsForTeacher } from '@repo/api/allocation-round';
 import {
+  type ListSupervisionApplicantsForTeacherStatusFilter,
   type PaginatedSupervisionApplicantsDTO,
   type SupervisionApplicantDTO,
-  type SupervisionApplicationStatus,
 } from '@repo/api/model';
 
 export type { SupervisionApplicantDTO };
 
 export interface SupervisionApplicantsFilter
   extends AsyncListPagination, Record<string, unknown> {
-  statusFilter?: SupervisionApplicationStatus | null;
+  statusFilter: ListSupervisionApplicantsForTeacherStatusFilter;
 }
 
 export const teacherSupervisionApplicantsListAtom = asyncList<
@@ -44,6 +44,7 @@ export const teacherSupervisionApplicantsListAtom = asyncList<
     defaultFilters: {
       page: 1,
       pageSize: 10,
+      statusFilter: 'ALL',
     },
   },
   'supervisionApplicants',

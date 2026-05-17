@@ -4,13 +4,13 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { SupervisionApplicationStatus } from './supervision-application-status';
+import type { ListSupervisionApplicantsForTeacherStatusFilter } from './list-supervision-applicants-for-teacher-status-filter';
 import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export type RawGetSupervisionApplicantsForTeacherParams = {
   page?: number;
   page_size?: number;
-  status_filter?: SupervisionApplicationStatus | null;
+  status_filter?: ListSupervisionApplicantsForTeacherStatusFilter;
 };
 
 export type GetSupervisionApplicantsForTeacherParams =
