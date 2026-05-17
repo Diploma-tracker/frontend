@@ -18,6 +18,7 @@
       "afternoon": "Good afternoon",
       "evening": "Good evening",
       "night": "Good night"
+    },
     "validation": {
       "atLeastOneFileRequired": "At least one file must be uploaded"
     },

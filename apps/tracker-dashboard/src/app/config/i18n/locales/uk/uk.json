@@ -18,6 +18,7 @@
       "afternoon": "Доброго дня",
       "evening": "Доброго вечора",
       "night": "Доброї ночі"
+    },
     "validation": {
       "atLeastOneFileRequired": "Потрібно завантажити хоча б один файл"
     },
