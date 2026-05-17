@@ -1,6 +1,13 @@
 import { type User, userAtom } from '@/modules/user';
 import { calculatePercentage } from '@/shared/utils/percentage';
-import { action, atom, computed, withAsyncData, wrap } from '@reatom/core';
+import {
+  action,
+  atom,
+  computed,
+  effect,
+  withAsyncData,
+  wrap,
+} from '@reatom/core';
 
 import { bachelorThesisProcess } from '@repo/api';
 import type { ThesisDataDTO } from '@repo/api';
@@ -111,26 +118,32 @@ export const fetchBachalorThesisProcess = computed(
       data: data.data,
     };
 
-    let selectedStageId = process.stages[0]?.id ?? null;
-    let isAllCompleted = true;
-    for (const stage of process.stages) {
-      if (stage.status !== 'completed') {
-        isAllCompleted = false;
-      }
-      if (stage.status === 'active') {
-        selectedStageId = stage.id;
-        break;
-      }
-    }
-    if (isAllCompleted) {
-      selectedStageId = process.stages[process.stages.length - 1]?.id ?? null;
-    }
-    selectedStage.set(selectedStageId ?? '');
-
     return process;
   },
   'getBachalorThesis',
 ).extend(withAsyncData({ status: true }));
+
+effect(() => {
+  const process = fetchBachalorThesisProcess.data();
+  if (!process) return;
+
+  let selectedStageId = process.stages[0]?.id ?? null;
+  let isAllCompleted = true;
+  for (const stage of process.stages) {
+    if (stage.status !== 'completed') {
+      isAllCompleted = false;
+    }
+    if (stage.status === 'active') {
+      selectedStageId = stage.id;
+      break;
+    }
+  }
+  if (isAllCompleted) {
+    selectedStageId = process.stages[process.stages.length - 1]?.id ?? null;
+  }
+
+  selectedStage.set(selectedStageId ?? '');
+}, 'syncSelectedStageWithProcess');
 
 export const selectedStageDetail = computed(() => {
   const process = fetchBachalorThesisProcess.data();
