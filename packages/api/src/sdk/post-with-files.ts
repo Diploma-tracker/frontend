@@ -36,7 +36,7 @@ function extractFiles(input: Record<string, unknown>): {
     if (obj instanceof File) {
       // FileField placeholder – the real uuid will be assigned by the backend;
       // we just need a non-null object here so the schema is satisfied.
-      files.set(key!, obj);
+      files.set(key ?? '', obj);
       return { fileUuid: '' } satisfies FileField;
     }
 
