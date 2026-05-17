@@ -4,6 +4,7 @@ import { getAllocationRounds } from '@repo/api/allocation-round';
 import type {
   AllocationRoundDTO,
   AllocationRoundStatus,
+  ListAllocationRoundsStatusFilter,
   PaginatedAllocationRoundsDTO,
 } from '@repo/api/model';
 
@@ -11,7 +12,7 @@ export type { AllocationRoundDTO, AllocationRoundStatus };
 
 export interface AllocationRoundsFilter
   extends AsyncListPagination, Record<string, unknown> {
-  statusFilter: 'ALL' | AllocationRoundStatus;
+  statusFilter: ListAllocationRoundsStatusFilter;
 }
 
 export const allocationRoundListAtom = asyncList<

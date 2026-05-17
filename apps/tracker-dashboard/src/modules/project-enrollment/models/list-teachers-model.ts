@@ -8,7 +8,8 @@ import {
   SelectionFilter as TeacherSelectionFilter,
 } from '@repo/api/model';
 
-export type { TeacherDTO, TeacherSelectionFilter };
+export type { TeacherDTO };
+export { TeacherSelectionFilter };
 
 export interface TeachersFilter
   extends AsyncListPagination, Record<string, unknown> {
