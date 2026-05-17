@@ -18,6 +18,11 @@
       "afternoon": "Good afternoon",
       "evening": "Good evening",
       "night": "Good night"
+    "validation": {
+      "atLeastOneFileRequired": "At least one file must be uploaded"
+    },
+    "fileInput": {
+      "chooseFile": "Choose file"
     }
   },
   "auth": {
@@ -45,6 +50,7 @@
       "projects": "Projects",
       "diploma1": "Diploma 1",
       "diploma2": "Diploma 2",
+      "thesisProcess": "Thesis Process",
       "projectEnrollment": "Project Enrollment",
       "schedule": "Schedule"
     }
@@ -219,8 +225,11 @@
         }
       },
       "bulkActions": {
+        "entityLabel": "Teachers",
         "entityLabel_one": "Teacher",
         "entityLabel_other": "Teachers",
+        "entityLabel_few": "Teachers",
+        "entityLabel_many": "Teachers",
         "remove": "Remove",
         "add": "Add"
       },
@@ -245,6 +254,8 @@
       },
       "actions": {
         "apply": "Apply",
+        "add": "Add",
+        "remove": "Remove",
         "confirmApply": {
           "title": "Apply to this teacher?",
           "description": "Your supervision application will be submitted to this teacher. You can track its status in your applications."
@@ -301,6 +312,233 @@
         "statusAccepted": "Accepted",
         "statusRejected": "Rejected"
       }
+    }
+  },
+  "thesisProcess": {
+    "roles": {
+      "student": "Student",
+      "supervisor": "Scientific Supervisor",
+      "plagiarism_supervisor": "Plagiarism Checker",
+      "internship_supervisor": "Internship Supervisor",
+      "commission_member": "Commission Member",
+      "reviewer": "Reviewer"
+    },
+    "stages": {
+      "init_process": "Process Initialization",
+      "topic_approval": "Topic Approval",
+      "design": "Design Stage",
+      "internship": "Pre-graduation Internship",
+      "plagiarism_check": "Plagiarism Check",
+      "defense_registration": "Defense Registration",
+      "pre_defense": "Pre-Defense",
+      "review": "Project Review",
+      "thesis_defense": "Thesis Defense"
+    },
+    "stageStates": {
+      "init_process": {
+        "start": "Process Started",
+        "admin_init_process": "Assigning Roles by Admin",
+        "end": "Initialization Completed"
+      },
+      "topic_approval": {
+        "start": "Topic Approval Started",
+        "student_upload_topic": "Awaiting Topic Upload by Student",
+        "supervisor_review_topic": "Awaiting Topic Review by Supervisor",
+        "admin_review_topic": "Awaiting Topic Approval by Admin",
+        "end": "Topic Approved"
+      },
+      "design": {
+        "start": "Thesis Design Started",
+        "student_upload_thesis": "Awaiting Thesis Materials Upload",
+        "supervisor_review_thesis": "Awaiting Thesis Review by Supervisor",
+        "end": "Thesis Design Approved"
+      },
+      "internship": {
+        "start": "Internship Stage Started",
+        "student_upload_internship_report": "Awaiting Internship Report Upload",
+        "practice_supervisor_review": "Awaiting Report Review by Practice Supervisor",
+        "end": "Internship Report Approved"
+      },
+      "plagiarism_check": {
+        "start": "Plagiarism Check Started",
+        "plagiarism_supervisor_check": "Awaiting Check by Plagiarism Supervisor",
+        "student_reupload_thesis": "Awaiting Thesis Re-upload by Student",
+        "end": "Plagiarism Check Passed"
+      },
+      "defense_registration": {
+        "start": "Defense Registration Started",
+        "student_register_defense": "Awaiting Defense Date Selection",
+        "registered": "Defense Registration Confirmed",
+        "end": "Registration Phase Finalized"
+      },
+      "pre_defense": {
+        "start": "Pre-Defense Started",
+        "commission_review": "Awaiting Review by Commission Member",
+        "student_reupload_thesis": "Awaiting Revision Upload by Student",
+        "end": "Pre-Defense Approved"
+      },
+      "review": {
+        "start": "Review Stage Started",
+        "reviewer_upload_report": "Awaiting Review Report Upload",
+        "end": "Review Report Submitted"
+      },
+      "thesis_defense": {
+        "start": "Thesis Defense Started",
+        "supervisor_add_grade": "Awaiting Grade Entry by Supervisor",
+        "end": "Thesis Defense Concluded"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "waiting": "Waiting"
+    },
+    "header": {
+      "defaultTitle": "Thesis Work",
+      "progress": "Progress",
+      "noActiveStages": "No active stages",
+      "currentStages": "Current stages:",
+      "stagesCompleted": "{{completed}} / {{total}} stages completed"
+    },
+    "panels": {
+      "actors": "Actors",
+      "stages": "Stages",
+      "deadline": "Deadline",
+      "actions": "Actions",
+      "noProcess": "Failed to load process data",
+      "noStage": "Select a stage to view details"
+    },
+    "common": {
+      "loading": "Loading...",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "openFile": "Open file",
+      "responsible": "Responsible:",
+      "status": "Status:"
+    },
+    "initProcess": {
+      "description": "The administrator assigns responsible persons for each stage of the thesis process.",
+      "responsible": "Administrator",
+      "assignRolesButton": "Assign Roles",
+      "dialogTitle": "Role Assignment",
+      "submitLabel": "Confirm and proceed",
+      "plagiarismSupervisorLabel": "Plagiarism Checker",
+      "internshipSupervisorLabel": "Internship Supervisor",
+      "commissionMemberLabel": "Commission Member",
+      "reviewerLabel": "Reviewer"
+    },
+    "topicApproval": {
+      "description": "The student selects and agrees on a thesis topic with the supervisor and administrator.",
+      "responsible": "Student → Supervisor → Administrator",
+      "topicUkLabel": "Topic (UA)",
+      "topicEnLabel": "Topic (EN)",
+      "submitTopicButton": "Submit Topic",
+      "dialogTitle": "Enter your thesis topic",
+      "submitLabel": "Send for review",
+      "topicUkPlaceholder": "Topic title...",
+      "topicEnPlaceholder": "Topic title...",
+      "approveButton": "Approve",
+      "rejectButton": "Reject",
+      "confirmApproveSupervisor": "Approve topic?",
+      "confirmRejectSupervisor": "Reject topic?",
+      "rejectDescriptionSupervisor": "The student will be asked to choose a new topic.",
+      "confirmApproveAdmin": "Approve topic (administrator)?",
+      "confirmRejectAdmin": "Reject topic (administrator)?"
+    },
+    "design": {
+      "description": "The student uploads the thesis materials archive and report for supervisor review.",
+      "responsible": "Student → Supervisor",
+      "archiveLabel": "Materials Archive",
+      "reportLabel": "Report",
+      "uploadButton": "Upload Materials",
+      "dialogTitle": "Upload Design Materials",
+      "submitLabel": "Send for review",
+      "archiveFieldLabel": "Thesis materials archive",
+      "reportFieldLabel": "Report",
+      "confirmApprove": "Approve materials?",
+      "approveDescription": "You confirm that the materials meet the requirements.",
+      "confirmReject": "Reject materials?",
+      "rejectDescription": "The student will be asked to fix and re-upload.",
+      "approveButton": "Approve",
+      "rejectButton": "Reject"
+    },
+    "internship": {
+      "description": "The student uploads the pre-graduation internship report for supervisor confirmation.",
+      "responsible": "Student → Internship Supervisor",
+      "reportLabel": "Internship Report",
+      "uploadButton": "Upload Report",
+      "dialogTitle": "Upload Internship Report",
+      "submitLabel": "Send for review",
+      "reportFieldLabel": "Internship report",
+      "confirmApprove": "Approve internship report?",
+      "confirmReject": "Reject report?",
+      "rejectDescription": "The student will be asked to fix and re-upload.",
+      "approveButton": "Approve",
+      "rejectButton": "Reject"
+    },
+    "plagiarism": {
+      "description": "Plagiarism check of the thesis. The responsible person uploads the plagiarism report.",
+      "responsible": "Plagiarism Supervisor → Student (if rejected)",
+      "archiveLabel": "Materials Archive",
+      "reportLabel": "Report",
+      "plagiarismReportLabel": "Plagiarism Report",
+      "approveWithReportButton": "Approve (with report)",
+      "dialogTitle": "Plagiarism Check Approval",
+      "submitLabel": "Approve",
+      "plagiarismReportFieldLabel": "Plagiarism report",
+      "plagiarismReportDescription": "Required for approval",
+      "rejectButton": "Reject",
+      "confirmReject": "Reject check?",
+      "rejectDescription": "The student will be asked to fix the work.",
+      "reuploadButton": "Re-upload",
+      "reuploadDialogTitle": "Fix and Re-upload",
+      "reuploadSubmitLabel": "Re-submit",
+      "archiveFieldLabel": "Materials archive (fixed)",
+      "reportFieldLabel": "Report (fixed)"
+    },
+    "preDefense": {
+      "description": "The commission reviews thesis materials and decides on admission to defense.",
+      "responsible": "Commission Member → Student (if rejected)",
+      "archiveLabel": "Materials Archive",
+      "reportLabel": "Report",
+      "admitButton": "Admit to Defense",
+      "confirmAdmit": "Admit to defense?",
+      "admitDescription": "The student will be admitted to the final defense.",
+      "confirmAdmitButton": "Admit",
+      "rejectButton": "Reject",
+      "confirmReject": "Reject materials?",
+      "rejectDescription": "The student will be asked to fix remarks.",
+      "fixButton": "Fix and Submit",
+      "fixDialogTitle": "Fix Commission Remarks",
+      "fixSubmitLabel": "Send for re-review",
+      "archiveFieldLabel": "Materials archive (fixed)",
+      "reportFieldLabel": "Report (fixed)"
+    },
+    "defenseRegistration": {
+      "description": "The student registers for one of the available thesis defense sessions.",
+      "responsible": "Student",
+      "sessionLabel": "Defense Session",
+      "openCalendarButton": "Open Calendar"
+    },
+    "review": {
+      "description": "The reviewer prepares and uploads the official thesis review.",
+      "responsible": "Reviewer",
+      "reviewLabel": "Review",
+      "uploadButton": "Upload Review",
+      "dialogTitle": "Upload Review",
+      "submitLabel": "Submit Review",
+      "reviewFieldLabel": "Review (file)"
+    },
+    "thesisDefense": {
+      "description": "Final thesis defense before the commission. The supervisor assigns a grade.",
+      "responsible": "Supervisor / Commission",
+      "gradeLabel": "Grade",
+      "gradeLetterLabel": "Letter",
+      "assignGradeButton": "Assign Grade",
+      "dialogTitle": "Defense Result",
+      "submitLabel": "Assign grade and complete",
+      "gradePlaceholder": "Enter grade (0–100)...",
+      "gradeFieldLabel": "Grade (0–100)"
     }
   },
   "defense": {

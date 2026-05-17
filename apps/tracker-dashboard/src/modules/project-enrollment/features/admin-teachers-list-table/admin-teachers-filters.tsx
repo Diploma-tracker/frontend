@@ -1,21 +1,15 @@
 import { useState } from 'react';
 
 import { SearchField } from '@/shared/components';
+import {
+  SelectEnum,
+  enumToOptions,
+} from '@/shared/components/form/select-enum';
 import { k, useTranslation } from '@/shared/utils/i18n';
 import { useDebounce } from '@/shared/utils/use-debounce';
 import { reatomComponent } from '@reatom/react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui-kit/components/common/form/select';
-
-import { type TeacherSelectionFilter, teacherListAtom } from '../../models';
-
-const SELECTION_VALUES = ['ALL', 'SELECTED', 'NOT_SELECTED'] as const;
+import { TeacherSelectionFilter, teacherListAtom } from '../../models';
 
 const SELECTION_LABEL_KEYS: Record<TeacherSelectionFilter, string> = {
   ALL: k('projectEnrollment.teacher.filters.selectionAll'),
@@ -35,8 +29,8 @@ export const AdminTeachersFilters = reatomComponent(
       setFilter({ search: searchInput || undefined });
     }, [searchInput]);
 
-    const handleSelectionChange = (value: string) => {
-      setFilter({ selectionFilter: value as TeacherSelectionFilter });
+    const handleSelectionChange = (value: TeacherSelectionFilter) => {
+      setFilter({ selectionFilter: value });
     };
 
     return (
@@ -47,25 +41,18 @@ export const AdminTeachersFilters = reatomComponent(
           placeholder={t('projectEnrollment.teacher.filters.searchPlaceholder')}
         />
 
-        <Select
+        <SelectEnum
           value={filter.selectionFilter}
-          onValueChange={handleSelectionChange}
-        >
-          <SelectTrigger className="w-44">
-            <SelectValue
-              placeholder={t(
-                'projectEnrollment.teacher.filters.selectionPlaceholder',
-              )}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {SELECTION_VALUES.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(SELECTION_LABEL_KEYS[value])}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          onChange={handleSelectionChange}
+          options={enumToOptions(
+            TeacherSelectionFilter,
+            SELECTION_LABEL_KEYS,
+            t,
+          )}
+          placeholder={t(
+            'projectEnrollment.teacher.filters.selectionPlaceholder',
+          )}
+        />
       </div>
     );
   },

@@ -5,9 +5,10 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export type StatusFilter = (typeof StatusFilter)[keyof typeof StatusFilter];
+export type ListAllocationRoundsStatusFilter =
+  (typeof ListAllocationRoundsStatusFilter)[keyof typeof ListAllocationRoundsStatusFilter];
 
-export const StatusFilter = {
+export const ListAllocationRoundsStatusFilter = {
   ALL: 'ALL',
   DRAFT: 'DRAFT',
   OPEN: 'OPEN',

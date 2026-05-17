@@ -1,19 +1,13 @@
+import {
+  SelectEnum,
+  enumToOptions,
+} from '@/shared/components/form/select-enum';
 import { k, useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui-kit/components/common/form/select';
+import { ListAllocationRoundsStatusFilter as StatusValue } from '@repo/api/model';
 
 import { allocationRoundListAtom } from '../../models';
-
-const STATUS_VALUES = ['ALL', 'DRAFT', 'OPEN', 'CLOSED'] as const;
-
-type StatusValue = (typeof STATUS_VALUES)[number];
 
 const STATUS_LABEL_KEYS: Record<StatusValue, string> = {
   ALL: k('projectEnrollment.allocationRound.status.all'),
@@ -28,28 +22,20 @@ export const AllocationRoundsFilters = reatomComponent(
     const filter = allocationRoundListAtom.filter();
     const setFilter = allocationRoundListAtom.setFilter;
 
-    const handleStatusChange = (value: string) => {
-      setFilter({ statusFilter: value as typeof filter.statusFilter });
+    const handleStatusChange = (value: StatusValue) => {
+      setFilter({ statusFilter: value });
     };
 
     return (
       <div className="flex items-center gap-3">
-        <Select value={filter.statusFilter} onValueChange={handleStatusChange}>
-          <SelectTrigger size="sm" className="w-40">
-            <SelectValue
-              placeholder={t(
-                'projectEnrollment.allocationRound.filters.statusPlaceholder',
-              )}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_VALUES.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(STATUS_LABEL_KEYS[value])}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectEnum
+          value={filter.statusFilter}
+          onChange={handleStatusChange}
+          options={enumToOptions(StatusValue, STATUS_LABEL_KEYS, t)}
+          placeholder={t(
+            'projectEnrollment.allocationRound.filters.statusPlaceholder',
+          )}
+        />
       </div>
     );
   },

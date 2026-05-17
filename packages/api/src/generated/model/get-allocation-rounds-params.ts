@@ -4,13 +4,13 @@
  * Diploma tracker API
  * OpenAPI spec version: 0.0.0
  */
-import type { StatusFilter } from './status-filter';
+import type { ListAllocationRoundsStatusFilter } from './list-allocation-rounds-status-filter';
 import type { CamelCaseKeys } from '../../utils/camel-case';
 
 export type RawGetAllocationRoundsParams = {
   page?: number;
   page_size?: number;
-  status_filter?: StatusFilter;
+  status_filter?: ListAllocationRoundsStatusFilter;
 };
 
 export type GetAllocationRoundsParams =

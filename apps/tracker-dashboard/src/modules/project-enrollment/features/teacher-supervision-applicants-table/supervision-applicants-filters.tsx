@@ -1,25 +1,13 @@
+import {
+  SelectEnum,
+  enumToOptions,
+} from '@/shared/components/form/select-enum';
 import { k, useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
-import { SupervisionApplicationStatus } from '@repo/api/model';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui-kit/components/common/form/select';
+import { ListSupervisionApplicantsForTeacherStatusFilter as StatusFilterValue } from '@repo/api/model';
 
 import { teacherSupervisionApplicantsListAtom } from '../../models';
-
-const STATUS_VALUES = [
-  'ALL',
-  SupervisionApplicationStatus.PENDING,
-  SupervisionApplicationStatus.ACCEPTED,
-  SupervisionApplicationStatus.REJECTED,
-] as const;
-
-type StatusFilterValue = (typeof STATUS_VALUES)[number];
 
 const STATUS_LABEL_KEYS: Record<StatusFilterValue, string> = {
   ALL: k('projectEnrollment.supervisionApplicants.filters.statusAll'),
@@ -33,34 +21,24 @@ export const SupervisionApplicantsFilters = reatomComponent(
     const { t } = useTranslation();
     const filter = teacherSupervisionApplicantsListAtom.filter();
 
-    const currentValue = filter.statusFilter ?? 'ALL';
+    const currentValue = filter.statusFilter;
 
-    const handleStatusChange = (value: string) => {
+    const handleStatusChange = (value: StatusFilterValue) => {
       teacherSupervisionApplicantsListAtom.setFilter({
-        statusFilter:
-          value === 'ALL' ? null : (value as SupervisionApplicationStatus),
-        page: 1,
+        statusFilter: value,
       });
     };
 
     return (
       <div className="flex items-center gap-4">
-        <Select value={currentValue} onValueChange={handleStatusChange}>
-          <SelectTrigger className="w-44">
-            <SelectValue
-              placeholder={t(
-                'projectEnrollment.supervisionApplicants.filters.statusPlaceholder',
-              )}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_VALUES.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(STATUS_LABEL_KEYS[value])}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectEnum
+          value={currentValue}
+          onChange={handleStatusChange}
+          options={enumToOptions(StatusFilterValue, STATUS_LABEL_KEYS, t)}
+          placeholder={t(
+            'projectEnrollment.supervisionApplicants.filters.statusPlaceholder',
+          )}
+        />
       </div>
     );
   },

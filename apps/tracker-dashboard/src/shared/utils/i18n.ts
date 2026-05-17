@@ -1,7 +1,7 @@
 import { useTranslation as useTranslationRaw } from 'react-i18next';
-import type { UseTranslationResponse } from 'react-i18next';
 
 import i18n from '@/app/config/i18n';
+import { formatDate } from '@/shared/utils/format-date';
 
 interface TProps {
   k: string;
@@ -60,7 +60,10 @@ export const k = <T>(key: T): T => key;
  *   return <p>{t('common.save')}</p>;
  * };
  */
-export const useTranslation = useTranslationRaw as () => UseTranslationResponse<
-  'translation',
-  undefined
->;
+export const useTranslation = () => {
+  const translation = useTranslationRaw();
+  return {
+    ...translation,
+    formatDate,
+  };
+};
