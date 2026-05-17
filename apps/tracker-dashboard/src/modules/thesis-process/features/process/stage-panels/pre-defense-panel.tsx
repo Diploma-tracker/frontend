@@ -7,7 +7,7 @@
 import { useEffectOnce } from 'react-use';
 
 import { FileInputField } from '@/shared/components/form/file-form-field';
-import { useTranslation } from '@/shared/utils/i18n';
+import { t, useTranslation } from '@/shared/utils/i18n';
 import { reatomField, reatomForm } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 import { z } from 'zod';
@@ -46,7 +46,7 @@ const fixPreDefenseSchema = z
     thesisReport: z.instanceof(File).nullable(),
   })
   .refine((values) => values.thesisMaterialsArchive || values.thesisReport, {
-    message: 'Потрібно завантажити хоча б один файл',
+    message: t('common.validation.atLeastOneFileRequired'),
     path: ['thesisMaterialsArchive', 'thesisReport'],
   });
 

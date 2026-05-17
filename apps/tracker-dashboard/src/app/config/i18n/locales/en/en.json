@@ -12,6 +12,12 @@
     },
     "bulkActions": {
       "selected": "selected"
+    },
+    "validation": {
+      "atLeastOneFileRequired": "At least one file must be uploaded"
+    },
+    "fileInput": {
+      "chooseFile": "Choose file"
     }
   },
   "auth": {

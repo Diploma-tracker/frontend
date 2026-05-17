@@ -12,6 +12,12 @@
     },
     "bulkActions": {
       "selected": "обрано"
+    },
+    "validation": {
+      "atLeastOneFileRequired": "Потрібно завантажити хоча б один файл"
+    },
+    "fileInput": {
+      "chooseFile": "Обрати файл"
     }
   },
   "auth": {

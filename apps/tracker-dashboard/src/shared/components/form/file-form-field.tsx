@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useTranslation } from '@/shared/utils/i18n';
 import { UploadSimpleIcon } from '@phosphor-icons/react';
 import type { FieldAtom } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
@@ -24,6 +25,7 @@ export const FileInputField = reatomComponent(function FileInputField({
   accept,
   field,
 }: FileInputFieldProps) {
+  const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const value = field.value();
 
@@ -43,7 +45,7 @@ export const FileInputField = reatomComponent(function FileInputField({
           onClick={() => inputRef.current?.click()}
         >
           <UploadSimpleIcon size={14} />
-          {value ? value.name : 'Обрати файл'}
+          {value ? value.name : t('common.fileInput.chooseFile')}
         </Button>
         {value && (
           <span className="max-w-[140px] truncate text-xs text-muted-foreground">
