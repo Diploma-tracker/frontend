@@ -19,7 +19,8 @@
     "./allocation-round": "./src/generated/allocation-round.ts",
     "./supervision-application": "./src/generated/supervision-application.ts",
     "./thesis-defense-session": "./src/generated/thesis-defense-session.ts",
-    "./bachelor-thesis-process": "./src/sdk/bachelor-thesis-process.ts"
+    "./bachelor-thesis-process": "./src/sdk/bachelor-thesis-process.ts",
+    "./bachelor-thesis": "./src/generated/bachelor-thesis.ts"
   },
   "devDependencies": {
     "@repo/code-tools-config": "workspace:*",

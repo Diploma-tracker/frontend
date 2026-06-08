@@ -337,6 +337,10 @@
     }
   },
   "thesisProcess": {
+    "myThesesPage": {
+      "title": "My Theses",
+      "description": "View all bachelor theses associated with your account."
+    },
     "roles": {
       "student": "Student",
       "supervisor": "Scientific Supervisor",
