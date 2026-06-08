@@ -143,7 +143,7 @@ export const DefenseSessionsGrid = reatomComponent(
 
     return (
       <>
-        <WeekCalendar.Root>
+        <WeekCalendar.Root events={events}>
           <div className="flex h-full flex-col gap-4 overflow-hidden p-0">
             <div className="flex shrink-0 items-center justify-between">
               <WeekCalendar.Navigation />
@@ -153,7 +153,6 @@ export const DefenseSessionsGrid = reatomComponent(
             <WeekCalendar.Grid
               editable={isAdmin}
               height="auto"
-              events={events}
               isLoading={isLoading}
               error={error}
               dateClick={handleDateClick}

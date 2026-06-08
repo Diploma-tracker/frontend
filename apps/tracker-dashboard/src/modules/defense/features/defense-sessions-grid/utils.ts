@@ -7,8 +7,8 @@ import type { DefenseSessionDTO, PendingDragReschedule } from '../../models';
 export interface DefenseSessionCalendarEvent {
   id: string;
   title: string;
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
   classNames: string[];
   extendedProps: {
     session: DefenseSessionDTO;
@@ -34,8 +34,8 @@ export function sessionsToCalendarEvents(
     return {
       id: session.id,
       title: getTitle(session),
-      start: start.toISOString(),
-      end: end.toISOString(),
+      start: start,
+      end: end,
       classNames: ['fc-event--primary'],
       extendedProps: { session },
     };
