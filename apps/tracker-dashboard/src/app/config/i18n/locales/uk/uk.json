@@ -271,6 +271,27 @@
         }
       }
     },
+    "bachelorTheses": {
+      "table": {
+        "columns": {
+          "studentName": "Студент",
+          "studentEmail": "Електронна пошта",
+          "thesisTopic": "Тема дипломної роботи",
+          "actions": "Дії"
+        },
+        "noTopic": "Тему не призначено"
+      },
+      "actions": {
+        "open": "Відкрити роботу"
+      },
+      "filters": {
+        "searchPlaceholder": "Пошук за темою або студентом..."
+      },
+      "section": {
+        "title": "Дипломні роботи",
+        "description": "Список дипломних робіт, закріплених за цим раундом розподілу."
+      }
+    },
     "supervisionApplicants": {
       "table": {
         "columns": {

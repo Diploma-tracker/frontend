@@ -1,5 +1,6 @@
 import { PageLayout } from '@/layouts';
 import {
+  BachelorThesesListTable,
   StaffTeachersListTable,
   TeacherSupervisionApplicantsTable,
 } from '@/modules/project-enrollment';
@@ -49,6 +50,19 @@ export const ProjectEnrollmentRoundStaffPage = () => {
           </div>
 
           <StaffTeachersListTable roundId={roundId} />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1 border-b pb-4">
+            <h2 className="text-lg font-semibold tracking-tight">
+              {t('projectEnrollment.bachelorTheses.section.title')}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t('projectEnrollment.bachelorTheses.section.description')}
+            </p>
+          </div>
+
+          <BachelorThesesListTable roundId={roundId} />
         </div>
       </div>
     </PageLayout>
