@@ -55,6 +55,11 @@ export function GroupSelector({
   const [loading, setLoading] = React.useState(false);
 
   useDebounce(async () => {
+    if (inputValue.trim() === '') {
+      setItems(null);
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -93,7 +98,7 @@ export function GroupSelector({
 
   return (
     <Combobox<GroupOption>
-      items={options}
+      filteredItems={options}
       value={options.find((x) => x.value === value) ?? null}
       disabled={disabled}
       aria-invalid={invalid || undefined}
