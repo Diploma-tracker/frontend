@@ -4,6 +4,7 @@ import {
   useMultiSelect,
   useMultiSelectModalShows,
 } from '@/shared/components/form/multi-select';
+import { useQuery } from '@/shared/model/query';
 import { useTranslation } from '@/shared/utils/i18n';
 import type { Setter } from '@/shared/utils/types';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
@@ -11,6 +12,7 @@ import { wrap } from '@reatom/core';
 
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
+import { groupQuery } from '../../models';
 import { loadGroupOptions } from '../../models/group-selector-model';
 import { GroupInfo } from '../group-info/group-info';
 
@@ -42,6 +44,20 @@ function GroupsSelectorOption({ option }: { option: Option }) {
   );
 }
 
+function GroupChip({ option }: { option: Option }) {
+  const { data } = useQuery(groupQuery, option.value);
+  const { name } = data()!;
+
+  return (
+    <MultiSelect.Chip
+      option={{
+        value: option.value,
+        label: name,
+      }}
+    />
+  );
+}
+
 export function GroupsSelectorContent() {
   const { t } = useTranslation();
   const { showSelected, showSuggestions, showEmpty } =
@@ -52,7 +68,9 @@ export function GroupsSelectorContent() {
       <MultiSelect.Trigger
         visibleChips={2}
         placeholder={t('user.groupSelector.placeholder')}
-      />
+      >
+        {(option) => <GroupChip option={option} />}
+      </MultiSelect.Trigger>
       <MultiSelect.Modal>
         <MultiSelect.Search
           placeholder={t('user.groupSelector.searchPlaceholder')}

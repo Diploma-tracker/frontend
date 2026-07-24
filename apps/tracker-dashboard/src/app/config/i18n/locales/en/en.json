@@ -271,6 +271,27 @@
         }
       }
     },
+    "bachelorTheses": {
+      "table": {
+        "columns": {
+          "studentName": "Student",
+          "studentEmail": "Email",
+          "thesisTopic": "Thesis Topic",
+          "actions": "Actions"
+        },
+        "noTopic": "No topic assigned"
+      },
+      "actions": {
+        "open": "Open thesis"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by topic or student..."
+      },
+      "section": {
+        "title": "Bachelor Theses",
+        "description": "List of bachelor theses assigned to this allocation round."
+      }
+    },
     "supervisionApplicants": {
       "table": {
         "columns": {
@@ -316,6 +337,10 @@
     }
   },
   "thesisProcess": {
+    "myThesesPage": {
+      "title": "My Theses",
+      "description": "View all bachelor theses associated with your account."
+    },
     "roles": {
       "student": "Student",
       "supervisor": "Scientific Supervisor",

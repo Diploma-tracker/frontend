@@ -13,8 +13,10 @@ import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
 import { Route as appAppRouteImport } from './routes/(app)/_app'
 import { Route as appAppIndexRouteImport } from './routes/(app)/_app.index'
 import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
+import { Route as appAppThesisProcessRouteImport } from './routes/(app)/_app.thesis-process'
 import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
+import { Route as appAppThesisProcessIndexRouteImport } from './routes/(app)/_app.thesis-process.index'
 import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
 import { Route as appAppThesisProcessProcessIdRouteImport } from './routes/(app)/_app.thesis-process.$processId'
 import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
@@ -38,6 +40,11 @@ const authAuthLoginRoute = authAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => authAuthRoute,
 } as any)
+const appAppThesisProcessRoute = appAppThesisProcessRouteImport.update({
+  id: '/thesis-process',
+  path: '/thesis-process',
+  getParentRoute: () => appAppRoute,
+} as any)
 const appAppScheduleRoute = appAppScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -48,6 +55,12 @@ const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
   path: '/project-enrollment',
   getParentRoute: () => appAppRoute,
 } as any)
+const appAppThesisProcessIndexRoute =
+  appAppThesisProcessIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appAppThesisProcessRoute,
+  } as any)
 const appAppProjectEnrollmentIndexRoute =
   appAppProjectEnrollmentIndexRouteImport.update({
     id: '/',
@@ -56,9 +69,9 @@ const appAppProjectEnrollmentIndexRoute =
   } as any)
 const appAppThesisProcessProcessIdRoute =
   appAppThesisProcessProcessIdRouteImport.update({
-    id: '/thesis-process/$processId',
-    path: '/thesis-process/$processId',
-    getParentRoute: () => appAppRoute,
+    id: '/$processId',
+    path: '/$processId',
+    getParentRoute: () => appAppThesisProcessRoute,
   } as any)
 const appAppProjectEnrollmentRoundIdRoute =
   appAppProjectEnrollmentRoundIdRouteImport.update({
@@ -75,12 +88,14 @@ const appAppDefenseRoundIdRoute = appAppDefenseRoundIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/schedule': typeof appAppScheduleRoute
+  '/thesis-process': typeof appAppThesisProcessRouteWithChildren
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
   '/defense/$roundId': typeof appAppDefenseRoundIdRoute
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
   '/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
+  '/thesis-process/': typeof appAppThesisProcessIndexRoute
 }
 export interface FileRoutesByTo {
   '/schedule': typeof appAppScheduleRoute
@@ -90,6 +105,7 @@ export interface FileRoutesByTo {
   '/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
   '/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/project-enrollment': typeof appAppProjectEnrollmentIndexRoute
+  '/thesis-process': typeof appAppThesisProcessIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,24 +113,28 @@ export interface FileRoutesById {
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(app)/_app/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/(app)/_app/schedule': typeof appAppScheduleRoute
+  '/(app)/_app/thesis-process': typeof appAppThesisProcessRouteWithChildren
   '/(auth)/_auth/login': typeof authAuthLoginRoute
   '/(app)/_app/': typeof appAppIndexRoute
   '/(app)/_app/defense/$roundId': typeof appAppDefenseRoundIdRoute
   '/(app)/_app/project-enrollment/$roundId': typeof appAppProjectEnrollmentRoundIdRoute
   '/(app)/_app/thesis-process/$processId': typeof appAppThesisProcessProcessIdRoute
   '/(app)/_app/project-enrollment/': typeof appAppProjectEnrollmentIndexRoute
+  '/(app)/_app/thesis-process/': typeof appAppThesisProcessIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/project-enrollment'
     | '/schedule'
+    | '/thesis-process'
     | '/login'
     | '/'
     | '/defense/$roundId'
     | '/project-enrollment/$roundId'
     | '/thesis-process/$processId'
     | '/project-enrollment/'
+    | '/thesis-process/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/schedule'
@@ -124,18 +144,21 @@ export interface FileRouteTypes {
     | '/project-enrollment/$roundId'
     | '/thesis-process/$processId'
     | '/project-enrollment'
+    | '/thesis-process'
   id:
     | '__root__'
     | '/(app)/_app'
     | '/(auth)/_auth'
     | '/(app)/_app/project-enrollment'
     | '/(app)/_app/schedule'
+    | '/(app)/_app/thesis-process'
     | '/(auth)/_auth/login'
     | '/(app)/_app/'
     | '/(app)/_app/defense/$roundId'
     | '/(app)/_app/project-enrollment/$roundId'
     | '/(app)/_app/thesis-process/$processId'
     | '/(app)/_app/project-enrollment/'
+    | '/(app)/_app/thesis-process/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -173,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthLoginRouteImport
       parentRoute: typeof authAuthRoute
     }
+    '/(app)/_app/thesis-process': {
+      id: '/(app)/_app/thesis-process'
+      path: '/thesis-process'
+      fullPath: '/thesis-process'
+      preLoaderRoute: typeof appAppThesisProcessRouteImport
+      parentRoute: typeof appAppRoute
+    }
     '/(app)/_app/schedule': {
       id: '/(app)/_app/schedule'
       path: '/schedule'
@@ -187,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppProjectEnrollmentRouteImport
       parentRoute: typeof appAppRoute
     }
+    '/(app)/_app/thesis-process/': {
+      id: '/(app)/_app/thesis-process/'
+      path: '/'
+      fullPath: '/thesis-process/'
+      preLoaderRoute: typeof appAppThesisProcessIndexRouteImport
+      parentRoute: typeof appAppThesisProcessRoute
+    }
     '/(app)/_app/project-enrollment/': {
       id: '/(app)/_app/project-enrollment/'
       path: '/'
@@ -196,10 +233,10 @@ declare module '@tanstack/react-router' {
     }
     '/(app)/_app/thesis-process/$processId': {
       id: '/(app)/_app/thesis-process/$processId'
-      path: '/thesis-process/$processId'
+      path: '/$processId'
       fullPath: '/thesis-process/$processId'
       preLoaderRoute: typeof appAppThesisProcessProcessIdRouteImport
-      parentRoute: typeof appAppRoute
+      parentRoute: typeof appAppThesisProcessRoute
     }
     '/(app)/_app/project-enrollment/$roundId': {
       id: '/(app)/_app/project-enrollment/$roundId'
@@ -234,20 +271,33 @@ const appAppProjectEnrollmentRouteWithChildren =
     appAppProjectEnrollmentRouteChildren,
   )
 
+interface appAppThesisProcessRouteChildren {
+  appAppThesisProcessProcessIdRoute: typeof appAppThesisProcessProcessIdRoute
+  appAppThesisProcessIndexRoute: typeof appAppThesisProcessIndexRoute
+}
+
+const appAppThesisProcessRouteChildren: appAppThesisProcessRouteChildren = {
+  appAppThesisProcessProcessIdRoute: appAppThesisProcessProcessIdRoute,
+  appAppThesisProcessIndexRoute: appAppThesisProcessIndexRoute,
+}
+
+const appAppThesisProcessRouteWithChildren =
+  appAppThesisProcessRoute._addFileChildren(appAppThesisProcessRouteChildren)
+
 interface appAppRouteChildren {
   appAppProjectEnrollmentRoute: typeof appAppProjectEnrollmentRouteWithChildren
   appAppScheduleRoute: typeof appAppScheduleRoute
+  appAppThesisProcessRoute: typeof appAppThesisProcessRouteWithChildren
   appAppIndexRoute: typeof appAppIndexRoute
   appAppDefenseRoundIdRoute: typeof appAppDefenseRoundIdRoute
-  appAppThesisProcessProcessIdRoute: typeof appAppThesisProcessProcessIdRoute
 }
 
 const appAppRouteChildren: appAppRouteChildren = {
   appAppProjectEnrollmentRoute: appAppProjectEnrollmentRouteWithChildren,
   appAppScheduleRoute: appAppScheduleRoute,
+  appAppThesisProcessRoute: appAppThesisProcessRouteWithChildren,
   appAppIndexRoute: appAppIndexRoute,
   appAppDefenseRoundIdRoute: appAppDefenseRoundIdRoute,
-  appAppThesisProcessProcessIdRoute: appAppThesisProcessProcessIdRoute,
 }
 
 const appAppRouteWithChildren =

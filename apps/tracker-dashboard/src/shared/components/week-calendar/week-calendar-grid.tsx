@@ -16,7 +16,13 @@ import { getFullCalendarLocale } from './utils';
 type WeekCalendarGridProps = Omit<
   CalendarOptions,
   // managed internally by the compound component
-  'ref' | 'plugins' | 'initialView' | 'headerToolbar' | 'weekends' | 'locale'
+  | 'events'
+  | 'ref'
+  | 'plugins'
+  | 'initialView'
+  | 'headerToolbar'
+  | 'weekends'
+  | 'locale'
 > & {
   isLoading?: boolean;
   error?: string | null;
@@ -29,7 +35,7 @@ export function WeekCalendarGrid({
   editable = true,
   ...props
 }: WeekCalendarGridProps) {
-  const { calendarRef, weekView, setIsInteractive } = useWeekCalendar();
+  const { events, calendarRef, weekView, setIsInteractive } = useWeekCalendar();
   const { i18n } = useTranslation();
   const [fcLocale, setFcLocale] = useState<LocaleSingularArg | undefined>(
     undefined,
@@ -55,6 +61,7 @@ export function WeekCalendarGrid({
     >
       <FullCalendar
         ref={calendarRef}
+        events={events}
         plugins={[timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
         headerToolbar={false}

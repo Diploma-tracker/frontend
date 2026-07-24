@@ -1,12 +1,7 @@
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import {
-  CalendarIcon,
-  FilesIcon,
-  GraduationCapIcon,
-  ListChecksIcon,
-} from '@phosphor-icons/react';
+import { CalendarIcon, FilesIcon, ListChecksIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
 import {
@@ -26,21 +21,6 @@ export const AppSidebar = () => {
   const { t } = useTranslation();
 
   const NAV_MENU = [
-    {
-      title: t('sidebar.nav.projects'),
-      url: '#',
-      icon: GraduationCapIcon,
-      items: [
-        {
-          title: t('sidebar.nav.diploma1'),
-          url: '#',
-        },
-        {
-          title: t('sidebar.nav.diploma2'),
-          url: '#',
-        },
-      ],
-    },
     {
       title: t('sidebar.nav.thesisProcess'),
       url: '/thesis-process',

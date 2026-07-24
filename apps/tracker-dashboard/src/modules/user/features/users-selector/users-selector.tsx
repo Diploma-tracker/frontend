@@ -4,6 +4,7 @@ import {
   useMultiSelect,
   useMultiSelectModalShows,
 } from '@/shared/components/form/multi-select';
+import { useQuery } from '@/shared/model/query';
 import { k, useTranslation } from '@/shared/utils/i18n';
 import type { Setter } from '@/shared/utils/types';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
@@ -11,6 +12,7 @@ import { CheckIcon, XIcon } from '@phosphor-icons/react';
 import { LoginTokenUserRole } from '@repo/api/model';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
+import { userQuery } from '../../models';
 import { loadUserOptions } from '../../models/user-selector-model';
 import { UserInfo } from '../user-info/user-info';
 
@@ -52,6 +54,22 @@ function UsersSelectorOption({ option }: { option: Option }) {
   );
 }
 
+function UserChip({ option }: { option: Option }) {
+  const { data } = useQuery(userQuery, option.value);
+
+  const { firstName, lastName } = data()!;
+  const label = `${firstName} ${lastName}`;
+
+  return (
+    <MultiSelect.Chip
+      option={{
+        value: option.value,
+        label,
+      }}
+    />
+  );
+}
+
 export function UsersSelectorContent({ role }: UsersSelectorContentProps) {
   const { t } = useTranslation();
   const { showSelected, showSuggestions, showEmpty } =
@@ -63,7 +81,9 @@ export function UsersSelectorContent({ role }: UsersSelectorContentProps) {
       <MultiSelect.Trigger
         visibleChips={2}
         placeholder={t('user.selector.placeholder', { name: actorName })}
-      />
+      >
+        {(option) => <UserChip option={option} />}
+      </MultiSelect.Trigger>
       <MultiSelect.Modal>
         <MultiSelect.Search
           placeholder={t('user.selector.searchPlaceholder', {

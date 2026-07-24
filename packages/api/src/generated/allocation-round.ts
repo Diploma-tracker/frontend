@@ -11,7 +11,9 @@ import type {
   GetAllocationRoundTeachersParams,
   GetAllocationRoundsParams,
   GetSupervisionApplicantsForTeacherParams,
+  ListBachelorThesesForAllocationRoundParams,
   PaginatedAllocationRoundsDTO,
+  PaginatedBachelorThesesDTO,
   PaginatedSupervisionApplicantsDTO,
   PaginatedTeachersDTO,
   RemoveTeachersFromAllocationRoundRequest,
@@ -122,6 +124,20 @@ export const getSupervisionApplicantsForTeacher = (
     params,
   });
 };
+/**
+ * Returns a paginated list of bachelor theses belonging to a given allocation round. Each item includes the thesis topic (EN/UK) and the student's info. Use the `search` parameter to filter by topic (EN or UK), student first name, last name, or email.
+ * @summary List bachelor theses for allocation round
+ */
+export const listBachelorThesesForAllocationRound = (
+  allocationRoundId: string,
+  params?: ListBachelorThesesForAllocationRoundParams,
+) => {
+  return orvalCustomInstance<PaginatedBachelorThesesDTO>({
+    url: `/projects/allocation-rounds/${allocationRoundId}/bachelor-theses`,
+    method: 'GET',
+    params,
+  });
+};
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -150,4 +166,7 @@ export type RemoveTeachersFromAllocationRoundResult = NonNullable<
 >;
 export type GetSupervisionApplicantsForTeacherResult = NonNullable<
   Awaited<ReturnType<typeof getSupervisionApplicantsForTeacher>>
+>;
+export type ListBachelorThesesForAllocationRoundResult = NonNullable<
+  Awaited<ReturnType<typeof listBachelorThesesForAllocationRound>>
 >;

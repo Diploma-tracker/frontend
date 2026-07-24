@@ -1,9 +1,15 @@
 import { createContext, useContext } from 'react';
 import type { RefObject } from 'react';
 
+import type { EventInput } from '@fullcalendar/core/index.js';
 import type FullCalendar from '@fullcalendar/react';
 
 export type WeekView = 'work' | 'full';
+
+export type Event = EventInput & {
+  start: Date;
+  end: Date;
+};
 
 export type WeekCalendarContextValue = {
   calendarRef: RefObject<FullCalendar | null>;
@@ -20,6 +26,7 @@ export type WeekCalendarContextValue = {
   handleDayClick: (day: Date) => void;
   isInteractive: boolean;
   setIsInteractive: (value: boolean) => void;
+  events: Event[];
 };
 
 export const WeekCalendarContext =

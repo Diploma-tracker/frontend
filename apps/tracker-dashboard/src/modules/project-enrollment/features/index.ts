@@ -1,4 +1,5 @@
 export * from './allocations-list-table';
+export * from './bachelor-theses-list-table';
 export * from './create-allocation-round-form';
 export * from './staff-teachers-list-table';
 export * from './student-teachers-list-table';

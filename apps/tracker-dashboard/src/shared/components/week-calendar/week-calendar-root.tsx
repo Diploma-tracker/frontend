@@ -6,17 +6,19 @@ import type { ReactNode } from 'react';
 import { useTranslation } from '@/shared/utils/i18n';
 import FullCalendar from '@fullcalendar/react';
 
-import { WeekCalendarContext, type WeekView } from './context';
+import { type Event, WeekCalendarContext, type WeekView } from './context';
 import { formatWeekTitle, getMondayOfWeek, getWeekEnd } from './utils';
 
 interface WeekCalendarRootProps {
   children: ReactNode;
   defaultView?: WeekView;
+  events: Event[];
 }
 
 export function WeekCalendarRoot({
   children,
   defaultView = 'work',
+  events,
 }: WeekCalendarRootProps) {
   const { i18n } = useTranslation();
   const calendarRef = useRef<FullCalendar>(null);
@@ -98,6 +100,7 @@ export function WeekCalendarRoot({
         handleDayClick,
         isInteractive,
         setIsInteractive,
+        events,
       }}
     >
       {children}
