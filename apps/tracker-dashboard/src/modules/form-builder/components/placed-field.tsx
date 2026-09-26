@@ -1,10 +1,12 @@
+import { useMemo } from 'react';
+
 import { useTranslation } from '@/shared/utils/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { JsonForms } from '@jsonforms/react';
 import { TrashIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
-import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { cn } from '@repo/ui-kit/lib/utils';
 
@@ -14,6 +16,8 @@ import {
   removeField,
   selectedFieldIdAtom,
 } from '../model/form-builder-model';
+import { generateBuilderOutput } from '../model/schema-generator';
+import { formBuilderRenderers } from '../renderers/register-renderers';
 
 interface PlacedFieldProps {
   instanceId: string;
@@ -38,6 +42,17 @@ export const PlacedField = reatomComponent(function PlacedField({
     data: { source: 'canvas', instanceId: instanceId },
   });
 
+  /**
+   * The field as a one-field form: the very same schema/uischema pair and the
+   * very same renderers the finished form is built from, so the tile shows the
+   * field instead of a stand-in for it.
+   */
+  const preview = useMemo(
+    () =>
+      field ? generateBuilderOutput([field], [[field.instanceId]], []) : null,
+    [field],
+  );
+
   const handleSelect = () => {
     selectedFieldIdAtom.set((current) =>
       current === instanceId ? null : instanceId,
@@ -49,7 +64,7 @@ export const PlacedField = reatomComponent(function PlacedField({
     commit();
   };
 
-  if (!field) return null;
+  if (!field || !preview) return null;
 
   if (isDragging) {
     return (
@@ -73,40 +88,39 @@ export const PlacedField = reatomComponent(function PlacedField({
       {...listeners}
       onClick={handleSelect}
       className={cn(
-        'h-full cursor-grab rounded-lg border bg-card shadow-sm transition-shadow active:cursor-grabbing',
+        'relative h-full cursor-grab rounded-lg border bg-card p-3 shadow-sm transition-shadow active:cursor-grabbing',
         selected ? 'border-primary ring-2 ring-primary/30' : 'hover:shadow-md',
       )}
     >
-      <div className="flex h-full items-center gap-2 px-3 py-2">
-        <div className="size-4 shrink-0 text-muted-foreground">IC</div>
-
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{field.props.label}</p>
-          <p className="truncate text-xs text-muted-foreground">
-            {field.typeId}
-          </p>
-        </div>
-
-        {field.props.required && (
-          <Badge variant="filled" intent="destructive">
-            {t('formBuilder.canvas.required')}
-          </Badge>
-        )}
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          intent="destructive"
-          aria-label={t('formBuilder.canvas.deleteField')}
-          onClick={(event) => {
-            event.stopPropagation();
-            handleRemove();
-          }}
-        >
-          <TrashIcon />
-        </Button>
+      {/*
+       * Readonly + `pointer-events-none`: the builder owns the gestures on the
+       * tile (drag to move, click to select), so the rendered control must never
+       * take focus, open a popover or swallow a pointer event meant for dnd.
+       */}
+      <div className="pointer-events-none select-none">
+        <JsonForms
+          data={{}}
+          schema={preview.schema}
+          uischema={preview.uischema}
+          renderers={formBuilderRenderers}
+          readonly
+        />
       </div>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        intent="destructive"
+        className="absolute top-1.5 right-1.5 bg-card"
+        aria-label={t('formBuilder.canvas.deleteField')}
+        onClick={(event) => {
+          event.stopPropagation();
+          handleRemove();
+        }}
+      >
+        <TrashIcon />
+      </Button>
     </div>
   );
 });
