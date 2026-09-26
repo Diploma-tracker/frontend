@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from '@/shared/utils/i18n';
 import { JsonForms } from '@jsonforms/react';
 import { FilesIcon } from '@phosphor-icons/react';
-import { useAtom } from '@reatom/react';
+import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
@@ -22,12 +22,12 @@ import {
 } from '../model/form-builder-model';
 import { formBuilderRenderers } from '../renderers/register-renderers';
 
-export const FormPreview = function FormPreview() {
+export const FormPreview = reatomComponent(function FormPreview() {
   const { t } = useTranslation();
   const { data, setData, violatedRules } = useBuilderPreview();
-  const [fields] = useAtom(fieldsAtom);
 
-  const [output] = useAtom(builderOutput);
+  const fields = fieldsAtom();
+  const output = builderOutput();
 
   const labelsByInstanceId = useMemo(() => {
     const map = new Map<string, string>();
@@ -104,4 +104,4 @@ export const FormPreview = function FormPreview() {
       </Button>
     </div>
   );
-};
+});
