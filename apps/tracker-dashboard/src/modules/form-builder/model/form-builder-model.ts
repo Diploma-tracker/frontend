@@ -26,14 +26,32 @@ export const selectedFieldIdAtom = atom<string | null>(
   null,
   'formBuilder.selectedFieldId',
 );
+
+/** Whichever node a drag started from, the field the drag is about. */
+export type DragSession = {
+  source: 'palette' | 'canvas';
+  instanceId: string;
+};
+
 /**
- * The field the current drag is about, whichever node the drag started from.
- * dnd-kit only reports the node it started from — the palette tile — so a field
- * dragged out of the palette needs this to know it is the one being dragged.
+ * The drag in progress. dnd-kit only reports the node the drag started from —
+ * the palette tile — so a field dragged out of the palette needs this to know
+ * it is the one being dragged (and to render its tile in the drag overlay).
  */
-export const draggedFieldIdAtom = atom<string | null>(
+export const dragSessionAtom = atom<DragSession | null>(
   null,
-  'formBuilder.draggedFieldId',
+  'formBuilder.dragSession',
+);
+
+/**
+ * The session of the last drop. dnd-kit runs the drop animation after
+ * `onDragEnd`, and that animation is the only thing left that needs to know
+ * which field the ghost stands for, so the session outlives the drag until the
+ * animation has read it.
+ */
+export const dropSessionAtom = atom<DragSession | null>(
+  null,
+  'formBuilder.dropSession',
 );
 export const activeTabAtom = atom<BuilderTab>('build', 'formBuilder.activeTab');
 export const rulesAtom = atom<ValidationRule[]>([], 'formBuilder.rules');

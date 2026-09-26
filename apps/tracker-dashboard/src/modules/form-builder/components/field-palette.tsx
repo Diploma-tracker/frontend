@@ -40,8 +40,7 @@ const PaletteItem = reatomComponent(function PaletteItem({
       {...attributes}
       {...listeners}
       onClick={handleAdd}
-      icon={field.icon}
-      label={field.label}
+      field={field}
       title={field.description}
       aria-label={`${addLabel}: ${field.label}`}
       className={cn('cursor-grab', isDragging ? 'opacity-0' : 'opacity-100')}
