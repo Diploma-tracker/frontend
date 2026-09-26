@@ -19,11 +19,16 @@
     "i18n:fix:write": "tsx ../../tools/i18n-checker/src/cli.ts fix --locale en=src/app/config/i18n/locales/en/en.json --locale uk=src/app/config/i18n/locales/uk/uk.json --dir src --write"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@fullcalendar/core": "^6.1.20",
     "@fullcalendar/daygrid": "^6.1.20",
     "@fullcalendar/interaction": "^6.1.20",
     "@fullcalendar/react": "^6.1.20",
     "@fullcalendar/timegrid": "^6.1.20",
+    "@jsonforms/core": "^3.8.0",
+    "@jsonforms/react": "^3.8.0",
     "@phosphor-icons/react": "^2.1.10",
     "@reatom/core": "^1000.15.2",
     "@reatom/react": "^1000.2.2",

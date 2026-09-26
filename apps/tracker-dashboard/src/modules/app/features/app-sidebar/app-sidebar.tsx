@@ -1,7 +1,12 @@
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import { CalendarIcon, FilesIcon, ListChecksIcon } from '@phosphor-icons/react';
+import {
+  CalendarIcon,
+  FilesIcon,
+  ListChecksIcon,
+  SquaresFourIcon,
+} from '@phosphor-icons/react';
 
 import {
   Sidebar,
@@ -36,6 +41,11 @@ export const AppSidebar = () => {
       title: t('sidebar.nav.schedule'),
       url: '/schedule',
       icon: CalendarIcon,
+    },
+    {
+      title: t('sidebar.nav.formBuilder'),
+      url: '/form-builder',
+      icon: SquaresFourIcon,
     },
   ];
 
