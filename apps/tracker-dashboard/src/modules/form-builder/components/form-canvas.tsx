@@ -1,4 +1,4 @@
-import { Fragment, type ReactElement } from 'react';
+import { Fragment } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
 import { useDroppable } from '@dnd-kit/core';
@@ -93,17 +93,6 @@ const EmptyCanvas = reatomComponent(function EmptyCanvas() {
   );
 });
 
-interface ForProps<T> {
-  iterable: Array<T>;
-  children: (item: T, index: number) => ReactElement;
-  empty?: () => ReactElement;
-}
-
-const For = <T,>({ iterable, children, empty }: ForProps<T>) =>
-  iterable.length === 0
-    ? (empty?.() ?? null)
-    : iterable.map((item, index) => children(item, index));
-
 export const FormCanvas = reatomComponent(function FormCanvas() {
   const { t } = useTranslation();
 
@@ -111,23 +100,29 @@ export const FormCanvas = reatomComponent(function FormCanvas() {
     id: CANVAS_DROPPABLE_ID,
     data: { kind: 'canvas' },
   });
+  const layout = layoutAtom();
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        'flex min-h-64 flex-col rounded-xl border border-dashed p-4 transition-colors',
+        'flex min-h-64 flex-col rounded-xl border border-dashed p-4 pt-0 transition-colors',
         isOver ? 'border-primary bg-primary/5' : 'border-border',
       )}
     >
-      <For iterable={layoutAtom()} empty={() => <EmptyCanvas />}>
-        {(row, rowIndex) => (
-          <Fragment key={rowIndex}>
-            <CanvasRow row={row} rowIndex={rowIndex} />
-            <RowGap afterRowIndex={rowIndex} />
-          </Fragment>
-        )}
-      </For>
+      {layout.length === 0 ? (
+        <EmptyCanvas />
+      ) : (
+        <>
+          <RowGap afterRowIndex={-1} />
+          {layout.map((row, rowIndex) => (
+            <Fragment key={rowIndex}>
+              <CanvasRow row={row} rowIndex={rowIndex} />
+              <RowGap afterRowIndex={rowIndex} />
+            </Fragment>
+          ))}
+        </>
+      )}
 
       <div className="mt-auto flex items-center justify-center gap-2 rounded-lg border border-dashed border-muted px-3 py-2.5 text-xs text-muted-foreground">
         <PaperPlaneTiltIcon className="size-4" />
