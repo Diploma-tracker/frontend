@@ -4,6 +4,7 @@ import {
   CaretRightIcon,
   FilesIcon,
   ListChecksIcon,
+  SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
@@ -59,6 +60,11 @@ export default function AppSidebarMainNav(props: Props) {
       title: t('sidebar.nav.schedule'),
       url: '/schedule',
       icon: CalendarIcon,
+    },
+    {
+      title: t('sidebar.nav.formBuilder'),
+      url: '/form-builder',
+      icon: SquaresFourIcon,
     },
   ];
 
