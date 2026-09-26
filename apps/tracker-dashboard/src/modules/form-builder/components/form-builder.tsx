@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 import {
   type ClientRect,
@@ -16,33 +16,27 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useAtom } from '@reatom/react';
+import { reatomComponent } from '@reatom/react';
 
-import { type PremadeField, catalogAtom } from '../model/field-catalog';
+import { type PremadeField } from '../model/field-catalog';
 import {
   type AddTarget,
   activeTabAtom,
   addField,
-  addRule,
   commit,
   fieldsAtom,
   layoutAtom,
   moveField,
-  removeRule,
   rollback,
-  rulesAtom,
-  selectedFieldIdAtom,
   unplaceField,
-  updateFieldProps,
 } from '../model/form-builder-model';
 import { parseRowIndex } from '../model/row-dnd';
 import type { RowLayout } from '../model/schema-generator';
 import { BuilderTabs } from './builder-tabs';
 import { FieldPalette } from './field-palette';
 import { FormCanvas } from './form-canvas';
+import { FormPanel } from './form-panel';
 import { FormPreview } from './form-preview';
-import { PropertiesPanel } from './properties-panel';
-import { ValidationRulesPanel } from './validation-rules-panel';
 
 type DragSession = {
   source: 'palette' | 'canvas';
@@ -210,14 +204,10 @@ const resolveDropTarget = (
   return { kind: 'insertInRow', rowIndex, index: overIndex };
 };
 
-export const FormBuilder = function FormBuilder() {
+export const FormBuilder = reatomComponent(function FormBuilder() {
   const dragSessionRef = useRef<DragSession | null>(null);
 
-  const [catalog] = useAtom(catalogAtom);
-  const [fields] = useAtom(fieldsAtom);
-  const [selectedId] = useAtom(selectedFieldIdAtom);
-  const [rules] = useAtom(rulesAtom);
-  const [activeTab] = useAtom(activeTabAtom);
+  const activeTab = activeTabAtom();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -260,11 +250,6 @@ export const FormBuilder = function FormBuilder() {
           (COLLISION_PRIORITY[collisionKind(b)] ?? 4),
       );
   }, []);
-
-  const selectedField = useMemo(
-    () => fields.find((field) => field.instanceId === selectedId) ?? null,
-    [fields, selectedId],
-  );
 
   const clearDragState = () => {
     dragSessionRef.current = null;
@@ -361,40 +346,11 @@ export const FormBuilder = function FormBuilder() {
         onDragCancel={handleDragCancel}
       >
         <div className="grid grid-cols-[320px_minmax(0,1fr)_340px] items-start gap-6">
-          <FieldPalette
-            catalog={catalog ?? []}
-            onAddField={(field) => {
-              addField(field);
-              commit();
-            }}
-          />
-
+          <FieldPalette />
           <FormCanvas />
-
-          {selectedField ? (
-            <PropertiesPanel
-              field={selectedField}
-              onUpdate={(instanceId, patch) => {
-                updateFieldProps(instanceId, patch);
-                commit();
-              }}
-            />
-          ) : (
-            <ValidationRulesPanel
-              rules={rules}
-              fields={fields}
-              onAdd={(rule) => {
-                addRule(rule);
-                commit();
-              }}
-              onRemove={(ruleId) => {
-                removeRule(ruleId);
-                commit();
-              }}
-            />
-          )}
+          <FormPanel />
         </div>
       </DndContext>
     </div>
   );
-};
+});

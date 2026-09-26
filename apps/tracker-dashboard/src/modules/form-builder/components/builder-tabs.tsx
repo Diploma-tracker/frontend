@@ -1,5 +1,5 @@
 import { useTranslation } from '@/shared/utils/i18n';
-import { useAtom } from '@reatom/react';
+import { reatomComponent } from '@reatom/react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
@@ -11,9 +11,9 @@ import {
 
 const tabs: BuilderTab[] = ['build', 'preview'];
 
-export const BuilderTabs = function BuilderTabs() {
+export const BuilderTabs = reatomComponent(function BuilderTabs() {
   const { t } = useTranslation();
-  const [activeTab] = useAtom(activeTabAtom);
+  const activeTab = activeTabAtom();
 
   return (
     <div className="flex w-fit items-center gap-1 rounded-lg border bg-muted p-1">
@@ -36,4 +36,4 @@ export const BuilderTabs = function BuilderTabs() {
       ))}
     </div>
   );
-};
+});

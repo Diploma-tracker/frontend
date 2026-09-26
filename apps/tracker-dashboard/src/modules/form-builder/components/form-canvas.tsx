@@ -7,6 +7,7 @@ import {
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { PaperPlaneTiltIcon, SquaresFourIcon } from '@phosphor-icons/react';
+import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
@@ -31,21 +32,24 @@ interface RowGapProps {
   afterRowIndex: number;
 }
 
-const RowGap = function RowGap({ afterRowIndex }: RowGapProps) {
+const RowGap = reatomComponent(function RowGap({ afterRowIndex }: RowGapProps) {
   const { setNodeRef } = useDroppable({
     id: rowGapDroppableId(afterRowIndex),
     data: { kind: 'row-gap', afterRowIndex },
   });
 
   return <div ref={setNodeRef} className="h-5" />;
-};
+});
 
 interface CanvasRowProps {
   row: string[];
   rowIndex: number;
 }
 
-const CanvasRow = function CanvasRow({ row, rowIndex }: CanvasRowProps) {
+const CanvasRow = reatomComponent(function CanvasRow({
+  row,
+  rowIndex,
+}: CanvasRowProps) {
   const { setNodeRef } = useDroppable({
     id: rowDroppableId(rowIndex),
     data: { kind: 'row', rowIndex },
@@ -68,9 +72,9 @@ const CanvasRow = function CanvasRow({ row, rowIndex }: CanvasRowProps) {
       </SortableContext>
     </div>
   );
-};
+});
 
-const EmptyCanvas = function EmptyCanvas() {
+const EmptyCanvas = reatomComponent(function EmptyCanvas() {
   const { t } = useTranslation();
   return (
     <Empty className="border-none">
@@ -87,7 +91,7 @@ const EmptyCanvas = function EmptyCanvas() {
       </EmptyContent>
     </Empty>
   );
-};
+});
 
 interface ForProps<T> {
   iterable: Array<T>;
@@ -100,7 +104,7 @@ const For = <T,>({ iterable, children, empty }: ForProps<T>) =>
     ? (empty?.() ?? null)
     : iterable.map((item, index) => children(item, index));
 
-export const FormCanvas = function FormCanvas() {
+export const FormCanvas = reatomComponent(function FormCanvas() {
   const { t } = useTranslation();
 
   const { setNodeRef, isOver } = useDroppable({
@@ -134,4 +138,4 @@ export const FormCanvas = function FormCanvas() {
       </div>
     </div>
   );
-};
+});

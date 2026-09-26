@@ -1,6 +1,7 @@
 import { useTranslation } from '@/shared/utils/i18n';
 import { useDraggable } from '@dnd-kit/core';
 import { PlusIcon } from '@phosphor-icons/react';
+import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
@@ -12,18 +13,17 @@ import {
 } from '@repo/ui-kit/components/common/layout/card';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import type { PremadeField } from '../model/field-catalog';
+import { type PremadeField, catalogAtom } from '../model/field-catalog';
+import { commit, placeField } from '../model/form-builder-model';
 
 interface PaletteItemProps {
   field: PremadeField;
   addLabel: string;
-  onAdd: (field: PremadeField) => void;
 }
 
-const PaletteItem = function PaletteItem({
+const PaletteItem = reatomComponent(function PaletteItem({
   field,
   addLabel,
-  onAdd,
 }: PaletteItemProps) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `form-field-palette-${field.typeId}`,
@@ -31,6 +31,11 @@ const PaletteItem = function PaletteItem({
   });
 
   const Icon = field.icon;
+
+  const handleAdd = () => {
+    placeField(field);
+    commit();
+  };
 
   return (
     <div
@@ -41,7 +46,7 @@ const PaletteItem = function PaletteItem({
         'flex cursor-grab items-center gap-3 rounded-md border bg-card px-3 py-2 transition-colors hover:bg-accent active:cursor-grabbing',
         isDragging ? 'opacity-40' : 'opacity-100',
       )}
-      onClick={() => onAdd(field)}
+      onClick={handleAdd}
     >
       <Icon className="size-4 shrink-0 text-muted-foreground" />
 
@@ -60,24 +65,16 @@ const PaletteItem = function PaletteItem({
         aria-label={addLabel}
         onClick={(event) => {
           event.stopPropagation();
-          onAdd(field);
+          handleAdd();
         }}
       >
         <PlusIcon />
       </Button>
     </div>
   );
-};
+});
 
-interface FieldPaletteProps {
-  catalog: PremadeField[];
-  onAddField: (field: PremadeField) => void;
-}
-
-export const FieldPalette = function FieldPalette({
-  catalog,
-  onAddField,
-}: FieldPaletteProps) {
+export const FieldPalette = reatomComponent(function FieldPalette() {
   const { t } = useTranslation();
 
   return (
@@ -90,15 +87,14 @@ export const FieldPalette = function FieldPalette({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-2">
-        {catalog.map((field) => (
+        {catalogAtom().map((field) => (
           <PaletteItem
             key={field.typeId}
             field={field}
             addLabel={t('formBuilder.palette.addField')}
-            onAdd={onAddField}
           />
         ))}
       </CardContent>
     </Card>
   );
-};
+});

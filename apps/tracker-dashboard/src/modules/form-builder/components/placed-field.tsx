@@ -2,6 +2,7 @@ import { useTranslation } from '@/shared/utils/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { TrashIcon } from '@phosphor-icons/react';
+import { reatomComponent } from '@reatom/react';
 
 import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -18,7 +19,7 @@ interface PlacedFieldProps {
   instanceId: string;
 }
 
-export const PlacedField = function PlacedField({
+export const PlacedField = reatomComponent(function PlacedField({
   instanceId,
 }: PlacedFieldProps) {
   const { t } = useTranslation();
@@ -108,4 +109,4 @@ export const PlacedField = function PlacedField({
       </div>
     </div>
   );
-};
+});
