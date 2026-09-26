@@ -53,7 +53,57 @@
       "diploma2": "Diploma 2",
       "thesisProcess": "Thesis Process",
       "projectEnrollment": "Project Enrollment",
-      "schedule": "Schedule"
+      "schedule": "Schedule",
+      "formBuilder": "Form Builder"
+    }
+  },
+  "formBuilder": {
+    "tabs": {
+      "build": "Build",
+      "preview": "Preview"
+    },
+    "palette": {
+      "title": "Fields",
+      "description": "Drag a field onto the canvas or click + to add it.",
+      "addField": "Add to form"
+    },
+    "canvas": {
+      "emptyTitle": "Empty form",
+      "emptyDescription": "Drag fields here from the palette. Drop on a field's edge to place fields side by side.",
+      "submitHint": "Submit button is added automatically",
+      "required": "Required",
+      "deleteField": "Delete field"
+    },
+    "properties": {
+      "title": "Field properties",
+      "emptyTitle": "No field selected",
+      "emptyDescription": "Select a field on the canvas to edit its properties.",
+      "label": "Label",
+      "labelPlaceholder": "Enter field label",
+      "placeholder": "Placeholder",
+      "placeholderHint": "Enter placeholder text",
+      "required": "Required field"
+    },
+    "rules": {
+      "title": "Validation rules",
+      "description": "Cross-field validation rules for the form.",
+      "addRule": "New rule",
+      "addRuleSubmit": "Add rule",
+      "cancel": "Cancel",
+      "emptyTitle": "No rules yet",
+      "emptyDescription": "Add a rule such as \"at least one of the fields must be filled\".",
+      "atLeastOneOf": "At least one of: {{fields}}",
+      "removeRule": "Delete rule",
+      "ruleHint": "At least one of the selected fields must be filled.",
+      "noFields": "Place fields on the canvas first."
+    },
+    "preview": {
+      "emptyTitle": "Form is empty",
+      "emptyDescription": "Switch to the Build tab and place some fields first.",
+      "submit": "Submit",
+      "crossFieldError": "Please fill in at least one of the highlighted fields.",
+      "chooseFile": "Choose file",
+      "clearFile": "Remove file"
     }
   },
   "user": {
