@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   type ClientRect,
@@ -6,6 +6,7 @@ import {
   type CollisionDetection,
   DndContext,
   type DragOverEvent,
+  DragOverlay,
   type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
@@ -18,7 +19,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { reatomComponent } from '@reatom/react';
 
-import { type PremadeField } from '../model/field-catalog';
+import { type PremadeField, catalogAtom } from '../model/field-catalog';
 import {
   type AddTarget,
   activeTabAtom,
@@ -33,15 +34,21 @@ import {
 import { parseRowIndex } from '../model/row-dnd';
 import type { RowLayout } from '../model/schema-generator';
 import { BuilderTabs } from './builder-tabs';
+import { anchorModifier } from './dnd-kit-anchor';
 import { FieldPalette } from './field-palette';
+import { FIELD_SQUARE_SIZE, FieldSquare } from './field-square';
 import { FormCanvas } from './form-canvas';
 import { FormPanel } from './form-panel';
 import { FormPreview } from './form-preview';
+import { PhysicsOverlay } from './physics-drag-overlay';
 
 type DragSession = {
   source: 'palette' | 'canvas';
   instanceId: string;
 };
+
+/** What the drag overlay draws: the square of the field being dragged. */
+type DraggedField = Pick<PremadeField, 'icon' | 'label'>;
 
 /** Data attached to every droppable the canvas registers. */
 interface DroppableData {
@@ -144,10 +151,9 @@ const resolveDropTarget = (
     return { kind: 'addNewRowInBottom' };
   }
 
-  // Where the field would land: the pointer, or the active node itself while
-  // dragging with the keyboard. A palette drag has no DragOverlay, so its
-  // active node stays in the palette and its rect cannot tell which side of a
-  // field the pointer is on.
+  // Where the field would land: the pointer, or the overlay itself while
+  // dragging with the keyboard — with the DragOverlay mounted the active node
+  // follows the drag, so its rect is where the square is being dropped.
   const positionX =
     geometry.pointerX ??
     centerX(active.rect.current.translated ?? active.rect.current.initial);
@@ -206,6 +212,7 @@ const resolveDropTarget = (
 
 export const FormBuilder = reatomComponent(function FormBuilder() {
   const dragSessionRef = useRef<DragSession | null>(null);
+  const [draggedField, setDraggedField] = useState<DraggedField | null>(null);
 
   const activeTab = activeTabAtom();
 
@@ -253,6 +260,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
 
   const clearDragState = () => {
     dragSessionRef.current = null;
+    setDraggedField(null);
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -270,6 +278,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
         source: 'palette',
         instanceId: instance.instanceId,
       };
+      setDraggedField({ icon: field.icon, label: field.label });
 
       return;
     }
@@ -283,6 +292,17 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
         source: 'canvas',
         instanceId,
       };
+
+      // The icon lives in the catalog, the label on the instance.
+      const catalogField = catalogAtom().find(
+        (item) => item.typeId === field.typeId,
+      );
+      if (catalogField) {
+        setDraggedField({
+          icon: catalogField.icon,
+          label: field.props.label,
+        });
+      }
     }
   };
 
@@ -344,12 +364,26 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
+        modifiers={[anchorModifier(['center', 'top'], [0, 10])]}
       >
         <div className="grid grid-cols-[320px_minmax(0,1fr)_340px] items-start gap-6">
           <FieldPalette />
           <FormCanvas />
           <FormPanel />
         </div>
+
+        <DragOverlay
+          style={{ width: FIELD_SQUARE_SIZE, height: FIELD_SQUARE_SIZE }}
+        >
+          {draggedField && (
+            <PhysicsOverlay>
+              <FieldSquare
+                icon={draggedField.icon}
+                label={draggedField.label}
+              />
+            </PhysicsOverlay>
+          )}
+        </DragOverlay>
       </DndContext>
     </div>
   );

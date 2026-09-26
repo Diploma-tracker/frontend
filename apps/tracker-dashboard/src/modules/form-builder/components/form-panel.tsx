@@ -13,10 +13,6 @@ import {
 import { PropertiesPanel } from './properties-panel';
 import { ValidationRulesPanel } from './validation-rules-panel';
 
-/**
- * Right column of the builder: the properties of the selected field, or the
- * cross-field validation rules when nothing is selected.
- */
 export const FormPanel = reatomComponent(function FormPanel() {
   const fields = fieldsAtom();
   const rules = rulesAtom();
