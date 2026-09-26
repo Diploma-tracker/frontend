@@ -305,7 +305,6 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
   const handleDragEnd = () => {
     const session = dragSessionAtom();
     if (session) {
-      // TODO: add cleanup of other atoms before commit, like fields and so on
       commit();
       dropSessionAtom.set(session);
     }

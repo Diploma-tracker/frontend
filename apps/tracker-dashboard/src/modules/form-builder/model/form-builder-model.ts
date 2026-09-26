@@ -109,8 +109,41 @@ const [
   rollbackBuilderState,
 ] = createAtomsWithCommit(layoutAtom, fieldsAtom, rulesAtom);
 
-export const commit = commitBuilderState;
 export const rollback = rollbackBuilderState;
+
+/**
+ * A field that is not in the layout does not survive a commit: dragging a
+ * field out of the canvas merely unplaces it, and this is what actually drops
+ * it — along with its selection and every rule it took part in.
+ */
+const pruneUnplacedFields = (): void => {
+  const placedIds = new Set(layoutAtom().flat());
+  const unplacedIds = fieldsAtom()
+    .filter((field) => !placedIds.has(field.instanceId))
+    .map((field) => field.instanceId);
+
+  if (unplacedIds.length === 0) return;
+
+  fieldsAtom.set((fields) =>
+    fields.filter((field) => !unplacedIds.includes(field.instanceId)),
+  );
+  rulesAtom.set((rules) =>
+    rules
+      .map((rule) => ({
+        ...rule,
+        fieldIds: rule.fieldIds.filter((id) => !unplacedIds.includes(id)),
+      }))
+      .filter((rule) => rule.fieldIds.length >= 2),
+  );
+  selectedFieldIdAtom.set((selected) =>
+    selected && unplacedIds.includes(selected) ? null : selected,
+  );
+};
+
+export const commit = (): void => {
+  pruneUnplacedFields();
+  commitBuilderState();
+};
 
 /**
  * Where a field ends up when added (or moved):
