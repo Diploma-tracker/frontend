@@ -106,7 +106,7 @@ export const FormCanvas = reatomComponent(function FormCanvas() {
     <div
       ref={setNodeRef}
       className={cn(
-        'flex min-h-64 flex-col rounded-xl border border-dashed p-4 pt-0 transition-colors',
+        'flex min-h-80 flex-col rounded-xl border border-dashed p-4 pt-0 transition-colors',
         isOver ? 'border-primary bg-primary/5' : 'border-border',
       )}
     >

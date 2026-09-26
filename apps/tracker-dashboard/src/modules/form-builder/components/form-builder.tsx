@@ -190,18 +190,52 @@ const resolveDropTarget = (
     };
   }
 
-  // Over a field: take over its slot, which is what dnd-kit's own
-  // `arrayMove(items, activeIndex, overIndex)` does. Comparing the position with
-  // the middle of the field instead would disagree with the sortable transform,
-  // which already shifts the neighbour as soon as the position touches it: the
-  // row would look swapped while the layout never changed.
   const overIndex = row.indexOf(String(over.id));
   if (overIndex === -1) {
     return { kind: 'addNewRowInBottom' };
   }
 
-  return { kind: 'insertInRow', rowIndex, index: overIndex };
+  // Same row: the sortable strategy has already shifted the neighbour the
+  // moment the position touched it, so the layout has to take over its slot
+  // right away — dnd-kit's own `arrayMove` behaviour. Anything slower (like
+  // the middle split below) leaves the dragged field stacked on its side.
+  if (row.includes(activeInstanceId)) {
+    return { kind: 'insertInRow', rowIndex, index: overIndex };
+  }
+
+  // Into another row: no neighbour shifts as a preview, so the position
+  // splits the field by its middle — the same answer the row gives itself.
+  const overMiddle = centerX(geometry.rects.get(String(over.id)));
+  const after =
+    positionX !== null && overMiddle !== null && positionX > overMiddle;
+
+  return {
+    kind: 'insertInRow',
+    rowIndex,
+    index: after ? overIndex + 1 : overIndex,
+  };
 };
+
+/** The slot a field occupies now, keyed like a placement target would be. */
+const placementKeyOf = (layout: RowLayout, instanceId: string): string => {
+  const rowIndex = layout.findIndex((row) => row.includes(instanceId));
+  if (rowIndex === -1) return 'unplaced';
+  return JSON.stringify({
+    kind: 'insertInRow',
+    rowIndex,
+    index: layout[rowIndex]!.indexOf(instanceId),
+  });
+};
+
+/**
+ * How far the pointer has to travel before a reversal is believed. Between a
+ * layout write and dnd-kit's re-measurement the droppable rects still describe
+ * the old layout, so while the pointer crosses a field slowly the resolution
+ * lands right back in the slot the field just left — and back again, until
+ * React trips the maximum update depth. That reversal is deferred until the
+ * pointer has genuinely moved on.
+ */
+const FLIP_CURSOR_HYSTERESIS_PX = 6;
 
 export const FormBuilder = reatomComponent(function FormBuilder() {
   const activeTab = activeTabAtom();
@@ -233,14 +267,23 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     // The dragged field is taken out of the collisions: it is the only
     // droppable that follows the pointer, so as soon as it is placed under
     // the cursor it wins the priority sort, `over` flips to it, the target
-    // resolves to nothing and the field is unplaced again — an endless
-    // place/unplace loop.
+    // resolves to nothing (or to its own slot) and the field is moved again —
+    // an endless place/unplace loop that React trips over as a maximum update
+    // depth.
+    //
+    // For a canvas drag the field is the active node and `active.id` covers
+    // it; for a palette drag the active node is the palette tile, so the
+    // placed field's id has to be excluded too — same pointer-following it.
+    const draggedId = dragSessionAtom()?.instanceId ?? args.active.id;
     const collisions = args.pointerCoordinates
       ? pointerWithin(args)
       : closestCenter(args);
 
     return [...collisions]
-      .filter((collision) => collision.id !== args.active.id)
+      .filter(
+        (collision) =>
+          collision.id !== args.active.id && collision.id !== draggedId,
+      )
       .sort(
         (a, b) =>
           (COLLISION_PRIORITY[collisionKind(a)] ?? 4) -
@@ -282,30 +325,92 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     }
   };
 
+  /**
+   * The placement the field vacated at the last `moveField` *and* the pointer
+   * position then — a resolved target that would put it right back (while the
+   * pointer has barely moved) is the stale-rect cycle, so it is held off.
+   */
+  const flipGuardRef = useRef<{
+    fromKey: string;
+    pointerX: number | null;
+  } | null>(null);
+
+  /**
+   * The placement staged for the next animation frame. `onDragOver` can fire
+   * several times in one frame (pointer moves, re-measures), and writing the
+   * layout on every fire is what the frame loop then amplifies — one write per
+   * frame, taking the last resolution, is all that ever shows on screen.
+   */
+  const pendingMoveRef = useRef<{
+    instanceId: string;
+    target: AddTarget;
+  } | null>(null);
+  const moveFrameRef = useRef<number | null>(null);
+
+  const flushPendingMove = () => {
+    if (moveFrameRef.current !== null) {
+      cancelAnimationFrame(moveFrameRef.current);
+      moveFrameRef.current = null;
+    }
+
+    const pending = pendingMoveRef.current;
+    pendingMoveRef.current = null;
+    if (pending) moveField(pending.instanceId, pending.target);
+  };
+
+  const stageMove = (instanceId: string, target: AddTarget) => {
+    pendingMoveRef.current = { instanceId, target };
+    if (moveFrameRef.current !== null) return;
+    moveFrameRef.current = requestAnimationFrame(flushPendingMove);
+  };
+
   const handleDragOver = (event: DragOverEvent) => {
     const session = dragSessionAtom();
     if (!session) return;
 
     const { instanceId } = session;
+    const layout = layoutAtom();
     const target = resolveDropTarget(
       event,
       instanceId,
-      layoutAtom(),
+      layout,
       dragGeometryRef.current,
     );
 
-    if (target) {
-      moveField(instanceId, target);
+    if (!target) {
+      // Pointer outside of the canvas: the field has no place until it is back.
+      // Unplaced right away — a staged frame must not bring it back later.
+      pendingMoveRef.current = null;
+      unplaceField(instanceId);
       return;
     }
 
-    // Pointer outside of the canvas: the field has no place until it is back.
-    unplaceField(instanceId);
+    const pointerX = dragGeometryRef.current.pointerX;
+    const key = JSON.stringify(target);
+    const flipGuard = flipGuardRef.current;
+
+    if (
+      flipGuard &&
+      key === flipGuard.fromKey &&
+      pointerX !== null &&
+      flipGuard.pointerX !== null &&
+      Math.abs(pointerX - flipGuard.pointerX) < FLIP_CURSOR_HYSTERESIS_PX
+    ) {
+      return;
+    }
+
+    flipGuardRef.current = {
+      fromKey: placementKeyOf(layout, instanceId),
+      pointerX,
+    };
+    stageMove(instanceId, target);
   };
 
   const handleDragEnd = () => {
     const session = dragSessionAtom();
     if (session) {
+      // The last staged placement has to land before it can be committed.
+      flushPendingMove();
       commit();
       dropSessionAtom.set(session);
 
@@ -325,6 +430,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     // No drop happened, so the drop animation must not land the ghost on the
     // field: a stale session would send it to the previous drop's slot.
     dropSessionAtom.set(null);
+    pendingMoveRef.current = null;
     if (dragSessionAtom()) {
       rollback();
     }
