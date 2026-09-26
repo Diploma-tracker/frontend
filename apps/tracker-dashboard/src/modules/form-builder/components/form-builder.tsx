@@ -30,6 +30,7 @@ import {
   layoutAtom,
   moveField,
   rollback,
+  selectField,
   unplaceField,
 } from '../model/form-builder-model';
 import { parseRowIndex } from '../model/row-dnd';
@@ -307,6 +308,15 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     if (session) {
       commit();
       dropSessionAtom.set(session);
+
+      // A field that landed on the canvas becomes the selected one, same as a
+      // field added from the palette with a click; a field dropped outside has
+      // no place and stays unselected.
+      selectField(
+        layoutAtom().some((row) => row.includes(session.instanceId))
+          ? session.instanceId
+          : null,
+      );
     }
     clearDragState();
   };
