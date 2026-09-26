@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 import {
   type ClientRect,
@@ -6,10 +6,7 @@ import {
   type CollisionDetection,
   DndContext,
   type DragOverEvent,
-  DragOverlay,
   type DragStartEvent,
-  type DropAnimationKeyframeResolver,
-  type DropAnimationSideEffects,
   KeyboardSensor,
   PointerSensor,
   type UniqueIdentifier,
@@ -19,16 +16,16 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { reatomComponent } from '@reatom/react';
 
-import { type PremadeField, catalogAtom } from '../model/field-catalog';
+import { type PremadeField } from '../model/field-catalog';
 import {
   type AddTarget,
   activeTabAtom,
   addField,
   commit,
-  draggedFieldIdAtom,
+  dragSessionAtom,
+  dropSessionAtom,
   fieldsAtom,
   layoutAtom,
   moveField,
@@ -40,26 +37,10 @@ import type { RowLayout } from '../model/schema-generator';
 import { BuilderTabs } from './builder-tabs';
 import { anchorModifier } from './dnd-kit-anchor';
 import { FieldPalette } from './field-palette';
-import { FIELD_SQUARE_SIZE, FieldSquare } from './field-square';
 import { FormCanvas } from './form-canvas';
+import { FormDragOverlay } from './form-drag-overlay';
 import { FormPanel } from './form-panel';
 import { FormPreview } from './form-preview';
-import { PhysicsOverlay } from './physics-drag-overlay';
-
-type DragSession = {
-  source: 'palette' | 'canvas';
-  instanceId: string;
-};
-
-/** What the drag overlay draws: the square of the field being dragged. */
-type DraggedField = Pick<PremadeField, 'icon' | 'label'>;
-
-/**
- * How fast the ghost glides to its place when the field is dropped, in
- * milliseconds. Increase it for a longer, softer landing; the easing stays
- * dnd-kit's default `ease` unless `easing` is passed next to it.
- */
-const DROP_ANIMATION_DURATION = 250;
 
 /** Data attached to every droppable the canvas registers. */
 interface DroppableData {
@@ -222,24 +203,6 @@ const resolveDropTarget = (
 };
 
 export const FormBuilder = reatomComponent(function FormBuilder() {
-  const dragSessionRef = useRef<DragSession | null>(null);
-  const [draggedField, setDraggedField] = useState<DraggedField | null>(null);
-
-  /**
-   * The session the last drop belongs to. dnd-kit runs the drop animation after
-   * `onDragEnd`, and that animation is the only thing left that needs to know
-   * which field the ghost stands for, so the session outlives the drag state
-   * until the animation has read it.
-   */
-  const dropSessionRef = useRef<DragSession | null>(null);
-
-  /**
-   * The node the drop animation lands the ghost on, handed from the keyframe
-   * resolver to the side effects — dnd-kit calls them in that order, and the
-   * side effects are the ones that can hide the node for the flight.
-   */
-  const dropTargetNodeRef = useRef<HTMLElement | null>(null);
-
   const activeTab = activeTabAtom();
 
   const sensors = useSensors(
@@ -285,91 +248,8 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
   }, []);
 
   const clearDragState = () => {
-    dragSessionRef.current = null;
-    draggedFieldIdAtom.set(null);
-    setDraggedField(null);
+    dragSessionAtom.set(null);
   };
-
-  /**
-   * Keyframes of the drop animation.
-   *
-   * dnd-kit ends the animation at the node the drag started from. For a palette
-   * drag that is the palette tile, so the ghost flies back to the palette while
-   * the field it stands for is being placed in the canvas — drops animate into
-   * the placed field instead, which sits in the layout for a palette drag and a
-   * canvas drag alike, and its droppable rect is where the ghost belongs. A drop
-   * that ends outside the canvas has no slot (the field was unplaced) and a
-   * cancelled drop has no drop at all, so those keep dnd-kit's own animation, a
-   * glide back to where the drag started.
-   */
-  const dropAnimationKeyframes = useCallback<DropAnimationKeyframeResolver>(
-    ({ dragOverlay, droppableContainers, transform }) => {
-      const session = dropSessionRef.current;
-      dropSessionRef.current = null;
-
-      const targetContainer = session
-        ? droppableContainers.get(session.instanceId)
-        : undefined;
-      const target = targetContainer?.rect.current ?? null;
-
-      // The field the ghost lands on is rendered as soon as the drop commits —
-      // its node goes to the side effects so it stays hidden for the flight.
-      dropTargetNodeRef.current = targetContainer?.node.current ?? null;
-
-      if (!target) {
-        return [
-          { transform: CSS.Transform.toString(transform.initial) },
-          { transform: CSS.Transform.toString(transform.final) },
-        ];
-      }
-
-      // The ghost stays the square it is (no scaling) and glides so its top
-      // left corner lands on the top left corner of the slot the field took.
-      const { left, top } = dragOverlay.rect;
-
-      return [
-        { transform: CSS.Transform.toString(transform.initial) },
-        {
-          transform: CSS.Transform.toString({
-            x: transform.initial.x + (target.left - left),
-            y: transform.initial.y + (target.top - top),
-            scaleX: 1,
-            scaleY: 1,
-          }),
-        },
-      ];
-    },
-    [],
-  );
-
-  /**
-   * Side effects of the drop animation: what the default one does to the node
-   * the drag started from (hide it for the flight) plus the same for the field
-   * the ghost lands on. For a palette drag the start node is the palette tile
-   * and the field just placed renders right away, so without this the field
-   * pops up in the canvas while the ghost is still gliding towards it. The
-   * returned cleanup brings everything back.
-   */
-  const dropAnimationSideEffects = useCallback<DropAnimationSideEffects>(
-    ({ active }) => {
-      const targetNode = dropTargetNodeRef.current;
-      dropTargetNodeRef.current = null;
-
-      const hidden: Array<[HTMLElement, string]> = [];
-      for (const node of [active.node, targetNode]) {
-        if (!node || hidden.some(([entry]) => entry === node)) continue;
-        hidden.push([node, node.style.opacity]);
-        node.style.opacity = '0';
-      }
-
-      return () => {
-        for (const [node, previousOpacity] of hidden) {
-          node.style.opacity = previousOpacity;
-        }
-      };
-    },
-    [],
-  );
 
   const handleDragStart = (event: DragStartEvent) => {
     const data = event.active.data.current;
@@ -382,42 +262,27 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
 
       const instance = addField(field);
 
-      dragSessionRef.current = {
+      dragSessionAtom.set({
         source: 'palette',
         instanceId: instance.instanceId,
-      };
-      draggedFieldIdAtom.set(instance.instanceId);
-      setDraggedField({ icon: field.icon, label: field.label });
+      });
 
       return;
     }
 
     if (data?.source === 'canvas') {
       const instanceId = String(event.active.id);
-      const field = fieldsAtom.get(instanceId);
-      if (!field) return;
+      if (!fieldsAtom.has(instanceId)) return;
 
-      dragSessionRef.current = {
+      dragSessionAtom.set({
         source: 'canvas',
         instanceId,
-      };
-      draggedFieldIdAtom.set(instanceId);
-
-      // The icon lives in the catalog, the label on the instance.
-      const catalogField = catalogAtom().find(
-        (item) => item.typeId === field.typeId,
-      );
-      if (catalogField) {
-        setDraggedField({
-          icon: catalogField.icon,
-          label: field.props.label,
-        });
-      }
+      });
     }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    const session = dragSessionRef.current;
+    const session = dragSessionAtom();
     if (!session) return;
 
     const { instanceId } = session;
@@ -438,18 +303,20 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
   };
 
   const handleDragEnd = () => {
-    const session = dragSessionRef.current;
+    const session = dragSessionAtom();
     if (session) {
       // TODO: add cleanup of other atoms before commit, like fields and so on
       commit();
-      dropSessionRef.current = session;
+      dropSessionAtom.set(session);
     }
     clearDragState();
   };
 
   const handleDragCancel = () => {
-    const session = dragSessionRef.current;
-    if (session) {
+    // No drop happened, so the drop animation must not land the ghost on the
+    // field: a stale session would send it to the previous drop's slot.
+    dropSessionAtom.set(null);
+    if (dragSessionAtom()) {
       rollback();
     }
     clearDragState();
@@ -483,23 +350,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
           <FormPanel />
         </div>
 
-        <DragOverlay
-          style={{ width: FIELD_SQUARE_SIZE, height: FIELD_SQUARE_SIZE }}
-          dropAnimation={{
-            keyframes: dropAnimationKeyframes,
-            sideEffects: dropAnimationSideEffects,
-            duration: DROP_ANIMATION_DURATION,
-          }}
-        >
-          {draggedField && (
-            <PhysicsOverlay>
-              <FieldSquare
-                icon={draggedField.icon}
-                label={draggedField.label}
-              />
-            </PhysicsOverlay>
-          )}
-        </DragOverlay>
+        <FormDragOverlay />
       </DndContext>
     </div>
   );

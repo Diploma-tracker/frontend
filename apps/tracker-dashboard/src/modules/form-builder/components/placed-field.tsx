@@ -12,7 +12,7 @@ import { cn } from '@repo/ui-kit/lib/utils';
 
 import {
   commit,
-  draggedFieldIdAtom,
+  dragSessionAtom,
   fieldsAtom,
   removeField,
   selectedFieldIdAtom,
@@ -43,7 +43,7 @@ export const PlacedField = reatomComponent(function PlacedField({
    * dragged field is the one the builder tracks, so the gap shows up for it
    * either way.
    */
-  const isDragged = draggedFieldIdAtom() === instanceId;
+  const isDragged = dragSessionAtom()?.instanceId === instanceId;
 
   /**
    * The field as a one-field form: the very same schema/uischema pair and the
