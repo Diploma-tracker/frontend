@@ -78,13 +78,12 @@
     },
     "properties": {
       "title": "Field properties",
-      "emptyTitle": "No field selected",
-      "emptyDescription": "Select a field on the canvas to edit its properties.",
       "label": "Label",
       "labelPlaceholder": "Enter field label",
       "placeholder": "Placeholder",
       "placeholderHint": "Enter placeholder text",
-      "required": "Required field"
+      "required": "Required field",
+      "back": "Back to rules"
     },
     "rules": {
       "title": "Validation rules",

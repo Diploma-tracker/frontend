@@ -1,5 +1,8 @@
 import { useTranslation } from '@/shared/utils/i18n';
+import { ArrowLeftIcon } from '@phosphor-icons/react';
+import { reatomComponent } from '@reatom/react';
 
+import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Checkbox } from '@repo/ui-kit/components/common/form/checkbox';
 import {
   Field,
@@ -9,17 +12,12 @@ import {
 import { Input } from '@repo/ui-kit/components/common/form/input';
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@repo/ui-kit/components/common/layout/card';
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyTitle,
-} from '@repo/ui-kit/components/common/states/empty';
 
 import type {
   FieldInstance,
@@ -27,32 +25,17 @@ import type {
 } from '../model/schema-generator';
 
 interface PropertiesPanelProps {
-  field: FieldInstance | null;
+  field: FieldInstance;
+  onBack: () => void;
   onUpdate: (instanceId: string, patch: Partial<FieldInstanceProps>) => void;
 }
 
-export const PropertiesPanel = function PropertiesPanel({
+export const PropertiesPanel = reatomComponent(function PropertiesPanel({
   field,
+  onBack,
   onUpdate,
 }: PropertiesPanelProps) {
   const { t } = useTranslation();
-
-  if (!field) {
-    return (
-      <Card>
-        <CardContent className="p-0">
-          <Empty className="border-none">
-            <EmptyContent>
-              <EmptyTitle>{t('formBuilder.properties.emptyTitle')}</EmptyTitle>
-              <EmptyDescription>
-                {t('formBuilder.properties.emptyDescription')}
-              </EmptyDescription>
-            </EmptyContent>
-          </Empty>
-        </CardContent>
-      </Card>
-    );
-  }
 
   const update = (patch: Partial<FieldInstanceProps>) =>
     onUpdate(field.instanceId, patch);
@@ -64,6 +47,18 @@ export const PropertiesPanel = function PropertiesPanel({
       <CardHeader>
         <CardTitle>{t('formBuilder.properties.title')}</CardTitle>
         <CardDescription>{field.props.label}</CardDescription>
+        <CardAction>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            intent="neutral"
+            aria-label={t('formBuilder.properties.back')}
+            onClick={onBack}
+          >
+            <ArrowLeftIcon />
+          </Button>
+        </CardAction>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-5">
@@ -105,4 +100,4 @@ export const PropertiesPanel = function PropertiesPanel({
       </CardContent>
     </Card>
   );
-};
+});

@@ -202,7 +202,6 @@ export const addField = (field: PremadeField) => {
   return instance;
 };
 
-/** Adds a brand-new field. Without `target` it becomes a new row at the end. */
 export const placeField = (
   field: PremadeField,
   target: AddTarget = { kind: 'addNewRowInBottom' },
