@@ -12,6 +12,7 @@ import { cn } from '@repo/ui-kit/lib/utils';
 
 import {
   commit,
+  draggedFieldIdAtom,
   fieldsAtom,
   removeField,
   selectedFieldIdAtom,
@@ -30,17 +31,19 @@ export const PlacedField = reatomComponent(function PlacedField({
   const field = fieldsAtom.get(instanceId);
   const selected = selectedFieldIdAtom() === instanceId;
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: instanceId,
-    data: { source: 'canvas', instanceId: instanceId },
-  });
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: instanceId,
+      data: { source: 'canvas', instanceId: instanceId },
+    });
+
+  /**
+   * dnd-kit's own `isDragging` only covers the node the drag started from, which
+   * for a field dragged out of the palette is the tile in the palette. The
+   * dragged field is the one the builder tracks, so the gap shows up for it
+   * either way.
+   */
+  const isDragged = draggedFieldIdAtom() === instanceId;
 
   /**
    * The field as a one-field form: the very same schema/uischema pair and the
@@ -66,7 +69,7 @@ export const PlacedField = reatomComponent(function PlacedField({
 
   if (!field || !preview) return null;
 
-  if (isDragging) {
+  if (isDragged) {
     return (
       <div
         ref={setNodeRef}

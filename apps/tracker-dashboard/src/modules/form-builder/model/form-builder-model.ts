@@ -26,6 +26,15 @@ export const selectedFieldIdAtom = atom<string | null>(
   null,
   'formBuilder.selectedFieldId',
 );
+/**
+ * The field the current drag is about, whichever node the drag started from.
+ * dnd-kit only reports the node it started from — the palette tile — so a field
+ * dragged out of the palette needs this to know it is the one being dragged.
+ */
+export const draggedFieldIdAtom = atom<string | null>(
+  null,
+  'formBuilder.draggedFieldId',
+);
 export const activeTabAtom = atom<BuilderTab>('build', 'formBuilder.activeTab');
 export const rulesAtom = atom<ValidationRule[]>([], 'formBuilder.rules');
 export const previewDataAtom = atom<Record<string, unknown>>(
