@@ -1,12 +1,12 @@
 import type { ComponentProps } from 'react';
 
-import type { Icon } from '@phosphor-icons/react';
-
 import { cn } from '@repo/ui-kit/lib/utils';
 
+import type { PremadeField } from '../model/field-catalog';
+
 interface FieldSquareProps extends ComponentProps<'div'> {
-  icon: Icon;
-  label: string;
+  /** The catalog field the square stands for. */
+  field: PremadeField;
 }
 
 /**
@@ -23,13 +23,12 @@ export const FIELD_SQUARE_SIZE = 80;
  * puts the drag listeners on it, the drag overlay reuses it as the ghost.
  */
 export const FieldSquare = function FieldSquare({
-  icon,
-  label,
+  field,
   className,
   style,
   ...props
 }: FieldSquareProps) {
-  const Icon = icon;
+  const Icon = field.icon;
 
   return (
     <div
@@ -47,7 +46,7 @@ export const FieldSquare = function FieldSquare({
       <Icon className="size-5 shrink-0 text-muted-foreground" />
 
       <span className="line-clamp-2 text-xs leading-tight text-muted-foreground">
-        {label}
+        {field.label}
       </span>
     </div>
   );
