@@ -75,7 +75,7 @@ export const PlacedField = reatomComponent(function PlacedField({
         ref={setNodeRef}
         {...attributes}
         {...listeners}
-        className="h-full min-h-14 rounded-lg border-2 border-dashed border-primary bg-primary/10"
+        className="h-full min-h-12 rounded-lg border-2 border-dashed border-primary bg-primary/10"
       />
     );
   }
