@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
-import { useSortable } from '@dnd-kit/sortable';
+import { defaultAnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { JsonForms } from '@jsonforms/react';
 import { TrashIcon } from '@phosphor-icons/react';
@@ -24,6 +24,23 @@ interface PlacedFieldProps {
   instanceId: string;
 }
 
+type AnimateLayoutChangesArgs = Parameters<
+  typeof defaultAnimateLayoutChanges
+>[0];
+
+/**
+ * The builder writes the new row order itself while a drag is in flight, so by
+ * the time a canvas field swaps slots the sortable's own bookkeeping is already
+ * stale: `newIndex` gets recomputed from the order that was just committed and
+ * lands back on the current `index`, which is exactly the case the default
+ * check treats as "nothing moved" and switches the derived transform off - the
+ * field would jump instead of sliding. A drag being live is enough to keep the
+ * transition on, and it only ever applies to a field whose index changed.
+ */
+const animateLayoutChanges = (args: AnimateLayoutChangesArgs) =>
+  defaultAnimateLayoutChanges(args) ||
+  (args.active != null && args.wasDragging);
+
 export const PlacedField = reatomComponent(function PlacedField({
   instanceId,
 }: PlacedFieldProps) {
@@ -35,6 +52,7 @@ export const PlacedField = reatomComponent(function PlacedField({
     useSortable({
       id: instanceId,
       data: { source: 'canvas', instanceId: instanceId },
+      animateLayoutChanges,
     });
 
   /**
