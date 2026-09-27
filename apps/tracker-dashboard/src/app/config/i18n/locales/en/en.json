@@ -54,7 +54,9 @@
       "thesisProcess": "Thesis Process",
       "projectEnrollment": "Project Enrollment",
       "schedule": "Schedule"
-    }
+    },
+    "collapsed": "Collapse sidebar",
+    "expanded": "Expand sidebar"
   },
   "user": {
     "logOut": "Log out",
