@@ -2,6 +2,8 @@
 
 echo "🔍 Linting commit message..."
 
-npx pnpm dlx commitlint --edit $1
+# commitlint is a root devDependency; husky puts node_modules/.bin on PATH.
+# Do not use npx: it ignores PATH here and fetches a remote, unpinned copy.
+commitlint --edit "$1"
 
 echo "✅ Commit message is valid"
