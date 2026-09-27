@@ -54,7 +54,9 @@
       "thesisProcess": "Процес ДП",
       "projectEnrollment": "Зарахування до проєктів",
       "schedule": "Розклад"
-    }
+    },
+    "collapsed": "Розгорнути бокову панель",
+    "expanded": "Згорнути бокову панель"
   },
   "user": {
     "logOut": "Вийти",

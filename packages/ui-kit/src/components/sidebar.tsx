@@ -256,20 +256,31 @@ function Sidebar({
   );
 }
 
+type SidebarTriggerProps = React.ComponentProps<typeof Button> & {
+  collapsedLabel?: string;
+  expandedLabel?: string;
+  showTooltip?: boolean;
+};
+
 function SidebarTrigger({
   className,
   onClick,
+  collapsedLabel = 'Expand sidebar',
+  expandedLabel = 'Collapse sidebar',
+  showTooltip = true,
   ...props
-}: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+}: SidebarTriggerProps) {
+  const { state, toggleSidebar } = useSidebar();
 
-  return (
+  const label = state === 'collapsed' ? collapsedLabel : expandedLabel;
+
+  const trigger = (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn('ui:size-7', className)}
+      className={cn('ui:size-8', className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
@@ -277,8 +288,23 @@ function SidebarTrigger({
       {...props}
     >
       <SidebarSimpleIcon />
-      <span className="ui:sr-only">Toggle Sidebar</span>
+      <span className="ui:sr-only">{label}</span>
     </Button>
+  );
+
+  if (!showTooltip) {
+    return trigger;
+  }
+
+  return (
+    <TooltipProvider delayDuration={500}>
+      <Tooltip>
+        <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+        <TooltipContent side="right" align="center">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
