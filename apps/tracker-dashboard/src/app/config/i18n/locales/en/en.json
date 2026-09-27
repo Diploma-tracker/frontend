@@ -55,8 +55,8 @@
       "projectEnrollment": "Project Enrollment",
       "schedule": "Schedule"
     },
-    "collapsed": "Collapse sidebar",
-    "expanded": "Expand sidebar"
+    "collapsed": "Expand sidebar",
+    "expanded": "Collapse sidebar"
   },
   "user": {
     "logOut": "Log out",
