@@ -1,16 +1,13 @@
 # `@repo/tailwind-config`
 
-Shared Tailwind CSS configurations used across the monorepo (design-tokens, themes, utilities).
+CSS-first Tailwind CSS 4 theme, semantic design tokens, shared global styles,
+and optional PostCSS integration.
 
-## Exports
+## Documentation
 
-- `.` (shared-styles.css): Full Tailwind setup with preflight, theme tokens, and utilities. Use for global app styling.
+- [Files and public exports](docs/architecture.md)
+- [Consumer setup and configuration](docs/development.md)
+- [Token and styling conventions](docs/conventions.md)
+- [Commands and validation](docs/commands.md)
 
-- `./tokens` (tokens.css): Design tokens (CSS variables) only, for theming components and libraries. Use in UI packages to avoid duplicating Tailwind preflight.
-
-- `./postcss`: PostCSS config for build system integration (for example for Next.js).
-
-**Usage examples:**
-
-- In an app: `@import '@repo/tailwind-config';`
-- In a UI library: `@import '@repo/tailwind-config/tokens';`
+For shared setup and practices, see the [root documentation](../../README.md#documentation).

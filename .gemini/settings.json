@@ -1,16 +1,5 @@
 {
   "context": {
-    "fileName": [
-      "styleguide.md"
-    ]
-  },
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ]
-    }
+    "fileName": ["AGENTS.md"]
   }
 }
