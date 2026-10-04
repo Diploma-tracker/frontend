@@ -154,22 +154,33 @@ Avoid asserting:
 
 Assert HTTP payloads, query parameters, or headers only when they are part of the behavior being protected.
 
-## Fixtures and helpers
+## Organize reusable test support
 
-Search existing `tests/fixtures` and `tests/utils` before creating new helpers.
+Before writing tests, inspect existing `tests/fixtures`, `tests/mocks`, and `tests/utils`.
 
-Create reusable factories when test data is recurring or sufficiently complex.
+When the task covers an entire module, establish or reuse small module-level test support before duplicating the same setup across individual suites. Extract only concepts that are likely to be reused.
 
-Factories should:
+Use these ownership rules:
+
+- `tests/fixtures` → deterministic domain data and raw HTTP DTO factories, such as `createUser()` or `createLoginHttpResponse()`.
+- `tests/mocks` → reusable dependency behavior, especially MSW handler factories and reusable external-boundary stubs.
+- `tests/utils` → reusable test infrastructure and lifecycle helpers, such as `resetAuthTestState()`, render helpers, or small Reatom test-state builders.
+- `tests/setup` → global test-environment wiring only: MSW server lifecycle, Testing Library cleanup, and other suite-wide hooks.
+
+Create reusable factories when test data is recurring or sufficiently complex. Factories should:
 
 - return fresh values,
 - use deterministic defaults,
 - support partial overrides,
 - use real public types when practical.
 
-Do not introduce unnecessary abstraction for small one-off test data.
+Keep raw HTTP DTO fixtures separate from frontend/domain fixtures when the API client transforms data.
 
-Do not recreate the same mock or helper independently across multiple tests.
+Do not introduce unnecessary abstraction for small one-off test data. A small interaction helper used by only one suite may stay in that test file.
+
+Do not recreate the same mock, fixture, handler, reset routine, or helper independently across multiple tests.
+
+Keep `vi.mock` and `vi.hoisted` declarations in test files unless the project has a verified setup-file pattern for that mock. Do not hide hoisted Vitest module mocks in ordinary imported utility modules.
 
 ## Reatom
 

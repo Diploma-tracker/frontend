@@ -140,6 +140,10 @@ server.use(...)
 
 for scenario-specific handlers.
 
+Prefer reusable domain handler factories under `tests/mocks/handlers/<domain>.ts` when several tests need the same endpoint with different success/error variants.
+
+Keep `tests/setup/msw/handlers.ts` as the aggregate for true suite-wide default handlers. A handler factory does not need to be registered globally: a test can opt into it with `server.use(createXxxHandler())`.
+
 Add handlers to the shared handler collection only when they are reusable defaults.
 
 Keep the real API client and transformations involved when they are part of the behavior being tested.
@@ -162,16 +166,39 @@ Do not import another workspace's private `src/` files from tests when a public 
 
 Generated API files may be inspected but must not be edited manually.
 
-## Fixtures and factories
+## Test support ownership
 
 Check existing:
 
 ```text
 tests/fixtures/
+tests/mocks/
 tests/utils/
 ```
 
-before creating new helpers.
+before creating new support code.
+
+Use the directories consistently:
+
+```text
+tests/fixtures/
+  deterministic domain objects and raw HTTP DTO factories
+
+tests/mocks/
+  reusable MSW handler factories and other reusable dependency behavior
+
+tests/utils/
+  render helpers, state reset helpers, lifecycle helpers, and small Reatom test-state builders
+
+tests/setup/
+  global environment wiring only
+```
+
+When covering a whole module, prefer one reusable module-level fixture/handler/reset helper over repeating the same setup in every feature test. Do not extract one-off details merely to make a test file shorter.
+
+Keep `vi.mock` and `vi.hoisted` in the test file unless a verified setup-file pattern is intentionally global. Vitest statically hoists these declarations in test/setup files; moving them into ordinary imported utilities can change or break their behavior.
+
+## Fixtures and factories
 
 Use factories for recurring or sufficiently complex domain objects.
 
