@@ -3,6 +3,7 @@ import {
   CalendarIcon,
   CaretRightIcon,
   FilesIcon,
+  FlowArrowIcon,
   ListChecksIcon,
   SquaresFourIcon,
 } from '@phosphor-icons/react';
@@ -65,6 +66,11 @@ export default function AppSidebarMainNav(props: Props) {
       title: t('sidebar.nav.formBuilder'),
       url: '/form-builder',
       icon: SquaresFourIcon,
+    },
+    {
+      title: t('sidebar.nav.bpmnEditor'),
+      url: '/bpmn-editor',
+      icon: FlowArrowIcon,
     },
   ];
 
