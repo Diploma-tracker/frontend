@@ -56,15 +56,16 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
        *
        * The defaults are handed over as unresolved `var()` references rather
        * than resolved colours. They land on the shapes as SVG presentation
-       * attributes, which resolve against the tokens in `bpmn-canvas.css` — so
-       * the whole diagram follows the theme, and light/dark switching needs no
-       * re-import. Anything that sets a real colour on bpmndi still wins,
-       * because `getFillColor` / `getStrokeColor` prefer it over the default.
+       * attributes, which resolve against the diagram tokens in
+       * `packages/tailwind-config/tokens.css` — so the whole diagram follows the
+       * app theme, and light/dark switching needs no re-import. Anything that
+       * sets a real colour on bpmndi still wins, because `getFillColor` /
+       * `getStrokeColor` prefer it over the default.
        */
       bpmnRenderer: {
-        defaultFillColor: 'var(--bpmn-fill)',
+        defaultFillColor: 'var(--bpmn-element-bg)',
         defaultStrokeColor: 'var(--bpmn-stroke)',
-        defaultLabelColor: 'var(--bpmn-label)',
+        defaultLabelColor: 'var(--bpmn-element-fg)',
       },
       additionalModules: [
         {

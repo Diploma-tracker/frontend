@@ -1,301 +1,171 @@
-/**
- * bpmn-js theme.
+/*
+ * bpmn-js 18.30.1 theme.
  *
- * How the theming layer works
- * ---------------------------
+ * Written against 18.x: the `--bio-*` token contract and `.bio-theme-parent` hook
+ * are specific to it, so re-check `diagram-js.css` before bumping past v18.
  *
- * bpmn-js v18 ships its stylesheets already split in two, both imported in
- * `bpmn-canvas.tsx` ahead of this file:
+ * Diagram paint (`--bpmn-bg`, `--bpmn-element-bg`, `--bpmn-element-fg`,
+ * `--bpmn-stroke`) and the app tokens live in `@repo/tailwind-config`. This file
+ * binds the library's `--bio-*` contract onto them, plus the few rules the
+ * renderer cannot express. Light and dark need nothing here: custom properties
+ * substitute at use time, so `.dark` changing the tokens underneath is enough.
  *
- *   - `diagram-js.css` — canvas behaviour (selection, lasso, resizers,
- *     bendpoints, context pad, popups, tooltips, search pad) and the `--bio-*`
- *     semantic tokens declared on `.bio-theme-parent`.
- *   - `bpmn-js.css` — breadcrumbs / drilldown, plus the same tokens.
+ * `.bio-theme-parent` is the hook. bpmn-js stamps it on the canvas container and
+ * appends every floating UI — context pad, popups, tooltips, search pad — to
+ * that same container, so one block themes the whole editor.
  *
- * `.bio-theme-parent` is the contract. bpmn-js stamps it on the canvas
- * container itself (`class="djs-container djs-parent bio-theme-parent"`), and
- * every built-in UI it floats over the diagram — context pad, popups, hover
- * tooltips, search pad — is appended to that same container. One token block
- * therefore covers the whole editor.
- *
- * Tokens resolve in two steps:
- *
- *   1. `--bio-*` semantic tokens (surface, text, border, primary, danger, …)
- *      are declared on `.bio-theme-parent`.
- *   2. `.djs-parent` re-exports them as component variables
- *      (`--accent-color`, `--popup-border-color`, `--bendpoint-fill-color`, …)
- *      and the actual rules consume those.
- *
- * Overriding step 1 is the supported way in, and it covers almost everything:
- * `--accent-color` resolves `var(--bio-canvas-accent)` on the same element, so
- * rebinding `--bio-canvas-accent` retints the selection outline, bendpoints,
- * resizers, lasso, snap lines and breadcrumbs in a single move.
- *
- * Two things step 1 cannot reach, both handled below:
- *
- *   - `--popup-font-family`, `--search-font-family`, `--hover-tooltip-font-family`
- *     and `--popup-scrollbar-thumb-color` are literal values in `diagram-js.css`.
- *   - BPMN shapes carry no tokens at all. They get theirs from the renderer,
- *     which is handed unresolved `var()` references in `bpmn-canvas.tsx`:
- *     `defaultFillColor: 'var(--bpmn-fill)'` and friends become `fill="var(…)"`
- *     presentation attributes, and those resolve against the `--bpmn-*` tokens
- *     below. So the diagram body is themed from CSS without a single CSS rule
- *     painting it — which also keeps `getFillColor` / `getStrokeColor` able to
- *     hand back a real colour when bpmndi has one.
- *
- * What is left in section 3 is only what the renderer cannot separate or does
- * not theme at all: connection colour, the inner line art that `lineStyle()`
- * hardcodes to black, hover, and arrowheads. Those are deliberately
- * overrides — they sit above the presentation attributes, so an element whose
- * colour was set on bpmndi still loses on those four, and nowhere else.
- *
- * The palette below is deliberately loud — accent is red, and surfaces, text
- * and status hues are pushed away from the bpmn.io defaults — so it is obvious
- * that every value here really is driving the diagram.
- *
- * Per-element colour set through `element.setColor` lands in bpmndi and keeps
- * winning over these rules. That is the intended split: tokens own the default
- * look, bpmndi owns user overrides.
- *
- * This file is not a place for a second theme. To ship one, redefine the same
- * `--bio-*` tokens under another scope and switch the scope from `ThemeProvider`.
+ * Shapes carry no tokens at all. Their paint comes from the `bpmnRenderer`
+ * defaults in `bpmn-canvas.tsx`, handed over as unresolved `var()` references
+ * that land as SVG presentation attributes. A colour set on bpmndi still wins
+ * over those.
  */
 
-/* ---------------------------------------------------------------------------
- * 1. Light theme
- * ------------------------------------------------------------------------- */
-
 .djs-container.bio-theme-parent {
-  /* The library hardcodes IBM Plex Sans; the editor has to look like the app. */
+  /* Hardcoded IBM Plex Sans in diagram-js.css, with no token to rebind. */
   --bjs-font-family: var(--font-sans);
   --popup-font-family: var(--font-sans);
   --search-font-family: var(--font-sans);
   --hover-tooltip-font-family: var(--font-sans);
   --popup-scrollbar-thumb-color: var(--bio-border);
 
-  /* Diagram paint — the part `--bio-*` does not reach. */
-  --bpmn-fill: hsl(36, 60%, 99%);
-  --bpmn-stroke: hsl(20, 25%, 32%);
-  --bpmn-stroke-hover: hsl(0, 72%, 48%);
-  --bpmn-icon: hsl(20, 25%, 32%);
-  --bpmn-label: hsl(20, 25%, 14%);
-  --bpmn-connection: hsl(200, 20%, 38%);
+  /* Also drives `--bendpoint-stroke-color` and `--resizer-stroke-color`, which
+     cut out against the canvas. */
+  --bio-surface: var(--bpmn-bg);
+  --bio-surface-overlay: var(--popover);
+  --bio-surface-subtle: var(--muted);
+  --bio-surface-medium: var(--secondary);
+  --bio-surface-strong: var(--accent);
 
-  /* Surfaces: warm cream instead of bpmn.io's cool grey. */
-  --bio-surface: hsl(36, 40%, 98%);
-  --bio-surface-overlay: hsl(36, 50%, 99%);
-  --bio-surface-subtle: hsl(36, 30%, 95%);
-  --bio-surface-medium: hsl(36, 24%, 91%);
-  --bio-surface-strong: hsl(36, 20%, 84%);
+  /* Same inversion `TooltipContent` uses. */
+  --bio-surface-inverted: var(--foreground);
+  --bio-surface-inverted-subtle: color-mix(
+    in srgb,
+    var(--foreground) 80%,
+    transparent
+  );
 
-  /* Tooltips invert against the page, so they invert with the theme. */
-  --bio-surface-inverted: hsl(20, 15%, 16%);
-  --bio-surface-inverted-subtle: hsl(20, 12%, 30%);
+  --bio-text: var(--foreground);
+  --bio-text-subtle: color-mix(in srgb, var(--foreground) 70%, transparent);
+  --bio-text-subtlest: var(--muted-foreground);
+  --bio-text-on-primary: var(--primary-foreground);
+  --bio-text-on-inverted: var(--background);
 
-  /* Content: warm charcoal rather than neutral black. */
-  --bio-text: hsl(20, 25%, 14%);
-  --bio-text-subtle: hsl(20, 14%, 34%);
-  --bio-text-subtlest: hsl(20, 10%, 52%);
-  --bio-text-on-primary: hsl(36, 60%, 98%);
-  --bio-text-on-inverted: hsl(36, 40%, 96%);
+  /* Not `--border`: that hairline disappears as a shape outline. */
+  --bio-border: var(--bpmn-stroke);
+  --bio-border-subtle: color-mix(in srgb, var(--bpmn-stroke) 60%, transparent);
+  --bio-border-disabled: var(--border);
+  --bio-border-input: var(--bpmn-stroke);
 
-  /* Lines. */
-  --bio-border: hsl(20, 16%, 76%);
-  --bio-border-subtle: hsl(20, 18%, 86%);
-  --bio-border-disabled: hsl(20, 16%, 91%);
-  --bio-border-input: hsl(20, 18%, 74%);
+  --bio-primary: var(--primary);
+  --bio-primary-hover: color-mix(in srgb, var(--primary) 85%, black);
+  --bio-primary-surface: color-mix(in srgb, var(--primary) 12%, transparent);
+  --bio-primary-surface-strong: color-mix(
+    in srgb,
+    var(--primary) 25%,
+    transparent
+  );
 
-  /* Accent — red, on purpose. */
-  --bio-primary: hsl(0, 72%, 51%);
-  --bio-primary-hover: hsl(0, 72%, 43%);
-  --bio-primary-surface: hsl(0, 80%, 96%);
-  --bio-primary-surface-strong: hsl(0, 75%, 88%);
+  --bio-neutral: var(--secondary-foreground);
+  --bio-neutral-hover: var(--foreground);
+  --bio-neutral-subtle: var(--secondary);
+  --bio-neutral-subtle-hover: var(--accent);
 
-  --bio-neutral: hsl(20, 14%, 34%);
-  --bio-neutral-hover: hsl(20, 14%, 28%);
-  --bio-neutral-subtle: hsl(20, 16%, 84%);
-  --bio-neutral-subtle-hover: hsl(20, 16%, 78%);
+  --bio-danger: var(--destructive);
+  --bio-danger-hover: color-mix(in srgb, var(--destructive) 85%, black);
+  --bio-danger-text: var(--destructive);
+  --bio-danger-surface: color-mix(in srgb, var(--destructive) 15%, transparent);
+  --bio-danger-surface-subtle: color-mix(
+    in srgb,
+    var(--destructive) 8%,
+    transparent
+  );
 
-  /* Danger moves to amber, since red now means "accent". */
-  --bio-danger: hsl(28, 94%, 44%);
-  --bio-danger-hover: hsl(28, 94%, 38%);
-  --bio-danger-text: hsl(24, 90%, 34%);
-  --bio-danger-surface: hsl(30, 95%, 90%);
-  --bio-danger-surface-subtle: hsl(34, 96%, 95%);
+  --bio-warning: var(--pending);
+  --bio-warning-hover: color-mix(in srgb, var(--pending) 85%, black);
+  --bio-warning-text: var(--pending);
+  --bio-warning-surface: color-mix(in srgb, var(--pending) 15%, transparent);
 
-  --bio-warning: hsl(45, 95%, 52%);
-  --bio-warning-hover: hsl(45, 95%, 46%);
-  --bio-warning-text: hsl(38, 90%, 30%);
-  --bio-warning-surface: hsl(48, 96%, 93%);
+  --bio-success: var(--success);
 
-  --bio-success: hsl(152, 62%, 36%);
+  --bio-info: var(--primary);
+  --bio-info-hover: color-mix(in srgb, var(--primary) 85%, black);
+  --bio-info-text: var(--primary);
+  --bio-info-surface: color-mix(in srgb, var(--primary) 12%, transparent);
+  --bio-info-on-inverted: color-mix(
+    in srgb,
+    var(--primary) 60%,
+    var(--background)
+  );
 
-  --bio-info: hsl(196, 72%, 38%);
-  --bio-info-hover: hsl(196, 72%, 32%);
-  --bio-info-text: hsl(200, 70%, 30%);
-  --bio-info-surface: hsl(196, 78%, 94%);
-  --bio-info-on-inverted: hsl(196, 90%, 78%);
+  /* Severity markers stay colour-identifiable to their status. */
+  --bio-danger-marker: var(--destructive);
+  --bio-warning-marker: var(--pending);
+  --bio-success-marker: var(--success);
+  --bio-info-marker: var(--primary);
 
-  /* Severity markers stay colour-identifiable: red still means "error". */
-  --bio-danger-marker: hsl(0, 72%, 48%);
-  --bio-warning-marker: hsl(30, 92%, 46%);
-  --bio-success-marker: hsl(152, 62%, 32%);
-  --bio-info-marker: hsl(196, 72%, 38%);
+  --bio-selected-surface: color-mix(in srgb, var(--primary) 12%, transparent);
+  --bio-selected-text: var(--foreground);
 
-  --bio-selected-surface: hsl(0, 60%, 94%);
-  --bio-selected-text: hsl(20, 25%, 14%);
+  --bio-focus: var(--ring);
+  --bio-focus-ring: color-mix(in srgb, var(--ring) 35%, transparent);
+  --bio-focus-surface: color-mix(in srgb, var(--ring) 12%, transparent);
 
-  --bio-focus: hsl(0, 78%, 48%);
-  --bio-focus-ring: hsla(0, 78%, 48%, 0.35);
-  --bio-focus-surface: hsl(0, 80%, 96%);
+  /* One binding retints selection, bendpoints, resizers, lasso and snap lines. */
+  --bio-canvas-accent: var(--primary);
+  --bio-canvas-accent-subtle: color-mix(
+    in srgb,
+    var(--primary) 45%,
+    transparent
+  );
 
-  /* Canvas interactions: selection, bendpoints, resizers, lasso, snap lines. */
-  --bio-canvas-accent: hsl(0, 78%, 48%);
-  --bio-canvas-accent-subtle: hsl(0, 70%, 76%);
+  --bio-shadow: color-mix(in srgb, var(--shadow-color) 25%, transparent);
+  --bio-shadow-subtle: color-mix(in srgb, var(--shadow-color) 10%, transparent);
 
-  --bio-shadow: hsla(20, 40%, 12%, 0.28);
-  --bio-shadow-subtle: hsla(20, 40%, 12%, 0.12);
-
-  /* Bigger, softer corners than the 2/3/4px default. */
-  --bio-radius-sm: 3px;
-  --bio-radius-md: 6px;
-  --bio-radius-lg: 10px;
+  --bio-radius-sm: var(--radius);
+  --bio-radius-md: var(--radius);
+  --bio-radius-lg: var(--radius);
 }
 
-/* ---------------------------------------------------------------------------
- * 2. Dark theme
- *
- * `ThemeProvider` toggles `dark` on `document.documentElement`, and the app
- * token file switches on `.dark` too, so this follows the same convention.
- * ------------------------------------------------------------------------- */
+/*
+ * Renderer gaps. Shape and label paint is already covered by the `bpmnRenderer`
+ * defaults; the rules below are the exceptions. They sit above the presentation
+ * attributes, so a colour set on bpmndi loses on them.
+ */
 
-:root.dark .djs-container.bio-theme-parent {
-  --bpmn-fill: hsl(24, 12%, 16%);
-  --bpmn-stroke: hsl(36, 25%, 72%);
-  --bpmn-stroke-hover: hsl(0, 84%, 62%);
-  --bpmn-icon: hsl(36, 25%, 72%);
-  --bpmn-label: hsl(36, 30%, 94%);
-  --bpmn-connection: hsl(36, 18%, 62%);
-
-  --bio-surface: hsl(24, 10%, 12%);
-  --bio-surface-overlay: hsl(24, 10%, 15%);
-  --bio-surface-subtle: hsl(24, 9%, 17%);
-  --bio-surface-medium: hsl(24, 8%, 22%);
-  --bio-surface-strong: hsl(24, 8%, 28%);
-
-  --bio-surface-inverted: hsl(36, 45%, 94%);
-  --bio-surface-inverted-subtle: hsl(36, 30%, 84%);
-
-  --bio-text: hsl(36, 30%, 94%);
-  --bio-text-subtle: hsl(36, 14%, 74%);
-  --bio-text-subtlest: hsl(36, 10%, 56%);
-  --bio-text-on-primary: hsl(36, 60%, 98%);
-  --bio-text-on-inverted: hsl(24, 15%, 12%);
-
-  --bio-border: hsl(24, 10%, 38%);
-  --bio-border-subtle: hsl(24, 10%, 30%);
-  --bio-border-disabled: hsl(24, 10%, 25%);
-  --bio-border-input: hsl(24, 10%, 42%);
-
-  --bio-primary: hsl(0, 84%, 62%);
-  --bio-primary-hover: hsl(0, 84%, 70%);
-  --bio-primary-surface: hsl(0, 40%, 20%);
-  --bio-primary-surface-strong: hsl(0, 45%, 30%);
-
-  --bio-neutral: hsl(36, 14%, 74%);
-  --bio-neutral-hover: hsl(36, 14%, 82%);
-  --bio-neutral-subtle: hsl(24, 10%, 26%);
-  --bio-neutral-subtle-hover: hsl(24, 10%, 32%);
-
-  --bio-danger: hsl(30, 90%, 60%);
-  --bio-danger-hover: hsl(30, 90%, 68%);
-  --bio-danger-text: hsl(34, 96%, 78%);
-  --bio-danger-surface: hsl(28, 45%, 22%);
-  --bio-danger-surface-subtle: hsl(28, 35%, 17%);
-
-  --bio-warning: hsl(45, 90%, 62%);
-  --bio-warning-hover: hsl(45, 90%, 70%);
-  --bio-warning-text: hsl(48, 96%, 76%);
-  --bio-warning-surface: hsl(45, 40%, 20%);
-
-  --bio-success: hsl(152, 52%, 52%);
-
-  --bio-info: hsl(196, 70%, 58%);
-  --bio-info-hover: hsl(196, 70%, 66%);
-  --bio-info-text: hsl(196, 80%, 78%);
-  --bio-info-surface: hsl(196, 40%, 20%);
-  --bio-info-on-inverted: hsl(196, 80%, 32%);
-
-  --bio-danger-marker: hsl(0, 76%, 54%);
-  --bio-warning-marker: hsl(30, 88%, 54%);
-  --bio-success-marker: hsl(152, 56%, 42%);
-  --bio-info-marker: hsl(196, 70%, 54%);
-
-  --bio-selected-surface: hsl(0, 30%, 24%);
-  --bio-selected-text: hsl(36, 30%, 94%);
-
-  --bio-focus: hsl(0, 86%, 62%);
-  --bio-focus-ring: hsla(0, 86%, 62%, 0.4);
-  --bio-focus-surface: hsl(0, 40%, 18%);
-
-  --bio-canvas-accent: hsl(0, 86%, 62%);
-  --bio-canvas-accent-subtle: hsl(0, 60%, 40%);
-
-  --bio-shadow: hsla(0, 0%, 0%, 0.55);
-  --bio-shadow-subtle: hsla(0, 0%, 0%, 0.35);
+/* The library never paints the container — `--canvas-fill-color` is declared but
+   never consumed, only feeding the bendpoint and resizer strokes. */
+.djs-container {
+  background-color: var(--bpmn-bg);
 }
 
-/* ---------------------------------------------------------------------------
- * 3. Renderer deltas
- *
- * Shape and label paint comes from the renderer defaults, which are `var()`
- * references resolved against the tokens above. The rules below only cover what
- * the renderer cannot do: there is one `defaultStrokeColor` for both shapes and
- * connections, inner line art is hardcoded to black by `lineStyle()`, and
- * arrowheads bake their colour in when the marker is created.
- *
- * `BpmnRenderer` puts the body of a shape in the first child of `.djs-visual` —
- * the same hook `diagram-js.css` uses for its own drop and connect feedback.
- * ------------------------------------------------------------------------- */
-
-.djs-container.bio-theme-parent {
-  /* `--canvas-fill-color` is derived from `--bio-surface`. */
-  background-color: var(--canvas-fill-color);
-}
-
-/* Sequence flows, message flows, associations. */
+/* One `defaultStrokeColor` covers shapes and connections alike, and they have to
+   differ. `> :nth-child(1)` is where BpmnRenderer puts the body. */
 .djs-container .djs-connection .djs-visual > :nth-child(1) {
   fill: none;
-  stroke: var(--bpmn-connection);
+  stroke: var(--bpmn-stroke);
   stroke-width: 2.5;
 }
 
-/* Arrowheads bake their colour in when the marker is created, and in BPMN every
-   arrowhead belongs to a flow. */
+/* Marker colour is baked in when the marker is created, and every arrowhead in
+   BPMN belongs to a flow. */
 .djs-container svg defs marker path {
-  fill: var(--bpmn-connection);
-  stroke: var(--bpmn-connection);
+  fill: var(--bpmn-stroke);
+  stroke: var(--bpmn-stroke);
 }
 
-/* Inner line art: task and event icons, expand/collapse chevrons. */
+/* `lineStyle()` hardcodes black: task and event icons, expand/collapse chevrons. */
 .djs-container .djs-visual [data-marker] {
   fill: none;
-  stroke: var(--bpmn-icon);
+  stroke: var(--bpmn-element-fg);
 }
 
 .djs-container .djs-element:hover .djs-visual > :nth-child(1),
 .djs-container .djs-element:hover .djs-visual [data-marker] {
-  stroke: var(--bpmn-stroke-hover);
+  stroke: var(--primary);
 }
 
-/* ---------------------------------------------------------------------------
- * 4. Editor chrome
- * ------------------------------------------------------------------------- */
-
-/*
- * Context pad glyphs are bpmn-font text and popup glyphs are
- * `stroke="currentColor"` SVGs, so both follow `color`.
- */
+/* Context pad glyphs are bpmn-font text and popup glyphs are
+   `stroke="currentColor"` SVGs, so both follow `color`. */
 .djs-container .djs-context-pad .entry,
 .djs-container .djs-popup,
 .djs-container .djs-search-container {
@@ -310,7 +180,6 @@
   color: var(--bio-primary-hover);
 }
 
-/* The bpmn.io attribution, kept but toned down so it does not fight the theme. */
 .djs-container .bjs-powered-by {
   opacity: 0.35;
   transition: opacity 120ms ease-in-out;

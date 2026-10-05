@@ -36,6 +36,16 @@
   --border: #f2f2f2;
   --input: #f2f2f2;
 
+  /* BPMN */
+
+  /* The canvas the diagram is drawn on. Warm and a step darker than the page, so
+     the editor reads as its own recessed surface instead of a hole in the
+     layout. */
+  --bpmn-bg: #f7f3ec;
+  --bpmn-element-bg: var(--background);
+  --bpmn-element-fg: var(--foreground);
+  --bpmn-stroke: var(--foreground);
+
   --ring: #3b82f6;
 
   /* CHARTS */
@@ -124,6 +134,13 @@
 
   --border: #333333;
   --input: #333333;
+
+  /* BPMN */
+
+  --bpmn-bg: #141110;
+  --bpmn-element-bg: var(--background);
+  --bpmn-element-fg: var(--foreground);
+  --bpmn-stroke: var(--foreground);
 
   --ring: #2f5fa3;
 
