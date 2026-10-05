@@ -14,7 +14,7 @@ import {
   replaceElementType,
   spawnElement,
   toDiagramElement,
-  updateElementName,
+  updateProperties,
   zoomToFit,
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
@@ -243,16 +243,24 @@ export const spawnPaletteElement = action(
   },
 );
 
-export const renameSelected = action((name: string) => {
+const getCurrentElement = (): Element | null => {
   const selected = selectedElementAtom();
+  if (!modeler || !selected) return null;
+  return getElementById(selected.id);
+};
 
-  if (!modeler || !selected) return;
+const updateCurrent = action(() => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+  setSelectedElement(describeElement(element));
+});
 
-  const element = getElementById(selected.id);
+export const renameSelected = action((name: string) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
 
-  if (!element) return;
-
-  updateElementName(modeler, element, name);
+  updateProperties(modeler, element, { name });
+  updateCurrent();
 });
 
 export const duplicateSelected = action(() => {

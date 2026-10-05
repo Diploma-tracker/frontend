@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@repo/ui-kit/components/common/floating/tooltip';
+import { InlineInput } from '@repo/ui-kit/components/common/form/inline-input';
 import { Card } from '@repo/ui-kit/components/common/layout/card';
 
 import { saveDiagram } from '../model/diagram-persistence';
@@ -32,6 +33,7 @@ import {
   duplicateSelected,
   fitViewport,
   redo,
+  renameSelected,
   resetZoom,
   selectedElementAtom,
   setError,
@@ -107,9 +109,12 @@ const ContextActions = reatomComponent(function ContextActions() {
 
   return (
     <>
-      <span className="max-w-48 truncate text-sm font-medium">
-        {selected.name || t('bpmnEditor.menu.untitled')}
-      </span>
+      <InlineInput
+        className="max-w-48 text-sm"
+        value={selected.name}
+        placeholder={t('bpmnEditor.menu.untitled')}
+        onValueChange={renameSelected}
+      />
 
       <div className="h-5 w-px bg-border" />
 
