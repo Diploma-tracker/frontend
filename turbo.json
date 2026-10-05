@@ -8,6 +8,9 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["MODE", "DEV", "PROD", "SSR", "BASE_URL"]
     },
+    "test": {
+      "outputs": []
+    },
     "lint:check": {
       "outputs": []
     },
