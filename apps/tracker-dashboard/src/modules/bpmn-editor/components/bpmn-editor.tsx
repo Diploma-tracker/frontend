@@ -4,6 +4,7 @@ import {
   Alert,
   AlertDescription,
 } from '@repo/ui-kit/components/common/floating/alert';
+import { cn } from '@repo/ui-kit/lib/utils';
 
 import { PageLayout } from '../../../layouts/page-layout/page-layout';
 import { isPropertiesOpenAtom, lastErrorAtom } from '../model/editor-model';
@@ -32,15 +33,31 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
             <BpmnToolRail />
           </div>
 
-          {isPropertiesOpen ? (
-            <div className="pointer-events-auto absolute top-20 right-3 bottom-14 flex w-72 flex-col">
-              <BpmnProperties />
-            </div>
-          ) : (
-            // The pill positions itself against the overlay, which is
-            // `pointer-events-none` — so it opts back in on its own button.
-            <BpmnPropertiesPill className="pointer-events-auto absolute top-1/2 right-3 z-40 size-9 -translate-y-1/2" />
-          )}
+          {/* Stays mounted while closed so it can slide out; `invisible` drops it
+              from the tab order and the accessibility tree once the exit
+              transition finishes. */}
+          <div
+            aria-hidden={!isPropertiesOpen}
+            className={cn(
+              'absolute top-20 right-3 bottom-14 flex w-72 flex-col transition-[translate,opacity] transition-discrete duration-200 ease-out',
+              isPropertiesOpen
+                ? 'pointer-events-auto translate-x-0 opacity-100'
+                : 'pointer-events-none invisible translate-x-full opacity-0',
+            )}
+          >
+            <BpmnProperties />
+          </div>
+
+          {/* The pill positions itself against the overlay, which is
+              `pointer-events-none` — so it opts back in on its own button. */}
+          <BpmnPropertiesPill
+            className={cn(
+              'pointer-events-auto absolute top-1/2 right-3 z-40 size-9 -translate-y-1/2 transition-[translate,opacity] duration-200 ease-out',
+              isPropertiesOpen
+                ? 'pointer-events-none translate-x-2 opacity-0'
+                : 'translate-x-0 opacity-100',
+            )}
+          />
         </div>
 
         {error && (
