@@ -232,12 +232,12 @@ export const removeElement = (modeler: BpmnModeler, element: Element): void => {
   getServices(modeler).modeling.removeElements([element]);
 };
 
-export const updateElementName = (
+export const updateProperties = (
   modeler: BpmnModeler,
   element: Element,
-  name: string,
+  properties: object,
 ): void => {
-  getServices(modeler).modeling.updateProperties(element, { name });
+  getServices(modeler).modeling.updateProperties(element, properties);
 };
 
 export const replaceElementType = (
