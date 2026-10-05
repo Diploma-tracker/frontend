@@ -10,9 +10,19 @@ import { cn } from '@repo/ui-kit/lib/utils';
 interface PageLayoutProps {
   children: ReactNode;
   height?: 'auto' | 'screen';
+  /**
+   * Drops the container constraints so the child can fill the whole area below
+   * the header, edge to edge. Used by full-bleed surfaces such as the BPMN
+   * canvas, which hosts its own floating panels.
+   */
+  bleed?: boolean;
 }
 
-export const PageLayout = ({ children, height = 'auto' }: PageLayoutProps) => {
+export const PageLayout = ({
+  children,
+  height = 'auto',
+  bleed = false,
+}: PageLayoutProps) => {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -32,7 +42,10 @@ export const PageLayout = ({ children, height = 'auto' }: PageLayoutProps) => {
         </header>
 
         <Container
-          className={cn('flex-1 py-10', {
+          className={cn('flex-1', {
+            'py-10': !bleed,
+            // `Container` also constrains width and adds horizontal padding.
+            'min-h-0 max-w-none px-0': bleed,
             'overflow-hidden': height === 'screen',
           })}
         >

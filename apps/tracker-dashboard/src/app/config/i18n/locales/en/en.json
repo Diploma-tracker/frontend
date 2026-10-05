@@ -54,7 +54,8 @@
       "thesisProcess": "Thesis Process",
       "projectEnrollment": "Project Enrollment",
       "schedule": "Schedule",
-      "formBuilder": "Form Builder"
+      "formBuilder": "Form Builder",
+      "bpmnEditor": "BPMN Editor"
     },
     "collapsed": "Expand sidebar",
     "expanded": "Collapse sidebar"
@@ -692,6 +693,115 @@
         "unregisterSuccess": "Successfully unregistered from defense session.",
         "unregisterError": "Failed to unregister from defense session."
       }
+    }
+  },
+  "bpmnEditor": {
+    "loading": "Loading diagram...",
+    "tools": {
+      "hand": {
+        "name": "Hand tool",
+        "description": "Pan the canvas by dragging it."
+      },
+      "lasso": {
+        "name": "Lasso tool",
+        "description": "Draw a freehand region to select everything inside it."
+      },
+      "space": {
+        "name": "Space tool",
+        "description": "Create or remove empty space between elements."
+      },
+      "globalConnect": {
+        "name": "Global connect",
+        "description": "Drag from any element or its border to another to create a flow."
+      }
+    },
+    "toolbar": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom to 100%",
+      "fit": "Fit to screen",
+      "reset": "Reset diagram"
+    },
+    "topbar": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "rename": "Rename element",
+      "replace": "Change type",
+      "save": "Save diagram",
+      "cancel": "Discard changes",
+      "showProperties": "Show properties",
+      "hideProperties": "Hide properties",
+      "incomingFlows": "Incoming flows",
+      "outgoingFlows": "Outgoing flows"
+    },
+    "search": {
+      "open": "Search elements",
+      "placeholder": "Find element...",
+      "clear": "Clear search",
+      "empty": "No elements found"
+    },
+    "palette": {
+      "groups": {
+        "events": "Events",
+        "activities": "Activities",
+        "gateways": "Gateways",
+        "artifacts": "Artifacts",
+        "containers": "Containers"
+      },
+      "startEvent": "Start event",
+      "startEventDescription": "Marks where the process begins.",
+      "messageIntermediateEvent": "Message event",
+      "messageIntermediateEventDescription": "Waits for or throws a message.",
+      "signalIntermediateEvent": "Signal event",
+      "signalIntermediateEventDescription": "Waits for or throws a signal.",
+      "endEvent": "End event",
+      "endEventDescription": "Marks where the process ends.",
+      "messageEndEvent": "Message end",
+      "messageEndEventDescription": "Ends the process with a thrown message.",
+      "task": "Task",
+      "taskDescription": "A unit of work in the process.",
+      "userTask": "User task",
+      "userTaskDescription": "Work performed by a person.",
+      "serviceTask": "Service task",
+      "serviceTaskDescription": "Work performed by an automated service.",
+      "sendTask": "Send task",
+      "sendTaskDescription": "Sends a message to another participant.",
+      "subProcess": "Sub-process",
+      "subProcessDescription": "A collapsed or expanded block of steps.",
+      "adHocSubProcess": "Ad-hoc sub-process",
+      "adHocSubProcessDescription": "A sub-process whose steps are not predefined.",
+      "exclusiveGateway": "Exclusive gateway",
+      "exclusiveGatewayDescription": "Takes exactly one outgoing path.",
+      "parallelGateway": "Parallel gateway",
+      "parallelGatewayDescription": "Splits or joins all paths at once.",
+      "inclusiveGateway": "Inclusive gateway",
+      "inclusiveGatewayDescription": "Splits or joins any number of paths.",
+      "eventBasedGateway": "Event-based gateway",
+      "eventBasedGatewayDescription": "Chooses the next path based on an event.",
+      "dataObject": "Data object",
+      "dataObjectDescription": "A piece of data used by the process.",
+      "dataStore": "Data store",
+      "dataStoreDescription": "Data persisted outside the process.",
+      "textAnnotation": "Text annotation",
+      "textAnnotationDescription": "A free-floating note on the diagram.",
+      "group": "Group",
+      "groupDescription": "A visual frame that groups elements.",
+      "participant": "Pool / participant",
+      "participantDescription": "A lane or pool representing one actor."
+    },
+    "inspector": {
+      "title": "Properties",
+      "close": "Close properties",
+      "empty": "Select an element to see its properties",
+      "name": "Name",
+      "namePlaceholder": "Element name",
+      "save": "Save name",
+      "currentType": "Current type"
+    },
+    "menu": {
+      "untitled": "Untitled",
+      "duplicate": "Duplicate",
+      "delete": "Delete"
     }
   }
 }

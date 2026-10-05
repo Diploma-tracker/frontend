@@ -54,7 +54,8 @@
       "thesisProcess": "Процес ДП",
       "projectEnrollment": "Зарахування до проєктів",
       "schedule": "Розклад",
-      "formBuilder": "Конструктор форм"
+      "formBuilder": "Конструктор форм",
+      "bpmnEditor": "Редактор BPMN"
     },
     "collapsed": "Розгорнути бокову панель",
     "expanded": "Згорнути бокову панель"
@@ -692,6 +693,115 @@
         "unregisterSuccess": "Ви успішно відписалися від сесії захисту.",
         "unregisterError": "Не вдалося відписатися від сесії захисту."
       }
+    }
+  },
+  "bpmnEditor": {
+    "loading": "Завантаження діаграми...",
+    "tools": {
+      "hand": {
+        "name": "Інструмент «Рука»",
+        "description": "Перетягуйте полотно для панорамування."
+      },
+      "lasso": {
+        "name": "Інструмент «Ласо»",
+        "description": "Обведіть довільну область, щоб вибрати все елементи всередині."
+      },
+      "space": {
+        "name": "Інструмент «Простір»",
+        "description": "Створюйте або прибирайте порожній простір між елементами."
+      },
+      "globalConnect": {
+        "name": "Глобальне з'єднання",
+        "description": "Перетягніть від елемента або його межі до іншого, щоб створити потік."
+      }
+    },
+    "toolbar": {
+      "zoomIn": "Збільшити",
+      "zoomOut": "Зменшити",
+      "zoomReset": "Скинути масштаб до 100%",
+      "fit": "Вмістити на екрані",
+      "reset": "Скинути діаграму"
+    },
+    "topbar": {
+      "undo": "Скасувати дію",
+      "redo": "Повторити дію",
+      "rename": "Перейменувати елемент",
+      "replace": "Змінити тип",
+      "save": "Зберегти діаграму",
+      "cancel": "Відкинути зміни",
+      "showProperties": "Показати властивості",
+      "hideProperties": "Сховати властивості",
+      "incomingFlows": "Вхідні потоки",
+      "outgoingFlows": "Вихідні потоки"
+    },
+    "search": {
+      "open": "Пошук елементів",
+      "placeholder": "Знайти елемент...",
+      "clear": "Очистити пошук",
+      "empty": "Елементів не знайдено"
+    },
+    "palette": {
+      "groups": {
+        "events": "Події",
+        "activities": "Дії",
+        "gateways": "Шлюзи",
+        "artifacts": "Артефакти",
+        "containers": "Контейнери"
+      },
+      "startEvent": "Початкова подія",
+      "startEventDescription": "Позначає, де процес починається.",
+      "messageIntermediateEvent": "Повідомлення",
+      "messageIntermediateEventDescription": "Очікує або надсилає повідомлення.",
+      "signalIntermediateEvent": "Сигнал",
+      "signalIntermediateEventDescription": "Очікує або надсилає сигнал.",
+      "endEvent": "Кінцева подія",
+      "endEventDescription": "Позначає, де процес завершується.",
+      "messageEndEvent": "Кінець із повідомленням",
+      "messageEndEventDescription": "Завершує процес надісланим повідомленням.",
+      "task": "Завдання",
+      "taskDescription": "Одиниця роботи в процесі.",
+      "userTask": "Завдання користувача",
+      "userTaskDescription": "Робота, яку виконує людина.",
+      "serviceTask": "Сервісне завдання",
+      "serviceTaskDescription": "Робота, яку виконує автоматизований сервіс.",
+      "sendTask": "Завдання надсилання",
+      "sendTaskDescription": "Надсилає повідомлення іншому учаснику.",
+      "subProcess": "Підпроцес",
+      "subProcessDescription": "Блок кроків, згорнутий або розгорнутий.",
+      "adHocSubProcess": "Неформалізований підпроцес",
+      "adHocSubProcessDescription": "Підпроцес, кроки якого не визначені заздалегідь.",
+      "exclusiveGateway": "Виключний шлюз",
+      "exclusiveGatewayDescription": "Обирає рівно один вихідний шлях.",
+      "parallelGateway": "Паралельний шлюз",
+      "parallelGatewayDescription": "Розгалужує або зливає всі шляхи одночасно.",
+      "inclusiveGateway": "Включний шлюз",
+      "inclusiveGatewayDescription": "Розгалужує або зливає будь-яку кількість шляхів.",
+      "eventBasedGateway": "Шлюз на основі події",
+      "eventBasedGatewayDescription": "Обирає наступний шлях за подією.",
+      "dataObject": "Об'єкт даних",
+      "dataObjectDescription": "Шматок даних, який використовує процес.",
+      "dataStore": "Сховище даних",
+      "dataStoreDescription": "Дані, які зберігаються поза процесом.",
+      "textAnnotation": "Текстова примітка",
+      "textAnnotationDescription": "Вільна нотатка на діаграмі.",
+      "group": "Група",
+      "groupDescription": "Візуальна рамка, що групує елементи.",
+      "participant": "Доріжка / учасник",
+      "participantDescription": "Доріжка або пул, що позначає одного учасника."
+    },
+    "inspector": {
+      "title": "Властивості",
+      "close": "Закрити властивості",
+      "empty": "Виберіть елемент, щоб побачити його властивості",
+      "name": "Назва",
+      "namePlaceholder": "Назва елемента",
+      "save": "Зберегти назву",
+      "currentType": "Поточний тип"
+    },
+    "menu": {
+      "untitled": "Без назви",
+      "duplicate": "Дублювати",
+      "delete": "Видалити"
     }
   }
 }

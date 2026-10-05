@@ -4,6 +4,7 @@ import { useTranslation } from '@/shared/utils/i18n';
 import {
   CalendarIcon,
   FilesIcon,
+  FlowArrowIcon,
   ListChecksIcon,
   SquaresFourIcon,
 } from '@phosphor-icons/react';
@@ -46,6 +47,11 @@ export const AppSidebar = () => {
       title: t('sidebar.nav.formBuilder'),
       url: '/form-builder',
       icon: SquaresFourIcon,
+    },
+    {
+      title: t('sidebar.nav.bpmnEditor'),
+      url: '/bpmn-editor',
+      icon: FlowArrowIcon,
     },
   ];
 
