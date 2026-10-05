@@ -28,12 +28,18 @@ const ESLINT_PACKAGES = new Set([
 /**
  * Returns the package dir relative to the monorepo root.
  * e.g. /root/apps/tracker-dashboard/src/foo.ts  →  apps/tracker-dashboard
- *//**
+ * Files outside apps and packages are handled from the monorepo root.
+ *
  * @param {string} filepath
  * @returns {string}
- */ function getPackageDir(filepath) {
+ */
+function getPackageDir(filepath) {
   const parts = path.relative(ROOT, filepath).split(path.sep);
-  return parts.length >= 2 ? path.join(parts[0], parts[1]) : ".";
+  const [workspaceType, workspaceName] = parts;
+
+  return workspaceName && ["apps", "packages"].includes(workspaceType)
+    ? path.join(workspaceType, workspaceName)
+    : ".";
 }
 
 /**
