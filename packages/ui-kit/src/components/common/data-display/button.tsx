@@ -23,6 +23,7 @@ const buttonVariants = cva(
         destructive: '',
         success: '',
         neutral: '',
+        background: '',
       },
 
       size: {
@@ -66,6 +67,12 @@ const buttonVariants = cva(
         className:
           'ui:bg-secondary ui:text-secondary-foreground ui:hover:bg-secondary/80',
       },
+      {
+        variant: 'solid',
+        intent: 'background',
+        className:
+          'ui:border ui:border-border ui:bg-background ui:text-foreground ui:hover:bg-accent',
+      },
 
       // OUTLINE
       {
@@ -90,6 +97,12 @@ const buttonVariants = cva(
         intent: 'neutral',
         className: 'ui:border-border ui:text-foreground ui:hover:bg-accent',
       },
+      {
+        variant: 'outline',
+        intent: 'background',
+        className:
+          'ui:border-border ui:bg-background ui:text-foreground ui:hover:bg-accent',
+      },
 
       // GHOST
       {
@@ -112,6 +125,11 @@ const buttonVariants = cva(
       {
         variant: 'ghost',
         intent: 'neutral',
+        className: 'ui:text-foreground ui:hover:bg-accent',
+      },
+      {
+        variant: 'ghost',
+        intent: 'background',
         className: 'ui:text-foreground ui:hover:bg-accent',
       },
     ],

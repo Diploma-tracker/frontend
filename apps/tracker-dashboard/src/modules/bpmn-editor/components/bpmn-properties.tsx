@@ -20,8 +20,11 @@ import { setPropertiesOpen } from '../model/editor-model';
 import { BpmnInspector } from './bpmn-inspector';
 
 /**
- * Floating properties panel shown over the canvas on the right. It is mounted
- * only while open — see `BpmnEditor` — and its body is contextual.
+ * Floating properties panel shown over the canvas on the right. Its body is
+ * contextual.
+ *
+ * Stays mounted while closed so it can animate out — see `BpmnEditor`, which
+ * owns the open state and the slide.
  */
 export const BpmnProperties = reatomComponent(function BpmnProperties() {
   const { t } = useTranslation();
@@ -68,7 +71,7 @@ export const BpmnPropertiesPill = reatomComponent(function BpmnPropertiesPill({
         <Button
           type="button"
           variant="solid"
-          intent="neutral"
+          intent="background"
           size="icon-sm"
           className={cn('rounded-full shadow-lg', className)}
           aria-label={t('bpmnEditor.topbar.showProperties')}
