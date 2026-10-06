@@ -114,9 +114,13 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     });
 
     eventBus.on('selection.changed', (event: { newSelection: Element[] }) => {
-      const [selected] = event.newSelection;
+      const selected = event.newSelection;
 
-      setSelectedElement(describeElement(selected));
+      if (selected.length > 1) {
+        setSelectedElement(null);
+      } else {
+        setSelectedElement(describeElement(selected[0]));
+      }
     });
 
     /**
