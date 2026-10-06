@@ -67,11 +67,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
         defaultStrokeColor: 'var(--bpmn-stroke)',
         defaultLabelColor: 'var(--bpmn-element-fg)',
       },
-      additionalModules: [
-        {
-          paletteProvider: ['value', null],
-        },
-      ],
     });
 
     setModeler(modeler);

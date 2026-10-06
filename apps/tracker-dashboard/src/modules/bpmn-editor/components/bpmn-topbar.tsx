@@ -4,12 +4,11 @@ import { useTranslation } from '@/shared/utils/i18n';
 import {
   ArrowUUpLeftIcon,
   ArrowUUpRightIcon,
-  ArrowsInLineVerticalIcon,
-  ArrowsOutLineVerticalIcon,
-  ArrowsOutSimpleIcon,
+  ArrowsOutIcon,
   CopyIcon,
-  FingerprintIcon,
   FloppyDiskIcon,
+  MagnifyingGlassMinusIcon,
+  MagnifyingGlassPlusIcon,
   TrashIcon,
   XIcon,
 } from '@phosphor-icons/react';
@@ -34,7 +33,6 @@ import {
   fitViewport,
   redo,
   renameSelected,
-  resetZoom,
   selectedElementAtom,
   setError,
   undo,
@@ -91,17 +89,14 @@ const ContextActions = reatomComponent(function ContextActions() {
   if (!selected) {
     return (
       <>
-        <Action labelKey="bpmnEditor.toolbar.zoomOut" onClick={() => zoomOut()}>
-          <ArrowsInLineVerticalIcon className="size-4" />
-        </Action>
-        <Action labelKey="bpmnEditor.toolbar.zoomReset" onClick={resetZoom}>
-          <ArrowsOutSimpleIcon className="size-4" />
-        </Action>
         <Action labelKey="bpmnEditor.toolbar.zoomIn" onClick={() => zoomIn()}>
-          <ArrowsOutLineVerticalIcon className="size-4" />
+          <MagnifyingGlassPlusIcon className="size-4" />
+        </Action>
+        <Action labelKey="bpmnEditor.toolbar.zoomOut" onClick={() => zoomOut()}>
+          <MagnifyingGlassMinusIcon className="size-4" />
         </Action>
         <Action labelKey="bpmnEditor.toolbar.fit" onClick={() => fitViewport()}>
-          <FingerprintIcon className="size-4" />
+          <ArrowsOutIcon className="size-4" />
         </Action>
       </>
     );
@@ -110,7 +105,7 @@ const ContextActions = reatomComponent(function ContextActions() {
   return (
     <>
       <InlineInput
-        className="max-w-48 text-sm"
+        className="w-min max-w-48 text-sm"
         value={selected.name}
         placeholder={t('bpmnEditor.menu.untitled')}
         onValueChange={renameSelected}
