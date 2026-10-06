@@ -20,6 +20,11 @@
  * over those.
  */
 
+.djs-palette,
+.djs-context-pad {
+  display: none !important;
+}
+
 .djs-container.bio-theme-parent {
   /* Hardcoded IBM Plex Sans in diagram-js.css, with no token to rebind. */
   --bjs-font-family: var(--font-sans);

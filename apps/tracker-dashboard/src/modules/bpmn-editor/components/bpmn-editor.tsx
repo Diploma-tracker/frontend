@@ -39,7 +39,7 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
           <div
             aria-hidden={!isPropertiesOpen}
             className={cn(
-              'absolute top-20 right-3 bottom-14 flex w-72 flex-col transition-[translate,opacity] transition-discrete duration-200 ease-out',
+              'absolute top-20 right-3 bottom-14 flex w-72 flex-col transition-[translate,opacity,visibility] transition-discrete duration-200 ease-out',
               isPropertiesOpen
                 ? 'pointer-events-auto translate-x-0 opacity-100'
                 : 'pointer-events-none invisible translate-x-full opacity-0',

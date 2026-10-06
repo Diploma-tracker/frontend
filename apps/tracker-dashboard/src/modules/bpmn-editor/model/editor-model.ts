@@ -323,10 +323,6 @@ export const redo = action(() => {
   if (modeler) getServices(modeler).commandStack.redo();
 });
 
-export const resetZoom = action(() => {
-  if (modeler) getServices(modeler).canvas.zoom(1);
-});
-
 /**
  * Discards the pending changes.
  *

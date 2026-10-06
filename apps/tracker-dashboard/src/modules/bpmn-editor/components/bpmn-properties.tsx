@@ -31,7 +31,7 @@ export const BpmnProperties = reatomComponent(function BpmnProperties() {
 
   return (
     <Card className="flex h-full min-h-0 flex-col shadow-lg">
-      <CardHeader className="flex-row items-center justify-between gap-2 space-y-0 px-4 py-3">
+      <CardHeader className="flex items-center justify-between gap-2">
         <CardTitle>{t('bpmnEditor.inspector.title')}</CardTitle>
         <Button
           type="button"

@@ -702,9 +702,9 @@
         "name": "Hand tool",
         "description": "Pan the canvas by dragging it."
       },
-      "lasso": {
-        "name": "Lasso tool",
-        "description": "Draw a freehand region to select everything inside it."
+      "select": {
+        "name": "Select tool",
+        "description": "Select and manipulate elements."
       },
       "space": {
         "name": "Space tool",

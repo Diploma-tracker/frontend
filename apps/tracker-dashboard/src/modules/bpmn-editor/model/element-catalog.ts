@@ -1,13 +1,12 @@
 import { k } from '@/shared/utils/i18n';
 import type { Icon } from '@phosphor-icons/react';
 import {
-  ArrowsLeftRightIcon,
   CheckSquareIcon,
   ClockIcon,
-  CursorIcon,
   DatabaseIcon,
   DiamondIcon,
   FingerprintIcon,
+  FlowArrowIcon,
   FolderIcon,
   GearIcon,
   GitBranchIcon,
@@ -19,6 +18,7 @@ import {
   PlayCircleIcon,
   PlusIcon,
   RectangleIcon,
+  SelectionIcon,
   SquaresFourIcon,
   StackIcon,
   StopCircleIcon,
@@ -83,11 +83,11 @@ export const toolEntries: ToolEntry[] = [
     shortcut: 'H',
   },
   {
-    id: 'lasso-tool',
+    id: 'select-tool',
     tool: 'lasso',
-    labelKey: k('bpmnEditor.tools.lasso.name'),
-    descriptionKey: k('bpmnEditor.tools.lasso.description'),
-    icon: CursorIcon,
+    labelKey: k('bpmnEditor.tools.select.name'),
+    descriptionKey: k('bpmnEditor.tools.select.description'),
+    icon: SelectionIcon,
     shortcut: 'L',
   },
   {
@@ -103,7 +103,7 @@ export const toolEntries: ToolEntry[] = [
     tool: 'global-connect',
     labelKey: k('bpmnEditor.tools.globalConnect.name'),
     descriptionKey: k('bpmnEditor.tools.globalConnect.description'),
-    icon: ArrowsLeftRightIcon,
+    icon: FlowArrowIcon,
     shortcut: 'C',
   },
 ];
