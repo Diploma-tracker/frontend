@@ -9,6 +9,7 @@
       "env": ["MODE", "DEV", "PROD", "SSR", "BASE_URL"]
     },
     "test": {
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint:check": {
