@@ -63,3 +63,19 @@ jobs:
 
       - name: 🧪 Run monorepo tests
         run: pnpm run test
+
+  ci:
+    name: ci
+    if: ${{ always() }}
+    needs: [code-quality, tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify required jobs succeeded
+        env:
+          CODE_QUALITY_RESULT: ${{ needs.code-quality.result }}
+          TESTS_RESULT: ${{ needs.tests.result }}
+        shell: bash
+        run: |
+          test "$CODE_QUALITY_RESULT" = "success"
+          test "$TESTS_RESULT" = "success"
