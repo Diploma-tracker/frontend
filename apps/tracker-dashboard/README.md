@@ -1,53 +1,13 @@
-# `@repo/tracker-dashboard`
+# Tracker Dashboard
 
-Main dashboard application for the Diploma tracker.
+React/Vite application for Diploma Tracker enrollment, thesis workflows, and defense scheduling. It uses TanStack Router, Reatom, i18next, Tailwind CSS, and shared `@repo/*` packages.
 
-## Scripts
+## Documentation
 
-Start the Vite dev server.
+- [Architecture and routing](docs/architecture.md)
+- [Setup and configuration](docs/development.md)
+- [Environment variables](docs/environment.md)
+- [Application conventions](docs/conventions.md)
+- [Commands](docs/commands.md)
 
-```bash
-dev
-```
-
-Build the production bundle (TypeScript build + Vite build).
-
-```bash
-build
-```
-
-Preview the production build locally.
-
-```bash
-preview
-```
-
-Lint source files with ESLint (no warnings allowed).
-
-```bash
-lint
-```
-
-Fix ESLint issues in source files.
-
-```bash
-lint:fix
-```
-
-Check formatting with Prettier.
-
-```bash
-format
-```
-
-Fix formatting with Prettier.
-
-```bash
-format:fix
-```
-
-Type-check without emitting files.
-
-```bash
-check-types
-```
+For repository-wide setup and practices, see the [root documentation](../../README.md#general-monorepo-documentation).

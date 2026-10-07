@@ -1,6 +1,6 @@
-# Diploma tracker frontend monorepo
+# Diploma Tracker frontend
 
-Monorepo repository containing the frontend part of the Diploma tracker application for KHPI university.
+Frontend monorepo for the KHPI Diploma Tracker. It contains the dashboard application, shared UI and API libraries, reusable utilities, and repository-wide tooling presets.
 
 ## Tech stack
 
@@ -51,97 +51,21 @@ Monorepo repository containing the frontend part of the Diploma tracker applicat
     </a>
 </div>
 
-## Table of Contents
+## Workspaces
 
-- [Requirements](#requirements)
-- [Quick start](#quick-start)
-- [Monorepo structure](#monorepo-structure)
-- [Scripts](#root-scripts)
-- [Apps/packages scripts](#appspackages-scripts)
-- [Environment Variables](#environment-variables)
+| Workspace                                                         | Purpose                                                        |
+| ----------------------------------------------------------------- | -------------------------------------------------------------- |
+| [`tracker-dashboard`](apps/tracker-dashboard/README.md)           | React dashboard for enrollment, thesis processes, and defenses |
+| [`@repo/api`](packages/api/README.md)                             | Typed API client and generated endpoints                       |
+| [`@repo/ui-kit`](packages/ui-kit/README.md)                       | Shared React component library                                 |
+| [`@repo/utils`](packages/utils/README.md)                         | Framework-independent utilities                                |
+| [`@repo/tailwind-config`](packages/tailwind-config/README.md)     | Shared theme and Tailwind CSS styles                           |
+| [`@repo/typescript-config`](packages/typescript-config/README.md) | Shared TypeScript presets                                      |
+| [`@repo/code-tools-config`](packages/code-tools-config/README.md) | Shared ESLint and Prettier presets                             |
 
-## Requirements
+## General Monorepo Documentation
 
-- Node.js + `pnpm` package manager
-- Configured `.env` file
-
-## Quick start
-
-- Install dependencies: `pnpm install`
-- Configure dashboard environment variables in [apps/tracker-dashboard/.env](apps/tracker-dashboard/.env)
-- Run in development mode (all packages with `dev`): `pnpm dev`
-
-## Monorepo structure
-
-- `apps/` — applications ([tracker-dashboard](apps/tracker-dashboard/README.md))
-- `packages/` — shared packages and configs ([ui-kit](packages/ui-kit/README.md), [api](packages/api/README.md), [code-tools-config](packages/code-tools-config/README.md))
-
-## Scripts
-
-### Root scripts
-
-Scripts are run from the repository root.
-
-- `pnpm dev` — run all packages with `dev` via Turbo
-- `pnpm build` — build all packages
-- `pnpm lint` — lint code with auto-fix
-- `pnpm lint:check` — only lint check without auto-fix (good for CI)
-- `pnpm format` — format code with auto-fix
-- `pnpm format:check` — only format check without auto-fix (good for CI)
-- `pnpm format:root` — format only root files (e.g. `README.md`, `turbo.json`, etc.) with auto-fix
-- `pnpm format:check:root` — only format check for root files without auto-fix (good for CI)
-- `pnpm check-types` — type checking
-- `pnpm create:app` — create a new app
-- `pnpm create:package` — create a new package
-
-When creating a new package, add only the scripts relevant to the tooling configured in that package:
-
-| Script         | Required when              | Command                                  |
-| :------------- | :------------------------- | :--------------------------------------- |
-| `lint`         | `eslint.config.*` exists   | `eslint src/ --fix --max-warnings 0`     |
-| `lint:check`   | `eslint.config.*` exists   | `eslint src/ --max-warnings 0`           |
-| `format`       | `prettier.config.*` exists | `prettier --write src/ --ignore-unknown` |
-| `format:check` | `prettier.config.*` exists | `prettier --check src/ --ignore-unknown` |
-| `check-types`  | `tsconfig.json` exists     | `tsc --noEmit`                           |
-
-> [!NOTE]
-> Use `.` instead of `src/` as the target path for packages that have no `src/` directory (e.g. config-only packages).
-
-These scripts are picked up automatically by Turbo via the root `turbo.json` pipeline, so they will run as part of `pnpm lint`, `pnpm format`, and `pnpm check-types` from the repository root.
-
-### Apps/packages scripts
-
-Depending on what scripts are defined in each package, you can run them from the `root` using commands like:
-
-```bash
-pnpm --filter tracker-dashboard dev
-```
-
-```bash
-pnpm --filter ui-kit build:components
-```
-
-> [!TIP]
-> If you want see all available scripts for a package, you can run:  
-> `pnpm --filter <package-name> run`
->
-> If you want see all available workspaces in monorepo, you can run:
-> `pnpm m list --depth -1 --json`
-
-Or you can check `package.json` of the package/app and run scripts directly from there:
-
-```bash
-cd apps/tracker-dashboard
-pnpm dev
-```
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your `.env` file.
-
-Dashboard for tracker `.env` file (`apps/tracker-dashboard/.env`):
-
-| Parameter      | Description                                |
-| :------------- | :----------------------------------------- |
-| `NODE_ENV`     | Node environment (development, production) |
-| `VITE_API_URL` | URL of the backend API                     |
+- [Getting started and local development](docs/development.md)
+- [Monorepo architecture](docs/architecture.md)
+- [Engineering conventions](docs/conventions.md)
+- [Root commands](docs/commands.md)

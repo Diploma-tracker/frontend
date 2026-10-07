@@ -1,4 +1,4 @@
-import { action, atom, effect, withAsyncData, wrap } from '@reatom/core';
+import { action, atom, effect, noop, withAsyncData, wrap } from '@reatom/core';
 
 const DEFAULT_FILTERS = {
   page: 1,
@@ -63,7 +63,7 @@ export function asyncList<
     }
   }, `${name}RevalidateAction`);
 
-  effect(async () => {
+  effect(() => {
     filterAtom();
 
     if (stateAtom().isInit) {
@@ -71,7 +71,7 @@ export function asyncList<
       return;
     }
 
-    await wrap(revalidateAction());
+    void revalidateAction().catch(noop);
   }, `${name}FilterEffect`);
 
   const setFilterAction = action((update: Partial<TFilters>) => {

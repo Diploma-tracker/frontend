@@ -8,6 +8,10 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["MODE", "DEV", "PROD", "SSR", "BASE_URL"]
     },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "lint:check": {
       "outputs": []
     },
@@ -22,6 +26,10 @@
     },
     "check-types": {
       "dependsOn": ["^check-types"]
+    },
+    "check-types:test": {
+      "dependsOn": ["^check-types"],
+      "outputs": []
     },
     "generate": {
       "cache": false,
