@@ -37,7 +37,7 @@ jobs:
       - name: 🏗 Build
         run: pnpm run build
 
-      - name: 🧠 Type check
+      - name: 🧠 Type-check source and tests
         run: pnpm run check-types
 
   tests:

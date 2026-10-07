@@ -4,7 +4,8 @@
 - Preserve deliberate public exports and validate edge cases at utility boundaries.
 - Do not introduce implicit locale, timezone, network, or mutable global-state behavior.
 
-Run the [package checks](docs/commands.md#validation); there is no test runner configured.
+Run Vitest tests and the source/test type checks with the other
+[package checks](docs/commands.md#validation).
 
 ## Documentation
 

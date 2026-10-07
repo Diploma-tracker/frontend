@@ -7,7 +7,7 @@ Run these commands from the repository root.
 | `pnpm dev`               | Run workspace development tasks                             |
 | `pnpm build`             | Build participating workspaces                              |
 | `pnpm test`              | Run workspace tests                                         |
-| `pnpm check-types`       | Type-check participating workspaces                         |
+| `pnpm check-types`       | Type-check workspace source and test projects               |
 | `pnpm lint:check`        | Check lint rules without fixes                              |
 | `pnpm lint`              | Run ESLint with fixes                                       |
 | `pnpm format:check`      | Check top-level root files and workspace formatting targets |

@@ -10,4 +10,4 @@ presets live separately in [`@repo/typescript-config`](../typescript-config/READ
 - [Preset maintenance conventions](docs/conventions.md)
 - [Commands and validation](docs/commands.md)
 
-For shared setup and practices, see the [root documentation](../../README.md#documentation).
+For shared setup and practices, see the [root documentation](../../README.md#general-monorepo-documentation).

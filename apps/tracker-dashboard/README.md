@@ -10,4 +10,4 @@ React/Vite application for Diploma Tracker enrollment, thesis workflows, and def
 - [Application conventions](docs/conventions.md)
 - [Commands](docs/commands.md)
 
-For repository-wide setup and practices, see the [root documentation](../../README.md#documentation).
+For repository-wide setup and practices, see the [root documentation](../../README.md#general-monorepo-documentation).

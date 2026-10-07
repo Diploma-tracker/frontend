@@ -24,8 +24,8 @@ Run from the repository root.
 
 Run relevant tests, `check-types`, `check-types:test`, `lint:check`,
 `format:check`, and `build` for application changes. Locale changes also need
-`i18n:check-locales` and `i18n:audit`. The root type task does not include
-`check-types:test`; run it explicitly.
+`i18n:check-locales` and `i18n:audit`. The root `pnpm check-types` task runs both
+source and test type checks, including in CI.
 
 Formatting targets `src/` and `tests/`, not this workspace's README or docs. See
 the [documentation formatting command](../../../docs/commands.md#documentation-formatting).
