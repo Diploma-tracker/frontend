@@ -56,10 +56,13 @@
       "schedule": "Schedule"
     },
     "collapsed": "Expand sidebar",
-    "expanded": "Collapse sidebar"
+    "expanded": "Collapse sidebar",
+    "openMenu": "Open menu"
   },
   "user": {
     "logOut": "Log out",
+    "language": "Language",
+    "switchTheme": "Switch theme",
     "password": {
       "show": "Show password",
       "hide": "Hide password"

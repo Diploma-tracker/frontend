@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { AppSidebar, LangSelect } from '@/modules/app';
-import { ThemeSwitcher } from '@/modules/user';
+import { AppSidebar } from '@/modules/app';
 import { Container } from '@/shared/components';
 
 import { SidebarInset, SidebarProvider } from '@repo/ui-kit/components/sidebar';
 import { cn } from '@repo/ui-kit/lib/utils';
+
+import { MobileHeader } from './components/mobile-header';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -22,14 +23,7 @@ export const PageLayout = ({ children, height = 'auto' }: PageLayoutProps) => {
           'flex h-screen max-h-screen flex-col': height === 'screen',
         })}
       >
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2"></div>
-
-          <div className="flex items-center gap-2">
-            <LangSelect />
-            <ThemeSwitcher />
-          </div>
-        </header>
+        <MobileHeader />
 
         <Container
           className={cn('flex-1 py-10', {

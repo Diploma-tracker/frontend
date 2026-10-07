@@ -1,7 +1,6 @@
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import { CalendarIcon, FilesIcon, ListChecksIcon } from '@phosphor-icons/react';
 
 import {
   Sidebar,
@@ -20,24 +19,6 @@ import AppSidebarMainNav from './components/app-sidebar-main-nav';
 export const AppSidebar = () => {
   const { t } = useTranslation();
   const { state } = useSidebar();
-
-  const NAV_MENU = [
-    {
-      title: t('sidebar.nav.thesisProcess'),
-      url: '/thesis-process',
-      icon: FilesIcon,
-    },
-    {
-      title: t('sidebar.nav.projectEnrollment'),
-      url: '/project-enrollment',
-      icon: ListChecksIcon,
-    },
-    {
-      title: t('sidebar.nav.schedule'),
-      url: '/schedule',
-      icon: CalendarIcon,
-    },
-  ];
 
   const trigger = () => (
     <SidebarTrigger
@@ -67,13 +48,13 @@ export const AppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent>
-        <AppSidebarMainNav navItems={NAV_MENU} />
+        <AppSidebarMainNav />
       </SidebarContent>
 
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <UserMenu />
+            <UserMenu variant="full" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
