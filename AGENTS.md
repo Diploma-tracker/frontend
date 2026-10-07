@@ -15,3 +15,7 @@
 - [Development setup](docs/development.md)
 - [Conventions](docs/conventions.md)
 - [Commands](docs/commands.md)
+
+## Code Review Rules
+
+Read and follow [REVIEW.md](REVIEW.md) for repository-specific review rules.
