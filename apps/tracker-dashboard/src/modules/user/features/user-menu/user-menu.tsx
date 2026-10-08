@@ -14,13 +14,24 @@ import {
 import { SidebarMenuButton, useSidebar } from '@repo/ui-kit/components/sidebar';
 
 import { userAtom } from '../../models';
+import { LangSelect } from '../lang-select/lang-select';
+import { ThemeSwitcher } from '../theme-switcher/theme-switcher';
 import { UserInfo } from '../user-info/user-info';
 
-export const UserMenu = reatomComponent(function UserMenu() {
+export type UserMenuVariant = 'full' | 'compact';
+
+interface UserMenuProps {
+  variant: UserMenuVariant;
+}
+
+export const UserMenu = reatomComponent(function UserMenu({
+  variant,
+}: UserMenuProps) {
   const user = userAtom();
   const { t } = useTranslation();
 
   const { isMobile } = useSidebar();
+  const isCompact = variant === 'compact';
 
   const handleLogout = () => {
     logoutAction();
@@ -41,12 +52,21 @@ export const UserMenu = reatomComponent(function UserMenu() {
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
         side={isMobile ? 'bottom' : 'right'}
-        align="end"
-        sideOffset={4}
+        align={isMobile ? 'center' : 'end'}
+        sideOffset={14}
       >
-        <DropdownMenuLabel className="p-0 font-normal">
-          <UserInfo userId={user.id} />
-        </DropdownMenuLabel>
+        {!isCompact && (
+          <>
+            <DropdownMenuLabel className="p-0 font-normal">
+              <UserInfo userId={user.id} />
+            </DropdownMenuLabel>
+
+            <DropdownMenuSeparator />
+          </>
+        )}
+
+        <LangSelect variant={isCompact ? 'inline' : 'submenu'} />
+        <ThemeSwitcher />
 
         <DropdownMenuSeparator />
 

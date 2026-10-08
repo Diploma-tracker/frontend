@@ -1,5 +1,10 @@
 import { useTranslation } from '@/shared/utils/i18n';
-import { CaretRightIcon } from '@phosphor-icons/react';
+import {
+  CalendarIcon,
+  CaretRightIcon,
+  FilesIcon,
+  ListChecksIcon,
+} from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 
 import {
@@ -32,18 +37,36 @@ type NavItem = {
 };
 
 interface Props {
-  navItems: NavItem[];
+  onNavigate?: () => void;
 }
 
 export default function AppSidebarMainNav(props: Props) {
-  const { navItems } = props;
+  const { onNavigate } = props;
   const { t } = useTranslation();
+
+  const NAV_MENU: NavItem[] = [
+    {
+      title: t('sidebar.nav.thesisProcess'),
+      url: '/thesis-process',
+      icon: FilesIcon,
+    },
+    {
+      title: t('sidebar.nav.projectEnrollment'),
+      url: '/project-enrollment',
+      icon: ListChecksIcon,
+    },
+    {
+      title: t('sidebar.nav.schedule'),
+      url: '/schedule',
+      icon: CalendarIcon,
+    },
+  ];
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{t('sidebar.platform')}</SidebarGroupLabel>
       <SidebarMenu>
-        {navItems.map((item) =>
+        {NAV_MENU.map((item) =>
           item.items ? (
             <Collapsible
               key={item.title}
@@ -64,7 +87,7 @@ export default function AppSidebarMainNav(props: Props) {
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <Link to={item.url}>
+                          <Link to={item.url} onClick={onNavigate}>
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
@@ -77,7 +100,7 @@ export default function AppSidebarMainNav(props: Props) {
           ) : (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton tooltip={item.title} asChild>
-                <Link to={item.url}>
+                <Link to={item.url} onClick={onNavigate}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </Link>

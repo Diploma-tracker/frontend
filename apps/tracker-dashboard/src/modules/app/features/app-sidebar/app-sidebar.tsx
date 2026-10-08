@@ -1,7 +1,6 @@
 import { UserMenu } from '@/modules/user';
 import { Logo } from '@/shared/components';
 import { useTranslation } from '@/shared/utils/i18n';
-import { CalendarIcon, FilesIcon, ListChecksIcon } from '@phosphor-icons/react';
 
 import {
   Sidebar,
@@ -21,24 +20,6 @@ export const AppSidebar = () => {
   const { t } = useTranslation();
   const { state } = useSidebar();
 
-  const NAV_MENU = [
-    {
-      title: t('sidebar.nav.thesisProcess'),
-      url: '/thesis-process',
-      icon: FilesIcon,
-    },
-    {
-      title: t('sidebar.nav.projectEnrollment'),
-      url: '/project-enrollment',
-      icon: ListChecksIcon,
-    },
-    {
-      title: t('sidebar.nav.schedule'),
-      url: '/schedule',
-      icon: CalendarIcon,
-    },
-  ];
-
   const trigger = () => (
     <SidebarTrigger
       collapsedLabel={t('sidebar.collapsed')}
@@ -51,10 +32,10 @@ export const AppSidebar = () => {
       <SidebarHeader className="w-full px-2">
         {state === 'collapsed' ? (
           <div className="relative flex h-8 w-full items-center justify-center">
-            <div className="absolute inset-0 flex items-center justify-center group-hover:hidden group-hover:delay-500">
+            <div className="absolute inset-0 flex items-center justify-start group-hover:hidden group-hover:delay-500">
               <Logo />
             </div>
-            <div className="absolute inset-0 z-10 hidden items-center justify-center group-hover:flex group-hover:delay-500">
+            <div className="absolute inset-0 z-10 hidden items-center justify-start group-hover:flex group-hover:delay-500">
               {trigger()}
             </div>
           </div>
@@ -67,13 +48,13 @@ export const AppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent>
-        <AppSidebarMainNav navItems={NAV_MENU} />
+        <AppSidebarMainNav />
       </SidebarContent>
 
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <UserMenu />
+            <UserMenu variant="full" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

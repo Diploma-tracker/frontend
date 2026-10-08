@@ -12,3 +12,4 @@ export { GroupSelector, GroupSelectorField } from './group-selector';
 
 export { ThemeProvider } from './theme-switcher/theme-provider';
 export { ThemeSwitcher } from './theme-switcher/theme-switcher';
+export { LangSelect } from './lang-select/lang-select';
