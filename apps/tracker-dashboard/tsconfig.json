@@ -1,7 +1,6 @@
 {
   "extends": "@repo/typescript-config/react-vite.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@tests/*": ["./tests/*"]
