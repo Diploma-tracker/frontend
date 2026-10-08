@@ -10,9 +10,7 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawRemoveTeachersFromAllocationRound400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type RemoveTeachersFromAllocationRound400Extra =
   CamelCaseKeys<RawRemoveTeachersFromAllocationRound400Extra>;

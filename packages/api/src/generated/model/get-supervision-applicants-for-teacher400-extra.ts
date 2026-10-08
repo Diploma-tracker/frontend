@@ -10,9 +10,7 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawGetSupervisionApplicantsForTeacher400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type GetSupervisionApplicantsForTeacher400Extra =
   CamelCaseKeys<RawGetSupervisionApplicantsForTeacher400Extra>;

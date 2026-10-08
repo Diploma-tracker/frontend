@@ -10,8 +10,6 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawListGroups400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type ListGroups400Extra = CamelCaseKeys<RawListGroups400Extra>;

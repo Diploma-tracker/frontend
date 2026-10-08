@@ -10,9 +10,7 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawUpdateDefenseSession400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type UpdateDefenseSession400Extra =
   CamelCaseKeys<RawUpdateDefenseSession400Extra>;

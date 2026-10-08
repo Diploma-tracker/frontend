@@ -10,9 +10,7 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawListBachelorThesesForAllocationRound400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type ListBachelorThesesForAllocationRound400Extra =
   CamelCaseKeys<RawListBachelorThesesForAllocationRound400Extra>;

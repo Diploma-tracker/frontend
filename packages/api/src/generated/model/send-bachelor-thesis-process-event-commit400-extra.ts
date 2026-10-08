@@ -10,9 +10,7 @@
  */
 import type { CamelCaseKeys } from '../../utils/camel-case';
 export type RawSendBachelorThesisProcessEventCommit400Extra =
-  | { [key: string]: unknown }
-  | unknown[]
-  | null;
+  { [key: string]: unknown } | unknown[] | null;
 
 export type SendBachelorThesisProcessEventCommit400Extra =
   CamelCaseKeys<RawSendBachelorThesisProcessEventCommit400Extra>;
