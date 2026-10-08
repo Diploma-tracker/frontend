@@ -52,8 +52,8 @@ export const UserMenu = reatomComponent(function UserMenu({
       <DropdownMenuContent
         className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
         side={isMobile ? 'bottom' : 'right'}
-        align="end"
-        sideOffset={4}
+        align={isMobile ? 'center' : 'end'}
+        sideOffset={14}
       >
         {!isCompact && (
           <>
