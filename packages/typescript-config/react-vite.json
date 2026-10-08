@@ -1,9 +1,11 @@
 {
   "extends": "./base.json",
   "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

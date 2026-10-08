@@ -80,15 +80,13 @@ export const DefenseSessionsGrid = reatomComponent(
 
     const handleEventClick = (arg: EventClickArg) => {
       const session = arg.event.extendedProps?.session as
-        | DefenseSessionDTO
-        | undefined;
+        DefenseSessionDTO | undefined;
       if (session) openDetailDialog(session);
     };
 
     const handleEventDrop = (arg: EventDropArg) => {
       const session = arg.event.extendedProps?.session as
-        | DefenseSessionDTO
-        | undefined;
+        DefenseSessionDTO | undefined;
       if (!session || !arg.event.start) {
         arg.revert();
         return;
@@ -102,8 +100,7 @@ export const DefenseSessionsGrid = reatomComponent(
 
     const handleEventResize = (arg: EventResizeDoneArg) => {
       const session = arg.event.extendedProps?.session as
-        | DefenseSessionDTO
-        | undefined;
+        DefenseSessionDTO | undefined;
       if (!session || !arg.event.start || !arg.event.end) {
         arg.revert();
         return;
