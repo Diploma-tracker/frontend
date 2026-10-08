@@ -32,10 +32,10 @@ export const AppSidebar = () => {
       <SidebarHeader className="w-full px-2">
         {state === 'collapsed' ? (
           <div className="relative flex h-8 w-full items-center justify-center">
-            <div className="absolute inset-0 flex items-center justify-center group-hover:hidden group-hover:delay-500">
+            <div className="absolute inset-0 flex items-center justify-start group-hover:hidden group-hover:delay-500">
               <Logo />
             </div>
-            <div className="absolute inset-0 z-10 hidden items-center justify-center group-hover:flex group-hover:delay-500">
+            <div className="absolute inset-0 z-10 hidden items-center justify-start group-hover:flex group-hover:delay-500">
               {trigger()}
             </div>
           </div>
