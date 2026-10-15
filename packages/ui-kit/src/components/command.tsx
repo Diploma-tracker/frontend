@@ -14,6 +14,9 @@ import {
   DialogTitle,
 } from './common/floating/dialog';
 
+const COMMAND_HEIGHT = 360;
+const COMMAND_HEIGHT_HALF = Math.floor(COMMAND_HEIGHT / 2);
+
 function Command({
   className,
   ...props
@@ -49,8 +52,12 @@ function CommandDialog({
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
+      {/* Anchored to a stable top (its full height centred in the viewport)
+          so filtering results grows the palette downward instead of shifting
+          it, unlike the fully centered default. */}
       <DialogContent
-        className={cn('ui:overflow-hidden ui:p-0', className)}
+        className={cn('ui:translate-y-0 ui:overflow-hidden ui:p-0', className)}
+        style={{ top: `calc(50% - ${COMMAND_HEIGHT_HALF}px)` }}
         showCloseButton={showCloseButton}
       >
         <Command className="ui:**:data-[slot=command-input-wrapper]:h-12 ui:[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 ui:[&_[cmdk-input-wrapper]_svg]:h-5 ui:[&_[cmdk-input-wrapper]_svg]:w-5 ui:[&_[cmdk-item]_svg]:h-5 ui:[&_[cmdk-item]_svg]:w-5 ui:**:[[cmdk-group-heading]]:px-2 ui:**:[[cmdk-group-heading]]:font-medium ui:**:[[cmdk-group-heading]]:text-muted-foreground ui:**:[[cmdk-group]]:px-2 ui:**:[[cmdk-input]]:h-12 ui:**:[[cmdk-item]]:px-2 ui:**:[[cmdk-item]]:py-3">
@@ -85,27 +92,33 @@ function CommandInput({
 
 function CommandList({
   className,
+  style,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
   return (
     <CommandPrimitive.List
       data-slot="command-list"
       className={cn(
-        'ui:max-h-[300px] ui:scroll-py-1 ui:overflow-x-hidden ui:overflow-y-auto',
+        'ui:scroll-py-1 ui:overflow-x-hidden ui:overflow-y-auto',
         className,
       )}
+      style={{ maxHeight: COMMAND_HEIGHT, ...style }}
       {...props}
     />
   );
 }
 
 function CommandEmpty({
+  className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
   return (
     <CommandPrimitive.Empty
       data-slot="command-empty"
-      className="ui:py-6 ui:text-center ui:text-sm"
+      className={cn(
+        'ui:py-6 ui:text-center ui:text-sm ui:opacity-50',
+        className,
+      )}
       {...props}
     />
   );
