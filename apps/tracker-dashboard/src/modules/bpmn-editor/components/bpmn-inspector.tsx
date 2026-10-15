@@ -1,6 +1,14 @@
+import { useTranslation } from '@/shared/utils/i18n';
+import { CursorClickIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { ScrollArea } from '@repo/ui-kit/components/common/layout/scroll-area';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+} from '@repo/ui-kit/components/common/states/empty';
 
 import { isConnectionType } from '../model/diagram-api';
 import {
@@ -54,9 +62,21 @@ const VARIANTS = [
 ] as const;
 
 export const BpmnInspector = reatomComponent(function BpmnInspector() {
+  const { t } = useTranslation();
   const selected = selectedElementAtom();
 
-  if (!selected) return null;
+  if (!selected) {
+    return (
+      <Empty className="h-full gap-4 p-6">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <CursorClickIcon />
+          </EmptyMedia>
+          <EmptyDescription>{t('bpmnEditor.inspector.empty')}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
 
   const active = VARIANTS.find((variant) => variant.matches(selected));
   const content = active?.render(selected);
