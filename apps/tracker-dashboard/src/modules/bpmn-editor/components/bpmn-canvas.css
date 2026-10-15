@@ -141,6 +141,18 @@
    never consumed, only feeding the bendpoint and resizer strokes. */
 .djs-container {
   background-color: var(--bpmn-bg);
+  /*
+   * Dot grid behind the diagram. `updateGrid` in `bpmn-canvas.tsx` tracks the
+   * viewbox and sets the spacing, offset and dot radius, so the dots pan and
+   * scale with the canvas instead of sticking to the viewport.
+   */
+  background-image: radial-gradient(
+    var(--bpmn-grid-dot) 0,
+    var(--bpmn-grid-dot) var(--djs-grid-dot, 1.5px),
+    transparent calc(var(--djs-grid-dot, 1.5px) * 1.4)
+  );
+  background-size: var(--djs-grid-size, 40px) var(--djs-grid-size, 40px);
+  background-position: var(--djs-grid-offset-x, 0) var(--djs-grid-offset-y, 0);
 }
 
 /* One `defaultStrokeColor` covers shapes and connections alike, and they have to

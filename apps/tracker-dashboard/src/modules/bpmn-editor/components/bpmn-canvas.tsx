@@ -40,6 +40,19 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/diagram-js.css';
 
+/** Diagram-space distance between grid dots, in px at 100% zoom. */
+const GRID_STEP = 40;
+
+/** Smallest on-screen spacing before the grid doubles up a step. */
+const MIN_GRID_PX = 24;
+
+/** Dot radius in px at 100% zoom; scales with the viewbox so dots read as sized. */
+const DOT_RADIUS = 2;
+
+/** Clamps for the zoom-scaled dot radius, in px. */
+const MIN_DOT_PX = 1;
+const MAX_DOT_PX = 5;
+
 export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
@@ -88,7 +101,46 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     setModeler(modeler);
 
-    const eventBus = getServices(modeler).eventBus;
+    const { canvas, eventBus } = getServices(modeler);
+
+    /**
+     * The dot grid lives on `.djs-container` as a CSS background, but bpmn-js
+     * pans/zooms by transforming an inner <svg> — a plain background would stay
+     * pinned to the viewport. Recomputing the tile size and offset from the
+     * viewbox keeps the dots moving and scaling with the diagram.
+     */
+    const updateGrid = (viewbox: { x: number; y: number; scale: number }) => {
+      let step = GRID_STEP;
+
+      // Zoomed far out, a fixed step would smear into noise; double it up.
+      while (step * viewbox.scale < MIN_GRID_PX) step *= 2;
+
+      const size = step * viewbox.scale;
+      const dot = Math.min(
+        MAX_DOT_PX,
+        Math.max(MIN_DOT_PX, DOT_RADIUS * viewbox.scale),
+      );
+
+      container.style.setProperty('--djs-grid-size', `${size}px`);
+      container.style.setProperty('--djs-grid-dot', `${dot}px`);
+      container.style.setProperty(
+        '--djs-grid-offset-x',
+        `${(-viewbox.x * viewbox.scale) % size}px`,
+      );
+      container.style.setProperty(
+        '--djs-grid-offset-y',
+        `${(-viewbox.y * viewbox.scale) % size}px`,
+      );
+    };
+
+    updateGrid(canvas.viewbox());
+
+    eventBus.on(
+      'canvas.viewbox.changed',
+      (event: { viewbox: { x: number; y: number; scale: number } }) => {
+        updateGrid(event.viewbox);
+      },
+    );
 
     /**
      * bpmn-js measures its container once, at import time. Inside a flex/grid
@@ -99,8 +151,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     let hasAutoFitted = false;
 
     const observer = new ResizeObserver(() => {
-      const { canvas } = getServices(modeler);
-
       canvas.resized();
 
       const { width, height } = canvas.getSize();

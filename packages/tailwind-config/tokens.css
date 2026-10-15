@@ -46,6 +46,9 @@
   --bpmn-element-fg: var(--foreground);
   --bpmn-stroke: var(--foreground);
 
+  /* Dot-grid paint on the canvas (see `bpmn-canvas.css`). */
+  --bpmn-grid-dot: #40404014;
+
   /* Per-kind colours for the supported task kinds (see TaskRenderer). */
   --bpmn-task-approve-bg: #e7f7ef;
   --bpmn-task-approve-stroke: #17a865;
@@ -156,6 +159,9 @@
   --bpmn-element-bg: var(--background);
   --bpmn-element-fg: var(--foreground);
   --bpmn-stroke: var(--foreground);
+
+  /* Dot-grid paint on the canvas (see `bpmn-canvas.css`). */
+  --bpmn-grid-dot: #f3f4f614;
 
   /* Per-kind colours for the supported task kinds (see TaskRenderer). */
   --bpmn-task-approve-bg: #12291e;
