@@ -7,7 +7,6 @@ import type { Element } from 'bpmn-js/lib/model/Types';
 
 import customModdle from '../model/custom-moddle.json';
 import {
-  clearSelection,
   exportXml,
   getServices,
   importXml,
@@ -16,8 +15,6 @@ import {
 import {
   activeToolAtom,
   describeElement,
-  duplicateSelected,
-  fitViewport,
   isReadyAtom,
   readStats,
   setActiveTool,
@@ -215,34 +212,9 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     });
 
     /**
-     * Deletion, undo and redo are handled by bpmn-js's own keyboard binding.
-     * Only the shortcuts it does not cover are handled here.
+     * Deletion, undo, redo and the editor shortcuts are handled centrally by
+     * `BpmnKeyboard`; bpmn-js's own SVG-bound keyboard is detached there too.
      */
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      const isTyping =
-        target?.tagName === 'INPUT' ||
-        target?.tagName === 'TEXTAREA' ||
-        target?.isContentEditable;
-
-      if (isTyping) return;
-
-      const meta = event.metaKey || event.ctrlKey;
-
-      if (event.key === 'Escape') {
-        clearSelection(modeler);
-        setSelectedElement(null);
-        setTool();
-      } else if (meta && event.key.toLowerCase() === 'd') {
-        event.preventDefault();
-        duplicateSelected();
-      } else if (meta && event.key === '0') {
-        event.preventDefault();
-        fitViewport();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
 
     importXml(modeler, starterDiagramXml)
       .then(({ error }) => {
@@ -254,7 +226,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('keydown', handleKeyDown);
       modeler.destroy();
       setModeler(null);
       setReady(false);

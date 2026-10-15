@@ -12,6 +12,7 @@ import type EventBus from 'diagram-js/lib/core/EventBus';
 import type CopyPaste from 'diagram-js/lib/features/copy-paste/CopyPaste';
 import type GlobalConnect from 'diagram-js/lib/features/global-connect/GlobalConnect';
 import type HandTool from 'diagram-js/lib/features/hand-tool/HandTool';
+import type Keyboard from 'diagram-js/lib/features/keyboard/Keyboard';
 import type LassoTool from 'diagram-js/lib/features/lasso-tool/LassoTool';
 import type Selection from 'diagram-js/lib/features/selection/Selection';
 import type SpaceTool from 'diagram-js/lib/features/space-tool/SpaceTool';
@@ -39,6 +40,7 @@ export interface EditorServices {
   selection: Selection;
   copyPaste: CopyPaste;
   commandStack: CommandStack;
+  keyboard: Keyboard;
   toolManager: ToolManager;
   handTool: HandTool;
   lassoTool: LassoTool;
@@ -57,6 +59,7 @@ export const getServices = (modeler: BpmnModeler): EditorServices => ({
   selection: modeler.get<Selection>('selection'),
   copyPaste: modeler.get<CopyPaste>('copyPaste'),
   commandStack: modeler.get<CommandStack>('commandStack'),
+  keyboard: modeler.get<Keyboard>('keyboard'),
   toolManager: modeler.get<ToolManager>('toolManager'),
   handTool: modeler.get<HandTool>('handTool'),
   lassoTool: modeler.get<LassoTool>('lassoTool'),

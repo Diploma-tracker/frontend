@@ -494,6 +494,17 @@ export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
 };
 
 /**
+ * bpmn-js binds its keyboard to the canvas SVG, so the diagram only reacts to
+ * shortcuts while that element holds DOM focus. Everything outside the canvas
+ * pushes focus back here after it is done.
+ */
+export const focusCanvas = action(() => {
+  if (!modeler) return;
+
+  getServices(modeler).canvas.focus();
+});
+
+/**
  * Selects a node by id, scrolls it into view and moves focus to the canvas so
  * keyboard shortcuts target the revealed element — used by the palette search
  * so a hit can be opened with a single click.
@@ -508,7 +519,7 @@ export const revealElement = action((id: string) => {
 
   services.selection.select(element);
   services.canvas.scrollToElement(element, 60);
-  services.canvas.focus();
+  focusCanvas();
 });
 
 export const pickElement = action((id: string) => {

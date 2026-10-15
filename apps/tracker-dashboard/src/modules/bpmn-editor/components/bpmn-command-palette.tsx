@@ -22,7 +22,6 @@ import {
   revealElement,
   setCommandPaletteOpen,
   spawnPaletteElement,
-  toggleCommandPalette,
 } from '../model/editor-model';
 import {
   type EditorToolName,
@@ -78,22 +77,6 @@ export const BpmnCommandPalette = reatomComponent(
     const pendingAction = useRef<(() => void) | null>(null);
 
     const hits = useMemo(() => (open ? collectNamedElements() : []), [open]);
-
-    useEffect(() => {
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (
-          (event.metaKey || event.ctrlKey) &&
-          event.key.toLowerCase() === 'k'
-        ) {
-          event.preventDefault();
-          toggleCommandPalette();
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-
-      return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
 
     useEffect(() => {
       if (open || !pendingAction.current) return;
