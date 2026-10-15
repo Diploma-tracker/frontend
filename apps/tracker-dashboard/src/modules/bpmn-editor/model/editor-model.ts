@@ -280,11 +280,11 @@ const readConditionExpression = (element: Element): string | null => {
   if (typeof body === 'string' && body.length > 0) return body;
 
   const eventDefs = (bo?.eventDefinitions ?? []) as Array<{
-    conditionExpression?: { body?: unknown };
+    condition?: { body?: unknown };
   }>;
 
   for (const def of eventDefs) {
-    const defBody = def.conditionExpression?.body;
+    const defBody = def.condition?.body;
 
     if (typeof defBody === 'string' && defBody.length > 0) return defBody;
   }
@@ -298,7 +298,7 @@ const isDefaultFlowOf = (source: Element | undefined, flow: Element): boolean =>
 
 interface EventDefinitionLike {
   $type?: string;
-  conditionExpression?: { body?: unknown };
+  condition?: { body?: unknown };
   timeDuration?: { body?: unknown };
   timeDate?: { body?: unknown };
   timeCycle?: { body?: unknown };

@@ -303,13 +303,13 @@ export const setConditionExpression = (
   const bo = flow.businessObject as {
     eventDefinitions?: Array<{
       $type: string;
-      conditionExpression?: unknown;
+      condition?: unknown;
     }>;
   };
   const eventDefs = Array.isArray(bo?.eventDefinitions)
     ? (bo.eventDefinitions as Array<{
         $type: string;
-        conditionExpression?: unknown;
+        condition?: unknown;
       }>)
     : [];
 
@@ -324,7 +324,7 @@ export const setConditionExpression = (
           return services.bpmnFactory.create(
             'bpmn:ConditionalEventDefinition',
             {
-              conditionExpression:
+              condition:
                 trimmed.length === 0
                   ? undefined
                   : services.bpmnFactory.create('bpmn:FormalExpression', {
