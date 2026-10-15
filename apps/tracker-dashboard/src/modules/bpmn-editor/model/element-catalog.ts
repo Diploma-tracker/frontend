@@ -2,28 +2,26 @@ import { k } from '@/shared/utils/i18n';
 import type { Icon } from '@phosphor-icons/react';
 import {
   CheckSquareIcon,
-  ClockIcon,
   CodeIcon,
-  DatabaseIcon,
   DiamondIcon,
   FileTextIcon,
-  FingerprintIcon,
   FlowArrowIcon,
-  FolderIcon,
-  GitBranchIcon,
-  GitMergeIcon,
   HandGrabbingIcon,
-  LightningIcon,
-  NoteIcon,
-  PlayCircleIcon,
-  PlusIcon,
-  RectangleIcon,
-  SelectionIcon,
+  RectangleDashedIcon,
+  SelectionPlusIcon,
   ShieldCheckIcon,
   SquaresFourIcon,
   StackIcon,
-  StopCircleIcon,
+  TextTIcon,
 } from '@phosphor-icons/react';
+
+import {
+  EndEventIcon,
+  IntermediateEventIcon,
+  type PaletteIcon,
+  PoolIcon,
+  StartEventIcon,
+} from '../components/palette-icons';
 
 /** bpmn-js `tool-manager` tool names, as registered in `ToolManager.registerTool`. */
 export type EditorToolName = 'hand' | 'lasso' | 'space' | 'global-connect';
@@ -43,12 +41,7 @@ export interface ToolEntry {
   shortcut?: string;
 }
 
-export type CreateGroupId =
-  | 'event'
-  | 'activity'
-  | 'gateway'
-  | 'artifact'
-  | 'container';
+export type CreateGroupId = 'flow' | 'activity' | 'annotation';
 
 export interface PaletteElement {
   id: string;
@@ -57,7 +50,7 @@ export interface PaletteElement {
   group: CreateGroupId;
   labelKey: string;
   descriptionKey: string;
-  icon: Icon;
+  icon: PaletteIcon;
   /** Extra attributes passed to `elementFactory.createShape`. */
   attrs?: Record<string, unknown>;
   /** Attached event definition, e.g. `bpmn:MessageEventDefinition`. */
@@ -87,7 +80,7 @@ export const toolEntries: ToolEntry[] = [
     tool: 'lasso',
     labelKey: k('bpmnEditor.tools.select.name'),
     descriptionKey: k('bpmnEditor.tools.select.description'),
-    icon: SelectionIcon,
+    icon: SelectionPlusIcon,
     shortcut: 'L',
   },
   {
@@ -109,11 +102,9 @@ export const toolEntries: ToolEntry[] = [
 ];
 
 export const createGroups: CreateGroup[] = [
-  { id: 'event', labelKey: k('bpmnEditor.palette.groups.events') },
+  { id: 'flow', labelKey: k('bpmnEditor.palette.groups.flowControl') },
   { id: 'activity', labelKey: k('bpmnEditor.palette.groups.activities') },
-  { id: 'gateway', labelKey: k('bpmnEditor.palette.groups.gateways') },
-  { id: 'artifact', labelKey: k('bpmnEditor.palette.groups.artifacts') },
-  { id: 'container', labelKey: k('bpmnEditor.palette.groups.containers') },
+  { id: 'annotation', labelKey: k('bpmnEditor.palette.groups.annotation') },
 ];
 
 // TODO: Replace with a backend request once the real BPMN element catalog is
@@ -123,45 +114,34 @@ export const paletteElements: PaletteElement[] = [
   {
     id: 'start-event',
     bpmnType: 'bpmn:StartEvent',
-    group: 'event',
+    group: 'flow',
     labelKey: k('bpmnEditor.palette.startEvent'),
     descriptionKey: k('bpmnEditor.palette.startEventDescription'),
-    icon: PlayCircleIcon,
+    icon: StartEventIcon,
   },
   {
-    id: 'message-intermediate-event',
+    id: 'intermediate-event',
     bpmnType: 'bpmn:IntermediateCatchEvent',
-    group: 'event',
-    labelKey: k('bpmnEditor.palette.messageIntermediateEvent'),
-    descriptionKey: k('bpmnEditor.palette.messageIntermediateEventDescription'),
-    icon: ClockIcon,
-    eventDefinitionType: 'bpmn:MessageEventDefinition',
-  },
-  {
-    id: 'signal-intermediate-event',
-    bpmnType: 'bpmn:IntermediateThrowEvent',
-    group: 'event',
-    labelKey: k('bpmnEditor.palette.signalIntermediateEvent'),
-    descriptionKey: k('bpmnEditor.palette.signalIntermediateEventDescription'),
-    icon: FingerprintIcon,
-    eventDefinitionType: 'bpmn:SignalEventDefinition',
+    group: 'flow',
+    labelKey: k('bpmnEditor.palette.intermediateEvent'),
+    descriptionKey: k('bpmnEditor.palette.intermediateEventDescription'),
+    icon: IntermediateEventIcon,
   },
   {
     id: 'end-event',
     bpmnType: 'bpmn:EndEvent',
-    group: 'event',
+    group: 'flow',
     labelKey: k('bpmnEditor.palette.endEvent'),
     descriptionKey: k('bpmnEditor.palette.endEventDescription'),
-    icon: StopCircleIcon,
+    icon: EndEventIcon,
   },
   {
-    id: 'message-end-event',
-    bpmnType: 'bpmn:EndEvent',
-    group: 'event',
-    labelKey: k('bpmnEditor.palette.messageEndEvent'),
-    descriptionKey: k('bpmnEditor.palette.messageEndEventDescription'),
-    icon: StopCircleIcon,
-    eventDefinitionType: 'bpmn:MessageEventDefinition',
+    id: 'gateway',
+    bpmnType: 'bpmn:ExclusiveGateway',
+    group: 'flow',
+    labelKey: k('bpmnEditor.palette.gateway'),
+    descriptionKey: k('bpmnEditor.palette.gatewayDescription'),
+    icon: DiamondIcon,
   },
   {
     id: 'approve-task',
@@ -209,76 +189,28 @@ export const paletteElements: PaletteElement[] = [
     attrs: { isExpanded: true },
   },
   {
-    id: 'exclusive-gateway',
-    bpmnType: 'bpmn:ExclusiveGateway',
-    group: 'gateway',
-    labelKey: k('bpmnEditor.palette.exclusiveGateway'),
-    descriptionKey: k('bpmnEditor.palette.exclusiveGatewayDescription'),
-    icon: DiamondIcon,
-  },
-  {
-    id: 'parallel-gateway',
-    bpmnType: 'bpmn:ParallelGateway',
-    group: 'gateway',
-    labelKey: k('bpmnEditor.palette.parallelGateway'),
-    descriptionKey: k('bpmnEditor.palette.parallelGatewayDescription'),
-    icon: GitMergeIcon,
-  },
-  {
-    id: 'inclusive-gateway',
-    bpmnType: 'bpmn:InclusiveGateway',
-    group: 'gateway',
-    labelKey: k('bpmnEditor.palette.inclusiveGateway'),
-    descriptionKey: k('bpmnEditor.palette.inclusiveGatewayDescription'),
-    icon: GitBranchIcon,
-  },
-  {
-    id: 'event-based-gateway',
-    bpmnType: 'bpmn:EventBasedGateway',
-    group: 'gateway',
-    labelKey: k('bpmnEditor.palette.eventBasedGateway'),
-    descriptionKey: k('bpmnEditor.palette.eventBasedGatewayDescription'),
-    icon: LightningIcon,
-  },
-  {
-    id: 'data-object',
-    bpmnType: 'bpmn:DataObjectReference',
-    group: 'artifact',
-    labelKey: k('bpmnEditor.palette.dataObject'),
-    descriptionKey: k('bpmnEditor.palette.dataObjectDescription'),
-    icon: DatabaseIcon,
-  },
-  {
-    id: 'data-store',
-    bpmnType: 'bpmn:DataStoreReference',
-    group: 'artifact',
-    labelKey: k('bpmnEditor.palette.dataStore'),
-    descriptionKey: k('bpmnEditor.palette.dataStoreDescription'),
-    icon: FolderIcon,
-  },
-  {
     id: 'text-annotation',
     bpmnType: 'bpmn:TextAnnotation',
-    group: 'artifact',
+    group: 'annotation',
     labelKey: k('bpmnEditor.palette.textAnnotation'),
     descriptionKey: k('bpmnEditor.palette.textAnnotationDescription'),
-    icon: NoteIcon,
+    icon: TextTIcon,
   },
   {
     id: 'group',
     bpmnType: 'bpmn:Group',
-    group: 'artifact',
+    group: 'annotation',
     labelKey: k('bpmnEditor.palette.group'),
     descriptionKey: k('bpmnEditor.palette.groupDescription'),
-    icon: RectangleIcon,
+    icon: RectangleDashedIcon,
   },
   {
     id: 'participant',
     bpmnType: 'bpmn:Participant',
-    group: 'container',
+    group: 'annotation',
     labelKey: k('bpmnEditor.palette.participant'),
     descriptionKey: k('bpmnEditor.palette.participantDescription'),
-    icon: PlusIcon,
+    icon: PoolIcon,
     attrs: { isHorizontal: true, isExpanded: true },
   },
 ];

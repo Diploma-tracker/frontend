@@ -297,6 +297,47 @@ export const setConditionExpression = (
   const services = getServices(modeler);
   const trimmed = body?.trim() ?? '';
 
+  const bo = flow.businessObject as {
+    eventDefinitions?: Array<{
+      $type: string;
+      conditionExpression?: unknown;
+    }>;
+  };
+  const eventDefs = Array.isArray(bo?.eventDefinitions)
+    ? (bo.eventDefinitions as Array<{
+        $type: string;
+        conditionExpression?: unknown;
+      }>)
+    : [];
+
+  const hasConditional = eventDefs.some(
+    (def) => def.$type === 'bpmn:ConditionalEventDefinition',
+  );
+
+  if (hasConditional) {
+    services.modeling.updateProperties(flow, {
+      eventDefinitions: eventDefs.map((def) => {
+        if (def.$type === 'bpmn:ConditionalEventDefinition') {
+          return services.bpmnFactory.create(
+            'bpmn:ConditionalEventDefinition',
+            {
+              conditionExpression:
+                trimmed.length === 0
+                  ? undefined
+                  : services.bpmnFactory.create('bpmn:FormalExpression', {
+                      body: trimmed,
+                    }),
+            },
+          );
+        }
+
+        return def;
+      }),
+    });
+
+    return;
+  }
+
   services.modeling.updateProperties(flow, {
     conditionExpression:
       trimmed.length === 0
@@ -315,6 +356,97 @@ export const setDefaultFlow = (
 ): void => {
   getServices(modeler).modeling.updateProperties(gateway, {
     default: flow ?? undefined,
+  });
+};
+
+/**
+ * Switches an event's attached definition (or drops it for a plain event).
+ * `bpmnReplace` keeps the element's name and attachment, converts it to
+ * `elementType`, and rebuilds the `eventDefinitions` list from the definition.
+ * `elementType` lets an intermediate event switch between catch and throw; it
+ * defaults to keeping the current type.
+ */
+export const setEventDefinitionType = (
+  modeler: BpmnModeler,
+  element: Element,
+  eventDefinitionType: string | null,
+  elementType: string = element.type,
+): Element | null => {
+  const services = getServices(modeler);
+
+  try {
+    const replaced = services.bpmnReplace.replaceElement(element, {
+      type: elementType,
+      ...(eventDefinitionType ? { eventDefinitionType } : {}),
+    } as TargetElement);
+
+    services.selection.select(replaced);
+
+    return replaced;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Switches a gateway to another gateway type. `bpmnReplace` keeps the element's
+ * id, position and connections, and rebuilds the shape for the new type.
+ */
+export const setGatewayType = (
+  modeler: BpmnModeler,
+  element: Element,
+  gatewayType: string,
+): Element | null => {
+  const services = getServices(modeler);
+
+  try {
+    const replaced = services.bpmnReplace.replaceElement(element, {
+      type: gatewayType,
+    } as TargetElement);
+
+    services.selection.select(replaced);
+
+    return replaced;
+  } catch {
+    return null;
+  }
+};
+
+/** Toggles a boundary event between interrupting and non-interrupting. */
+export const setBoundaryInterrupting = (
+  modeler: BpmnModeler,
+  element: Element,
+  interrupting: boolean,
+): void => {
+  getServices(modeler).modeling.updateProperties(element, {
+    cancelActivity: interrupting,
+  });
+};
+
+/** Sets a timer event's value into the given `bpmn:TimerEventDefinition` field. */
+export const setTimerDefinition = (
+  modeler: BpmnModeler,
+  element: Element,
+  property: string,
+  value: string,
+): void => {
+  const services = getServices(modeler);
+  const trimmed = value.trim();
+
+  const timerDefinition = services.bpmnFactory.create(
+    'bpmn:TimerEventDefinition',
+    {
+      [property]:
+        trimmed.length === 0
+          ? undefined
+          : services.bpmnFactory.create('bpmn:FormalExpression', {
+              body: trimmed,
+            }),
+    },
+  );
+
+  services.modeling.updateProperties(element, {
+    eventDefinitions: [timerDefinition],
   });
 };
 

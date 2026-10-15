@@ -13,14 +13,31 @@ import {
   isConnectionType,
   removeElement,
   replaceElementType,
+  setBoundaryInterrupting,
   setConditionExpression,
   setDefaultFlow,
+  setEventDefinitionType,
+  setGatewayType,
+  setTimerDefinition,
   spawnElement,
   toDiagramElement,
   updateProperties,
   zoomToFit,
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
+import {
+  EVENT_DEFINITION_TYPES,
+  type EventDefinitionKey,
+  TIMER_TYPES,
+  TIMER_TYPE_PROPERTY,
+  type TimerType,
+  eventDefinitionKeyOf,
+  eventDefinitionKeys,
+  intermediateEventElementType,
+  isEventType,
+  isIntermediateEventType,
+} from './event-definitions';
+import { isGatewayElementType } from './gateway-definitions';
 import { starterDiagramXml } from './starter-diagram';
 import {
   DECISION_KEY_ATTRIBUTE,
@@ -68,8 +85,16 @@ export interface SelectedElementInfo {
   decisionKey: string | null;
   /** Custom `expressions` attribute, only set on scripting tasks. */
   scriptExpressions: ScriptExpression[];
-  /** Condition expression body of a sequence flow. */
+  /** Condition expression body of a sequence flow or conditional event. */
   conditionExpression: string | null;
+  /** Attached event definition of an event element, `none` when plain. */
+  eventDefinition: EventDefinitionKey | null;
+  /** Whether a boundary (or start) event interrupts its scope. */
+  isInterrupting: boolean;
+  /** Kind of a timer event's definition, `null` when not a timer. */
+  timerType: TimerType | null;
+  /** Value of a timer event's definition, `''` when unset. */
+  timerValue: string | null;
   /** Whether the selected flow is its gateway's `default` flow. */
   isDefaultFlow: boolean;
   /** Whether the selected flow leaves a gateway (so it may be a default). */
@@ -236,14 +261,81 @@ const readRolesAttribute = (element: Element): string[] => {
 
 /** Condition expression body of a sequence flow, if any. */
 const readConditionExpression = (element: Element): string | null => {
-  const body = element.businessObject?.conditionExpression?.body;
+  const bo = element.businessObject;
 
-  return typeof body === 'string' && body.length > 0 ? body : null;
+  const body = bo?.conditionExpression?.body;
+
+  if (typeof body === 'string' && body.length > 0) return body;
+
+  const eventDefs = (bo?.eventDefinitions ?? []) as Array<{
+    conditionExpression?: { body?: unknown };
+  }>;
+
+  for (const def of eventDefs) {
+    const defBody = def.conditionExpression?.body;
+
+    if (typeof defBody === 'string' && defBody.length > 0) return defBody;
+  }
+
+  return null;
 };
 
 /** True when `flow` is the `default` outgoing flow of `source`. */
 const isDefaultFlowOf = (source: Element | undefined, flow: Element): boolean =>
   !!source && source.businessObject?.default === flow.businessObject;
+
+interface EventDefinitionLike {
+  $type?: string;
+  conditionExpression?: { body?: unknown };
+  timeDuration?: { body?: unknown };
+  timeDate?: { body?: unknown };
+  timeCycle?: { body?: unknown };
+}
+
+/** Attached `bpmn:*EventDefinition`s of an element, if any. */
+const readEventDefinitions = (element: Element): EventDefinitionLike[] => {
+  const defs = (element.businessObject as { eventDefinitions?: unknown })
+    ?.eventDefinitions;
+
+  return Array.isArray(defs) ? (defs as EventDefinitionLike[]) : [];
+};
+
+/** UI key of an event's first attached definition. */
+const readEventDefinition = (element: Element): EventDefinitionKey =>
+  eventDefinitionKeyOf(readEventDefinitions(element)[0]?.$type);
+
+/** Whether a boundary event interrupts, or a start event is interrupting. */
+const readIsInterrupting = (element: Element): boolean => {
+  if (element.type === 'bpmn:BoundaryEvent') {
+    return element.businessObject?.cancelActivity !== false;
+  }
+
+  if (element.type === 'bpmn:StartEvent') {
+    return element.businessObject?.isInterrupting !== false;
+  }
+
+  return true;
+};
+
+/** Kind and value of a timer event's definition. */
+const readTimer = (element: Element): { type: TimerType; value: string } => {
+  const definition = readEventDefinitions(element).find(
+    (def) => def.$type === 'bpmn:TimerEventDefinition',
+  );
+
+  if (!definition) return { type: 'duration', value: '' };
+
+  for (const type of TIMER_TYPES) {
+    const body = (definition as Record<string, { body?: unknown } | undefined>)[
+      TIMER_TYPE_PROPERTY[type]
+    ]?.body;
+
+    if (typeof body === 'string' && body.length > 0)
+      return { type, value: body };
+  }
+
+  return { type: 'duration', value: '' };
+};
 
 /** Outgoing sequence flows of a gateway, flattened for the panel. */
 const readOutgoingFlows = (gateway: Element): GatewayFlowInfo[] =>
@@ -294,6 +386,9 @@ export const describeElement = (
   const sourceIsGateway = !!source && isGatewayType(source.type);
   const gateway = !connection && isGatewayType(target.type) ? target : null;
   const defaultFlowId = gateway?.businessObject?.default?.id;
+  const event = isEventType(target.type);
+  const eventDefinition = event ? readEventDefinition(target) : null;
+  const timer = event && eventDefinition === 'timer' ? readTimer(target) : null;
 
   return {
     id: target.id,
@@ -306,7 +401,16 @@ export const describeElement = (
     scriptExpressions: parseScriptExpressions(
       readStringAttribute(target, SCRIPT_EXPRESSIONS_ATTRIBUTE),
     ),
-    conditionExpression: connection ? readConditionExpression(target) : null,
+    conditionExpression:
+      connection || isEventType(target.type)
+        ? readConditionExpression(target)
+        : null,
+    eventDefinition,
+    isInterrupting: isEventType(target.type)
+      ? readIsInterrupting(target)
+      : true,
+    timerType: timer?.type ?? null,
+    timerValue: timer?.value ?? null,
     isDefaultFlow: connection && isDefaultFlowOf(source, target),
     sourceIsGateway,
     outgoingFlows: gateway ? readOutgoingFlows(gateway) : [],
@@ -520,23 +624,119 @@ export const removeSelectedScriptExpression = action((index: number) => {
 });
 
 /**
- * Writes (or clears) the selected flow's condition expression. A conditional
- * flow cannot be a gateway's default, so the default is dropped when a
- * condition is set.
+ * Writes (or clears) the selected condition expression — a sequence flow's, or
+ * a conditional event's. A conditional flow cannot be a gateway's default, so
+ * the default is dropped when a condition is set.
  */
 export const setSelectedConditionExpression = action((body: string | null) => {
   const element = getCurrentElement();
-  if (!modeler || !element || !isConnection(element)) return;
+  if (!modeler || !element) return;
+
+  const connection = isConnection(element);
+
+  if (!connection && !isEventType(element.type)) return;
 
   setConditionExpression(modeler, element, body);
 
-  const source = getFlowSource(element);
-  const hasCondition = (body?.trim().length ?? 0) > 0;
+  if (connection) {
+    const source = getFlowSource(element);
+    const hasCondition = (body?.trim().length ?? 0) > 0;
 
-  if (hasCondition && source && isDefaultFlowOf(source, element)) {
-    setDefaultFlow(modeler, source, null);
+    if (hasCondition && source && isDefaultFlowOf(source, element)) {
+      setDefaultFlow(modeler, source, null);
+    }
   }
 
+  updateCurrent();
+});
+
+/** Switches the selected event's attached definition, or clears it. */
+export const setSelectedEventDefinition = action((key: EventDefinitionKey) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  const replaced = setEventDefinitionType(
+    modeler,
+    element,
+    EVENT_DEFINITION_TYPES[key],
+  );
+
+  if (!replaced) {
+    setError('This event cannot be converted to that type.');
+
+    return;
+  }
+
+  setError(null);
+  updateCurrent();
+});
+
+/** Toggles the selected boundary event between interrupting and not. */
+export const setSelectedEventInterrupting = action((interrupting: boolean) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  setBoundaryInterrupting(modeler, element, interrupting);
+
+  updateCurrent();
+});
+
+/** Switches an intermediate event between catching and throwing. */
+export const setSelectedEventThrowing = action((throwing: boolean) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || !isIntermediateEventType(element.type)) return;
+
+  const targetType = intermediateEventElementType(throwing);
+  if (element.type === targetType) return;
+
+  const currentKey = readEventDefinition(element);
+  const nextKey = eventDefinitionKeys(targetType).includes(currentKey)
+    ? currentKey
+    : 'none';
+
+  const replaced = setEventDefinitionType(
+    modeler,
+    element,
+    EVENT_DEFINITION_TYPES[nextKey],
+    targetType,
+  );
+
+  if (!replaced) {
+    setError('This event cannot be converted to that type.');
+
+    return;
+  }
+
+  setError(null);
+  updateCurrent();
+});
+
+/** Sets the selected timer event's value into its active timer field. */
+export const setSelectedTimerValue = action(
+  (type: TimerType, value: string) => {
+    const element = getCurrentElement();
+    if (!modeler || !element) return;
+
+    setTimerDefinition(modeler, element, TIMER_TYPE_PROPERTY[type], value);
+
+    updateCurrent();
+  },
+);
+
+/** Switches the selected gateway to another gateway type. */
+export const setSelectedGatewayType = action((gatewayType: string) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || !isGatewayElementType(element.type)) return;
+
+  const replaced = setGatewayType(modeler, element, gatewayType);
+
+  if (!replaced) {
+    setError('This gateway cannot be converted to that type.');
+
+    return;
+  }
+
+  setError(null);
   updateCurrent();
 });
 

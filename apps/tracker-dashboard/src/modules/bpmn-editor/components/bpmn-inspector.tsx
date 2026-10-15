@@ -7,9 +7,12 @@ import {
   type SelectedElementInfo,
   selectedElementAtom,
 } from '../model/editor-model';
-import { TASK_DEFINITION_KEYS, isGatewayType } from '../model/task-definitions';
+import { isEventType } from '../model/event-definitions';
+import { isGatewayElementType } from '../model/gateway-definitions';
+import { TASK_DEFINITION_KEYS } from '../model/task-definitions';
 import { ConnectionInspector } from './inspector/connection-inspector';
-import { GatewayFlowsField } from './inspector/gateway-flows-field';
+import { EventField } from './inspector/event-field';
+import { GatewayField } from './inspector/gateway-field';
 import { NameField } from './inspector/name-field';
 import { TaskFields } from './inspector/task-fields';
 
@@ -36,12 +39,16 @@ const VARIANTS = [
     ),
   },
   {
-    matches: (selected: SelectedElementInfo) => isGatewayType(selected.type),
+    matches: (selected: SelectedElementInfo) =>
+      isGatewayElementType(selected.type),
     render: (selected: SelectedElementInfo) => (
-      <GatewayFlowsField
-        elementId={selected.id}
-        outgoingFlows={selected.outgoingFlows}
-      />
+      <GatewayField selected={selected} />
+    ),
+  },
+  {
+    matches: (selected: SelectedElementInfo) => isEventType(selected.type),
+    render: (selected: SelectedElementInfo) => (
+      <EventField selected={selected} />
     ),
   },
 ] as const;

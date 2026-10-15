@@ -29,7 +29,7 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
             <BpmnTopbar />
           </div>
 
-          <div className="pointer-events-auto absolute top-1/2 left-3 h-8/12 w-16 -translate-y-1/2">
+          <div className="pointer-events-auto absolute top-1/2 left-3 max-h-8/12 w-16 -translate-y-1/2">
             <BpmnToolRail />
           </div>
 
