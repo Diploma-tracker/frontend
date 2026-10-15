@@ -1,0 +1,37 @@
+{
+  "name": "CustomBPMN",
+  "uri": "http://example.com/bpmn/custom",
+  "prefix": "custom",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "UserTask",
+      "extends": ["bpmn:UserTask"],
+      "properties": [
+        {
+          "name": "taskDefinitionKey",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "roles",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "formKey",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "decisionKey",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+}

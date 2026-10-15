@@ -1,4 +1,5 @@
-import BpmnModeler from 'bpmn-js/lib/Modeler';
+import type BpmnModeler from 'bpmn-js/lib/Modeler';
+import type BpmnFactory from 'bpmn-js/lib/features/modeling/BpmnFactory';
 import type ElementFactory from 'bpmn-js/lib/features/modeling/ElementFactory';
 import type Modeling from 'bpmn-js/lib/features/modeling/Modeling';
 import type BpmnReplace from 'bpmn-js/lib/features/replace/BpmnReplace';
@@ -33,6 +34,7 @@ export interface EditorServices {
   elementRegistry: ElementRegistry;
   modeling: Modeling;
   elementFactory: ElementFactory;
+  bpmnFactory: BpmnFactory;
   bpmnReplace: BpmnReplace;
   selection: Selection;
   copyPaste: CopyPaste;
@@ -50,6 +52,7 @@ export const getServices = (modeler: BpmnModeler): EditorServices => ({
   elementRegistry: modeler.get<ElementRegistry>('elementRegistry'),
   modeling: modeler.get<Modeling>('modeling'),
   elementFactory: modeler.get<ElementFactory>('elementFactory'),
+  bpmnFactory: modeler.get<BpmnFactory>('bpmnFactory'),
   bpmnReplace: modeler.get<BpmnReplace>('bpmnReplace'),
   selection: modeler.get<Selection>('selection'),
   copyPaste: modeler.get<CopyPaste>('copyPaste'),
@@ -72,8 +75,12 @@ export const toDiagramElement = (
   return target.type === 'label' ? (target.labelTarget ?? null) : target;
 };
 
+/** True when a BPMN type is a connection (a flow or an association). */
+export const isConnectionType = (type: string): boolean =>
+  CONNECTION_TYPES.includes(type);
+
 export const isConnection = (element: { type: string } | null): boolean =>
-  !!element && CONNECTION_TYPES.includes(element.type);
+  !!element && isConnectionType(element.type);
 
 export const isShape = (element: { type: string } | null): boolean =>
   !!element && !isConnection(element);
@@ -158,6 +165,30 @@ export interface SpawnOptions {
   name?: string;
 }
 
+/**
+ * Attributes `elementFactory` only understands as diagram/DI flags. Everything
+ * else in `PaletteElement.attrs` is a business-object property (e.g. the custom
+ * `taskDefinitionKey`) and has to be applied through `modeling`.
+ */
+const DIAGRAM_ATTRIBUTE_KEYS = new Set(['isExpanded', 'isHorizontal']);
+
+const splitElementAttributes = (
+  attrs: Record<string, unknown> | undefined,
+): { diagram: Record<string, unknown>; business: Record<string, unknown> } => {
+  const diagram: Record<string, unknown> = {};
+  const business: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(attrs ?? {})) {
+    if (DIAGRAM_ATTRIBUTE_KEYS.has(key)) {
+      diagram[key] = value;
+    } else {
+      business[key] = value;
+    }
+  }
+
+  return { diagram, business };
+};
+
 export const spawnElement = (
   modeler: BpmnModeler,
   element: PaletteElement,
@@ -167,16 +198,29 @@ export const spawnElement = (
   const position = options.position ?? getViewportCenter(services.canvas);
   const target = getSpawnTarget(services);
 
+  const { diagram, business } = splitElementAttributes(element.attrs);
+
   const shape = services.elementFactory.create('shape', {
     type: element.bpmnType,
-    ...element.attrs,
+    ...diagram,
     ...(element.eventDefinitionType
       ? { eventDefinitionType: element.eventDefinitionType }
       : {}),
-    ...(options.name ? { name: options.name } : {}),
   });
 
   const created = services.modeling.createShape(shape, position, target);
+
+  // `elementFactory` drops unknown attrs onto the diagram element instead of
+  // the business object, so the custom task discriminator (and name) are
+  // applied explicitly — otherwise a palette task behaves nothing like one
+  // imported from the starter diagram.
+  const properties: Record<string, unknown> = { ...business };
+
+  if (options.name) properties.name = options.name;
+
+  if (Object.keys(properties).length > 0) {
+    services.modeling.updateProperties(created, properties);
+  }
 
   services.selection.select(created);
   services.canvas.scrollToElement(created);
@@ -240,6 +284,40 @@ export const updateProperties = (
   getServices(modeler).modeling.updateProperties(element, properties);
 };
 
+/**
+ * Writes (or clears) the condition expression of a sequence flow. A flow that
+ * carries a condition cannot be a gateway's default, so callers resolve one
+ * before setting the other.
+ */
+export const setConditionExpression = (
+  modeler: BpmnModeler,
+  flow: Element,
+  body: string | null,
+): void => {
+  const services = getServices(modeler);
+  const trimmed = body?.trim() ?? '';
+
+  services.modeling.updateProperties(flow, {
+    conditionExpression:
+      trimmed.length === 0
+        ? undefined
+        : services.bpmnFactory.create('bpmn:FormalExpression', {
+            body: trimmed,
+          }),
+  });
+};
+
+/** Sets (or clears) the gateway's `default` outgoing flow. */
+export const setDefaultFlow = (
+  modeler: BpmnModeler,
+  gateway: Element,
+  flow: Element | null,
+): void => {
+  getServices(modeler).modeling.updateProperties(gateway, {
+    default: flow ?? undefined,
+  });
+};
+
 export const replaceElementType = (
   modeler: BpmnModeler,
   element: Element,
@@ -251,6 +329,14 @@ export const replaceElementType = (
     const replaced = services.bpmnReplace.replaceElement(element, {
       type: target.bpmnType,
     } as TargetElement);
+
+    // bpmn-js only carries over properties shared by both descriptors, so the
+    // task discriminator has to be applied from the target explicitly.
+    const taskDefinitionKey = target.attrs?.taskDefinitionKey;
+
+    if (replaced && typeof taskDefinitionKey === 'string') {
+      services.modeling.updateProperties(replaced, { taskDefinitionKey });
+    }
 
     services.selection.select(replaced);
 

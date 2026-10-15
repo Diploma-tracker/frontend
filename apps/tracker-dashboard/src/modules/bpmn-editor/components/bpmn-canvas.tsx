@@ -5,6 +5,7 @@ import { reatomComponent } from '@reatom/react';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import type { Element } from 'bpmn-js/lib/model/Types';
 
+import customModdle from '../model/custom-moddle.json';
 import {
   clearSelection,
   exportXml,
@@ -30,7 +31,9 @@ import {
   setUndoRedoState,
   setXml,
 } from '../model/editor-model';
+import FlowRenderer from '../model/flow-renderer';
 import { starterDiagramXml } from '../model/starter-diagram';
+import TaskRenderer from '../model/task-renderer';
 import './bpmn-canvas.css';
 
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
@@ -50,6 +53,20 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       container,
       // Inline styles resolve CSS variables, so the diagram uses the app font.
       textRenderer: { defaultStyle: { fontFamily: 'var(--font-sans)' } },
+      moddleExtensions: {
+        custom: customModdle,
+      },
+      // Higher-priority renderers: `taskRenderer` tints the three supported task
+      // kinds, `flowRenderer` colours gateway approve/reject branches.
+      // `__init__` forces them to be constructed so they subscribe to the render
+      // events; without it didi would never instantiate the lazy services.
+      additionalModules: [
+        {
+          __init__: ['taskRenderer', 'flowRenderer'],
+          taskRenderer: ['type', TaskRenderer],
+          flowRenderer: ['type', FlowRenderer],
+        },
+      ],
       /**
        * `bpmnRenderer` is a documented config path: `BpmnRenderer.$inject` asks
        * for `config.bpmnRenderer`, and `config` is the modeler options object.

@@ -10,13 +10,15 @@ import {
 } from '@repo/ui-kit/components/common/floating/tooltip';
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@repo/ui-kit/components/common/layout/card';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { setPropertiesOpen } from '../model/editor-model';
+import { selectedElementAtom, setPropertiesOpen } from '../model/editor-model';
 import { BpmnInspector } from './bpmn-inspector';
 
 /**
@@ -28,21 +30,37 @@ import { BpmnInspector } from './bpmn-inspector';
  */
 export const BpmnProperties = reatomComponent(function BpmnProperties() {
   const { t } = useTranslation();
+  const selected = selectedElementAtom();
+
+  let description: string | null = null;
+  if (selected) {
+    const key = selected.type;
+    const specialKey = selected.taskDefinitionKey;
+    if (specialKey) {
+      description = `${key} / ${specialKey}`;
+    } else {
+      description = key;
+    }
+  }
 
   return (
     <Card className="flex h-full min-h-0 flex-col shadow-lg">
-      <CardHeader className="flex items-center justify-between gap-2">
+      <CardHeader>
         <CardTitle>{t('bpmnEditor.inspector.title')}</CardTitle>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={t('bpmnEditor.inspector.close')}
-          title={t('bpmnEditor.inspector.close')}
-          onClick={() => setPropertiesOpen(false)}
-        >
-          <XIcon className="size-4" />
-        </Button>
+        {description && <CardDescription>{description}</CardDescription>}
+
+        <CardAction>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label={t('bpmnEditor.inspector.close')}
+            title={t('bpmnEditor.inspector.close')}
+            onClick={() => setPropertiesOpen(false)}
+          >
+            <XIcon className="size-4" />
+          </Button>
+        </CardAction>
       </CardHeader>
 
       <CardContent className="min-h-0 flex-1 overflow-hidden p-0">

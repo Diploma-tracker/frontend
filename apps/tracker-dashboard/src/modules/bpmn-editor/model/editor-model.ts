@@ -10,8 +10,11 @@ import {
   getServices,
   importXml,
   isConnection,
+  isConnectionType,
   removeElement,
   replaceElementType,
+  setConditionExpression,
+  setDefaultFlow,
   spawnElement,
   toDiagramElement,
   updateProperties,
@@ -19,19 +22,60 @@ import {
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
 import { starterDiagramXml } from './starter-diagram';
+import {
+  DECISION_KEY_ATTRIBUTE,
+  type DecisionValue,
+  buildApprovalCondition,
+  isApproveTask,
+  isGatewayType,
+} from './task-definitions';
 
 /** Zoom bounds applied by the `zoomBy` action. */
 const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 4;
 const ZOOM_STEP = 1.2;
 
+export interface GatewayFlowInfo {
+  id: string;
+  name: string;
+  conditionExpression: string | null;
+  isDefault: boolean;
+}
+
+/** An approve task offered as a branch source in the condition picker. */
+export interface DecisionTaskOption {
+  id: string;
+  name: string;
+  decisionKey: string;
+}
+
 export interface SelectedElementInfo {
   id: string;
   type: string;
   name: string;
-  isConnection: boolean;
-  incomingCount: number;
-  outgoingCount: number;
+  /** Custom `taskDefinitionKey` attribute, only set on the three task types. */
+  taskDefinitionKey: string | null;
+  /** Custom `roles` attribute, stored as a JSON array string. */
+  roles: string[];
+  /** Custom `formKey` attribute, only set on the fill-form task. */
+  formKey: string | null;
+  /** Custom `decisionKey` attribute, only set on approve tasks. */
+  decisionKey: string | null;
+  /** Condition expression body of a sequence flow. */
+  conditionExpression: string | null;
+  /** Whether the selected flow is its gateway's `default` flow. */
+  isDefaultFlow: boolean;
+  /** Whether the selected flow leaves a gateway (so it may be a default). */
+  sourceIsGateway: boolean;
+  /** Outgoing flows of a selected gateway, in order. */
+  outgoingFlows: GatewayFlowInfo[];
+  /** Business-object id of the selected gateway's `default` flow. */
+  defaultFlowId: string | null;
+  /**
+   * Decision variable of the approve task feeding the selection — the source
+   * task for a flow, or the incoming approve task for a gateway.
+   */
+  feedingDecisionKey: string | null;
 }
 
 export interface DiagramStats {
@@ -155,6 +199,81 @@ export const setError = action((message: string | null) => {
   lastErrorAtom.set(message);
 });
 
+/** Reads a string custom attribute from the element's business object. */
+const readStringAttribute = (element: Element, name: string): string | null => {
+  const value = element.businessObject?.get(name);
+
+  return typeof value === 'string' && value.length > 0 ? value : null;
+};
+
+/** `source` only exists on connections, so it is unwrapped structurally. */
+const getFlowSource = (flow: Element): Element | undefined =>
+  (flow as { source?: Element }).source;
+
+/** Parses the JSON-encoded `roles` attribute back into a list of role ids. */
+const readRolesAttribute = (element: Element): string[] => {
+  const raw = readStringAttribute(element, 'roles');
+
+  if (!raw) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+
+    return Array.isArray(parsed)
+      ? parsed.filter((role): role is string => typeof role === 'string')
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+/** Condition expression body of a sequence flow, if any. */
+const readConditionExpression = (element: Element): string | null => {
+  const body = element.businessObject?.conditionExpression?.body;
+
+  return typeof body === 'string' && body.length > 0 ? body : null;
+};
+
+/** True when `flow` is the `default` outgoing flow of `source`. */
+const isDefaultFlowOf = (source: Element | undefined, flow: Element): boolean =>
+  !!source && source.businessObject?.default === flow.businessObject;
+
+/** Outgoing sequence flows of a gateway, flattened for the panel. */
+const readOutgoingFlows = (gateway: Element): GatewayFlowInfo[] =>
+  ((gateway.outgoing ?? []) as unknown as Element[])
+    .filter((flow) => isConnection(flow))
+    .map((flow) => ({
+      id: flow.id,
+      name: flow.businessObject?.name ?? '',
+      conditionExpression: readConditionExpression(flow),
+      isDefault: isDefaultFlowOf(gateway, flow),
+    }));
+
+/**
+ * Decision variable of the approve task feeding `element` — its own for a task,
+ * the incoming task's for a gateway, or the feeding gateway's for a flow.
+ */
+const readFeedingDecisionKey = (element: Element): string | null => {
+  if (isConnection(element)) {
+    const source = getFlowSource(element);
+
+    return source && isGatewayType(source.type)
+      ? readFeedingDecisionKey(source)
+      : null;
+  }
+
+  for (const flow of (element.incoming ?? []) as unknown as Element[]) {
+    const source = getFlowSource(flow);
+    const key = source
+      ? readStringAttribute(source, DECISION_KEY_ATTRIBUTE)
+      : null;
+
+    if (key) return key;
+  }
+
+  return null;
+};
+
 /** Flattens a diagram element into the serialisable shape React renders from. */
 export const describeElement = (
   element: Element | undefined,
@@ -164,14 +283,31 @@ export const describeElement = (
   if (!target) return null;
 
   const connection = isConnection(target);
+  const source = connection ? getFlowSource(target) : undefined;
+  const sourceIsGateway = !!source && isGatewayType(source.type);
+  const gateway = !connection && isGatewayType(target.type) ? target : null;
+  const defaultFlowId = gateway?.businessObject?.default?.id;
 
   return {
     id: target.id,
     type: target.type,
     name: target.businessObject?.name ?? '',
-    isConnection: connection,
-    incomingCount: connection ? (target.incoming ?? []).length : 0,
-    outgoingCount: connection ? (target.outgoing ?? []).length : 0,
+    taskDefinitionKey: readStringAttribute(target, 'taskDefinitionKey'),
+    roles: readRolesAttribute(target),
+    formKey: readStringAttribute(target, 'formKey'),
+    decisionKey: readStringAttribute(target, DECISION_KEY_ATTRIBUTE),
+    conditionExpression: connection ? readConditionExpression(target) : null,
+    isDefaultFlow: connection && isDefaultFlowOf(source, target),
+    sourceIsGateway,
+    outgoingFlows: gateway ? readOutgoingFlows(gateway) : [],
+    defaultFlowId: typeof defaultFlowId === 'string' ? defaultFlowId : null,
+    feedingDecisionKey: connection
+      ? sourceIsGateway
+        ? readFeedingDecisionKey(target)
+        : null
+      : gateway
+        ? readFeedingDecisionKey(gateway)
+        : null,
   };
 };
 
@@ -197,6 +333,38 @@ export const getElementById = (id: string): Element | null => {
   if (!modeler) return null;
 
   return toDiagramElement(getServices(modeler).elementRegistry.get(id));
+};
+
+/**
+ * Every approve task in the diagram that carries a decision variable, offered
+ * as a branch source in the condition picker (deduplicated by variable name).
+ */
+export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
+  if (!modeler) return [];
+
+  const elements = getServices(modeler).elementRegistry.getAll() as Element[];
+  const seen = new Set<string>();
+  const options: DecisionTaskOption[] = [];
+
+  for (const element of elements) {
+    if (element.type !== 'bpmn:UserTask') continue;
+    if (!isApproveTask(readStringAttribute(element, 'taskDefinitionKey'))) {
+      continue;
+    }
+
+    const decisionKey = readStringAttribute(element, DECISION_KEY_ATTRIBUTE);
+
+    if (!decisionKey || seen.has(decisionKey)) continue;
+
+    seen.add(decisionKey);
+    options.push({
+      id: element.id,
+      name: element.businessObject?.name || element.id,
+      decisionKey,
+    });
+  }
+
+  return options;
 };
 
 /**
@@ -263,6 +431,134 @@ export const renameSelected = action((name: string) => {
   updateCurrent();
 });
 
+/**
+ * Persists the roles that may perform the selected task. Stored as a JSON array
+ * string in the custom `roles` attribute.
+ */
+export const setSelectedRoles = action((roles: string[]) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  updateProperties(modeler, element, { roles: JSON.stringify(roles) });
+  updateCurrent();
+});
+
+/** Persists the form reference for the selected task in the custom `formKey`. */
+export const setSelectedFormKey = action((formKey: string) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  updateProperties(modeler, element, { formKey });
+  updateCurrent();
+});
+
+/**
+ * Persists the decision variable an approve task writes on completion. Each
+ * approval owns its own variable, so it stays independent of other gateways.
+ */
+export const setSelectedDecisionKey = action((decisionKey: string) => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  const trimmed = decisionKey.trim();
+
+  updateProperties(modeler, element, {
+    [DECISION_KEY_ATTRIBUTE]: trimmed.length === 0 ? undefined : trimmed,
+  });
+  updateCurrent();
+});
+
+/**
+ * Writes (or clears) the selected flow's condition expression. A conditional
+ * flow cannot be a gateway's default, so the default is dropped when a
+ * condition is set.
+ */
+export const setSelectedConditionExpression = action((body: string | null) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || !isConnection(element)) return;
+
+  setConditionExpression(modeler, element, body);
+
+  const source = getFlowSource(element);
+  const hasCondition = (body?.trim().length ?? 0) > 0;
+
+  if (hasCondition && source && isDefaultFlowOf(source, element)) {
+    setDefaultFlow(modeler, source, null);
+  }
+
+  updateCurrent();
+});
+
+/**
+ * Marks the selected flow as its gateway's default (clearing its condition), or
+ * clears the designation. Only meaningful for gateway outgoing flows.
+ */
+export const setSelectedAsDefaultFlow = action((asDefault: boolean) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || !isConnection(element)) return;
+
+  const source = getFlowSource(element);
+
+  if (!source || !isGatewayType(source.type)) return;
+
+  setDefaultFlow(modeler, source, asDefault ? element : null);
+
+  if (asDefault) setConditionExpression(modeler, element, null);
+
+  updateCurrent();
+});
+
+/** Chooses (or clears) the default outgoing flow of the selected gateway. */
+export const setGatewayDefaultFlow = action((flowId: string | null) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || isConnection(element)) return;
+
+  const resolved = flowId
+    ? toDiagramElement(getServices(modeler).elementRegistry.get(flowId))
+    : null;
+
+  setDefaultFlow(modeler, element, resolved);
+
+  if (resolved) setConditionExpression(modeler, resolved, null);
+
+  updateCurrent();
+});
+
+/**
+ * Writes `${decisionKey == '<value>'}` onto the selected flow for the chosen
+ * approval task and branch. A conditional flow cannot also be the gateway
+ * default, so any default designation is dropped.
+ */
+export const setSelectedApprovalCondition = action(
+  (decisionKey: string, value: DecisionValue) => {
+    const element = getCurrentElement();
+    if (!modeler || !element || !isConnection(element)) return;
+
+    const key = decisionKey.trim();
+
+    if (!key) {
+      setError('Choose the approval this branch handles.');
+
+      return;
+    }
+
+    const source = getFlowSource(element);
+
+    setError(null);
+    setConditionExpression(
+      modeler,
+      element,
+      buildApprovalCondition(key, value),
+    );
+
+    if (source && isDefaultFlowOf(source, element)) {
+      setDefaultFlow(modeler, source, null);
+    }
+
+    updateCurrent();
+  },
+);
+
 export const duplicateSelected = action(() => {
   const selected = selectedElementAtom();
 
@@ -293,7 +589,7 @@ export const deleteSelected = action(() => {
 export const changeSelectedType = action((target: PaletteElement) => {
   const selected = selectedElementAtom();
 
-  if (!modeler || !selected || selected.isConnection) return;
+  if (!modeler || !selected || isConnectionType(selected.type)) return;
 
   const element = getElementById(selected.id);
 

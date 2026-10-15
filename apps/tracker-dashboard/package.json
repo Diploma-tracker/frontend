@@ -32,6 +32,7 @@
     "@fullcalendar/timegrid": "^6.1.20",
     "@jsonforms/core": "^3.8.0",
     "@jsonforms/react": "^3.8.0",
+    "@phosphor-icons/core": "^2.1.1",
     "@phosphor-icons/react": "^2.1.10",
     "@reatom/core": "^1000.15.2",
     "@reatom/react": "^1000.2.2",
