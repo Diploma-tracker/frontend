@@ -2,18 +2,19 @@
  * Diagram the editor opens with: the bachelor-thesis workflow grouped into
  * embedded sub-processes (one per business stage).
  *
- * The tasks are mapped onto the three task kinds the editor understands via the
+ * The tasks are mapped onto the task kinds the editor understands via the
  * custom `taskDefinitionKey` attribute, with the allowed roles stored (as a JSON
  * array) in `roles` and the fill-form reference in `formKey`:
  *
  * - `approve`                    — review/decision tasks returning `approved`
  * - `fill-project-fields`        — upload/fill tasks, optionally with a form
  * - `register-project-for-defense` — the student's defense registration
+ * - `script`                     — scripting tasks that set a process variable
  */
 export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:custom="http://example.com/bpmn/custom" id="Definitions_BachelorThesis" targetNamespace="http://example.com/flowable/project">
   <bpmn:process id="bachelorThesisProcess" name="Bachelor Thesis Process" isExecutable="true">
-    <bpmn:documentation>Bachelor thesis workflow grouped into embedded sub-processes. Each sub-process is a business stage. Tasks are mapped onto approve, fill-project-fields or register-project-for-defense via the custom taskDefinitionKey attribute.</bpmn:documentation>
+    <bpmn:documentation>Bachelor thesis workflow grouped into embedded sub-processes. Each sub-process is a business stage. Tasks are mapped onto approve, fill-project-fields, register-project-for-defense or script via the custom taskDefinitionKey attribute.</bpmn:documentation>
 
     <bpmn:startEvent id="startEvent" name="Process created" />
 
@@ -151,7 +152,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
       <bpmn:sequenceFlow id="reviewFlowSubmit" name="review.submit" sourceRef="reviewerUploadReport" targetRef="reviewEnd" />
     </bpmn:subProcess>
 
-    <bpmn:task id="closeRegistration" name="Set defense registration closed" />
+    <bpmn:scriptTask id="closeRegistration" name="Set defense registration closed" custom:taskDefinitionKey="script" custom:expressions='[{"kind":"set-variable","name":"registrationClosed","value":"true"}]' />
 
     <bpmn:parallelGateway id="joinReviewRegistration" name="Review and registration complete" />
 

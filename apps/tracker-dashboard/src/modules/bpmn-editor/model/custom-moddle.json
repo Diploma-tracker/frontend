@@ -32,6 +32,22 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "ScriptTask",
+      "extends": ["bpmn:ScriptTask"],
+      "properties": [
+        {
+          "name": "taskDefinitionKey",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "expressions",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,5 @@
 import checkSquareIcon from '@phosphor-icons/core/assets/regular/check-square.svg?raw';
+import codeIcon from '@phosphor-icons/core/assets/regular/code.svg?raw';
 import fileTextIcon from '@phosphor-icons/core/assets/regular/file-text.svg?raw';
 import shieldCheckIcon from '@phosphor-icons/core/assets/regular/shield-check.svg?raw';
 import type {
@@ -14,7 +15,7 @@ import { TASK_DEFINITION_KEYS } from './task-definitions';
 
 /**
  * Per-kind paint and glyph. Colours resolve against the diagram tokens in
- * `packages/tailwind-config/tokens.css`, so the three read apart and still
+ * `packages/tailwind-config/tokens.css`, so the kinds read apart and still
  * follow the light/dark theme.
  */
 const TASK_STYLES: Record<string, { fill: string; stroke: string }> = {
@@ -30,6 +31,10 @@ const TASK_STYLES: Record<string, { fill: string; stroke: string }> = {
     fill: 'var(--bpmn-task-register-bg)',
     stroke: 'var(--bpmn-task-register-stroke)',
   },
+  [TASK_DEFINITION_KEYS.script]: {
+    fill: 'var(--bpmn-task-script-bg)',
+    stroke: 'var(--bpmn-task-script-stroke)',
+  },
 };
 
 /**
@@ -42,6 +47,7 @@ const TASK_ICONS: Record<string, string> = {
   [TASK_DEFINITION_KEYS.approve]: checkSquareIcon,
   [TASK_DEFINITION_KEYS.fillProjectFields]: fileTextIcon,
   [TASK_DEFINITION_KEYS.registerProjectForDefense]: shieldCheckIcon,
+  [TASK_DEFINITION_KEYS.script]: codeIcon,
 };
 
 const ICON_SIZE = 16;
@@ -50,15 +56,21 @@ const ICON_SIZE = 16;
 const ICON_TRANSFORM = 'translate(12, 10)';
 
 /**
- * `bpmnRenderer` draws the user-task icon as three trailing paths. They are
- * dropped so the per-kind glyph can take their place.
+ * `bpmnRenderer` paints each task type with a trailing glyph: three paths for a
+ * user task, a single path for a script task. They are dropped so the per-kind
+ * glyph can take their place.
  */
-const DEFAULT_USER_ICON_PATHS = 3;
+const DEFAULT_ICON_PATHS: Record<string, number> = {
+  'bpmn:UserTask': 3,
+  'bpmn:ScriptTask': 1,
+};
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const getTaskKind = (element: Element): string | null => {
-  if (!is(element, 'bpmn:UserTask')) return null;
+  if (!is(element, 'bpmn:UserTask') && !is(element, 'bpmn:ScriptTask')) {
+    return null;
+  }
 
   const key = getBusinessObject(element).get('taskDefinitionKey');
 
@@ -82,14 +94,14 @@ const resolveColors = (
   stroke: element.di?.get('color:border-color') ?? style.stroke,
 });
 
-const removeDefaultUserIcon = (parentGfx: SVGElement): void => {
+const removeDefaultIcon = (parentGfx: SVGElement, iconPaths: number): void => {
   const children = Array.from(parentGfx.childNodes);
 
   // Keep the task rectangle; only the trailing icon paths are removed.
-  if (children.length <= DEFAULT_USER_ICON_PATHS) return;
+  if (children.length <= iconPaths) return;
 
   children
-    .slice(-DEFAULT_USER_ICON_PATHS)
+    .slice(-iconPaths)
     .forEach((child) => child.parentNode?.removeChild(child));
 };
 
@@ -115,8 +127,8 @@ const drawIcon = (parentGfx: SVGElement, kind: string, color: string): void => {
 };
 
 /**
- * Colours the three supported user tasks (approve, fill-project-fields,
- * register-project-for-defense) and replaces their icon so each kind is
+ * Colours the supported task kinds (approve, fill-project-fields,
+ * register-project-for-defense, script) and replaces their icon so each kind is
  * recognisable on the canvas. It runs at a higher priority than the built-in
  * `bpmnRenderer`, delegates the actual drawing to it, then decorates the
  * result.
@@ -155,7 +167,7 @@ export default class TaskRenderer extends BaseRenderer {
 
     shape.setAttribute('stroke-width', '2');
 
-    removeDefaultUserIcon(parentGfx);
+    removeDefaultIcon(parentGfx, DEFAULT_ICON_PATHS[element.type] ?? 0);
     drawIcon(parentGfx, getTaskKind(element) as string, colors.stroke);
 
     return shape;

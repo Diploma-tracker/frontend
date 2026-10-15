@@ -2,12 +2,13 @@ import { k } from '@/shared/utils/i18n';
 
 /**
  * Discriminator values stored in the custom `taskDefinitionKey` attribute of
- * the three user tasks the editor supports.
+ * the task kinds the editor supports.
  */
 export const TASK_DEFINITION_KEYS = {
   approve: 'approve',
   fillProjectFields: 'fill-project-fields',
   registerProjectForDefense: 'register-project-for-defense',
+  script: 'script',
 } as const;
 
 export type TaskDefinitionKey =
@@ -15,6 +16,40 @@ export type TaskDefinitionKey =
 
 /** Custom attribute holding the process variable an approve task writes. */
 export const DECISION_KEY_ATTRIBUTE = 'decisionKey';
+
+/**
+ * Custom attribute holding a scripting task's script: a JSON array of
+ * expressions, stored as a string the same way `roles` is.
+ */
+export const SCRIPT_EXPRESSIONS_ATTRIBUTE = 'expressions';
+
+/**
+ * Kinds of expression a scripting task can run. Only set-variable exists for
+ * now; this is the extension point for future statement types.
+ */
+export const SCRIPT_EXPRESSION_KINDS = {
+  setVariable: 'set-variable',
+} as const;
+
+export type ScriptExpressionKind =
+  (typeof SCRIPT_EXPRESSION_KINDS)[keyof typeof SCRIPT_EXPRESSION_KINDS];
+
+/** One statement in a scripting task's script, shown as a row in the editor. */
+export interface ScriptExpression {
+  kind: ScriptExpressionKind;
+  name: string;
+  value: string;
+}
+
+/** Builds the `variable = value` set-variable statement. */
+export const createSetVariableExpression = (
+  name = '',
+  value = '',
+): ScriptExpression => ({
+  kind: SCRIPT_EXPRESSION_KINDS.setVariable,
+  name,
+  value,
+});
 
 /**
  * Values written into the decision variable. Each approval owns its own
@@ -40,6 +75,48 @@ export const isGatewayType = (type: string): boolean =>
 
 export const isApproveTask = (taskDefinitionKey: string | null): boolean =>
   taskDefinitionKey === TASK_DEFINITION_KEYS.approve;
+
+export const isScriptTask = (taskDefinitionKey: string | null): boolean =>
+  taskDefinitionKey === TASK_DEFINITION_KEYS.script;
+
+/**
+ * Reads a scripting task's script back from its JSON attribute. Unknown kinds
+ * and malformed entries are dropped rather than throwing, so hand-edited XML
+ * cannot break the inspector.
+ */
+export const parseScriptExpressions = (
+  raw: string | null,
+): ScriptExpression[] => {
+  if (!raw) return [];
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+
+  if (!Array.isArray(parsed)) return [];
+
+  const kinds: string[] = Object.values(SCRIPT_EXPRESSION_KINDS);
+
+  return parsed.flatMap((item) => {
+    if (typeof item !== 'object' || item === null) return [];
+
+    const { kind, name, value } = item as Record<string, unknown>;
+
+    if (typeof kind !== 'string' || !kinds.includes(kind)) return [];
+    if (typeof name !== 'string' || typeof value !== 'string') return [];
+
+    return [{ kind: kind as ScriptExpressionKind, name, value }];
+  });
+};
+
+/** Serialises a scripting task's script for storage in the custom attribute. */
+export const serializeScriptExpressions = (
+  expressions: ScriptExpression[],
+): string => (expressions.length === 0 ? '' : JSON.stringify(expressions));
 
 /** Builds the `decisionKey == 'approve'|'reject'` body of a branch condition. */
 export const buildApprovalCondition = (

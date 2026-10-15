@@ -13,14 +13,15 @@ import { GatewayFlowsField } from './inspector/gateway-flows-field';
 import { NameField } from './inspector/name-field';
 import { TaskFields } from './inspector/task-fields';
 
-const TASK_DEFINITION_KEY_VALUES = Object.values(TASK_DEFINITION_KEYS);
+const TASK_DEFINITION_KEY_VALUES: string[] =
+  Object.values(TASK_DEFINITION_KEYS);
+
+const TASK_ELEMENT_TYPES: string[] = ['bpmn:UserTask', 'bpmn:ScriptTask'];
 
 const isTaskElement = (selected: SelectedElementInfo): boolean =>
-  selected.type === 'bpmn:UserTask' &&
+  TASK_ELEMENT_TYPES.includes(selected.type) &&
   selected.taskDefinitionKey !== null &&
-  (TASK_DEFINITION_KEY_VALUES as readonly string[]).includes(
-    selected.taskDefinitionKey,
-  );
+  TASK_DEFINITION_KEY_VALUES.includes(selected.taskDefinitionKey);
 const VARIANTS = [
   {
     matches: (selected: SelectedElementInfo) => isConnectionType(selected.type),

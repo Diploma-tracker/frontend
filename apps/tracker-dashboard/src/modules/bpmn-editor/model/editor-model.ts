@@ -25,9 +25,14 @@ import { starterDiagramXml } from './starter-diagram';
 import {
   DECISION_KEY_ATTRIBUTE,
   type DecisionValue,
+  SCRIPT_EXPRESSIONS_ATTRIBUTE,
+  type ScriptExpression,
   buildApprovalCondition,
+  createSetVariableExpression,
   isApproveTask,
   isGatewayType,
+  parseScriptExpressions,
+  serializeScriptExpressions,
 } from './task-definitions';
 
 /** Zoom bounds applied by the `zoomBy` action. */
@@ -53,7 +58,7 @@ export interface SelectedElementInfo {
   id: string;
   type: string;
   name: string;
-  /** Custom `taskDefinitionKey` attribute, only set on the three task types. */
+  /** Custom `taskDefinitionKey` attribute, only set on the supported tasks. */
   taskDefinitionKey: string | null;
   /** Custom `roles` attribute, stored as a JSON array string. */
   roles: string[];
@@ -61,6 +66,8 @@ export interface SelectedElementInfo {
   formKey: string | null;
   /** Custom `decisionKey` attribute, only set on approve tasks. */
   decisionKey: string | null;
+  /** Custom `expressions` attribute, only set on scripting tasks. */
+  scriptExpressions: ScriptExpression[];
   /** Condition expression body of a sequence flow. */
   conditionExpression: string | null;
   /** Whether the selected flow is its gateway's `default` flow. */
@@ -296,6 +303,9 @@ export const describeElement = (
     roles: readRolesAttribute(target),
     formKey: readStringAttribute(target, 'formKey'),
     decisionKey: readStringAttribute(target, DECISION_KEY_ATTRIBUTE),
+    scriptExpressions: parseScriptExpressions(
+      readStringAttribute(target, SCRIPT_EXPRESSIONS_ATTRIBUTE),
+    ),
     conditionExpression: connection ? readConditionExpression(target) : null,
     isDefaultFlow: connection && isDefaultFlowOf(source, target),
     sourceIsGateway,
@@ -466,6 +476,47 @@ export const setSelectedDecisionKey = action((decisionKey: string) => {
     [DECISION_KEY_ATTRIBUTE]: trimmed.length === 0 ? undefined : trimmed,
   });
   updateCurrent();
+});
+
+/**
+ * Writes the selected scripting task's full script, stored as a JSON array in
+ * the custom `expressions` attribute. An empty script clears the attribute.
+ */
+const persistScriptExpressions = (expressions: ScriptExpression[]): void => {
+  const element = getCurrentElement();
+  if (!modeler || !element) return;
+
+  const payload = serializeScriptExpressions(expressions);
+
+  updateProperties(modeler, element, {
+    [SCRIPT_EXPRESSIONS_ATTRIBUTE]: payload.length === 0 ? undefined : payload,
+  });
+  updateCurrent();
+};
+
+/** Appends an empty set-variable expression to the selected scripting task. */
+export const addSelectedScriptExpression = action(() => {
+  const current = selectedElementAtom()?.scriptExpressions ?? [];
+
+  persistScriptExpressions([...current, createSetVariableExpression()]);
+});
+
+/** Replaces one expression in the selected scripting task's script. */
+export const setSelectedScriptExpression = action(
+  (index: number, expression: ScriptExpression) => {
+    const current = selectedElementAtom()?.scriptExpressions ?? [];
+
+    persistScriptExpressions(
+      current.map((item, position) => (position === index ? expression : item)),
+    );
+  },
+);
+
+/** Removes one expression from the selected scripting task's script. */
+export const removeSelectedScriptExpression = action((index: number) => {
+  const current = selectedElementAtom()?.scriptExpressions ?? [];
+
+  persistScriptExpressions(current.filter((_, position) => position !== index));
 });
 
 /**

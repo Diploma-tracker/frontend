@@ -3,6 +3,7 @@ import type { Icon } from '@phosphor-icons/react';
 import {
   CheckSquareIcon,
   ClockIcon,
+  CodeIcon,
   DatabaseIcon,
   DiamondIcon,
   FileTextIcon,
@@ -188,6 +189,15 @@ export const paletteElements: PaletteElement[] = [
     descriptionKey: k('bpmnEditor.palette.registerDefenseTaskDescription'),
     icon: ShieldCheckIcon,
     attrs: { taskDefinitionKey: 'register-project-for-defense' },
+  },
+  {
+    id: 'script-task',
+    bpmnType: 'bpmn:ScriptTask',
+    group: 'activity',
+    labelKey: k('bpmnEditor.palette.scriptTask'),
+    descriptionKey: k('bpmnEditor.palette.scriptTaskDescription'),
+    icon: CodeIcon,
+    attrs: { taskDefinitionKey: 'script' },
   },
   {
     id: 'sub-process',

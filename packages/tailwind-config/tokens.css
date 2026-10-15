@@ -46,13 +46,15 @@
   --bpmn-element-fg: var(--foreground);
   --bpmn-stroke: var(--foreground);
 
-  /* Per-kind colours for the three supported user tasks (see TaskRenderer). */
+  /* Per-kind colours for the supported task kinds (see TaskRenderer). */
   --bpmn-task-approve-bg: #e7f7ef;
   --bpmn-task-approve-stroke: #17a865;
   --bpmn-task-fields-bg: #e8f1fe;
   --bpmn-task-fields-stroke: #3b82f6;
   --bpmn-task-register-bg: #fdf0e2;
   --bpmn-task-register-stroke: #e8680f;
+  --bpmn-task-script-bg: #f3ecfe;
+  --bpmn-task-script-stroke: #8b5cf6;
 
   /* Branch colours for gateway approve/reject flow arrows (see FlowRenderer). */
   --bpmn-flow-approve: #17a865;
@@ -155,13 +157,15 @@
   --bpmn-element-fg: var(--foreground);
   --bpmn-stroke: var(--foreground);
 
-  /* Per-kind colours for the three supported user tasks (see TaskRenderer). */
+  /* Per-kind colours for the supported task kinds (see TaskRenderer). */
   --bpmn-task-approve-bg: #12291e;
   --bpmn-task-approve-stroke: #1ec978;
   --bpmn-task-fields-bg: #16243a;
   --bpmn-task-fields-stroke: #60a5fa;
   --bpmn-task-register-bg: #2e1d0b;
   --bpmn-task-register-stroke: #f97316;
+  --bpmn-task-script-bg: #291f45;
+  --bpmn-task-script-stroke: #a78bfa;
 
   /* Branch colours for gateway approve/reject flow arrows (see FlowRenderer). */
   --bpmn-flow-approve: #1ec978;
