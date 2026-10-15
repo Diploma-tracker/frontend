@@ -786,7 +786,6 @@
       "empty": "Select an element to see its properties",
       "name": "Name",
       "namePlaceholder": "Element name",
-      "save": "Save name",
       "currentType": "Current type",
       "roles": "Roles",
       "form": "Form",

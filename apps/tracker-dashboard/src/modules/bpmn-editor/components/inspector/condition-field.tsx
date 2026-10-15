@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
-import { CheckIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -95,31 +94,19 @@ export const ConditionField = reatomComponent(function ConditionField({
           {t('bpmnEditor.inspector.conditionCustom')}
         </p>
       )}
-      <div className="flex items-start gap-1.5">
-        <Textarea
-          value={current}
-          className="min-h-24 font-mono text-xs"
-          placeholder={t('bpmnEditor.inspector.conditionPlaceholder')}
-          onChange={(event) => setDraft(event.target.value)}
-          onBlur={commit}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              event.preventDefault();
-              setDraft(null);
-            }
-          }}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={t('bpmnEditor.inspector.save')}
-          title={t('bpmnEditor.inspector.save')}
-          onClick={commit}
-        >
-          <CheckIcon className="size-3.5" />
-        </Button>
-      </div>
+      <Textarea
+        value={current}
+        className="min-h-24 font-mono text-xs"
+        placeholder={t('bpmnEditor.inspector.conditionPlaceholder')}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            setDraft(null);
+          }
+        }}
+      />
     </>
   );
 

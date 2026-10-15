@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
-import { CheckIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
@@ -50,36 +49,24 @@ export const DecisionKeyField = reatomComponent(function DecisionKeyField({
   return (
     <Field orientation="vertical" className="w-full gap-2">
       <FieldLabel>{t('bpmnEditor.inspector.decisionKey')}</FieldLabel>
-      <div className="flex items-center gap-1.5">
-        <Input
-          className="min-w-0"
-          value={name}
-          placeholder={t('bpmnEditor.inspector.decisionKeyPlaceholder')}
-          onChange={(event) => setDraft(event.target.value)}
-          onBlur={commit}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              commit();
-            }
+      <Input
+        className="min-w-0"
+        value={name}
+        placeholder={t('bpmnEditor.inspector.decisionKeyPlaceholder')}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            commit();
+          }
 
-            if (event.key === 'Escape') {
-              event.preventDefault();
-              setDraft(null);
-            }
-          }}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={t('bpmnEditor.inspector.save')}
-          title={t('bpmnEditor.inspector.save')}
-          onClick={commit}
-        >
-          <CheckIcon className="size-3.5" />
-        </Button>
-      </div>
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            setDraft(null);
+          }
+        }}
+      />
       {(value === '' || value === suggestion) && (
         <Button
           type="button"

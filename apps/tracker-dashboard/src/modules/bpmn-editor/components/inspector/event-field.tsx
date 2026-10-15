@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
-import { CheckIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
-import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 import { Input } from '@repo/ui-kit/components/common/form/input';
 import {
@@ -174,36 +172,24 @@ export const EventField = reatomComponent(function EventField({
 
           <Field orientation="vertical" className="w-full gap-2">
             <FieldLabel>{t('bpmnEditor.inspector.timerValue')}</FieldLabel>
-            <div className="flex items-center gap-1.5">
-              <Input
-                className="min-w-0"
-                value={timerCurrent}
-                placeholder={t('bpmnEditor.inspector.timerValuePlaceholder')}
-                onChange={(event) => setTimerDraft(event.target.value)}
-                onBlur={commitTimer}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    commitTimer();
-                  }
+            <Input
+              className="min-w-0"
+              value={timerCurrent}
+              placeholder={t('bpmnEditor.inspector.timerValuePlaceholder')}
+              onChange={(event) => setTimerDraft(event.target.value)}
+              onBlur={commitTimer}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  commitTimer();
+                }
 
-                  if (event.key === 'Escape') {
-                    event.preventDefault();
-                    setTimerDraft(null);
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                aria-label={t('bpmnEditor.inspector.save')}
-                title={t('bpmnEditor.inspector.save')}
-                onClick={commitTimer}
-              >
-                <CheckIcon className="size-3.5" />
-              </Button>
-            </div>
+                if (event.key === 'Escape') {
+                  event.preventDefault();
+                  setTimerDraft(null);
+                }
+              }}
+            />
           </Field>
         </>
       )}
@@ -211,31 +197,19 @@ export const EventField = reatomComponent(function EventField({
       {isConditional && (
         <Field orientation="vertical" className="w-full gap-2">
           <FieldLabel>{t('bpmnEditor.inspector.eventCondition')}</FieldLabel>
-          <div className="flex items-start gap-1.5">
-            <Textarea
-              value={conditionCurrent}
-              className="min-h-24 font-mono text-xs"
-              placeholder={t('bpmnEditor.inspector.conditionPlaceholder')}
-              onChange={(event) => setConditionDraft(event.target.value)}
-              onBlur={commitCondition}
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setConditionDraft(null);
-                }
-              }}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-xs"
-              aria-label={t('bpmnEditor.inspector.save')}
-              title={t('bpmnEditor.inspector.save')}
-              onClick={commitCondition}
-            >
-              <CheckIcon className="size-3.5" />
-            </Button>
-          </div>
+          <Textarea
+            value={conditionCurrent}
+            className="min-h-24 font-mono text-xs"
+            placeholder={t('bpmnEditor.inspector.conditionPlaceholder')}
+            onChange={(event) => setConditionDraft(event.target.value)}
+            onBlur={commitCondition}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                setConditionDraft(null);
+              }
+            }}
+          />
         </Field>
       )}
     </div>
