@@ -137,6 +137,10 @@ export const isPropertiesOpenAtom = atom<boolean>(
   false,
   'bpmnEditor.isPropertiesOpen',
 );
+export const isCommandPaletteOpenAtom = atom<boolean>(
+  false,
+  'bpmnEditor.isCommandPaletteOpen',
+);
 export const canUndoAtom = atom<boolean>(false, 'bpmnEditor.canUndo');
 export const canRedoAtom = atom<boolean>(false, 'bpmnEditor.canRedo');
 export const selectedElementAtom = atom<SelectedElementInfo | null>(
@@ -203,6 +207,14 @@ export const setTool = action(() => {
 
 export const togglePropertiesPanel = action(() => {
   isPropertiesOpenAtom.set(!isPropertiesOpenAtom());
+});
+
+export const setCommandPaletteOpen = action((open: boolean) => {
+  isCommandPaletteOpenAtom.set(open);
+});
+
+export const toggleCommandPalette = action(() => {
+  isCommandPaletteOpenAtom.set(!isCommandPaletteOpenAtom());
 });
 
 export const setPropertiesOpen = action((open: boolean) => {
@@ -482,8 +494,9 @@ export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
 };
 
 /**
- * Selects a node by id and scrolls it into view — used by the palette search so
- * a hit can be opened with a single click.
+ * Selects a node by id, scrolls it into view and moves focus to the canvas so
+ * keyboard shortcuts target the revealed element — used by the palette search
+ * so a hit can be opened with a single click.
  */
 export const revealElement = action((id: string) => {
   if (!modeler) return;
@@ -495,6 +508,7 @@ export const revealElement = action((id: string) => {
 
   services.selection.select(element);
   services.canvas.scrollToElement(element, 60);
+  services.canvas.focus();
 });
 
 export const pickElement = action((id: string) => {

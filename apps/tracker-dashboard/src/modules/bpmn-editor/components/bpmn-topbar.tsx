@@ -89,11 +89,11 @@ const ContextActions = reatomComponent(function ContextActions() {
   if (!selected) {
     return (
       <>
-        <Action labelKey="bpmnEditor.toolbar.zoomIn" onClick={() => zoomIn()}>
-          <MagnifyingGlassPlusIcon className="size-4" />
-        </Action>
         <Action labelKey="bpmnEditor.toolbar.zoomOut" onClick={() => zoomOut()}>
           <MagnifyingGlassMinusIcon className="size-4" />
+        </Action>
+        <Action labelKey="bpmnEditor.toolbar.zoomIn" onClick={() => zoomIn()}>
+          <MagnifyingGlassPlusIcon className="size-4" />
         </Action>
         <Action labelKey="bpmnEditor.toolbar.fit" onClick={() => fitViewport()}>
           <ArrowsOutIcon className="size-4" />

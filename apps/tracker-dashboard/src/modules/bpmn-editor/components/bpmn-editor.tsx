@@ -9,6 +9,7 @@ import { cn } from '@repo/ui-kit/lib/utils';
 import { PageLayout } from '../../../layouts/page-layout/page-layout';
 import { isPropertiesOpenAtom, lastErrorAtom } from '../model/editor-model';
 import { BpmnCanvas } from './bpmn-canvas';
+import { BpmnCommandPalette } from './bpmn-command-palette';
 import { BpmnProperties, BpmnPropertiesPill } from './bpmn-properties';
 import { BpmnToolRail } from './bpmn-tool-rail';
 import { BpmnTopbar } from './bpmn-topbar';
@@ -68,6 +69,8 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        <BpmnCommandPalette />
       </div>
     </PageLayout>
   );

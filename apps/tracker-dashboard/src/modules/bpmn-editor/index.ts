@@ -1,5 +1,6 @@
 export { BpmnEditor } from './components/bpmn-editor';
 export { BpmnCanvas } from './components/bpmn-canvas';
+export { BpmnCommandPalette } from './components/bpmn-command-palette';
 export {
   BpmnProperties,
   BpmnPropertiesPill,

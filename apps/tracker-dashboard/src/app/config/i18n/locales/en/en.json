@@ -736,11 +736,14 @@
       "showProperties": "Show properties",
       "hideProperties": "Hide properties"
     },
-    "search": {
-      "open": "Search elements",
-      "placeholder": "Find element...",
-      "clear": "Clear search",
-      "empty": "No elements found"
+    "command": {
+      "open": "Command palette",
+      "title": "Command palette",
+      "description": "Create elements, switch tools and jump to an element.",
+      "placeholder": "Search elements, tools and actions...",
+      "empty": "Nothing found",
+      "tools": "Tools",
+      "navigate": "Go to element"
     },
     "palette": {
       "groups": {
