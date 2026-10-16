@@ -15,6 +15,8 @@ import { BpmnProperties, BpmnPropertiesPill } from './bpmn-properties';
 import { BpmnToolRail } from './bpmn-tool-rail';
 import { BpmnTopbar } from './bpmn-topbar';
 
+const INNER_PADDING = '1rem';
+
 export const BpmnEditor = reatomComponent(function BpmnEditor() {
   const error = lastErrorAtom();
   const isPropertiesOpen = isPropertiesOpenAtom();
@@ -28,12 +30,19 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
           <BpmnCanvas />
         </div>
 
-        <div className="pointer-events-none absolute inset-0">
-          <div className="pointer-events-auto absolute top-3 right-30 left-30">
+        <div
+          className="pointer-events-none absolute"
+          style={{
+            margin: INNER_PADDING,
+            height: `calc(100% - ${INNER_PADDING} * 2)`,
+            width: `calc(100% - ${INNER_PADDING} * 2)`,
+          }}
+        >
+          <div className="pointer-events-auto absolute left-1/2 w-full max-w-200 -translate-x-1/2">
             <BpmnTopbar />
           </div>
 
-          <div className="pointer-events-auto absolute top-1/2 left-3 max-h-8/12 w-16 -translate-y-1/2">
+          <div className="pointer-events-auto absolute top-1/2 max-h-8/12 w-16 -translate-y-1/2">
             <BpmnToolRail />
           </div>
 
@@ -43,7 +52,7 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
           <div
             aria-hidden={!isPropertiesOpen}
             className={cn(
-              'absolute top-20 right-3 bottom-14 flex w-80 flex-col transition-[translate,opacity,visibility] transition-discrete duration-200 ease-out',
+              'absolute top-20 right-0 bottom-14 flex w-80 flex-col transition-[translate,opacity,visibility] transition-discrete duration-200 ease-out',
               isPropertiesOpen
                 ? 'pointer-events-auto translate-x-0 opacity-100'
                 : 'pointer-events-none invisible translate-x-full opacity-0',
@@ -56,7 +65,7 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
               `pointer-events-none` — so it opts back in on its own button. */}
           <BpmnPropertiesPill
             className={cn(
-              'pointer-events-auto absolute top-1/2 right-3 z-40 size-9 -translate-y-1/2 transition-[translate,opacity] duration-200 ease-out',
+              'pointer-events-auto absolute top-1/2 right-0 z-40 size-9 -translate-y-1/2 transition-[translate,opacity] duration-200 ease-out',
               isPropertiesOpen
                 ? 'pointer-events-none translate-x-2 opacity-0'
                 : 'translate-x-0 opacity-100',

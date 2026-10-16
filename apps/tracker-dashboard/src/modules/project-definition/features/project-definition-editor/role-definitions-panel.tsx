@@ -1,9 +1,13 @@
 import { useTranslation } from '@/shared/utils/i18n';
-import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
+import { AsteriskSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
-import { Badge } from '@repo/ui-kit/components/common/data-display/badge';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@repo/ui-kit/components/common/floating/tooltip';
 import { Input } from '@repo/ui-kit/components/common/form/input';
 import {
   Card,
@@ -75,12 +79,6 @@ export const RoleDefinitionsPanel = reatomComponent(
                   }
                 />
 
-                {role.isCore && (
-                  <Badge variant="filled">
-                    {t('projectDefinition.roles.coreBadge')}
-                  </Badge>
-                )}
-
                 <div className="flex items-center gap-2">
                   <span className="text-sm whitespace-nowrap text-muted-foreground">
                     {t('projectDefinition.roles.slotsLabel')}
@@ -99,7 +97,22 @@ export const RoleDefinitionsPanel = reatomComponent(
                   />
                 </div>
 
-                {!role.isCore && (
+                {role.isCore ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        aria-label={t('projectDefinition.roles.coreTooltip')}
+                        className="inline-flex size-9 shrink-0 cursor-default items-center justify-center text-destructive"
+                      >
+                        <AsteriskSimpleIcon weight="bold" className="size-3" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {t('projectDefinition.roles.coreTooltip')}
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
                   <Button
                     type="button"
                     variant="ghost"

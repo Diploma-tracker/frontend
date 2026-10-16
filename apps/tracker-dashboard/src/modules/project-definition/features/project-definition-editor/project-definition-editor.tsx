@@ -1,11 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import { anchorModifier } from '@/shared/components/dnd/anchor-modifier';
 import { useTranslation } from '@/shared/utils/i18n';
+import {
+  type CollisionDetection,
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+  KeyboardSensor,
+  type Modifier,
+  PointerSensor,
+  closestCenter,
+  pointerWithin,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { CircleNotchIcon, FloppyDiskIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
+import { FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import { Input } from '@repo/ui-kit/components/common/form/input';
 import {
   Empty,
   EmptyDescription,
@@ -15,16 +32,62 @@ import {
 import { Skeleton } from '@repo/ui-kit/components/common/states/skeleton';
 
 import {
+  PROJECT_FIELDS_DROPPABLE_ID,
+  addProjectFieldAction,
+  beginProjectFieldDragAction,
+  endProjectFieldDragAction,
   hasDuplicateRoleNamesAtom,
   loadProjectDefinitionAction,
+  projectDefinitionNameAtom,
+  projectFieldDragSessionAtom,
   projectFieldsAtom,
   projectRolesAtom,
+  reorderProjectFieldsAction,
   saveProjectDefinitionAction,
 } from '../../models';
 import { AvailableFieldsPanel } from './available-fields-panel';
 import { FieldPropertiesPanel } from './field-properties-panel';
+import { ProjectFieldsDragOverlay } from './project-fields-drag-overlay';
 import { ProjectFieldsPanel } from './project-fields-panel';
 import { RoleDefinitionsPanel } from './role-definitions-panel';
+
+/**
+ * A palette drag only counts as over a target when the pointer is actually
+ * inside it, so hovering the palette or the properties panel shows neither an
+ * insertion point nor a drop. Keyboard drags have no pointer, so they fall
+ * back to proximity.
+ *
+ * Reordering ignores the canvas droppable: its id is not a sortable item, so
+ * `over` landing on it makes every row's transform collapse (dnd-kit treats a
+ * non-item `overIndex` as "nothing to displace") and the list jumps. Rows
+ * alone already cover reordering, including to the very end.
+ */
+const collisionDetection: CollisionDetection = (args) => {
+  const isPaletteDrag = args.active.data.current?.source === 'palette';
+
+  if (isPaletteDrag) {
+    return args.pointerCoordinates ? pointerWithin(args) : closestCenter(args);
+  }
+
+  return closestCenter({
+    ...args,
+    droppableContainers: args.droppableContainers.filter(
+      (container) => container.id !== PROJECT_FIELDS_DROPPABLE_ID,
+    ),
+  });
+};
+
+/*
+ * Palette squares keep their top-center anchored under the pointer, so the
+ * small tile does not jump away from the cursor. Sortable reorders keep
+ * dnd-kit's default transform.
+ */
+const anchorPaletteSquare = anchorModifier(['center', 'top'], [0, 10]);
+
+const paletteAnchorModifier: Modifier = (args) =>
+  args.active?.data.current?.source === 'palette'
+    ? anchorPaletteSquare(args)
+    : args.transform;
 
 export const ProjectDefinitionEditor = reatomComponent(
   function ProjectDefinitionEditor() {
@@ -34,10 +97,14 @@ export const ProjectDefinitionEditor = reatomComponent(
     const saveStatus = saveProjectDefinitionAction.status();
     const fields = projectFieldsAtom();
     const roles = projectRolesAtom();
+    const name = projectDefinitionNameAtom();
+    const [isNameTouched, setIsNameTouched] = useState(false);
 
-    const hasInvalidNames =
+    const hasUnnamedFieldsOrRoles =
       fields.some((field) => !field.name.trim()) ||
       roles.some((role) => !role.name.trim());
+    const hasInvalidNames = !name.trim() || hasUnnamedFieldsOrRoles;
+    const isNameInvalid = isNameTouched && !name.trim();
     const hasDuplicateRoleNames = hasDuplicateRoleNamesAtom();
     const isLoading = loadStatus.isPending || !loadStatus.isEverPending;
 
@@ -52,26 +119,123 @@ export const ProjectDefinitionEditor = reatomComponent(
       wrap(loadProjectDefinitionAction());
     };
 
+    const sensors = useSensors(
+      useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      }),
+    );
+
+    const handleDragStart = (event: DragStartEvent) => {
+      const { active } = event;
+      const data = active.data.current;
+
+      if (data?.source === 'palette') {
+        beginProjectFieldDragAction({ source: 'palette', type: data.type });
+        return;
+      }
+
+      if (data?.source === 'fields') {
+        beginProjectFieldDragAction({
+          source: 'fields',
+          id: String(active.id),
+        });
+      }
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+      const { active, over } = event;
+      const session = projectFieldDragSessionAtom();
+
+      if (!session || !over) {
+        endProjectFieldDragAction(null);
+        return;
+      }
+
+      if (session.source === 'palette') {
+        if (over.id === PROJECT_FIELDS_DROPPABLE_ID) {
+          const field = addProjectFieldAction(session.type);
+          endProjectFieldDragAction(field.id);
+          return;
+        }
+
+        const index = fields.findIndex((field) => field.id === over.id);
+
+        if (index === -1) {
+          endProjectFieldDragAction(null);
+          return;
+        }
+
+        const field = addProjectFieldAction(session.type, index);
+        endProjectFieldDragAction(field.id);
+        return;
+      }
+
+      if (active.id === over.id) {
+        endProjectFieldDragAction(null);
+        return;
+      }
+
+      reorderProjectFieldsAction(String(active.id), String(over.id));
+      endProjectFieldDragAction(null);
+    };
+
+    const handleDragCancel = () => {
+      endProjectFieldDragAction(null);
+    };
+
     return (
       <div className="flex flex-col gap-6">
+        <h1 className="sr-only">{t('projectDefinition.title')}</h1>
+
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              {t('projectDefinition.title')}
-            </h1>
-            <p className="max-w-2xl text-sm text-muted-foreground">
-              {t('projectDefinition.description')}
-            </p>
+          <div className="grid w-full max-w-xl gap-1.5">
+            <FieldLabel htmlFor="project-definition-name">
+              {t('projectDefinition.name.label')}
+              <span aria-hidden className="text-destructive">
+                *
+              </span>
+            </FieldLabel>
+
+            {isLoading ? (
+              <Skeleton className="h-11 w-full" />
+            ) : (
+              <Input
+                id="project-definition-name"
+                value={name}
+                placeholder={t('projectDefinition.name.placeholder')}
+                autoComplete="off"
+                maxLength={120}
+                className="h-11 text-lg font-semibold"
+                aria-invalid={isNameInvalid || undefined}
+                aria-describedby={
+                  isNameInvalid ? 'project-definition-name-error' : undefined
+                }
+                onChange={(event) =>
+                  projectDefinitionNameAtom.set(event.target.value)
+                }
+                onBlur={() => setIsNameTouched(true)}
+              />
+            )}
+
+            {isNameInvalid && (
+              <p
+                id="project-definition-name-error"
+                className="text-sm text-destructive"
+              >
+                {t('projectDefinition.name.required')}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
-            {hasInvalidNames && (
+            {hasUnnamedFieldsOrRoles && (
               <p className="text-sm text-destructive">
                 {t('projectDefinition.actions.saveDisabledHint')}
               </p>
             )}
 
-            {!hasInvalidNames && hasDuplicateRoleNames && (
+            {!hasUnnamedFieldsOrRoles && hasDuplicateRoleNames && (
               <p className="text-sm text-destructive">
                 {t('projectDefinition.roles.duplicateName')}
               </p>
@@ -98,10 +262,12 @@ export const ProjectDefinitionEditor = reatomComponent(
         </div>
 
         {isLoading && (
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-[320px_minmax(0,1fr)_340px] gap-6">
             <Skeleton className="h-72 w-full" />
             <Skeleton className="h-72 w-full" />
             <Skeleton className="h-72 w-full" />
+
+            <Skeleton className="col-start-2 row-start-2 h-72 w-full" />
           </div>
         )}
 
@@ -120,15 +286,26 @@ export const ProjectDefinitionEditor = reatomComponent(
         )}
 
         {loadStatus.isFulfilled && (
-          <>
-            <div className="grid gap-6 lg:grid-cols-3">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={collisionDetection}
+            modifiers={[paletteAnchorModifier]}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <div className="grid grid-cols-[320px_minmax(0,1fr)_340px] items-start gap-6">
               <AvailableFieldsPanel />
               <ProjectFieldsPanel />
               <FieldPropertiesPanel />
+
+              <div className="col-start-2 row-start-2">
+                <RoleDefinitionsPanel />
+              </div>
             </div>
 
-            <RoleDefinitionsPanel />
-          </>
+            <ProjectFieldsDragOverlay />
+          </DndContext>
         )}
       </div>
     );

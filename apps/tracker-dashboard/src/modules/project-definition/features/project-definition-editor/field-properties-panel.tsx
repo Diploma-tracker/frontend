@@ -36,11 +36,11 @@ export const FieldPropertiesPanel = reatomComponent(
 
     if (!field) {
       return (
-        <Card>
+        <Card className="min-h-[22rem]">
           <CardHeader>
             <CardTitle>{t('projectDefinition.properties.title')}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-1 flex-col">
             <Empty>
               <EmptyHeader>
                 <EmptyTitle>
@@ -67,7 +67,7 @@ export const FieldPropertiesPanel = reatomComponent(
     };
 
     return (
-      <Card>
+      <Card className="min-h-[22rem]">
         <CardHeader>
           <CardTitle>{t('projectDefinition.properties.title')}</CardTitle>
           <CardDescription>{t(fieldTypeLabelKeys[field.type])}</CardDescription>

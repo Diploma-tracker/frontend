@@ -18,6 +18,11 @@ import {
   isProjectFieldType,
 } from './types';
 
+export const projectDefinitionNameAtom = atom<string>(
+  '',
+  'projectDefinition.name',
+);
+
 export const projectFieldsAtom = atom<ProjectField[]>(
   [],
   'projectDefinition.fields',
@@ -33,6 +38,37 @@ export const selectedFieldIdAtom = atom<string | null>(
   'projectDefinition.selectedFieldId',
 );
 
+/**
+ * Droppable id of the project fields list. Registered as a droppable only
+ * while the list is empty, so a palette drag has somewhere to land before any
+ * field exists.
+ */
+export const PROJECT_FIELDS_DROPPABLE_ID = 'project-fields-canvas';
+
+/** dnd-kit draggable id of a palette tile standing for a field type. */
+export const projectFieldDragId = (type: ProjectFieldType) =>
+  `project-field-type-${type}`;
+
+export type ProjectFieldDragSession =
+  | { source: 'palette'; type: ProjectFieldType }
+  | { source: 'fields'; id: string };
+
+export const projectFieldDragSessionAtom = atom<ProjectFieldDragSession | null>(
+  null,
+  'projectDefinition.fieldDragSession',
+);
+
+/**
+ * Set only for a palette drop: the field the ghost lands on once the drag
+ * ends. Kept around for the drop animation, which glides the ghost onto that
+ * field's droppable rect. A reorder leaves it null and keeps dnd-kit's own
+ * drop animation.
+ */
+export const projectFieldDropSessionAtom = atom<{ id: string } | null>(
+  null,
+  'projectDefinition.fieldDropSession',
+);
+
 export const selectedFieldAtom = computed(
   () =>
     projectFieldsAtom().find((field) => field.id === selectedFieldIdAtom()) ??
@@ -42,6 +78,7 @@ export const selectedFieldAtom = computed(
 
 export const definitionOutputAtom = computed(
   (): ProjectDefinitionOutput => ({
+    name: projectDefinitionNameAtom().trim(),
     fields: projectFieldsAtom().map<ProjectDefinitionEntry>((field) => {
       const { min, max } = field.validation;
       const supportsValidation =
@@ -93,6 +130,7 @@ export const loadProjectDefinitionAction = action(async () => {
 
   projectFieldsAtom.set(fields);
   selectedFieldIdAtom.set(fields[0]?.id ?? null);
+  projectDefinitionNameAtom.set(snapshot.name);
   projectRolesAtom.set(
     snapshot.roles.map((role) => ({
       id: crypto.randomUUID(),
@@ -124,17 +162,34 @@ export const saveProjectDefinitionAction = action(async () => {
   return definition;
 }, 'saveProjectDefinition').extend(withAsyncData({ status: true }));
 
-export const addProjectFieldAction = action((type: ProjectFieldType) => {
-  const field: ProjectField = {
-    id: crypto.randomUUID(),
-    type,
-    name: '',
-    validation: {},
-  };
+export const addProjectFieldAction = action(
+  (type: ProjectFieldType, index?: number) => {
+    const field: ProjectField = {
+      id: crypto.randomUUID(),
+      type,
+      name: '',
+      validation: {},
+    };
 
-  projectFieldsAtom.set((fields) => [...fields, field]);
-  selectedFieldIdAtom.set(field.id);
-}, 'addProjectField');
+    projectFieldsAtom.set((fields) => {
+      const insertAt =
+        index === undefined ? -1 : Math.min(Math.max(index, 0), fields.length);
+
+      if (insertAt === -1) {
+        return [...fields, field];
+      }
+
+      const nextFields = [...fields];
+      nextFields.splice(insertAt, 0, field);
+
+      return nextFields;
+    });
+    selectedFieldIdAtom.set(field.id);
+
+    return field;
+  },
+  'addProjectField',
+);
 
 export const selectProjectFieldAction = action((id: string) => {
   selectedFieldIdAtom.set(id);
@@ -166,31 +221,43 @@ export const removeProjectFieldAction = action((id: string) => {
   }
 }, 'removeProjectField');
 
-export const moveProjectFieldAction = action(
-  (id: string, direction: 'up' | 'down') => {
+export const reorderProjectFieldsAction = action(
+  (activeId: string, overId: string) => {
     projectFieldsAtom.set((fields) => {
-      const index = fields.findIndex((field) => field.id === id);
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      const from = fields.findIndex((field) => field.id === activeId);
+      const to = fields.findIndex((field) => field.id === overId);
 
-      if (index === -1 || targetIndex < 0 || targetIndex >= fields.length) {
+      if (from === -1 || to === -1 || from === to) {
         return fields;
       }
 
       const nextFields = [...fields];
-      const moved = nextFields[index];
+      const [moved] = nextFields.splice(from, 1);
 
       if (!moved) {
         return fields;
       }
 
-      nextFields[index] = nextFields[targetIndex] as ProjectField;
-      nextFields[targetIndex] = moved;
+      nextFields.splice(to, 0, moved);
 
       return nextFields;
     });
   },
-  'moveProjectField',
+  'reorderProjectFields',
 );
+
+export const beginProjectFieldDragAction = action(
+  (session: ProjectFieldDragSession) => {
+    projectFieldDropSessionAtom.set(null);
+    projectFieldDragSessionAtom.set(session);
+  },
+  'beginProjectFieldDrag',
+);
+
+export const endProjectFieldDragAction = action((dropId: string | null) => {
+  projectFieldDragSessionAtom.set(null);
+  projectFieldDropSessionAtom.set(dropId ? { id: dropId } : null);
+}, 'endProjectFieldDrag');
 
 export const addProjectRoleAction = action(() => {
   const role: ProjectRole = {

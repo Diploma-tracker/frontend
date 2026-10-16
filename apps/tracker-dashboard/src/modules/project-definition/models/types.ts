@@ -42,6 +42,7 @@ export interface ProjectRole {
 }
 
 export interface ProjectDefinitionOutput {
+  name: string;
   fields: ProjectDefinitionEntry[];
   roles: ProjectRoleDefinitionEntry[];
 }

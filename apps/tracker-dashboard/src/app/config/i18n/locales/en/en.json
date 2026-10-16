@@ -882,11 +882,15 @@
       "untitled": "Untitled",
       "duplicate": "Duplicate",
       "delete": "Delete"
-     }
+    }
   },
   "projectDefinition": {
     "title": "Project definition editor",
-    "description": "Build the set of fields that hold project data during the whole process. Validation is defined once here and reused by every form that uses the field.",
+    "name": {
+      "label": "Project definition name",
+      "placeholder": "e.g. Bachelor thesis 2026",
+      "required": "Enter a name for the project definition"
+    },
     "actions": {
       "save": "Save",
       "saveDisabledHint": "Every field and role needs a name before saving"
@@ -903,11 +907,10 @@
     "fields": {
       "title": "Project fields",
       "emptyTitle": "No fields yet",
-      "emptyDescription": "Add a field type from the list on the left to start building the definition.",
+      "emptyDescription": "Drag a field type from the list on the left to start building the definition.",
       "untitled": "Untitled field",
       "actions": {
-        "moveUp": "Move up",
-        "moveDown": "Move down",
+        "dragHandle": "Drag to reorder",
         "remove": "Remove field"
       }
     },
@@ -930,7 +933,7 @@
     },
     "available": {
       "title": "Available field types",
-      "description": "Premade field types the backend operates with."
+      "description": "Premade field types the backend operates with. Drag one onto the fields list, or click it, to add a field."
     },
     "roles": {
       "title": "Role definitions",
@@ -939,7 +942,7 @@
       "remove": "Remove role",
       "namePlaceholder": "Role name",
       "slotsLabel": "Slots",
-      "coreBadge": "Core",
+      "coreTooltip": "Core role — important and cannot be removed",
       "duplicateName": "Role names must be unique"
     },
     "types": {

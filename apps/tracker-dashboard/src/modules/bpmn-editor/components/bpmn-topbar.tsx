@@ -152,7 +152,7 @@ export const BpmnTopbar = reatomComponent(function BpmnTopbar() {
   };
 
   return (
-    <Card className="flex- flex h-12 flex-row flex-nowrap items-center gap-1 px-2 py-1 shadow-lg">
+    <Card className="flex h-12 flex-row flex-nowrap items-center gap-1 px-2 py-1 shadow-lg">
       <div className="flex shrink-0 items-center gap-1">
         <Action
           labelKey="bpmnEditor.topbar.undo"

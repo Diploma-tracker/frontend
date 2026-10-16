@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 
+import { anchorModifier } from '@/shared/components/dnd/anchor-modifier';
 import {
   type ClientRect,
   type Collision,
@@ -36,7 +37,6 @@ import {
 import { parseRowIndex } from '../model/row-dnd';
 import type { RowLayout } from '../model/schema-generator';
 import { BuilderTabs } from './builder-tabs';
-import { anchorModifier } from './dnd-kit-anchor';
 import { FieldPalette } from './field-palette';
 import { FormCanvas } from './form-canvas';
 import { FormDragOverlay } from './form-drag-overlay';

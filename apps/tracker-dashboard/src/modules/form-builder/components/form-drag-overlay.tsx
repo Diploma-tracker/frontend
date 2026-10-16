@@ -1,3 +1,4 @@
+import { PhysicsOverlay } from '@/shared/components/dnd/physics-overlay';
 import {
   DragOverlay,
   type DropAnimationKeyframeResolver,
@@ -13,7 +14,6 @@ import {
   fieldsAtom,
 } from '../model/form-builder-model';
 import { FIELD_SQUARE_SIZE, FieldSquare } from './field-square';
-import { PhysicsOverlay } from './physics-drag-overlay';
 
 /**
  * How fast the ghost glides to its place when the field is dropped, in

@@ -17,11 +17,13 @@ export interface MockProjectRole {
 }
 
 export interface ProjectDefinitionSnapshot {
+  name: string;
   fields: ProjectDefinitionEntry[];
   roles: MockProjectRole[];
 }
 
 const mockProjectDefinition: ProjectDefinitionSnapshot = {
+  name: 'Bachelor thesis 2026',
   fields: [
     { type: 'grade', name: 'Grade' },
     { type: 'bool', name: 'Is top rated' },
@@ -40,6 +42,7 @@ export const fetchProjectDefinition =
     await wait(MOCK_LATENCY_MS);
 
     return {
+      name: mockProjectDefinition.name,
       fields: mockProjectDefinition.fields.map((entry) => ({
         ...entry,
         validation: entry.validation ? { ...entry.validation } : undefined,
