@@ -11,7 +11,7 @@ import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import type EventBus from 'diagram-js/lib/core/EventBus';
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
-import { TASK_DEFINITION_KEYS } from './task-definitions';
+import { TASK_DEFINITION_KEYS } from '../../model/task-definitions';
 
 /**
  * Per-kind paint and glyph. Colours resolve against the diagram tokens in

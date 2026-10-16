@@ -29,11 +29,11 @@ import {
   setUndoRedoState,
   setXml,
 } from '../model/editor-model';
-import FlowRenderer from '../model/flow-renderer';
-import StageRenderer from '../model/stage-renderer';
 import { starterDiagramXml } from '../model/starter-diagram';
-import TaskRenderer from '../model/task-renderer';
 import './bpmn-canvas.css';
+import FlowRenderer from './renderers/flow-renderer';
+import StageRenderer from './renderers/stage-renderer';
+import TaskRenderer from './renderers/task-renderer';
 
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';

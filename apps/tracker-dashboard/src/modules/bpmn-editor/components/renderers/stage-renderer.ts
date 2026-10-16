@@ -8,7 +8,7 @@ import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import type EventBus from 'diagram-js/lib/core/EventBus';
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
-import { STAGE_ATTR } from './stage-definitions';
+import { STAGE_ATTR } from '../../model/stage-definitions';
 
 /**
  * Stage paint. The values resolve against the diagram tokens in
