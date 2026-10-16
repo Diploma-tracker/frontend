@@ -839,13 +839,35 @@
       "eventThrowing": "Надсильна подія",
       "eventCondition": "Умова",
       "timerType": "Тип таймера",
-      "timerTypes": {
-        "duration": "Тривалість",
-        "date": "Дата",
-        "cycle": "Цикл"
+      "timerActiveType": "Активний тип таймера",
+      "timerModes": {
+        "relative": "Відносний",
+        "absolute": "Абсолютний",
+        "cycle": "Цикл",
+        "cron": "Cron",
+        "iso": "ISO 8601"
       },
       "timerValue": "Значення",
-      "timerValuePlaceholder": "напр. PT5M"
+      "timerUnits": {
+        "days": "Дні",
+        "hours": "Години",
+        "minutes": "Хвилини",
+        "hint": "д г х"
+      },
+      "timerPresets": {
+        "m5": "5хв",
+        "m15": "15хв",
+        "h1": "1год",
+        "d1": "1д"
+      },
+      "timerCycleInfinite": "Повторювати постійно",
+      "timerCycleRepeat": "Кількість повторів",
+      "timerCycleStart": "Початок о",
+      "timerCronPlaceholder": "0 0 9 ? * ПН-ПТ",
+      "timerCronHint": "Cron-розклад, напр. щодня о 09:00",
+      "timerIsoPlaceholder": "PT5M · 2026-01-01T09:00:00Z · R3/PT10H",
+      "timerIsoHint": "Тип таймера визначається автоматично",
+      "timerInvalid": "Некоректне значення таймера"
     },
     "menu": {
       "untitled": "Без назви",

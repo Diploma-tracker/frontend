@@ -1,27 +1,44 @@
 'use client';
 
-// TODO: refactor and fix issue with input switching and i18n
 import * as React from 'react';
 
 import { parseDuration, serializeDuration } from '@repo/utils/duration';
 
 import { cn } from '../../../lib/utils';
 
-function pad(n: number) {
-  return String(n).padStart(2, '0');
+function pad(n: number, digits: number) {
+  return String(n).padStart(digits, '0');
 }
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
+export type DurationUnit = 'days' | 'hours' | 'minutes';
+
+export interface DurationPickerLabels {
+  days?: string;
+  hours?: string;
+  minutes?: string;
+  /** Trailing hint shown after the segments, e.g. "hh:mm". */
+  hint?: string;
+}
+
 export interface DurationPickerProps {
   /** ISO 8601 duration string, e.g. "PT1H30M" */
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  /**
+   * Which segments to render, in order. Defaults to `['hours', 'minutes']`.
+   */
+  units?: DurationUnit[];
   /** Max hours allowed (default 23) */
   maxHours?: number;
+  /** Max days allowed (default 999) */
+  maxDays?: number;
+  /** Translatable segment labels and trailing hint. */
+  labels?: DurationPickerLabels;
   className?: string;
   id?: string;
   'aria-label'?: string;
@@ -29,20 +46,18 @@ export interface DurationPickerProps {
 }
 
 // ---------------------------------------------------------------------------
-// Segment – a single HH or MM spinner cell
+// Segment – a single DD / HH / MM spinner cell
 // ---------------------------------------------------------------------------
 
 interface SegmentProps {
   value: number;
   min?: number;
   max: number;
+  maxDigits: number;
   label: string;
   disabled?: boolean;
   'aria-invalid'?: boolean | 'true' | 'false';
   onChange: (next: number) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  focused?: boolean;
   inputRef?: React.Ref<HTMLInputElement>;
 }
 
@@ -50,12 +65,10 @@ function Segment({
   value,
   min = 0,
   max,
+  maxDigits,
   label,
   disabled,
   onChange,
-  onFocus,
-  onBlur,
-  focused,
   inputRef,
   'aria-invalid': ariaInvalid,
 }: SegmentProps) {
@@ -63,21 +76,31 @@ function Segment({
 
   const clamp = (n: number) => Math.max(min, Math.min(max, n));
 
+  // Reset a pending edit when the value is driven externally (e.g. switching
+  // timer type or unit set), so stale drafts never leak between fields.
+  React.useEffect(() => {
+    setEditing(null);
+  }, [value, max, maxDigits]);
+
   const commit = (raw: string) => {
     const n = parseInt(raw, 10);
     if (!isNaN(n)) onChange(clamp(n));
     setEditing(null);
   };
 
+  const step = (delta: number) => {
+    setEditing(null);
+    if (delta > 0) onChange(value >= max ? min : clamp(value + 1));
+    else onChange(value <= min ? max : clamp(value - 1));
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowUp') {
       e.preventDefault();
-      onChange(value >= max ? min : clamp(value + 1));
-      setEditing(null);
+      step(1);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      onChange(value <= min ? max : clamp(value - 1));
-      setEditing(null);
+      step(-1);
     } else if (e.key === 'Enter' || e.key === 'Tab') {
       if (editing !== null) commit(editing);
     } else if (e.key === 'Backspace') {
@@ -85,10 +108,10 @@ function Segment({
     } else if (/^\d$/.test(e.key)) {
       e.preventDefault();
       setEditing((prev) => {
-        const next = prev === null ? e.key : (prev + e.key).slice(-2);
+        const next = prev === null ? e.key : (prev + e.key).slice(-maxDigits);
         const n = parseInt(next, 10);
         // auto-commit when the value is unambiguous
-        if (next.length === 2 || n * 10 > max) {
+        if (next.length === maxDigits || n * 10 > max) {
           onChange(clamp(n));
           return null;
         }
@@ -97,7 +120,7 @@ function Segment({
     }
   };
 
-  const displayValue = editing !== null ? editing.padStart(2, '0') : pad(value);
+  const displayValue = editing !== null ? editing : pad(value, maxDigits);
 
   return (
     <input
@@ -113,31 +136,21 @@ function Segment({
       disabled={disabled}
       value={displayValue}
       data-slot="input-group-control"
-      data-focused={focused || undefined}
       onChange={() => {}} // controlled via keydown
       onKeyDown={handleKeyDown}
       onFocus={() => {
         setEditing(null);
-        onFocus?.();
       }}
       onBlur={() => {
         if (editing !== null) commit(editing);
-        onBlur?.();
       }}
       onWheel={(e) => {
         e.preventDefault();
-        onChange(
-          e.deltaY < 0
-            ? value >= max
-              ? min
-              : clamp(value + 1)
-            : value <= min
-              ? max
-              : clamp(value - 1),
-        );
+        step(e.deltaY < 0 ? 1 : -1);
       }}
+      style={{ width: `${maxDigits + 1}ch` }}
       className={cn(
-        'ui:w-8 ui:bg-transparent ui:text-center ui:text-sm ui:tabular-nums ui:outline-none ui:select-none',
+        'ui:bg-transparent ui:text-center ui:text-sm ui:tabular-nums ui:outline-none ui:select-none',
         'ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
         'ui:rounded-sm ui:transition-colors',
         'ui:focus:bg-primary ui:focus:text-primary-foreground',
@@ -150,25 +163,65 @@ function Segment({
 // DurationPicker
 // ---------------------------------------------------------------------------
 
+const UNIT_MAX: Record<DurationUnit, number> = {
+  days: 999,
+  hours: 23,
+  minutes: 59,
+};
+
+const UNIT_DIGITS: Record<DurationUnit, number> = {
+  days: 3,
+  hours: 2,
+  minutes: 2,
+};
+
 export function DurationPicker({
-  value = 'PT0M',
+  value,
   onChange,
   disabled = false,
+  units = ['hours', 'minutes'],
   maxHours = 23,
+  maxDays = 999,
+  labels,
   className,
   id,
   'aria-label': ariaLabel,
   'aria-invalid': ariaInvalid,
 }: DurationPickerProps) {
-  const { hours = 0, minutes = 0 } = parseDuration(value);
-  const hoursRef = React.useRef<HTMLInputElement>(null);
+  const parsed = React.useMemo(() => {
+    if (!value) return {};
+    try {
+      return parseDuration(value);
+    } catch {
+      return {};
+    }
+  }, [value]);
+  const firstRef = React.useRef<HTMLInputElement>(null);
 
-  const setHours = (h: number) =>
-    onChange?.(serializeDuration({ hours: h, minutes }));
-  const setMinutes = (m: number) =>
-    onChange?.(serializeDuration({ hours, minutes: m }));
+  const components: Record<DurationUnit, number> = {
+    days: parsed.days ?? 0,
+    hours: parsed.hours ?? 0,
+    minutes: parsed.minutes ?? 0,
+  };
 
-  const isInvalid = ariaInvalid === true || ariaInvalid === 'true';
+  const maxFor = (unit: DurationUnit) => {
+    if (unit === 'hours') return maxHours;
+    if (unit === 'days') return maxDays;
+    return UNIT_MAX[unit];
+  };
+
+  const setUnit = (unit: DurationUnit, next: number) => {
+    const nextComponents = { ...components, [unit]: next };
+    const serialized = {
+      days: nextComponents.days || undefined,
+      hours: nextComponents.hours || undefined,
+      minutes: nextComponents.minutes || undefined,
+    };
+    const isEmpty =
+      !nextComponents.days && !nextComponents.hours && !nextComponents.minutes;
+
+    onChange?.(isEmpty ? 'PT0S' : serializeDuration(serialized));
+  };
 
   return (
     <div
@@ -182,47 +235,43 @@ export function DurationPicker({
         'ui:has-[[data-slot=input-group-control]:focus]:ring-[3px] ui:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
         'ui:has-[[data-slot=input-group-control]:focus]:ring-ring/50 ui:has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50',
         'ui:dark:bg-input/30',
-        isInvalid &&
-          'ui:border-destructive ui:ring-[3px] ui:ring-destructive/20 ui:dark:ring-destructive/40',
+        ariaInvalid === true || ariaInvalid === 'true'
+          ? 'ui:border-destructive ui:ring-[3px] ui:ring-destructive/20 ui:dark:ring-destructive/40'
+          : undefined,
         disabled && 'ui:cursor-not-allowed ui:opacity-50',
         className,
       )}
-      onClick={() => hoursRef.current?.focus()}
+      onClick={() => firstRef.current?.focus()}
     >
-      {/* Hours */}
-      <Segment
-        inputRef={hoursRef}
-        value={hours}
-        min={0}
-        max={maxHours}
-        label="Hours"
-        disabled={disabled}
-        aria-invalid={ariaInvalid}
-        onChange={setHours}
-      />
+      {units.map((unit, index) => (
+        <React.Fragment key={unit}>
+          {index > 0 && (
+            <span
+              className="ui:pointer-events-none ui:text-sm ui:font-medium ui:text-muted-foreground ui:tabular-nums ui:select-none"
+              aria-hidden
+            >
+              :
+            </span>
+          )}
+          <Segment
+            inputRef={index === 0 ? firstRef : undefined}
+            value={components[unit]}
+            min={0}
+            max={maxFor(unit)}
+            maxDigits={UNIT_DIGITS[unit]}
+            label={labels?.[unit] ?? unit}
+            disabled={disabled}
+            aria-invalid={ariaInvalid}
+            onChange={(next) => setUnit(unit, next)}
+          />
+        </React.Fragment>
+      ))}
 
-      {/* Colon separator */}
       <span
-        className="ui:pointer-events-none ui:text-sm ui:font-medium ui:text-muted-foreground ui:tabular-nums ui:select-none"
+        className="ui:pointer-events-none ui:ml-2 ui:text-sm ui:font-medium ui:text-muted-foreground ui:tabular-nums ui:select-none"
         aria-hidden
       >
-        :
-      </span>
-
-      {/* Minutes */}
-      <Segment
-        value={minutes}
-        min={0}
-        max={59}
-        label="Minutes"
-        disabled={disabled}
-        aria-invalid={ariaInvalid}
-        onChange={setMinutes}
-      />
-
-      {/* Unit label */}
-      <span className="ui:pointer-events-none ui:ml-2 ui:text-xs ui:text-muted-foreground ui:select-none">
-        hh:mm
+        {labels?.hint ?? 'hh:mm'}
       </span>
     </div>
   );

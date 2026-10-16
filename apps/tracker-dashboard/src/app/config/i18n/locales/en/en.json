@@ -839,13 +839,35 @@
       "eventThrowing": "Throwing event",
       "eventCondition": "Condition",
       "timerType": "Timer type",
-      "timerTypes": {
-        "duration": "Duration",
-        "date": "Date",
-        "cycle": "Cycle"
+      "timerActiveType": "Active timer type",
+      "timerModes": {
+        "relative": "Relative",
+        "absolute": "Absolute",
+        "cycle": "Cycle",
+        "cron": "Cron",
+        "iso": "ISO 8601"
       },
       "timerValue": "Value",
-      "timerValuePlaceholder": "e.g. PT5M"
+      "timerUnits": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
+        "hint": "d h m"
+      },
+      "timerPresets": {
+        "m5": "5m",
+        "m15": "15m",
+        "h1": "1h",
+        "d1": "1d"
+      },
+      "timerCycleInfinite": "Repeat forever",
+      "timerCycleRepeat": "Repeat count",
+      "timerCycleStart": "Start at",
+      "timerCronPlaceholder": "0 0 9 ? * MON-FRI",
+      "timerCronHint": "Cron schedule, e.g. every weekday at 09:00",
+      "timerIsoPlaceholder": "PT5M · 2026-01-01T09:00:00Z · R3/PT10H",
+      "timerIsoHint": "Timer type is detected automatically",
+      "timerInvalid": "Invalid timer value"
     },
     "menu": {
       "untitled": "Untitled",

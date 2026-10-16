@@ -4,7 +4,6 @@ import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import { Field, FieldLabel } from '@repo/ui-kit/components/common/form/field';
-import { Input } from '@repo/ui-kit/components/common/form/input';
 import {
   Select,
   SelectContent,
@@ -21,17 +20,15 @@ import {
   setSelectedEventDefinition,
   setSelectedEventInterrupting,
   setSelectedEventThrowing,
-  setSelectedTimerValue,
 } from '../../model/editor-model';
 import {
   type EventDefinitionKey,
-  TIMER_TYPES,
-  type TimerType,
   eventDefinitionOptions,
   isBoundaryEventType,
   isIntermediateEventType,
   isToggleableIntermediateDefinition,
 } from '../../model/event-definitions';
+import { TimerField } from './timer-field';
 
 export interface EventFieldProps {
   selected: SelectedElementInfo;
@@ -56,11 +53,9 @@ export const EventField = reatomComponent(function EventField({
     isIntermediate && isToggleableIntermediateDefinition(definition);
 
   const [conditionDraft, setConditionDraft] = useState<string | null>(null);
-  const [timerDraft, setTimerDraft] = useState<string | null>(null);
 
   useEffect(() => {
     setConditionDraft(null);
-    setTimerDraft(null);
   }, [selected.id, definition]);
 
   const conditionValue = selected.conditionExpression ?? '';
@@ -76,22 +71,6 @@ export const EventField = reatomComponent(function EventField({
     }
 
     setConditionDraft(null);
-  };
-
-  const timerValue = selected.timerValue ?? '';
-  const timerCurrent = timerDraft ?? timerValue;
-  const timerType: TimerType = selected.timerType ?? 'duration';
-
-  const commitTimer = () => {
-    if (timerDraft === null) return;
-
-    const next = timerDraft.trim();
-
-    if (next !== timerValue) {
-      setSelectedTimerValue(timerType, next);
-    }
-
-    setTimerDraft(null);
   };
 
   return (
@@ -147,52 +126,7 @@ export const EventField = reatomComponent(function EventField({
         </Field>
       )}
 
-      {isTimer && (
-        <>
-          <Field orientation="vertical" className="w-full gap-2">
-            <FieldLabel>{t('bpmnEditor.inspector.timerType')}</FieldLabel>
-            <Select
-              value={timerType}
-              onValueChange={(next) =>
-                setSelectedTimerValue(next as TimerType, timerValue)
-              }
-            >
-              <SelectTrigger className="w-full min-w-0">
-                <SelectValue className="min-w-0 truncate" />
-              </SelectTrigger>
-              <SelectContent>
-                {TIMER_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(`bpmnEditor.inspector.timerTypes.${type}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-
-          <Field orientation="vertical" className="w-full gap-2">
-            <FieldLabel>{t('bpmnEditor.inspector.timerValue')}</FieldLabel>
-            <Input
-              className="min-w-0"
-              value={timerCurrent}
-              placeholder={t('bpmnEditor.inspector.timerValuePlaceholder')}
-              onChange={(event) => setTimerDraft(event.target.value)}
-              onBlur={commitTimer}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  commitTimer();
-                }
-
-                if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setTimerDraft(null);
-                }
-              }}
-            />
-          </Field>
-        </>
-      )}
+      {isTimer && <TimerField selected={selected} />}
 
       {isConditional && (
         <Field orientation="vertical" className="w-full gap-2">
