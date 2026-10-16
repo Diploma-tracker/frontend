@@ -16,6 +16,7 @@ import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
 import { Route as appAppThesisProcessRouteImport } from './routes/(app)/_app.thesis-process'
 import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
+import { Route as appAppProjectDefinitionRouteImport } from './routes/(app)/_app.project-definition'
 import { Route as appAppFormBuilderRouteImport } from './routes/(app)/_app.form-builder'
 import { Route as appAppBpmnEditorRouteImport } from './routes/(app)/_app.bpmn-editor'
 import { Route as appAppThesisProcessIndexRouteImport } from './routes/(app)/_app.thesis-process.index'
@@ -55,6 +56,11 @@ const appAppScheduleRoute = appAppScheduleRouteImport.update({
 const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
   id: '/project-enrollment',
   path: '/project-enrollment',
+  getParentRoute: () => appAppRoute,
+} as any)
+const appAppProjectDefinitionRoute = appAppProjectDefinitionRouteImport.update({
+  id: '/project-definition',
+  path: '/project-definition',
   getParentRoute: () => appAppRoute,
 } as any)
 const appAppFormBuilderRoute = appAppFormBuilderRouteImport.update({
@@ -100,6 +106,7 @@ const appAppDefenseRoundIdRoute = appAppDefenseRoundIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/bpmn-editor': typeof appAppBpmnEditorRoute
   '/form-builder': typeof appAppFormBuilderRoute
+  '/project-definition': typeof appAppProjectDefinitionRoute
   '/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/schedule': typeof appAppScheduleRoute
   '/thesis-process': typeof appAppThesisProcessRouteWithChildren
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/bpmn-editor': typeof appAppBpmnEditorRoute
   '/form-builder': typeof appAppFormBuilderRoute
+  '/project-definition': typeof appAppProjectDefinitionRoute
   '/schedule': typeof appAppScheduleRoute
   '/login': typeof authAuthLoginRoute
   '/': typeof appAppIndexRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(app)/_app/bpmn-editor': typeof appAppBpmnEditorRoute
   '/(app)/_app/form-builder': typeof appAppFormBuilderRoute
+  '/(app)/_app/project-definition': typeof appAppProjectDefinitionRoute
   '/(app)/_app/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
   '/(app)/_app/schedule': typeof appAppScheduleRoute
   '/(app)/_app/thesis-process': typeof appAppThesisProcessRouteWithChildren
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/bpmn-editor'
     | '/form-builder'
+    | '/project-definition'
     | '/project-enrollment'
     | '/schedule'
     | '/thesis-process'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
   to:
     | '/bpmn-editor'
     | '/form-builder'
+    | '/project-definition'
     | '/schedule'
     | '/login'
     | '/'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/(auth)/_auth'
     | '/(app)/_app/bpmn-editor'
     | '/(app)/_app/form-builder'
+    | '/(app)/_app/project-definition'
     | '/(app)/_app/project-enrollment'
     | '/(app)/_app/schedule'
     | '/(app)/_app/thesis-process'
@@ -239,6 +251,13 @@ declare module '@tanstack/react-router' {
       path: '/project-enrollment'
       fullPath: '/project-enrollment'
       preLoaderRoute: typeof appAppProjectEnrollmentRouteImport
+      parentRoute: typeof appAppRoute
+    }
+    '/(app)/_app/project-definition': {
+      id: '/(app)/_app/project-definition'
+      path: '/project-definition'
+      fullPath: '/project-definition'
+      preLoaderRoute: typeof appAppProjectDefinitionRouteImport
       parentRoute: typeof appAppRoute
     }
     '/(app)/_app/form-builder': {
@@ -325,6 +344,7 @@ const appAppThesisProcessRouteWithChildren =
 interface appAppRouteChildren {
   appAppBpmnEditorRoute: typeof appAppBpmnEditorRoute
   appAppFormBuilderRoute: typeof appAppFormBuilderRoute
+  appAppProjectDefinitionRoute: typeof appAppProjectDefinitionRoute
   appAppProjectEnrollmentRoute: typeof appAppProjectEnrollmentRouteWithChildren
   appAppScheduleRoute: typeof appAppScheduleRoute
   appAppThesisProcessRoute: typeof appAppThesisProcessRouteWithChildren
@@ -335,6 +355,7 @@ interface appAppRouteChildren {
 const appAppRouteChildren: appAppRouteChildren = {
   appAppBpmnEditorRoute: appAppBpmnEditorRoute,
   appAppFormBuilderRoute: appAppFormBuilderRoute,
+  appAppProjectDefinitionRoute: appAppProjectDefinitionRoute,
   appAppProjectEnrollmentRoute: appAppProjectEnrollmentRouteWithChildren,
   appAppScheduleRoute: appAppScheduleRoute,
   appAppThesisProcessRoute: appAppThesisProcessRouteWithChildren,

@@ -106,7 +106,8 @@
       "submit": "Submit",
       "crossFieldError": "Please fill in at least one of the highlighted fields.",
       "chooseFile": "Choose file",
-      "clearFile": "Remove file"
+      "clearFile": "Remove file",
+      "projectDefinition": "Project Definition"
     }
   },
   "user": {
@@ -881,6 +882,72 @@
       "untitled": "Untitled",
       "duplicate": "Duplicate",
       "delete": "Delete"
+     }
+  },
+  "projectDefinition": {
+    "title": "Project definition editor",
+    "description": "Build the set of fields that hold project data during the whole process. Validation is defined once here and reused by every form that uses the field.",
+    "actions": {
+      "save": "Save",
+      "saveDisabledHint": "Every field and role needs a name before saving"
+    },
+    "load": {
+      "errorTitle": "Failed to load project definition",
+      "errorDescription": "Something went wrong while loading the definition. Try again.",
+      "retry": "Retry"
+    },
+    "toast": {
+      "saveSuccess": "Project definition saved.",
+      "saveError": "Failed to save project definition."
+    },
+    "fields": {
+      "title": "Project fields",
+      "emptyTitle": "No fields yet",
+      "emptyDescription": "Add a field type from the list on the left to start building the definition.",
+      "untitled": "Untitled field",
+      "actions": {
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "remove": "Remove field"
+      }
+    },
+    "properties": {
+      "title": "Field properties",
+      "emptyTitle": "No field selected",
+      "emptyDescription": "Select a field in the list to edit its name and validation.",
+      "name": {
+        "label": "Name",
+        "placeholder": "e.g. Topic (EN)",
+        "description": "Displayed everywhere this project data is shown."
+      },
+      "validation": {
+        "min": "Min",
+        "max": "Max",
+        "minPlaceholder": "Min value",
+        "maxPlaceholder": "Max value",
+        "description": "Validation is stored on the project field level, so forms do not have to repeat it."
+      }
+    },
+    "available": {
+      "title": "Available field types",
+      "description": "Premade field types the backend operates with."
+    },
+    "roles": {
+      "title": "Role definitions",
+      "description": "Core roles always exist — you can only change how many slots they have. Add custom roles as needed. Each role has at least one slot.",
+      "add": "Add role",
+      "remove": "Remove role",
+      "namePlaceholder": "Role name",
+      "slotsLabel": "Slots",
+      "coreBadge": "Core",
+      "duplicateName": "Role names must be unique"
+    },
+    "types": {
+      "string": "String",
+      "number": "Number",
+      "bool": "Boolean",
+      "grade": "Grade",
+      "date": "Date"
     }
   }
 }
