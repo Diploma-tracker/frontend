@@ -11,6 +11,8 @@ import {
   importXml,
   isConnection,
   isConnectionType,
+  readProcessName,
+  readStageSubProcesses,
   removeElement,
   replaceElementType,
   setBoundaryInterrupting,
@@ -20,8 +22,12 @@ import {
   setGatewayType,
   setTimerDefinition,
   spawnElement,
+  syncStageOrder,
   toDiagramElement,
+  updateIsStage,
+  updateProcessName,
   updateProperties,
+  writeStageOrder,
   zoomToFit,
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
@@ -38,6 +44,7 @@ import {
   isIntermediateEventType,
 } from './event-definitions';
 import { isGatewayElementType } from './gateway-definitions';
+import { STAGE_ATTR, type StageInfo } from './stage-definitions';
 import { starterDiagramXml } from './starter-diagram';
 import {
   DECISION_KEY_ATTRIBUTE,
@@ -108,6 +115,8 @@ export interface SelectedElementInfo {
    * task for a flow, or the incoming approve task for a gateway.
    */
   feedingDecisionKey: string | null;
+  /** Custom `isStage` flag of a subprocess; always `false` for other types. */
+  isStage: boolean;
 }
 
 export interface DiagramStats {
@@ -157,6 +166,10 @@ export const statsAtom = atom<DiagramStats>(
 );
 export const xmlAtom = atom<string>('', 'bpmnEditor.xml');
 export const lastErrorAtom = atom<string | null>(null, 'bpmnEditor.lastError');
+/** Subprocesses flagged as stages, in their persisted order. */
+export const stagesAtom = atom<StageInfo[]>([], 'bpmnEditor.stages');
+/** Name of the process shown in the general properties panel. */
+export const processNameAtom = atom<string>('', 'bpmnEditor.processName');
 
 export const setModeler = (instance: BpmnModeler | null): void => {
   modeler = instance;
@@ -434,8 +447,14 @@ export const describeElement = (
       : gateway
         ? readFeedingDecisionKey(gateway)
         : null,
+    isStage: readIsStage(target),
   };
 };
+
+/** Whether a subprocess is flagged as a stage. */
+const readIsStage = (element: Element): boolean =>
+  element.type === 'bpmn:SubProcess' &&
+  element.businessObject?.get(STAGE_ATTR) === true;
 
 export const readStats = (): DiagramStats => {
   if (!modeler) return { shapes: 0, connections: 0 };
@@ -453,6 +472,27 @@ export const readStats = (): DiagramStats => {
     },
     { shapes: 0, connections: 0 },
   );
+};
+
+/**
+ * Stage subprocesses as `{ id, name }`, in the persisted `stageOrder`. The
+ * order is reconciled with the diagram first, so a stage added (or removed)
+ * since the last sort is written into the XML too, not just appended.
+ */
+export const readStages = (): StageInfo[] => {
+  if (!modeler) return [];
+
+  const names = new Map(
+    readStageSubProcesses(modeler).map((element) => [
+      element.id,
+      element.businessObject?.name || element.id,
+    ]),
+  );
+
+  return syncStageOrder(modeler).map((id) => ({
+    id,
+    name: names.get(id) ?? id,
+  }));
 };
 
 export const getElementById = (id: string): Element | null => {
@@ -560,6 +600,50 @@ const updateCurrent = action(() => {
   const element = getCurrentElement();
   if (!modeler || !element) return;
   setSelectedElement(describeElement(element));
+});
+
+/**
+ * Re-reads the stage list and process name from the diagram. Called whenever the
+ * diagram changes (import, create, remove, rename, undo/redo).
+ */
+export const refreshStageState = action(() => {
+  if (!modeler) {
+    stagesAtom.set([]);
+    processNameAtom.set('');
+    return;
+  }
+
+  stagesAtom.set(readStages());
+  processNameAtom.set(readProcessName(modeler));
+});
+
+/** Flags (or unflags) the selected subprocess as a stage. */
+export const setSelectedIsStage = action((isStage: boolean) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || element.type !== 'bpmn:SubProcess') return;
+
+  updateIsStage(modeler, element, isStage);
+  updateCurrent();
+  refreshStageState();
+});
+
+/** Persists the process name shown in the general properties panel. */
+export const renameProcess = action((name: string) => {
+  if (!modeler) return;
+
+  const trimmed = name.trim();
+  if (trimmed === readProcessName(modeler)) return;
+
+  updateProcessName(modeler, trimmed);
+  processNameAtom.set(trimmed);
+});
+
+/** Persists a new stage order, writing the ids back into the diagram XML. */
+export const reorderStages = action((ids: string[]) => {
+  if (!modeler) return;
+
+  writeStageOrder(modeler, ids);
+  stagesAtom.set(readStages());
 });
 
 export const renameSelected = action((name: string) => {

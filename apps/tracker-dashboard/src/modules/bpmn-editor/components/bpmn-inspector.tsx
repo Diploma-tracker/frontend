@@ -1,14 +1,6 @@
-import { useTranslation } from '@/shared/utils/i18n';
-import { CursorClickIcon } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
 import { ScrollArea } from '@repo/ui-kit/components/common/layout/scroll-area';
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-} from '@repo/ui-kit/components/common/states/empty';
 
 import { isConnectionType } from '../model/diagram-api';
 import {
@@ -17,11 +9,14 @@ import {
 } from '../model/editor-model';
 import { isEventType } from '../model/event-definitions';
 import { isGatewayElementType } from '../model/gateway-definitions';
+import { isSubProcessType } from '../model/stage-definitions';
 import { TASK_DEFINITION_KEYS } from '../model/task-definitions';
 import { ConnectionInspector } from './inspector/connection-inspector';
 import { EventField } from './inspector/event-field';
 import { GatewayField } from './inspector/gateway-field';
+import { GeneralInspector } from './inspector/general-inspector';
 import { NameField } from './inspector/name-field';
+import { SubProcessField } from './inspector/subprocess-field';
 import { TaskFields } from './inspector/task-fields';
 
 const TASK_DEFINITION_KEY_VALUES: string[] =
@@ -47,6 +42,12 @@ const VARIANTS = [
     ),
   },
   {
+    matches: (selected: SelectedElementInfo) => isSubProcessType(selected.type),
+    render: (selected: SelectedElementInfo) => (
+      <SubProcessField selected={selected} />
+    ),
+  },
+  {
     matches: (selected: SelectedElementInfo) =>
       isGatewayElementType(selected.type),
     render: (selected: SelectedElementInfo) => (
@@ -62,20 +63,10 @@ const VARIANTS = [
 ] as const;
 
 export const BpmnInspector = reatomComponent(function BpmnInspector() {
-  const { t } = useTranslation();
   const selected = selectedElementAtom();
 
   if (!selected) {
-    return (
-      <Empty className="h-full gap-4 p-6">
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <CursorClickIcon />
-          </EmptyMedia>
-          <EmptyDescription>{t('bpmnEditor.inspector.empty')}</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    );
+    return <GeneralInspector />;
   }
 
   const active = VARIANTS.find((variant) => variant.matches(selected));

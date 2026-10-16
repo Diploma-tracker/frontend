@@ -17,6 +17,7 @@ import {
   describeElement,
   isReadyAtom,
   readStats,
+  refreshStageState,
   setActiveTool,
   setCanvasSize,
   setError,
@@ -29,6 +30,7 @@ import {
   setXml,
 } from '../model/editor-model';
 import FlowRenderer from '../model/flow-renderer';
+import StageRenderer from '../model/stage-renderer';
 import { starterDiagramXml } from '../model/starter-diagram';
 import TaskRenderer from '../model/task-renderer';
 import './bpmn-canvas.css';
@@ -66,15 +68,17 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       moddleExtensions: {
         custom: customModdle,
       },
-      // Higher-priority renderers: `taskRenderer` tints the three supported task
-      // kinds, `flowRenderer` colours gateway approve/reject branches.
+      // Higher-priority renderers: `taskRenderer` tints the supported task
+      // kinds, `flowRenderer` colours gateway approve/reject branches, and
+      // `stageRenderer` marks subprocesses flagged as stages.
       // `__init__` forces them to be constructed so they subscribe to the render
       // events; without it didi would never instantiate the lazy services.
       additionalModules: [
         {
-          __init__: ['taskRenderer', 'flowRenderer'],
+          __init__: ['taskRenderer', 'flowRenderer', 'stageRenderer'],
           taskRenderer: ['type', TaskRenderer],
           flowRenderer: ['type', FlowRenderer],
+          stageRenderer: ['type', StageRenderer],
         },
       ],
       /**
@@ -175,6 +179,7 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       setReady(true);
       setTool();
       setStats(readStats());
+      refreshStageState();
     });
 
     eventBus.on('selection.changed', (event: { newSelection: Element[] }) => {
@@ -195,6 +200,7 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
      */
     eventBus.on('commandStack.changed', async () => {
       setStats(readStats());
+      refreshStageState();
 
       const { commandStack } = getServices(modeler);
 
@@ -230,6 +236,7 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       setModeler(null);
       setReady(false);
       setSelectedElement(null);
+      refreshStageState();
     };
   }, []);
 

@@ -59,6 +59,10 @@
   --bpmn-task-script-bg: #f3ecfe;
   --bpmn-task-script-stroke: #8b5cf6;
 
+  /* Stage fill/stroke for subprocesses flagged as stages (see StageRenderer). */
+  --bpmn-stage-bg: #fef3c7;
+  --bpmn-stage-stroke: #d97706;
+
   /* Branch colours for gateway approve/reject flow arrows (see FlowRenderer). */
   --bpmn-flow-approve: #17a865;
   --bpmn-flow-reject: #dc2626;
@@ -172,6 +176,10 @@
   --bpmn-task-register-stroke: #f97316;
   --bpmn-task-script-bg: #291f45;
   --bpmn-task-script-stroke: #a78bfa;
+
+  /* Stage fill/stroke for subprocesses flagged as stages (see StageRenderer). */
+  --bpmn-stage-bg: #2a1c05;
+  --bpmn-stage-stroke: #fbbf24;
 
   /* Branch colours for gateway approve/reject flow arrows (see FlowRenderer). */
   --bpmn-flow-approve: #1ec978;

@@ -13,5 +13,6 @@ export * from './model/diagram-api';
 export * from './model/editor-model';
 export * from './model/element-catalog';
 export * from './model/diagram-persistence';
+export * from './model/stage-definitions';
 export * from './model/timer-definitions';
 export { starterDiagramXml } from './model/starter-diagram';

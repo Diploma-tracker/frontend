@@ -8,6 +8,28 @@
   "associations": [],
   "types": [
     {
+      "name": "Process",
+      "extends": ["bpmn:Process"],
+      "properties": [
+        {
+          "name": "stageOrder",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "SubProcess",
+      "extends": ["bpmn:SubProcess"],
+      "properties": [
+        {
+          "name": "isStage",
+          "isAttr": true,
+          "type": "Boolean"
+        }
+      ]
+    },
+    {
       "name": "UserTask",
       "extends": ["bpmn:UserTask"],
       "properties": [

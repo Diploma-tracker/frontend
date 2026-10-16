@@ -32,21 +32,21 @@ export const BpmnProperties = reatomComponent(function BpmnProperties() {
   const { t } = useTranslation();
   const selected = selectedElementAtom();
 
+  let title = t('bpmnEditor.inspector.generalTitle');
   let description: string | null = null;
+
   if (selected) {
+    title = t('bpmnEditor.inspector.title');
+
     const key = selected.type;
     const specialKey = selected.taskDefinitionKey;
-    if (specialKey) {
-      description = `${key} / ${specialKey}`;
-    } else {
-      description = key;
-    }
+    description = specialKey ? `${key} / ${specialKey}` : key;
   }
 
   return (
     <Card className="flex h-full min-h-0 flex-col shadow-lg">
       <CardHeader>
-        <CardTitle>{t('bpmnEditor.inspector.title')}</CardTitle>
+        <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
 
         <CardAction>

@@ -20,6 +20,13 @@ import type ToolManager from 'diagram-js/lib/features/tool-manager/ToolManager';
 import type { ElementLike, ShapeLike } from 'diagram-js/lib/model/Types';
 
 import type { EditorToolName, PaletteElement } from './element-catalog';
+import {
+  STAGE_ATTR,
+  STAGE_ORDER_ATTR,
+  orderStages,
+  parseStageOrder,
+  serializeStageOrder,
+} from './stage-definitions';
 
 /** BPMN types that only make sense as a connection. */
 const CONNECTION_TYPES: string[] = [
@@ -285,6 +292,91 @@ export const updateProperties = (
   properties: object,
 ): void => {
   getServices(modeler).modeling.updateProperties(element, properties);
+};
+
+/** Reads a string custom attribute off an element's business object. */
+const readAttribute = (element: Element, name: string): string | null => {
+  const value = element.businessObject?.get(name);
+
+  return typeof value === 'string' && value.length > 0 ? value : null;
+};
+
+/**
+ * The diagram root as an updatable element. Its business object is the
+ * `bpmn:Process`, which holds the process name and the stage order.
+ */
+const getProcessElement = (modeler: BpmnModeler): Element =>
+  getServices(modeler).canvas.getRootElement() as unknown as Element;
+
+export const readProcessName = (modeler: BpmnModeler): string =>
+  readAttribute(getProcessElement(modeler), 'name') ?? '';
+
+export const updateProcessName = (modeler: BpmnModeler, name: string): void => {
+  const trimmed = name.trim();
+
+  getServices(modeler).modeling.updateProperties(getProcessElement(modeler), {
+    name: trimmed.length === 0 ? undefined : trimmed,
+  });
+};
+
+/** Persisted stage order, or an empty list when unset/invalid. */
+export const readStageOrder = (modeler: BpmnModeler): string[] =>
+  parseStageOrder(readAttribute(getProcessElement(modeler), STAGE_ORDER_ATTR));
+
+/** Writes the stage order; an empty list clears the attribute. */
+export const writeStageOrder = (modeler: BpmnModeler, ids: string[]): void => {
+  getServices(modeler).modeling.updateProperties(getProcessElement(modeler), {
+    [STAGE_ORDER_ATTR]: ids.length === 0 ? undefined : serializeStageOrder(ids),
+  });
+};
+
+/**
+ * Reconciles the persisted `stageOrder` with the stages currently in the
+ * diagram, writing it back when it drifted — a stage was added or removed, or
+ * the diagram was imported without one — so the attribute always lists every
+ * stage. Returns the authoritative order.
+ *
+ * The write goes straight onto the business object rather than through
+ * `modeling`: `stageOrder` is derived from the diagram, so normalising it must
+ * not add an undo step or mark a drag as dirty. It still lands in the exported
+ * XML on the next save.
+ */
+export const syncStageOrder = (modeler: BpmnModeler): string[] => {
+  const present = readStageSubProcesses(modeler).map((element) => element.id);
+  const persisted = readStageOrder(modeler);
+  const normalized = orderStages(present, persisted);
+
+  const drifted =
+    normalized.length !== persisted.length ||
+    normalized.some((id, index) => id !== persisted[index]);
+
+  if (drifted) {
+    getProcessElement(modeler).businessObject?.set(
+      STAGE_ORDER_ATTR,
+      normalized.length === 0 ? undefined : serializeStageOrder(normalized),
+    );
+  }
+
+  return normalized;
+};
+
+/** Every subprocess flagged as a stage, in diagram order. */
+export const readStageSubProcesses = (modeler: BpmnModeler): Element[] =>
+  (getServices(modeler).elementRegistry.getAll() as Element[]).filter(
+    (element) =>
+      element.type === 'bpmn:SubProcess' &&
+      element.businessObject?.get(STAGE_ATTR) === true,
+  );
+
+/** Flags (or unflags) a subprocess as a stage. */
+export const updateIsStage = (
+  modeler: BpmnModeler,
+  element: Element,
+  isStage: boolean,
+): void => {
+  getServices(modeler).modeling.updateProperties(element, {
+    [STAGE_ATTR]: isStage ? true : undefined,
+  });
 };
 
 /**
