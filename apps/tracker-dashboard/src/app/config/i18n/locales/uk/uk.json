@@ -791,6 +791,20 @@
       "processNamePlaceholder": "Назва процесу",
       "isStage": "Етап",
       "isStageHint": "Позначте цей підпроцес як етап. Етапи виділяються кольором і з'являються на панелі діаграми.",
+      "stageDeadline": "Дедлайн",
+      "stageDeadlineEnabled": "Дедлайн задано",
+      "stageDeadlineNone": "Без дедлайну",
+      "stageDeadlineRelativePrefix": "Через",
+      "stageDeadlineModes": {
+        "absolute": "Конкретна дата",
+        "relative": "Через період"
+      },
+      "stageDeadlineUnits": {
+        "years": "Роки",
+        "months": "Місяці",
+        "days": "Дні",
+        "hint": "р · міс · д"
+      },
       "stages": "Етапи",
       "stagesHint": "Перетягніть, щоб змінити порядок. Порядок зберігається разом із діаграмою.",
       "stagesEmpty": "Етапів ще немає — позначте підпроцес як етап.",

@@ -23,8 +23,12 @@ import type { EditorToolName, PaletteElement } from './element-catalog';
 import {
   STAGE_ATTR,
   STAGE_ORDER_ATTR,
+  type StageAttributes,
+  isStageElement,
   orderStages,
+  parseStageAttributes,
   parseStageOrder,
+  serializeStageAttributes,
   serializeStageOrder,
 } from './stage-definitions';
 
@@ -363,19 +367,24 @@ export const syncStageOrder = (modeler: BpmnModeler): string[] => {
 /** Every subprocess flagged as a stage, in diagram order. */
 export const readStageSubProcesses = (modeler: BpmnModeler): Element[] =>
   (getServices(modeler).elementRegistry.getAll() as Element[]).filter(
-    (element) =>
-      element.type === 'bpmn:SubProcess' &&
-      element.businessObject?.get(STAGE_ATTR) === true,
+    (element) => isStageElement(element),
   );
 
-/** Flags (or unflags) a subprocess as a stage. */
-export const updateIsStage = (
+/** Reads the stage attributes off an element, or `null` when it is not a stage. */
+export const readStageAttributes = (element: Element): StageAttributes | null =>
+  parseStageAttributes(readAttribute(element, STAGE_ATTR));
+
+/**
+ * Writes (or clears) the stage attributes of a subprocess. Clearing removes
+ * the attribute entirely, so the subprocess stops being a stage.
+ */
+export const writeStageAttributes = (
   modeler: BpmnModeler,
   element: Element,
-  isStage: boolean,
+  info: StageAttributes | null,
 ): void => {
   getServices(modeler).modeling.updateProperties(element, {
-    [STAGE_ATTR]: isStage ? true : undefined,
+    [STAGE_ATTR]: info === null ? undefined : serializeStageAttributes(info),
   });
 };
 

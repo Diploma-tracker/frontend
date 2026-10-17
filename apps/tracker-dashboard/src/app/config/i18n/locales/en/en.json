@@ -791,6 +791,20 @@
       "processNamePlaceholder": "Process name",
       "isStage": "Stage",
       "isStageHint": "Mark this subprocess as a stage. Stages are tinted and appear in the diagram panel.",
+      "stageDeadline": "Deadline",
+      "stageDeadlineEnabled": "Deadline set",
+      "stageDeadlineNone": "No deadline",
+      "stageDeadlineRelativePrefix": "After",
+      "stageDeadlineModes": {
+        "absolute": "Specific date",
+        "relative": "After a period"
+      },
+      "stageDeadlineUnits": {
+        "years": "Years",
+        "months": "Months",
+        "days": "Days",
+        "hint": "y · mo · d"
+      },
       "stages": "Stages",
       "stagesHint": "Drag to reorder. The order is saved with the diagram.",
       "stagesEmpty": "No stages yet — flag a subprocess as a stage.",

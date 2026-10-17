@@ -4,11 +4,10 @@ import type {
   default as BpmnRenderer,
 } from 'bpmn-js/lib/draw/BpmnRenderer';
 import type { Element, Shape } from 'bpmn-js/lib/model/Types';
-import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import type EventBus from 'diagram-js/lib/core/EventBus';
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
-import { STAGE_ATTR } from '../../model/stage-definitions';
+import { isStageElement } from '../../model/stage-definitions';
 
 /**
  * Stage paint. The values resolve against the diagram tokens in
@@ -23,10 +22,6 @@ const ICON_SIZE = 20;
 const ICON_TRANSFORM = 'translate(12, 10)';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-
-const isStageElement = (element: Element): boolean =>
-  is(element, 'bpmn:SubProcess') &&
-  getBusinessObject(element).get(STAGE_ATTR) === true;
 
 /** Colours set through the properties panel win over the stage defaults. */
 const resolveColors = (element: Shape): { fill: string; stroke: string } => ({

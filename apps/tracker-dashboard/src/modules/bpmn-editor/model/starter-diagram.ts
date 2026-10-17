@@ -18,7 +18,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 
     <bpmn:startEvent id="startEvent" name="Process created" />
 
-    <bpmn:subProcess id="initializationStage" name="Process initialization">
+    <bpmn:subProcess custom:stage="{}" id="initializationStage" name="Process initialization">
       <bpmn:startEvent id="initializationStart" />
       <bpmn:userTask id="initProcess" name="Init process / assign roles" custom:taskDefinitionKey="fill-project-fields" custom:roles='["admin"]' custom:formKey="initialization" />
       <bpmn:endEvent id="initializationEnd" />
@@ -26,7 +26,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
       <bpmn:sequenceFlow id="initializationFlowEnd" name="init.submit" sourceRef="initProcess" targetRef="initializationEnd" />
     </bpmn:subProcess>
 
-    <bpmn:subProcess id="topicSelectionStage" name="Topic selection">
+    <bpmn:subProcess custom:stage="{}" id="topicSelectionStage" name="Topic selection">
       <bpmn:startEvent id="topicSelectionStart" />
       <bpmn:userTask id="chooseTopic" name="Choose / upload topic" custom:taskDefinitionKey="fill-project-fields" custom:roles='["student"]' custom:formKey="topic" />
       <bpmn:userTask id="supervisorReviewTopic" name="Supervisor review topic" custom:taskDefinitionKey="approve" custom:roles='["supervisor"]' custom:decisionKey="topicSupervisorDecision" />
@@ -55,7 +55,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 
     <bpmn:parallelGateway id="forkAfterTopic" name="Topic approved" />
 
-    <bpmn:subProcess id="thesisPreparationStage" name="Thesis preparation">
+    <bpmn:subProcess custom:stage="{}" id="thesisPreparationStage" name="Thesis preparation">
       <bpmn:startEvent id="thesisPreparationStart" />
       <bpmn:userTask id="uploadThesisMaterials" name="Upload thesis materials" custom:taskDefinitionKey="fill-project-fields" custom:roles='["student"]' custom:formKey="thesis-materials" />
       <bpmn:userTask id="supervisorReviewThesis" name="Supervisor review thesis" custom:taskDefinitionKey="approve" custom:roles='["supervisor"]' custom:decisionKey="designDecision" />
@@ -73,7 +73,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
       </bpmn:sequenceFlow>
     </bpmn:subProcess>
 
-    <bpmn:subProcess id="internshipStage" name="Internship">
+    <bpmn:subProcess custom:stage="{}" id="internshipStage" name="Internship">
       <bpmn:startEvent id="internshipStart" />
       <bpmn:userTask id="uploadInternshipReport" name="Upload internship report" custom:taskDefinitionKey="fill-project-fields" custom:roles='["student"]' custom:formKey="internship-report" />
       <bpmn:userTask id="internshipSupervisorReview" name="Internship supervisor review" custom:taskDefinitionKey="approve" custom:roles='["internship_supervisor"]' custom:decisionKey="internshipDecision" />
@@ -93,7 +93,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 
     <bpmn:parallelGateway id="forkAfterThesis" name="Thesis approved" />
 
-    <bpmn:subProcess id="plagiarismStage" name="Plagiarism check">
+    <bpmn:subProcess custom:stage="{}" id="plagiarismStage" name="Plagiarism check">
       <bpmn:startEvent id="plagiarismStart" />
       <bpmn:userTask id="plagiarismSupervisorCheck" name="Plagiarism supervisor check" custom:taskDefinitionKey="approve" custom:roles='["plagiarism_supervisor"]' custom:decisionKey="plagiarismDecision" />
       <bpmn:exclusiveGateway id="plagiarismDecisionGateway" name="Plagiarism decision" />
@@ -111,7 +111,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
       <bpmn:sequenceFlow id="plagiarismFlowFix" name="plagiarism.upload" sourceRef="fixPlagiarismIssues" targetRef="plagiarismSupervisorCheck" />
     </bpmn:subProcess>
 
-    <bpmn:subProcess id="defenseRegistrationStage" name="Defense registration">
+    <bpmn:subProcess custom:stage="{}" id="defenseRegistrationStage" name="Defense registration">
       <bpmn:startEvent id="defenseRegistrationStart" />
       <bpmn:userTask id="studentRegisterDefense" name="Manage defense registration" custom:taskDefinitionKey="register-project-for-defense" custom:roles='["student"]' />
       <bpmn:sequenceFlow id="registrationFlowStart" sourceRef="defenseRegistrationStart" targetRef="studentRegisterDefense" />
@@ -126,7 +126,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 
     <bpmn:parallelGateway id="joinPlagiarismInternship" name="Plagiarism and internship complete" />
 
-    <bpmn:subProcess id="preDefenseStage" name="Pre-defense">
+    <bpmn:subProcess custom:stage="{}" id="preDefenseStage" name="Pre-defense">
       <bpmn:startEvent id="preDefenseStart" />
       <bpmn:userTask id="commissionReviewPreDefense" name="Commission pre-defense review" custom:taskDefinitionKey="approve" custom:roles='["commission_member"]' custom:decisionKey="preDefenseDecision" />
       <bpmn:exclusiveGateway id="preDefenseDecisionGateway" name="Pre-defense decision" />
@@ -144,7 +144,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
       <bpmn:sequenceFlow id="preDefenseFlowFix" name="pre_defense.upload" sourceRef="fixPreDefenseIssues" targetRef="commissionReviewPreDefense" />
     </bpmn:subProcess>
 
-    <bpmn:subProcess id="reviewStage" name="Reviewer report">
+    <bpmn:subProcess custom:stage="{}" id="reviewStage" name="Reviewer report">
       <bpmn:startEvent id="reviewStart" />
       <bpmn:userTask id="reviewerUploadReport" name="Upload review report" custom:taskDefinitionKey="fill-project-fields" custom:roles='["reviewer"]' custom:formKey="review-report" />
       <bpmn:endEvent id="reviewEnd" />
@@ -156,7 +156,7 @@ export const starterDiagramXml = `<?xml version="1.0" encoding="UTF-8"?>
 
     <bpmn:parallelGateway id="joinReviewRegistration" name="Review and registration complete" />
 
-    <bpmn:subProcess id="defenseStage" name="Final defense">
+    <bpmn:subProcess custom:stage="{}" id="defenseStage" name="Final defense">
       <bpmn:startEvent id="defenseStart" />
       <bpmn:userTask id="supervisorAddGrade" name="Record thesis defense grade" custom:taskDefinitionKey="fill-project-fields" custom:roles='["supervisor"]' custom:formKey="grade" />
       <bpmn:endEvent id="defenseEnd" />

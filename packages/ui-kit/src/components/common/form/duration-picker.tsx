@@ -14,9 +14,11 @@ function pad(n: number, digits: number) {
 // Types
 // ---------------------------------------------------------------------------
 
-export type DurationUnit = 'days' | 'hours' | 'minutes';
+export type DurationUnit = 'years' | 'months' | 'days' | 'hours' | 'minutes';
 
 export interface DurationPickerLabels {
+  years?: string;
+  months?: string;
   days?: string;
   hours?: string;
   minutes?: string;
@@ -164,12 +166,16 @@ function Segment({
 // ---------------------------------------------------------------------------
 
 const UNIT_MAX: Record<DurationUnit, number> = {
+  years: 99,
+  months: 99,
   days: 999,
   hours: 23,
   minutes: 59,
 };
 
 const UNIT_DIGITS: Record<DurationUnit, number> = {
+  years: 2,
+  months: 2,
   days: 3,
   hours: 2,
   minutes: 2,
@@ -199,6 +205,8 @@ export function DurationPicker({
   const firstRef = React.useRef<HTMLInputElement>(null);
 
   const components: Record<DurationUnit, number> = {
+    years: parsed.years ?? 0,
+    months: parsed.months ?? 0,
     days: parsed.days ?? 0,
     hours: parsed.hours ?? 0,
     minutes: parsed.minutes ?? 0,
@@ -213,12 +221,18 @@ export function DurationPicker({
   const setUnit = (unit: DurationUnit, next: number) => {
     const nextComponents = { ...components, [unit]: next };
     const serialized = {
+      years: nextComponents.years || undefined,
+      months: nextComponents.months || undefined,
       days: nextComponents.days || undefined,
       hours: nextComponents.hours || undefined,
       minutes: nextComponents.minutes || undefined,
     };
     const isEmpty =
-      !nextComponents.days && !nextComponents.hours && !nextComponents.minutes;
+      !nextComponents.years &&
+      !nextComponents.months &&
+      !nextComponents.days &&
+      !nextComponents.hours &&
+      !nextComponents.minutes;
 
     onChange?.(isEmpty ? 'PT0S' : serializeDuration(serialized));
   };

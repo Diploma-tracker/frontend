@@ -12,6 +12,7 @@ import {
   isConnection,
   isConnectionType,
   readProcessName,
+  readStageAttributes,
   readStageSubProcesses,
   removeElement,
   replaceElementType,
@@ -24,9 +25,9 @@ import {
   spawnElement,
   syncStageOrder,
   toDiagramElement,
-  updateIsStage,
   updateProcessName,
   updateProperties,
+  writeStageAttributes,
   writeStageOrder,
   zoomToFit,
 } from './diagram-api';
@@ -44,7 +45,7 @@ import {
   isIntermediateEventType,
 } from './event-definitions';
 import { isGatewayElementType } from './gateway-definitions';
-import { STAGE_ATTR, type StageInfo } from './stage-definitions';
+import { type StageInfo, isStageElement } from './stage-definitions';
 import { starterDiagramXml } from './starter-diagram';
 import {
   DECISION_KEY_ATTRIBUTE,
@@ -115,8 +116,15 @@ export interface SelectedElementInfo {
    * task for a flow, or the incoming approve task for a gateway.
    */
   feedingDecisionKey: string | null;
-  /** Custom `isStage` flag of a subprocess; always `false` for other types. */
+  /** Whether the selected subprocess is flagged as a stage. */
   isStage: boolean;
+  /** Absolute `stage` deadline of the selected stage; `null` when unset. */
+  stageDeadline: string | null;
+  /**
+   * Relative `stage` deadline of the selected stage — an ISO 8601 duration
+   * from the stage's runtime start; `null` when unset.
+   */
+  stageDeadlineDuration: string | null;
 }
 
 export interface DiagramStats {
@@ -414,6 +422,7 @@ export const describeElement = (
   const event = isEventType(target.type);
   const eventDefinition = event ? readEventDefinition(target) : null;
   const timer = event && eventDefinition === 'timer' ? readTimer(target) : null;
+  const stage = readStageAttributes(target);
 
   return {
     id: target.id,
@@ -447,14 +456,11 @@ export const describeElement = (
       : gateway
         ? readFeedingDecisionKey(gateway)
         : null,
-    isStage: readIsStage(target),
+    isStage: isStageElement(target),
+    stageDeadline: stage?.deadline ?? null,
+    stageDeadlineDuration: stage?.deadlineDuration ?? null,
   };
 };
-
-/** Whether a subprocess is flagged as a stage. */
-const readIsStage = (element: Element): boolean =>
-  element.type === 'bpmn:SubProcess' &&
-  element.businessObject?.get(STAGE_ATTR) === true;
 
 export const readStats = (): DiagramStats => {
   if (!modeler) return { shapes: 0, connections: 0 };
@@ -622,10 +628,51 @@ export const setSelectedIsStage = action((isStage: boolean) => {
   const element = getCurrentElement();
   if (!modeler || !element || element.type !== 'bpmn:SubProcess') return;
 
-  updateIsStage(modeler, element, isStage);
+  writeStageAttributes(modeler, element, isStage ? {} : null);
   updateCurrent();
   refreshStageState();
 });
+
+/**
+ * Persists an absolute deadline on the selected stage; `null` clears it. A set
+ * absolute deadline replaces any relative one — the two shapes are exclusive.
+ */
+export const setSelectedStageDeadline = action((deadline: string | null) => {
+  const element = getCurrentElement();
+  if (!modeler || !element || !isStageElement(element)) return;
+
+  const current = readStageAttributes(element) ?? {};
+  if ((current.deadline ?? null) === (deadline ?? null)) return;
+
+  writeStageAttributes(modeler, element, {
+    ...current,
+    deadline: deadline ?? undefined,
+    deadlineDuration: deadline ? undefined : current.deadlineDuration,
+  });
+  updateCurrent();
+});
+
+/**
+ * Persists a relative deadline on the selected stage — an ISO 8601 duration
+ * from the stage's runtime start; `null` clears it. A set relative deadline
+ * replaces any absolute one — the two shapes are exclusive.
+ */
+export const setSelectedStageDeadlineDuration = action(
+  (duration: string | null) => {
+    const element = getCurrentElement();
+    if (!modeler || !element || !isStageElement(element)) return;
+
+    const current = readStageAttributes(element) ?? {};
+    if ((current.deadlineDuration ?? null) === (duration ?? null)) return;
+
+    writeStageAttributes(modeler, element, {
+      ...current,
+      deadlineDuration: duration ?? undefined,
+      deadline: duration ? undefined : current.deadline,
+    });
+    updateCurrent();
+  },
+);
 
 /** Persists the process name shown in the general properties panel. */
 export const renameProcess = action((name: string) => {

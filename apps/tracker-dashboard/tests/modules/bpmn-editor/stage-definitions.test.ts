@@ -1,7 +1,10 @@
 import {
+  isStageElement,
   isSubProcessType,
   orderStages,
+  parseStageAttributes,
   parseStageOrder,
+  serializeStageAttributes,
   serializeStageOrder,
 } from '@/modules/bpmn-editor';
 import { describe, expect, it } from 'vitest';
@@ -80,5 +83,122 @@ describe('serializeStageOrder round trip', () => {
     const ids = ['stage-1', 'stage-2', 'stage-3'];
 
     expect(parseStageOrder(serializeStageOrder(ids))).toEqual(ids);
+  });
+});
+
+describe('parseStageAttributes', () => {
+  it('parses a deadline from a JSON object', () => {
+    expect(
+      parseStageAttributes('{"deadline":"2026-06-01T12:00:00.000Z"}'),
+    ).toEqual({ deadline: '2026-06-01T12:00:00.000Z' });
+  });
+
+  it('parses a relative deadline duration', () => {
+    expect(parseStageAttributes('{"deadlineDuration":"P3M5D"}')).toEqual({
+      deadlineDuration: 'P3M5D',
+    });
+    expect(parseStageAttributes('{"deadlineDuration":"P1Y2M3D"}')).toEqual({
+      deadlineDuration: 'P1Y2M3D',
+    });
+  });
+
+  it('keeps both deadline shapes when both are present', () => {
+    expect(
+      parseStageAttributes(
+        '{"deadline":"2026-06-01T12:00:00.000Z","deadlineDuration":"P3M5D"}',
+      ),
+    ).toEqual({
+      deadline: '2026-06-01T12:00:00.000Z',
+      deadlineDuration: 'P3M5D',
+    });
+  });
+
+  it('drops a deadline duration that is not an ISO 8601 duration', () => {
+    expect(parseStageAttributes('{"deadlineDuration":"soon"}')).toEqual({});
+    expect(parseStageAttributes('{"deadlineDuration":""}')).toEqual({});
+  });
+
+  it('returns empty attributes for a stage without extra data', () => {
+    expect(parseStageAttributes('{}')).toEqual({});
+  });
+
+  it('returns null for an absent attribute', () => {
+    expect(parseStageAttributes(null)).toEqual(null);
+    expect(parseStageAttributes(undefined)).toEqual(null);
+    expect(parseStageAttributes('')).toEqual(null);
+  });
+
+  it('degrades invalid JSON to empty attributes', () => {
+    expect(parseStageAttributes('not json')).toEqual({});
+  });
+
+  it('drops a non-object payload', () => {
+    expect(parseStageAttributes('["deadline"]')).toEqual({});
+    expect(parseStageAttributes('null')).toEqual({});
+    expect(parseStageAttributes('42')).toEqual({});
+  });
+
+  it('drops a non-string or empty deadline', () => {
+    expect(parseStageAttributes('{"deadline":42}')).toEqual({});
+    expect(parseStageAttributes('{"deadline":""}')).toEqual({});
+  });
+});
+
+describe('serializeStageAttributes', () => {
+  it('encodes a deadline', () => {
+    expect(
+      serializeStageAttributes({ deadline: '2026-06-01T12:00:00.000Z' }),
+    ).toBe('{"deadline":"2026-06-01T12:00:00.000Z"}');
+  });
+
+  it('encodes a relative deadline duration', () => {
+    expect(serializeStageAttributes({ deadlineDuration: 'P1Y2M3D' })).toBe(
+      '{"deadlineDuration":"P1Y2M3D"}',
+    );
+  });
+
+  it('encodes a stage without extra data', () => {
+    expect(serializeStageAttributes({})).toBe('{}');
+  });
+
+  it('round-trips through parseStageAttributes', () => {
+    const info = { deadline: '2026-06-01T12:00:00.000Z' };
+    const relative = { deadlineDuration: 'P3M5D' };
+
+    expect(parseStageAttributes(serializeStageAttributes(info))).toEqual(info);
+    expect(parseStageAttributes(serializeStageAttributes(relative))).toEqual(
+      relative,
+    );
+    expect(parseStageAttributes(serializeStageAttributes({}))).toEqual({});
+  });
+});
+
+describe('isStageElement', () => {
+  const subprocess = (stage: string | undefined) => ({
+    type: 'bpmn:SubProcess',
+    businessObject: {
+      get: (name: string) => (name === 'stage' ? stage : null),
+    },
+  });
+
+  it('recognises a subprocess carrying the stage attribute', () => {
+    expect(isStageElement(subprocess('{}'))).toBe(true);
+    expect(isStageElement(subprocess('{"deadline":"2026-06-01"}'))).toBe(true);
+  });
+
+  it('rejects a subprocess without the attribute', () => {
+    expect(isStageElement(subprocess(undefined))).toBe(false);
+    expect(isStageElement(subprocess(''))).toBe(false);
+  });
+
+  it('rejects non-subprocess elements and empty input', () => {
+    expect(
+      isStageElement({
+        type: 'bpmn:UserTask',
+        businessObject: { get: () => '{}' },
+      }),
+    ).toBe(false);
+    expect(isStageElement(null)).toBe(false);
+    expect(isStageElement(undefined)).toBe(false);
   });
 });

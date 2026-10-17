@@ -23,9 +23,9 @@
       "extends": ["bpmn:SubProcess"],
       "properties": [
         {
-          "name": "isStage",
+          "name": "stage",
           "isAttr": true,
-          "type": "Boolean"
+          "type": "String"
         }
       ]
     },

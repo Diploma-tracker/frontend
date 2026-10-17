@@ -13,7 +13,7 @@ import { StageList } from './stage-list';
 /**
  * Properties for the diagram itself, shown when nothing is selected: the
  * process name and the ordered list of stages. A stage is a subprocess flagged
- * with the `isStage` attribute; its order is stored in the diagram XML.
+ * with the `stage` attribute; its order is stored in the diagram XML.
  */
 export const GeneralInspector = reatomComponent(function GeneralInspector() {
   const { t } = useTranslation();
