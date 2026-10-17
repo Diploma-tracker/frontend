@@ -3,7 +3,6 @@ import { action, atom, computed, withAsyncData } from '@reatom/core';
 
 import { toast } from '@repo/ui-kit/components/common/floating/sonner';
 
-import { AVAILABLE_FIELD_TYPES_BY_TYPE } from './field-catalog';
 import {
   fetchProjectDefinition,
   saveProjectDefinition,
@@ -80,21 +79,13 @@ export const definitionOutputAtom = computed(
   (): ProjectDefinitionOutput => ({
     name: projectDefinitionNameAtom().trim(),
     fields: projectFieldsAtom().map<ProjectDefinitionEntry>((field) => {
-      const { min, max } = field.validation;
-      const supportsValidation =
-        AVAILABLE_FIELD_TYPES_BY_TYPE[field.type].supportsValidation;
-      const hasValidation = min !== undefined || max !== undefined;
-
       const entry: ProjectDefinitionEntry = {
         type: field.type,
         name: field.name.trim(),
       };
 
-      if (supportsValidation && hasValidation) {
-        entry.validation = {
-          ...(min !== undefined ? { min } : {}),
-          ...(max !== undefined ? { max } : {}),
-        };
+      if (Object.keys(field.settings).length > 0) {
+        entry.settings = { ...field.settings };
       }
 
       return entry;
@@ -119,7 +110,7 @@ const entryToField = (entry: ProjectDefinitionEntry): ProjectField => ({
   id: crypto.randomUUID(),
   type: entry.type as ProjectFieldType,
   name: entry.name,
-  validation: { ...entry.validation },
+  settings: { ...entry.settings },
 });
 
 export const loadProjectDefinitionAction = action(async () => {
@@ -168,7 +159,7 @@ export const addProjectFieldAction = action(
       id: crypto.randomUUID(),
       type,
       name: '',
-      validation: {},
+      settings: {},
     };
 
     projectFieldsAtom.set((fields) => {

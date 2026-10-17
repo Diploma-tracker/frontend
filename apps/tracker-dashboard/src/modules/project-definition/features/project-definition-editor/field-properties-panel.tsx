@@ -1,4 +1,6 @@
+import { jsonFormsRenderers } from '@/shared/components/json-forms';
 import { useTranslation } from '@/shared/utils/i18n';
+import { JsonForms } from '@jsonforms/react';
 import { reatomComponent } from '@reatom/react';
 
 import {
@@ -22,8 +24,9 @@ import {
 } from '@repo/ui-kit/components/common/states/empty';
 
 import {
-  AVAILABLE_FIELD_TYPES_BY_TYPE,
+  type ProjectFieldSettings,
   fieldTypeLabelKeys,
+  projectFieldSettingsSchema,
   selectedFieldAtom,
   updateProjectFieldAction,
 } from '../../models';
@@ -56,15 +59,7 @@ export const FieldPropertiesPanel = reatomComponent(
       );
     }
 
-    const meta = AVAILABLE_FIELD_TYPES_BY_TYPE[field.type];
-
-    const handleValidationChange = (key: 'min' | 'max', rawValue: string) => {
-      const value = rawValue === '' ? undefined : Number(rawValue);
-
-      updateProjectFieldAction(field.id, {
-        validation: { ...field.validation, [key]: value },
-      });
-    };
+    const settingsSchema = projectFieldSettingsSchema(field.type);
 
     return (
       <Card className="min-h-[22rem]">
@@ -73,72 +68,46 @@ export const FieldPropertiesPanel = reatomComponent(
           <CardDescription>{t(fieldTypeLabelKeys[field.type])}</CardDescription>
         </CardHeader>
 
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-4 sm:col-span-2">
-            <Field>
-              <FieldLabel htmlFor={`project-field-name-${field.id}`}>
-                {t('projectDefinition.properties.name.label')}
-              </FieldLabel>
-              <Input
-                id={`project-field-name-${field.id}`}
-                value={field.name}
-                placeholder={t('projectDefinition.properties.name.placeholder')}
-                autoComplete="off"
-                onChange={(event) =>
+        <CardContent className="flex flex-col gap-4">
+          <Field>
+            <FieldLabel htmlFor={`project-field-name-${field.id}`}>
+              {t('projectDefinition.properties.name.label')}
+            </FieldLabel>
+            <Input
+              id={`project-field-name-${field.id}`}
+              value={field.name}
+              placeholder={t('projectDefinition.properties.name.placeholder')}
+              autoComplete="off"
+              onChange={(event) =>
+                updateProjectFieldAction(field.id, {
+                  name: event.target.value,
+                })
+              }
+            />
+            <FieldDescription>
+              {t('projectDefinition.properties.name.description')}
+            </FieldDescription>
+          </Field>
+
+          {settingsSchema ? (
+            <>
+              <JsonForms
+                data={field.settings}
+                schema={settingsSchema}
+                renderers={jsonFormsRenderers}
+                validationMode="ValidateAndShow"
+                onChange={(state) =>
                   updateProjectFieldAction(field.id, {
-                    name: event.target.value,
+                    settings:
+                      (state.data as ProjectFieldSettings | undefined) ?? {},
                   })
                 }
               />
               <FieldDescription>
-                {t('projectDefinition.properties.name.description')}
+                {t('projectDefinition.properties.settings.description')}
               </FieldDescription>
-            </Field>
-          </div>
-
-          {meta.supportsValidation && (
-            <>
-              <Field>
-                <FieldLabel htmlFor={`project-field-min-${field.id}`}>
-                  {t('projectDefinition.properties.validation.min')}
-                </FieldLabel>
-                <Input
-                  id={`project-field-min-${field.id}`}
-                  type="number"
-                  value={field.validation.min ?? ''}
-                  placeholder={t(
-                    'projectDefinition.properties.validation.minPlaceholder',
-                  )}
-                  onChange={(event) =>
-                    handleValidationChange('min', event.target.value)
-                  }
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor={`project-field-max-${field.id}`}>
-                  {t('projectDefinition.properties.validation.max')}
-                </FieldLabel>
-                <Input
-                  id={`project-field-max-${field.id}`}
-                  type="number"
-                  value={field.validation.max ?? ''}
-                  placeholder={t(
-                    'projectDefinition.properties.validation.maxPlaceholder',
-                  )}
-                  onChange={(event) =>
-                    handleValidationChange('max', event.target.value)
-                  }
-                />
-              </Field>
-
-              <div className="sm:col-span-2">
-                <FieldDescription>
-                  {t('projectDefinition.properties.validation.description')}
-                </FieldDescription>
-              </div>
             </>
-          )}
+          ) : null}
         </CardContent>
       </Card>
     );

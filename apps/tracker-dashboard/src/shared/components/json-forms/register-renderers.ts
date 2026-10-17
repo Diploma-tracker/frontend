@@ -4,6 +4,7 @@ import {
   isControl,
   isDateControl,
   isEnumControl,
+  isIntegerControl,
   isMultiLineControl,
   isNumberControl,
   isStringControl,
@@ -17,6 +18,7 @@ import {
   UiKitEnumControl,
   UiKitFileControl,
   UiKitHorizontalLayout,
+  UiKitIntegerControl,
   UiKitNumberControl,
   UiKitTextControl,
   UiKitTextareaControl,
@@ -31,7 +33,7 @@ const isFileControl = (uischema: unknown): boolean => {
   return options?.file === true;
 };
 
-export const formBuilderRenderers: JsonFormsRendererRegistryEntry[] = [
+export const jsonFormsRenderers: JsonFormsRendererRegistryEntry[] = [
   {
     tester: rankWith(1, uiTypeIs('VerticalLayout')),
     renderer: UiKitVerticalLayout,
@@ -43,6 +45,7 @@ export const formBuilderRenderers: JsonFormsRendererRegistryEntry[] = [
   { tester: rankWith(4, isFileControl), renderer: UiKitFileControl },
   { tester: rankWith(3, isDateControl), renderer: UiKitDateControl },
   { tester: rankWith(3, isEnumControl), renderer: UiKitEnumControl },
+  { tester: rankWith(3, isIntegerControl), renderer: UiKitIntegerControl },
   { tester: rankWith(3, isNumberControl), renderer: UiKitNumberControl },
   { tester: rankWith(3, isMultiLineControl), renderer: UiKitTextareaControl },
   { tester: rankWith(3, isBooleanControl), renderer: UiKitBooleanControl },

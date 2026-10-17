@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { jsonFormsRenderers } from '@/shared/components/json-forms';
 import { useTranslation } from '@/shared/utils/i18n';
 import { defaultAnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -18,7 +19,6 @@ import {
   selectedFieldIdAtom,
 } from '../model/form-builder-model';
 import { generateBuilderOutput } from '../model/schema-generator';
-import { formBuilderRenderers } from '../renderers/register-renderers';
 
 interface PlacedFieldProps {
   instanceId: string;
@@ -123,7 +123,7 @@ export const PlacedField = reatomComponent(function PlacedField({
           data={{}}
           schema={preview.schema}
           uischema={preview.uischema}
-          renderers={formBuilderRenderers}
+          renderers={jsonFormsRenderers}
           readonly
         />
       </div>

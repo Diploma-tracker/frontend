@@ -917,18 +917,18 @@
     "properties": {
       "title": "Field properties",
       "emptyTitle": "No field selected",
-      "emptyDescription": "Select a field in the list to edit its name and validation.",
+      "emptyDescription": "Select a field in the list to edit its name and settings.",
       "name": {
         "label": "Name",
         "placeholder": "e.g. Topic (EN)",
         "description": "Displayed everywhere this project data is shown."
       },
-      "validation": {
-        "min": "Min",
-        "max": "Max",
-        "minPlaceholder": "Min value",
-        "maxPlaceholder": "Max value",
-        "description": "Validation is stored on the project field level, so forms do not have to repeat it."
+      "settings": {
+        "description": "Settings are stored on the project field level, so forms do not have to repeat them.",
+        "minLength": "Min length",
+        "maxLength": "Max length",
+        "minimum": "Min value",
+        "maximum": "Max value"
       }
     },
     "available": {

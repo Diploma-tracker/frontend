@@ -59,10 +59,6 @@ export const previewDataAtom = atom<Record<string, unknown>>(
   {},
   'formBuilder.previewData',
 );
-export const previewMarkedFieldIdsAtom = atom<string[]>(
-  [],
-  'formBuilder.previewMarkedFields',
-);
 
 const createId = (): string => globalThis.crypto.randomUUID();
 
@@ -445,6 +441,7 @@ export interface BuilderPreviewState {
   data: Record<string, unknown>;
   setData: (data: Record<string, unknown>) => void;
   violatedRules: ValidationRule[];
+  markedPaths: string[];
 }
 
 const isFieldFilled = (value: unknown): boolean =>
@@ -500,9 +497,5 @@ export const useBuilderPreview = (): BuilderPreviewState => {
     previewDataAtom.set(data);
   }, [data]);
 
-  useEffect(() => {
-    previewMarkedFieldIdsAtom.set(markedPaths);
-  }, [markedPaths]);
-
-  return { data, setData, violatedRules };
+  return { data, setData, violatedRules, markedPaths };
 };

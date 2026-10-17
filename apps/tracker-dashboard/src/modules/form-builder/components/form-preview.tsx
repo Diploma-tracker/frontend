@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
 
+import {
+  JsonFormsMarkedFieldsProvider,
+  jsonFormsRenderers,
+} from '@/shared/components/json-forms';
 import { useTranslation } from '@/shared/utils/i18n';
 import { JsonForms } from '@jsonforms/react';
 import { FilesIcon } from '@phosphor-icons/react';
@@ -20,11 +24,10 @@ import {
   fieldsAtom,
   useBuilderPreview,
 } from '../model/form-builder-model';
-import { formBuilderRenderers } from '../renderers/register-renderers';
 
 export const FormPreview = reatomComponent(function FormPreview() {
   const { t } = useTranslation();
-  const { data, setData, violatedRules } = useBuilderPreview();
+  const { data, setData, violatedRules, markedPaths } = useBuilderPreview();
 
   const fields = fieldsAtom();
   const output = builderOutput();
@@ -58,14 +61,16 @@ export const FormPreview = reatomComponent(function FormPreview() {
   return (
     <div className="flex w-full max-w-2xl flex-col gap-4">
       <div className="rounded-xl border bg-card p-6">
-        <JsonForms
-          data={data}
-          schema={output.schema}
-          uischema={output.uischema}
-          renderers={formBuilderRenderers}
-          validationMode="ValidateAndShow"
-          onChange={(state) => setData(state.data ?? {})}
-        />
+        <JsonFormsMarkedFieldsProvider paths={markedPaths}>
+          <JsonForms
+            data={data}
+            schema={output.schema}
+            uischema={output.uischema}
+            renderers={jsonFormsRenderers}
+            validationMode="ValidateAndShow"
+            onChange={(state) => setData(state.data ?? {})}
+          />
+        </JsonFormsMarkedFieldsProvider>
       </div>
 
       {violatedRules.length > 0 && (

@@ -27,8 +27,16 @@ const mockProjectDefinition: ProjectDefinitionSnapshot = {
   fields: [
     { type: 'grade', name: 'Grade' },
     { type: 'bool', name: 'Is top rated' },
-    { type: 'string', name: 'topic en', validation: { min: 5, max: 50 } },
-    { type: 'string', name: 'topic uk', validation: { min: 5, max: 50 } },
+    {
+      type: 'string',
+      name: 'topic en',
+      settings: { minLength: 5, maxLength: 50 },
+    },
+    {
+      type: 'string',
+      name: 'topic uk',
+      settings: { minLength: 5, maxLength: 50 },
+    },
   ],
   roles: [
     { name: 'Teacher', slots: 1, core: true },
@@ -45,7 +53,7 @@ export const fetchProjectDefinition =
       name: mockProjectDefinition.name,
       fields: mockProjectDefinition.fields.map((entry) => ({
         ...entry,
-        validation: entry.validation ? { ...entry.validation } : undefined,
+        settings: entry.settings ? { ...entry.settings } : undefined,
       })),
       roles: mockProjectDefinition.roles.map((role) => ({ ...role })),
     };

@@ -8,7 +8,6 @@ import {
   withJsonFormsLayoutProps,
 } from '@jsonforms/react';
 import { FileArrowUpIcon, XIcon } from '@phosphor-icons/react';
-import { useAtom } from '@reatom/react';
 import { format, parseISO } from 'date-fns';
 
 import { Checkbox } from '@repo/ui-kit/components/common/form/checkbox';
@@ -30,17 +29,12 @@ import {
 import { Textarea } from '@repo/ui-kit/components/common/form/textarea';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { previewMarkedFieldIdsAtom } from '../model/form-builder-model';
+import { useMarkedField } from './marked-fields-context';
 
 const markedFieldClass = 'rounded-md ring-2 ring-destructive/60 ring-offset-2';
 
 const requiredLabel = (label: string, required: boolean): string =>
   required ? `${label} *` : label;
-
-const useMarkedField = (path: string): boolean => {
-  const [markedFields] = useAtom(previewMarkedFieldIdsAtom);
-  return markedFields.includes(path);
-};
 
 const toDateValue = (data: unknown): Date | undefined => {
   if (typeof data !== 'string') {
@@ -124,10 +118,50 @@ export const UiKitNumberControl = withJsonFormsControlProps(
           aria-invalid={props.errors ? true : undefined}
           disabled={!enabled}
           placeholder={props.uischema.options?.placeholder}
+          step="any"
           value={typeof data === 'number' ? data : ''}
           onChange={(event) => {
             const raw = event.target.value;
             handleChange(path, raw === '' ? undefined : Number(raw));
+          }}
+        />
+        {props.errors ? <FieldError>{props.errors}</FieldError> : null}
+      </Field>
+    );
+  },
+);
+
+export const UiKitIntegerControl = withJsonFormsControlProps(
+  function IntegerControl(props: ControlProps) {
+    const { data, handleChange, path, enabled } = props;
+
+    return (
+      <Field
+        orientation="vertical"
+        data-invalid={props.errors ? true : undefined}
+        className={useMarkedField(path) ? markedFieldClass : undefined}
+      >
+        <FieldLabel>
+          {requiredLabel(props.label, props.required ?? false)}
+        </FieldLabel>
+        <Input
+          type="number"
+          aria-label={props.label || ''}
+          aria-invalid={props.errors ? true : undefined}
+          disabled={!enabled}
+          placeholder={props.uischema.options?.placeholder}
+          step="1"
+          value={typeof data === 'number' ? data : ''}
+          onChange={(event) => {
+            const raw = event.target.value;
+            if (raw === '') {
+              handleChange(path, undefined);
+              return;
+            }
+            const num = Number(raw);
+            if (Number.isInteger(num)) {
+              handleChange(path, num);
+            }
           }}
         />
         {props.errors ? <FieldError>{props.errors}</FieldError> : null}

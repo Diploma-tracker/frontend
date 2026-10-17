@@ -1,5 +1,4 @@
 export { FormBuilder } from './components/form-builder';
-export { formBuilderRenderers } from './renderers/register-renderers';
 export {
   builderOutput,
   addField,

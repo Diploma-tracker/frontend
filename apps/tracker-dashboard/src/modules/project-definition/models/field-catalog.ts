@@ -14,7 +14,6 @@ import type { ProjectFieldType } from './types';
 export interface AvailableFieldType {
   type: ProjectFieldType;
   icon: ElementType;
-  supportsValidation: boolean;
 }
 
 /**
@@ -23,11 +22,11 @@ export interface AvailableFieldType {
  * that swapping the source is the only change needed.
  */
 const availableFieldTypes: AvailableFieldType[] = [
-  { type: 'string', icon: TextTIcon, supportsValidation: true },
-  { type: 'number', icon: HashIcon, supportsValidation: true },
-  { type: 'bool', icon: CheckIcon, supportsValidation: false },
-  { type: 'grade', icon: StarIcon, supportsValidation: false },
-  { type: 'date', icon: CalendarIcon, supportsValidation: false },
+  { type: 'string', icon: TextTIcon },
+  { type: 'number', icon: HashIcon },
+  { type: 'bool', icon: CheckIcon },
+  { type: 'grade', icon: StarIcon },
+  { type: 'date', icon: CalendarIcon },
 ];
 
 export const AVAILABLE_FIELD_TYPES_BY_TYPE: Record<

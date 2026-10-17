@@ -1,26 +1,28 @@
 export type ProjectFieldType = 'string' | 'number' | 'bool' | 'grade' | 'date';
 
-export interface ProjectFieldValidation {
-  min?: number;
-  max?: number;
-}
+/**
+ * Type-specific field settings. The shape is driven by the field type's JSON
+ * Schema (`projectFieldSettingsSchema`), so it stays generic here and the
+ * editor renders the matching controls from the schema alone.
+ */
+export type ProjectFieldSettings = Record<string, unknown>;
 
 /**
- * Entry of the project definition as it is sent to the backend: validation
- * lives on the project data field level so it is defined once and reused by
- * every form that references the field.
+ * Entry of the project definition as it is sent to the backend: settings live
+ * on the project data field level so they are defined once and reused by every
+ * form that references the field.
  */
 export interface ProjectDefinitionEntry {
   type: string;
   name: string;
-  validation?: ProjectFieldValidation;
+  settings?: ProjectFieldSettings;
 }
 
 export interface ProjectField {
   id: string;
   type: ProjectFieldType;
   name: string;
-  validation: ProjectFieldValidation;
+  settings: ProjectFieldSettings;
 }
 
 /**
