@@ -3,11 +3,13 @@ import * as React from 'react';
 import { CalendarIcon, ClockIcon, XIcon } from '@phosphor-icons/react';
 import { type Locale, format } from 'date-fns';
 
+import { parseDuration, serializeDuration } from '@repo/utils/duration';
+
 import { cn } from '../../../lib/utils';
 import { Calendar } from '../../calendar';
 import { Button } from '../data-display/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../floating/popover';
-import { Input } from './input';
+import { DurationPicker } from './duration-picker';
 
 export interface DatePickerProps {
   value?: Date;
@@ -139,7 +141,7 @@ function DatePickerCalendar({
 interface DatePickerTimeSelectorProps {
   time: TimeState;
   labels?: { hours?: string; minutes?: string };
-  onTimeChange: (type: 'hours' | 'minutes', value: string) => void;
+  onTimeChange: (duration: string) => void;
 }
 
 function DatePickerTimeSelector({
@@ -147,41 +149,24 @@ function DatePickerTimeSelector({
   labels,
   onTimeChange,
 }: DatePickerTimeSelectorProps) {
-  const hoursLabel = labels?.hours ?? 'Hours';
-  const minutesLabel = labels?.minutes ?? 'Minutes';
+  const duration = React.useMemo(
+    () => serializeDuration({ hours: time.hours, minutes: time.minutes }),
+    [time.hours, time.minutes],
+  );
+
   return (
     <div className="ui:w-full ui:border-t ui:pt-3">
-      <div className="ui:flex ui:items-start ui:gap-2">
-        <div className="ui:flex-1">
-          <Input
-            type="number"
-            min="0"
-            max="23"
-            value={time.hours.toString().padStart(2, '0')}
-            onChange={(e) => onTimeChange('hours', e.target.value)}
-            className="ui:text-center"
-            aria-label={hoursLabel}
-          />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">
-            {hoursLabel}
-          </span>
-        </div>
-
-        <div className="ui:flex-1">
-          <Input
-            type="number"
-            min="0"
-            max="59"
-            value={time.minutes.toString().padStart(2, '0')}
-            onChange={(e) => onTimeChange('minutes', e.target.value)}
-            className="ui:text-center"
-            aria-label={minutesLabel}
-          />
-          <span className="ui:mt-1 ui:block ui:text-center ui:text-xs ui:text-muted-foreground">
-            {minutesLabel}
-          </span>
-        </div>
-      </div>
+      <DurationPicker
+        units={['hours', 'minutes']}
+        value={duration}
+        onChange={onTimeChange}
+        labels={{
+          hours: labels?.hours,
+          minutes: labels?.minutes,
+          hint: '',
+        }}
+        className="ui:w-full ui:justify-center"
+      />
     </div>
   );
 }
@@ -235,15 +220,12 @@ export function DatePicker({
     }
   };
 
-  const handleTimeChange = (type: 'hours' | 'minutes', raw: string) => {
-    const n = parseInt(raw, 10);
-    if (isNaN(n)) return;
-
-    const clamped =
-      type === 'hours'
-        ? Math.min(23, Math.max(0, n))
-        : Math.min(59, Math.max(0, n));
-    const next = { ...time, [type]: clamped };
+  const handleTimeChange = (duration: string) => {
+    const parsed = parseDuration(duration);
+    const next: TimeState = {
+      hours: parsed.hours ?? 0,
+      minutes: parsed.minutes ?? 0,
+    };
     setTime(next);
 
     if (value) {
