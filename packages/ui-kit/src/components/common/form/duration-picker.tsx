@@ -48,7 +48,7 @@ export interface DurationPickerProps {
 }
 
 // ---------------------------------------------------------------------------
-// Segment – a single DD / HH / MM spinner cell
+// Segment – a single YY / MM / DD spinner cell
 // ---------------------------------------------------------------------------
 
 interface SegmentProps {
@@ -60,6 +60,8 @@ interface SegmentProps {
   disabled?: boolean;
   'aria-invalid'?: boolean | 'true' | 'false';
   onChange: (next: number) => void;
+  /** Moves focus to the previous (-1) or next (1) segment, when present. */
+  onNavigate?: (direction: -1 | 1) => void;
   inputRef?: React.Ref<HTMLInputElement>;
 }
 
@@ -71,88 +73,124 @@ function Segment({
   label,
   disabled,
   onChange,
+  onNavigate,
   inputRef,
   'aria-invalid': ariaInvalid,
 }: SegmentProps) {
-  const [editing, setEditing] = React.useState<string | null>(null);
+  /** Digits being typed, or `null` when the committed value is displayed. */
+  const [draft, setDraft] = React.useState<string | null>(null);
+  const innerRef = React.useRef<HTMLInputElement>(null);
+  /** Set before a programmatic step so the fresh value is selected again. */
+  const reselectRef = React.useRef(false);
 
-  const clamp = (n: number) => Math.max(min, Math.min(max, n));
-
-  // Reset a pending edit when the value is driven externally (e.g. switching
-  // timer type or unit set), so stale drafts never leak between fields.
-  React.useEffect(() => {
-    setEditing(null);
-  }, [value, max, maxDigits]);
-
-  const commit = (raw: string) => {
-    const n = parseInt(raw, 10);
-    if (!isNaN(n)) onChange(clamp(n));
-    setEditing(null);
-  };
-
-  const step = (delta: number) => {
-    setEditing(null);
-    if (delta > 0) onChange(value >= max ? min : clamp(value + 1));
-    else onChange(value <= min ? max : clamp(value - 1));
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      step(1);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      step(-1);
-    } else if (e.key === 'Enter' || e.key === 'Tab') {
-      if (editing !== null) commit(editing);
-    } else if (e.key === 'Backspace') {
-      setEditing((prev) => (prev && prev.length > 1 ? prev.slice(0, -1) : '0'));
-    } else if (/^\d$/.test(e.key)) {
-      e.preventDefault();
-      setEditing((prev) => {
-        const next = prev === null ? e.key : (prev + e.key).slice(-maxDigits);
-        const n = parseInt(next, 10);
-        // auto-commit when the value is unambiguous
-        if (next.length === maxDigits || n * 10 > max) {
-          onChange(clamp(n));
-          return null;
-        }
-        return next;
-      });
+  const setRef = (node: HTMLInputElement | null) => {
+    innerRef.current = node;
+    if (typeof inputRef === 'function') inputRef(node);
+    else if (inputRef) {
+      (inputRef as React.MutableRefObject<HTMLInputElement | null>).current =
+        node;
     }
   };
 
-  const displayValue = editing !== null ? editing : pad(value, maxDigits);
+  const clamp = (n: number) => Math.max(min, Math.min(max, n));
+  const display = draft ?? pad(value, maxDigits);
+
+  // Reset a pending draft when the value is driven externally (e.g. switching
+  // timer type or unit set), so stale drafts never leak between fields. A
+  // stepped value is re-selected so the next keystroke replaces it.
+  React.useEffect(() => {
+    setDraft(null);
+    if (reselectRef.current) {
+      reselectRef.current = false;
+      innerRef.current?.select();
+    }
+  }, [value]);
+
+  const commitDraft = (raw: string | null) => {
+    if (raw === null) return;
+    setDraft(null);
+    onChange(raw === '' ? min : clamp(parseInt(raw, 10)));
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = event.target.value.replace(/\D/g, '').slice(0, maxDigits);
+    setDraft(digits);
+  };
+
+  const step = (delta: 1 | -1) => {
+    setDraft(null);
+    reselectRef.current = true;
+    onChange(
+      delta > 0
+        ? value >= max
+          ? min
+          : value + 1
+        : value <= min
+          ? max
+          : value - 1,
+    );
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      step(1);
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      step(-1);
+    } else if (
+      event.key === 'ArrowLeft' &&
+      event.currentTarget.selectionStart === 0 &&
+      onNavigate
+    ) {
+      event.preventDefault();
+      onNavigate(-1);
+    } else if (
+      event.key === 'ArrowRight' &&
+      event.currentTarget.selectionEnd === display.length &&
+      onNavigate
+    ) {
+      event.preventDefault();
+      onNavigate(1);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      commitDraft(draft);
+      innerRef.current?.blur();
+    } else if (event.key === 'Escape') {
+      setDraft(null);
+    }
+  };
 
   return (
     <input
-      ref={inputRef}
+      ref={setRef}
       type="text"
       inputMode="numeric"
       role="spinbutton"
       aria-label={label}
-      aria-valuenow={value}
+      aria-valuenow={
+        draft !== null && draft !== '' ? clamp(parseInt(draft, 10)) : value
+      }
       aria-valuemin={min}
       aria-valuemax={max}
       aria-invalid={ariaInvalid}
       disabled={disabled}
-      value={displayValue}
+      value={display}
       data-slot="input-group-control"
-      onChange={() => {}} // controlled via keydown
+      onChange={handleChange}
       onKeyDown={handleKeyDown}
-      onFocus={() => {
-        setEditing(null);
+      onFocus={(event) => {
+        setDraft(null);
+        event.target.select();
       }}
-      onBlur={() => {
-        if (editing !== null) commit(editing);
-      }}
-      onWheel={(e) => {
-        e.preventDefault();
-        step(e.deltaY < 0 ? 1 : -1);
+      onBlur={() => commitDraft(draft)}
+      onWheel={(event) => {
+        event.preventDefault();
+        step(event.deltaY < 0 ? 1 : -1);
       }}
       style={{ width: `${maxDigits + 1}ch` }}
       className={cn(
-        'ui:bg-transparent ui:text-center ui:text-sm ui:tabular-nums ui:outline-none ui:select-none',
+        'ui:bg-transparent ui:text-center ui:text-sm ui:tabular-nums ui:outline-none ui:select-text',
         'ui:disabled:cursor-not-allowed ui:disabled:opacity-50',
         'ui:rounded-sm ui:transition-colors',
         'ui:focus:bg-primary ui:focus:text-primary-foreground',
@@ -203,6 +241,7 @@ export function DurationPicker({
     }
   }, [value]);
   const firstRef = React.useRef<HTMLInputElement>(null);
+  const segmentRefs = React.useRef<Array<HTMLInputElement | null>>([]);
 
   const components: Record<DurationUnit, number> = {
     years: parsed.years ?? 0,
@@ -255,7 +294,11 @@ export function DurationPicker({
         disabled && 'ui:cursor-not-allowed ui:opacity-50',
         className,
       )}
-      onClick={() => firstRef.current?.focus()}
+      onClick={(event) => {
+        // Only the padding outside a cell focuses the first segment; clicks
+        // inside a cell keep the browser's own caret and selection.
+        if (event.target === event.currentTarget) firstRef.current?.focus();
+      }}
     >
       {units.map((unit, index) => (
         <React.Fragment key={unit}>
@@ -268,7 +311,10 @@ export function DurationPicker({
             </span>
           )}
           <Segment
-            inputRef={index === 0 ? firstRef : undefined}
+            inputRef={(node) => {
+              segmentRefs.current[index] = node;
+              if (index === 0) firstRef.current = node;
+            }}
             value={components[unit]}
             min={0}
             max={maxFor(unit)}
@@ -277,6 +323,9 @@ export function DurationPicker({
             disabled={disabled}
             aria-invalid={ariaInvalid}
             onChange={(next) => setUnit(unit, next)}
+            onNavigate={(direction) => {
+              segmentRefs.current[index + direction]?.focus();
+            }}
           />
         </React.Fragment>
       ))}
