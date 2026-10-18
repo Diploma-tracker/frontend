@@ -787,8 +787,6 @@
       "generalTitle": "Діаграма",
       "name": "Назва",
       "namePlaceholder": "Назва елемента",
-      "processName": "Назва процесу",
-      "processNamePlaceholder": "Назва процесу",
       "isStage": "Етап",
       "isStageHint": "Позначте цей підпроцес як етап. Етапи виділяються кольором і з'являються на панелі діаграми.",
       "stageDeadline": "Дедлайн",

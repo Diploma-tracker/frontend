@@ -787,8 +787,6 @@
       "generalTitle": "Diagram",
       "name": "Name",
       "namePlaceholder": "Element name",
-      "processName": "Process name",
-      "processNamePlaceholder": "Process name",
       "isStage": "Stage",
       "isStageHint": "Mark this subprocess as a stage. Stages are tinted and appear in the diagram panel.",
       "stageDeadline": "Deadline",

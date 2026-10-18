@@ -118,8 +118,6 @@ export const xmlAtom = atom<string>('', 'bpmnEditor.xml');
 export const lastErrorAtom = atom<string | null>(null, 'bpmnEditor.lastError');
 /** Subprocesses flagged as stages, in their persisted order. */
 export const stagesAtom = atom<StageInfo[]>([], 'bpmnEditor.stages');
-/** Name of the process shown in the general properties panel. */
-export const processNameAtom = atom<string>('', 'bpmnEditor.processName');
 
 export const setReady = action((ready: boolean) => {
   isReadyAtom.set(ready);
@@ -347,18 +345,16 @@ const updateCurrent = action(() => {
 });
 
 /**
- * Re-reads the stage list and process name from the diagram. Called whenever the
- * diagram changes (import, create, remove, rename, undo/redo).
+ * Re-reads the stage list from the diagram. Called whenever the diagram
+ * changes (import, create, remove, rename, undo/redo).
  */
 export const refreshStageState = action(() => {
   if (!service) {
     stagesAtom.set([]);
-    processNameAtom.set('');
     return;
   }
 
   stagesAtom.set(readStages());
-  processNameAtom.set(service.readProcessName());
 });
 
 /** Flags (or unflags) the selected subprocess as a stage. */
@@ -397,17 +393,6 @@ export const setSelectedStageDeadline = action((deadline: string | null) => {
 
   service.writeStageAttributes(element, next);
   updateCurrent();
-});
-
-/** Persists the process name shown in the general properties panel. */
-export const renameProcess = action((name: string) => {
-  if (!service) return;
-
-  const trimmed = name.trim();
-  if (trimmed === service.readProcessName()) return;
-
-  service.updateProcessName(trimmed);
-  processNameAtom.set(trimmed);
 });
 
 /** Persists a new stage order, writing the ids back into the diagram XML. */

@@ -463,22 +463,10 @@ export class DiagramService {
 
   /**
    * The diagram root as an updatable element. Its business object is the
-   * `bpmn:Process`, which holds the process name and the stage order.
+   * `bpmn:Process`, which holds the stage order.
    */
   private getProcessElement(): Element {
     return this.faced.canvas.getRootElement() as unknown as Element;
-  }
-
-  readProcessName(): string {
-    return readAttribute(this.getProcessElement(), 'name') ?? '';
-  }
-
-  updateProcessName(name: string): void {
-    const trimmed = name.trim();
-
-    this.faced.modeling.updateProperties(this.getProcessElement(), {
-      name: trimmed.length === 0 ? undefined : trimmed,
-    });
   }
 
   /** Persisted stage order, or an empty list when unset/invalid. */
