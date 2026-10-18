@@ -65,11 +65,11 @@ importers:
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       "@reatom/core":
-        specifier: ^1000.15.2
-        version: 1000.15.2
+        specifier: ^1001.3.0
+        version: 1001.3.0
       "@reatom/react":
-        specifier: ^1000.2.2
-        version: 1000.2.2(@reatom/core@1000.15.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^1001.0.1
+        version: 1001.0.1(@reatom/core@1001.3.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       "@repo/api":
         specifier: workspace:*
         version: link:../../packages/api
@@ -2454,19 +2454,19 @@ packages:
         integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==,
       }
 
-  "@reatom/core@1000.15.2":
+  "@reatom/core@1001.3.0":
     resolution:
       {
-        integrity: sha512-ychH11wZaVHHYsfPuPQvgGr8YyonURggwQwiaTxy+164nRfDnXXgbvuaWePjim7K3FR3LfI6ydYNoqJnDh88Bg==,
+        integrity: sha512-M8pZM6sWIQLIJZVaMI//tqadppk5GHV1MMjDZ0q5g3yxF1sXQs5ftgAxnitxAlP/ViwYWKxyrQI/8q1A3DeaNA==,
       }
 
-  "@reatom/react@1000.2.2":
+  "@reatom/react@1001.0.1":
     resolution:
       {
-        integrity: sha512-QxNFwtmbsIK/DUtmjebfW9gmW+d+4UPZVq1f+Nb2wkiNOZ8yUh7o0i4xAs83nneZOFqcqwNiYKfDrEpBozMCvA==,
+        integrity: sha512-xU5diWeNIrVmJs5a5G6RTPOAz3OhPTtT7iqswPKJs5tGEahf2tCWo25JKEALv79pG0eqTGGJ5W/k7llweOhe3g==,
       }
     peerDependencies:
-      "@reatom/core": ^1000.14.1
+      "@reatom/core": ^1001.3.0
       react: ">=18.2.0"
       react-dom: ">=18.2.0"
 
@@ -10087,15 +10087,15 @@ snapshots:
 
   "@radix-ui/rect@1.1.1": {}
 
-  "@reatom/core@1000.15.2":
+  "@reatom/core@1001.3.0":
     dependencies:
       "@standard-schema/spec": 1.1.0
     optionalDependencies:
       idb-keyval: 6.2.2
 
-  "@reatom/react@1000.2.2(@reatom/core@1000.15.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)":
+  "@reatom/react@1001.0.1(@reatom/core@1001.3.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)":
     dependencies:
-      "@reatom/core": 1000.15.2
+      "@reatom/core": 1001.3.0
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
