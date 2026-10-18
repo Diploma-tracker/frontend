@@ -1,5 +1,4 @@
-import { exportXml } from './diagram-api';
-import { getModeler } from './editor-model';
+import { getDiagramService } from './editor-model';
 
 export interface SaveResult {
   ok: boolean;
@@ -40,11 +39,11 @@ export const downloadDiagram = (
  * the file, so the button in the top bar is never dead.
  */
 export const saveDiagram = async (): Promise<SaveResult> => {
-  const modeler = getModeler();
+  const service = getDiagramService();
 
-  if (!modeler) return { ok: false, error: 'The editor is not ready yet.' };
+  if (!service) return { ok: false, error: 'The editor is not ready yet.' };
 
-  const { xml, error } = await exportXml(modeler);
+  const { xml, error } = await service.exportXml();
 
   if (error || !xml) {
     return { ok: false, error: error ?? 'Nothing to save.' };

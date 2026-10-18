@@ -14,10 +14,9 @@ import {
   CommandShortcut,
 } from '@repo/ui-kit/components/command';
 
-import { getServices } from '../model/diagram-api';
 import {
   activateTool,
-  getModeler,
+  getDiagramService,
   isCommandPaletteOpenAtom,
   revealElement,
   setCommandPaletteOpen,
@@ -45,14 +44,12 @@ interface NamedElement {
 const ACTION_DELAY = 250;
 
 const collectNamedElements = (): NamedElement[] => {
-  const modeler = getModeler();
+  const service = getDiagramService();
 
-  if (!modeler) return [];
+  if (!service) return [];
 
-  const { elementRegistry } = getServices(modeler);
-
-  return elementRegistry
-    .getAll()
+  return service
+    .getAllElements()
     .filter(
       (element): element is Element =>
         element.type !== 'label' && !!element.businessObject?.name,

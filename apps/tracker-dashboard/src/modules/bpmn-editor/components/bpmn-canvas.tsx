@@ -3,15 +3,8 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import type { Element } from 'bpmn-js/lib/model/Types';
 
 import customModdle from '../model/custom-moddle.json';
-import {
-  exportXml,
-  getServices,
-  importXml,
-  zoomToFit,
-} from '../model/diagram-api';
 import {
   activeToolAtom,
   describeElement,
@@ -100,9 +93,9 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       },
     });
 
-    setModeler(modeler);
+    const service = setModeler(modeler);
 
-    const { canvas, eventBus } = getServices(modeler);
+    const disposers: Array<() => void> = [];
 
     /**
      * The dot grid lives on `.djs-container` as a CSS background, but bpmn-js
@@ -134,14 +127,9 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       );
     };
 
-    updateGrid(canvas.viewbox());
+    updateGrid(service.getViewbox());
 
-    eventBus.on(
-      'canvas.viewbox.changed',
-      (event: { viewbox: { x: number; y: number; scale: number } }) => {
-        updateGrid(event.viewbox);
-      },
-    );
+    disposers.push(service.onViewboxChanged(updateGrid));
 
     /**
      * bpmn-js measures its container once, at import time. Inside a flex/grid
@@ -152,16 +140,16 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     let hasAutoFitted = false;
 
     const observer = new ResizeObserver(() => {
-      canvas.resized();
+      service.resize();
 
-      const { width, height } = canvas.getSize();
+      const { width, height } = service.getCanvasSize();
 
       setCanvasSize({ width, height });
 
       if (hasAutoFitted || width === 0 || height === 0) return;
 
       hasAutoFitted = true;
-      zoomToFit(modeler);
+      service.zoomToFit();
     });
 
     observer.observe(container);
@@ -171,26 +159,30 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
      * built-in palette highlights from the same event, and so does the tool
      * rail.
      */
-    eventBus.on('tool-manager.update', (event: { tool?: string | null }) => {
-      setActiveTool(event.tool ?? null);
-    });
+    disposers.push(
+      service.onToolChanged((tool) => {
+        setActiveTool(tool);
+      }),
+    );
 
-    eventBus.on('import.done', () => {
-      setReady(true);
-      setTool();
-      setStats(readStats());
-      refreshStageState();
-    });
+    disposers.push(
+      service.onImportDone(() => {
+        setReady(true);
+        setTool();
+        setStats(readStats());
+        refreshStageState();
+      }),
+    );
 
-    eventBus.on('selection.changed', (event: { newSelection: Element[] }) => {
-      const selected = event.newSelection;
-
-      if (selected.length > 1) {
-        setSelectedElement(null);
-      } else {
-        setSelectedElement(describeElement(selected[0]));
-      }
-    });
+    disposers.push(
+      service.onSelectionChanged((selected) => {
+        if (selected.length > 1) {
+          setSelectedElement(null);
+        } else {
+          setSelectedElement(describeElement(selected[0]));
+        }
+      }),
+    );
 
     /**
      * `commandStack.changed` is the single reliable notification that the
@@ -198,31 +190,32 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
      * undo and redo. bpmn-js does not re-fire `shape.create` / `connection.create`
      * on the event bus; those names only exist on the command stack.
      */
-    eventBus.on('commandStack.changed', async () => {
-      setStats(readStats());
-      refreshStageState();
+    disposers.push(
+      service.onDiagramChanged(async () => {
+        setStats(readStats());
+        refreshStageState();
 
-      const { commandStack } = getServices(modeler);
+        setUndoRedoState(service.canUndo(), service.canRedo());
 
-      setUndoRedoState(commandStack.canUndo(), commandStack.canRedo());
+        const { xml, error } = await service.exportXml();
 
-      const { xml, error } = await exportXml(modeler);
+        if (error) {
+          setError(error);
 
-      if (error) {
-        setError(error);
+          return;
+        }
 
-        return;
-      }
-
-      setXml(xml);
-    });
+        setXml(xml);
+      }),
+    );
 
     /**
      * Deletion, undo, redo and the editor shortcuts are handled centrally by
      * `BpmnKeyboard`; bpmn-js's own SVG-bound keyboard is detached there too.
      */
 
-    importXml(modeler, starterDiagramXml)
+    service
+      .importXml(starterDiagramXml)
       .then(({ error }) => {
         if (error) setError(error);
       })
@@ -232,6 +225,7 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     return () => {
       observer.disconnect();
+      for (const dispose of disposers) dispose();
       modeler.destroy();
       setModeler(null);
       setReady(false);

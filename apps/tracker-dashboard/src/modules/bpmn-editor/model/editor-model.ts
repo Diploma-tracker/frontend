@@ -3,33 +3,11 @@ import type BpmnModeler from 'bpmn-js/lib/Modeler';
 import type { Element } from 'bpmn-js/lib/model/Types';
 
 import {
-  activateToolOnModeler,
-  clearSelection,
-  duplicateElement,
-  exportXml,
-  getServices,
-  importXml,
+  DiagramService,
   isConnection,
   isConnectionType,
-  readProcessName,
   readStageAttributes,
-  readStageSubProcesses,
-  removeElement,
-  replaceElementType,
-  setBoundaryInterrupting,
-  setConditionExpression,
-  setDefaultFlow,
-  setEventDefinitionType,
-  setGatewayType,
-  setTimerDefinition,
-  spawnElement,
-  syncStageOrder,
   toDiagramElement,
-  updateProcessName,
-  updateProperties,
-  writeStageAttributes,
-  writeStageOrder,
-  zoomToFit,
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
 import {
@@ -133,13 +111,24 @@ export interface DiagramStats {
 }
 
 /**
- * The `bpmn-js` instance. Held in a module-scoped variable rather than a reatom
- * atom: it is a huge, non-serialisable object and would flood the dev logger
- * on every patch.
+ * The adapter over the `bpmn-js` instance. Held in a module-scoped variable
+ * rather than a reatom atom: it wraps a huge, non-serialisable object and would
+ * flood the dev logger on every patch. `setModeler` rebuilds it whenever the
+ * canvas (re)creates the modeler, so callers never touch the raw instance.
  */
-let modeler: BpmnModeler | null = null;
+let service: DiagramService | null = null;
 
-export const getModeler = (): BpmnModeler | null => modeler;
+export const getDiagramService = (): DiagramService | null => service;
+
+export function setModeler(instance: BpmnModeler): DiagramService;
+export function setModeler(instance: null): null;
+export function setModeler(
+  instance: BpmnModeler | null,
+): DiagramService | null {
+  service = instance ? new DiagramService(instance) : null;
+
+  return service;
+}
 
 export const isReadyAtom = atom<boolean>(false, 'bpmnEditor.isReady');
 /**
@@ -179,10 +168,6 @@ export const stagesAtom = atom<StageInfo[]>([], 'bpmnEditor.stages');
 /** Name of the process shown in the general properties panel. */
 export const processNameAtom = atom<string>('', 'bpmnEditor.processName');
 
-export const setModeler = (instance: BpmnModeler | null): void => {
-  modeler = instance;
-};
-
 export const setReady = action((ready: boolean) => {
   isReadyAtom.set(ready);
 });
@@ -205,10 +190,10 @@ export const setUndoRedoState = action((canUndo: boolean, canRedo: boolean) => {
 });
 
 export const activateTool = action((tool: EditorToolName, event?: Event) => {
-  if (!modeler) return;
+  if (!service) return;
 
-  clearSelection(modeler);
-  activateToolOnModeler(modeler, tool, event);
+  service.clearSelection();
+  service.activateTool(tool, event);
 });
 
 /**
@@ -218,12 +203,10 @@ export const activateTool = action((tool: EditorToolName, event?: Event) => {
 export const setTool = action(() => {
   activeToolAtom.set(null);
 
-  if (!modeler) return;
+  if (!service) return;
 
-  const { toolManager } = getServices(modeler);
-
-  toolManager.setActive(null);
-  clearSelection(modeler);
+  service.deactivateTool();
+  service.clearSelection();
 });
 
 export const togglePropertiesPanel = action(() => {
@@ -463,9 +446,9 @@ export const describeElement = (
 };
 
 export const readStats = (): DiagramStats => {
-  if (!modeler) return { shapes: 0, connections: 0 };
+  if (!service) return { shapes: 0, connections: 0 };
 
-  const elements = getServices(modeler).elementRegistry.getAll() as Element[];
+  const elements = service.getAllElements();
 
   return elements.reduce<DiagramStats>(
     (stats, element) => {
@@ -486,25 +469,27 @@ export const readStats = (): DiagramStats => {
  * since the last sort is written into the XML too, not just appended.
  */
 export const readStages = (): StageInfo[] => {
-  if (!modeler) return [];
+  if (!service) return [];
 
   const names = new Map(
-    readStageSubProcesses(modeler).map((element) => [
-      element.id,
-      element.businessObject?.name || element.id,
-    ]),
+    service
+      .readStageSubProcesses()
+      .map((element) => [
+        element.id,
+        element.businessObject?.name || element.id,
+      ]),
   );
 
-  return syncStageOrder(modeler).map((id) => ({
+  return service.syncStageOrder().map((id) => ({
     id,
     name: names.get(id) ?? id,
   }));
 };
 
 export const getElementById = (id: string): Element | null => {
-  if (!modeler) return null;
+  if (!service) return null;
 
-  return toDiagramElement(getServices(modeler).elementRegistry.get(id));
+  return service.getElementById(id);
 };
 
 /**
@@ -512,9 +497,9 @@ export const getElementById = (id: string): Element | null => {
  * as a branch source in the condition picker (deduplicated by variable name).
  */
 export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
-  if (!modeler) return [];
+  if (!service) return [];
 
-  const elements = getServices(modeler).elementRegistry.getAll() as Element[];
+  const elements = service.getAllElements();
   const seen = new Set<string>();
   const options: DecisionTaskOption[] = [];
 
@@ -545,9 +530,9 @@ export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
  * pushes focus back here after it is done.
  */
 export const focusCanvas = action(() => {
-  if (!modeler) return;
+  if (!service) return;
 
-  getServices(modeler).canvas.focus();
+  service.focusCanvas();
 });
 
 /**
@@ -556,35 +541,33 @@ export const focusCanvas = action(() => {
  * so a hit can be opened with a single click.
  */
 export const revealElement = action((id: string) => {
-  if (!modeler) return;
+  if (!service) return;
 
-  const services = getServices(modeler);
   const element = getElementById(id);
 
   if (!element) return;
 
-  services.selection.select(element);
-  services.canvas.scrollToElement(element, 60);
+  service.revealElement(element, 60);
   focusCanvas();
 });
 
 export const pickElement = action((id: string) => {
-  if (!modeler) return;
+  if (!service) return;
 
   const element = getElementById(id);
 
   if (!element || isConnection(element)) return;
 
-  getServices(modeler).selection.select(element);
+  service.selectElement(element);
 });
 
 export const spawnPaletteElement = action(
   (element: PaletteElement, name?: string) => {
-    if (!modeler) return;
+    if (!service) return;
 
     setError(null);
 
-    const created = spawnElement(modeler, element, { name });
+    const created = service.spawnElement(element, { name });
 
     if (!created) {
       setError(`Could not create ${element.bpmnType}.`);
@@ -598,13 +581,13 @@ export const spawnPaletteElement = action(
 
 const getCurrentElement = (): Element | null => {
   const selected = selectedElementAtom();
-  if (!modeler || !selected) return null;
+  if (!service || !selected) return null;
   return getElementById(selected.id);
 };
 
 const updateCurrent = action(() => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
   setSelectedElement(describeElement(element));
 });
 
@@ -613,22 +596,22 @@ const updateCurrent = action(() => {
  * diagram changes (import, create, remove, rename, undo/redo).
  */
 export const refreshStageState = action(() => {
-  if (!modeler) {
+  if (!service) {
     stagesAtom.set([]);
     processNameAtom.set('');
     return;
   }
 
   stagesAtom.set(readStages());
-  processNameAtom.set(readProcessName(modeler));
+  processNameAtom.set(service.readProcessName());
 });
 
 /** Flags (or unflags) the selected subprocess as a stage. */
 export const setSelectedIsStage = action((isStage: boolean) => {
   const element = getCurrentElement();
-  if (!modeler || !element || element.type !== 'bpmn:SubProcess') return;
+  if (!service || !element || element.type !== 'bpmn:SubProcess') return;
 
-  writeStageAttributes(modeler, element, isStage ? {} : null);
+  service.writeStageAttributes(element, isStage ? {} : null);
   updateCurrent();
   refreshStageState();
 });
@@ -639,12 +622,12 @@ export const setSelectedIsStage = action((isStage: boolean) => {
  */
 export const setSelectedStageDeadline = action((deadline: string | null) => {
   const element = getCurrentElement();
-  if (!modeler || !element || !isStageElement(element)) return;
+  if (!service || !element || !isStageElement(element)) return;
 
   const current = readStageAttributes(element) ?? {};
   if ((current.deadline ?? null) === (deadline ?? null)) return;
 
-  writeStageAttributes(modeler, element, {
+  service.writeStageAttributes(element, {
     ...current,
     deadline: deadline ?? undefined,
     deadlineDuration: deadline ? undefined : current.deadlineDuration,
@@ -660,12 +643,12 @@ export const setSelectedStageDeadline = action((deadline: string | null) => {
 export const setSelectedStageDeadlineDuration = action(
   (duration: string | null) => {
     const element = getCurrentElement();
-    if (!modeler || !element || !isStageElement(element)) return;
+    if (!service || !element || !isStageElement(element)) return;
 
     const current = readStageAttributes(element) ?? {};
     if ((current.deadlineDuration ?? null) === (duration ?? null)) return;
 
-    writeStageAttributes(modeler, element, {
+    service.writeStageAttributes(element, {
       ...current,
       deadlineDuration: duration ?? undefined,
       deadline: duration ? undefined : current.deadline,
@@ -676,28 +659,28 @@ export const setSelectedStageDeadlineDuration = action(
 
 /** Persists the process name shown in the general properties panel. */
 export const renameProcess = action((name: string) => {
-  if (!modeler) return;
+  if (!service) return;
 
   const trimmed = name.trim();
-  if (trimmed === readProcessName(modeler)) return;
+  if (trimmed === service.readProcessName()) return;
 
-  updateProcessName(modeler, trimmed);
+  service.updateProcessName(trimmed);
   processNameAtom.set(trimmed);
 });
 
 /** Persists a new stage order, writing the ids back into the diagram XML. */
 export const reorderStages = action((ids: string[]) => {
-  if (!modeler) return;
+  if (!service) return;
 
-  writeStageOrder(modeler, ids);
+  service.writeStageOrder(ids);
   stagesAtom.set(readStages());
 });
 
 export const renameSelected = action((name: string) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
-  updateProperties(modeler, element, { name });
+  service.updateProperties(element, { name });
   updateCurrent();
 });
 
@@ -707,18 +690,18 @@ export const renameSelected = action((name: string) => {
  */
 export const setSelectedRoles = action((roles: string[]) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
-  updateProperties(modeler, element, { roles: JSON.stringify(roles) });
+  service.updateProperties(element, { roles: JSON.stringify(roles) });
   updateCurrent();
 });
 
 /** Persists the form reference for the selected task in the custom `formKey`. */
 export const setSelectedFormKey = action((formKey: string) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
-  updateProperties(modeler, element, { formKey });
+  service.updateProperties(element, { formKey });
   updateCurrent();
 });
 
@@ -728,11 +711,11 @@ export const setSelectedFormKey = action((formKey: string) => {
  */
 export const setSelectedDecisionKey = action((decisionKey: string) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
   const trimmed = decisionKey.trim();
 
-  updateProperties(modeler, element, {
+  service.updateProperties(element, {
     [DECISION_KEY_ATTRIBUTE]: trimmed.length === 0 ? undefined : trimmed,
   });
   updateCurrent();
@@ -744,11 +727,11 @@ export const setSelectedDecisionKey = action((decisionKey: string) => {
  */
 const persistScriptExpressions = (expressions: ScriptExpression[]): void => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
   const payload = serializeScriptExpressions(expressions);
 
-  updateProperties(modeler, element, {
+  service.updateProperties(element, {
     [SCRIPT_EXPRESSIONS_ATTRIBUTE]: payload.length === 0 ? undefined : payload,
   });
   updateCurrent();
@@ -786,20 +769,20 @@ export const removeSelectedScriptExpression = action((index: number) => {
  */
 export const setSelectedConditionExpression = action((body: string | null) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
   const connection = isConnection(element);
 
   if (!connection && !isEventType(element.type)) return;
 
-  setConditionExpression(modeler, element, body);
+  service.setConditionExpression(element, body);
 
   if (connection) {
     const source = getFlowSource(element);
     const hasCondition = (body?.trim().length ?? 0) > 0;
 
     if (hasCondition && source && isDefaultFlowOf(source, element)) {
-      setDefaultFlow(modeler, source, null);
+      service.setDefaultFlow(source, null);
     }
   }
 
@@ -809,10 +792,9 @@ export const setSelectedConditionExpression = action((body: string | null) => {
 /** Switches the selected event's attached definition, or clears it. */
 export const setSelectedEventDefinition = action((key: EventDefinitionKey) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
-  const replaced = setEventDefinitionType(
-    modeler,
+  const replaced = service.setEventDefinitionType(
     element,
     EVENT_DEFINITION_TYPES[key],
   );
@@ -830,9 +812,9 @@ export const setSelectedEventDefinition = action((key: EventDefinitionKey) => {
 /** Toggles the selected boundary event between interrupting and not. */
 export const setSelectedEventInterrupting = action((interrupting: boolean) => {
   const element = getCurrentElement();
-  if (!modeler || !element) return;
+  if (!service || !element) return;
 
-  setBoundaryInterrupting(modeler, element, interrupting);
+  service.setBoundaryInterrupting(element, interrupting);
 
   updateCurrent();
 });
@@ -840,7 +822,7 @@ export const setSelectedEventInterrupting = action((interrupting: boolean) => {
 /** Switches an intermediate event between catching and throwing. */
 export const setSelectedEventThrowing = action((throwing: boolean) => {
   const element = getCurrentElement();
-  if (!modeler || !element || !isIntermediateEventType(element.type)) return;
+  if (!service || !element || !isIntermediateEventType(element.type)) return;
 
   const targetType = intermediateEventElementType(throwing);
   if (element.type === targetType) return;
@@ -850,8 +832,7 @@ export const setSelectedEventThrowing = action((throwing: boolean) => {
     ? currentKey
     : 'none';
 
-  const replaced = setEventDefinitionType(
-    modeler,
+  const replaced = service.setEventDefinitionType(
     element,
     EVENT_DEFINITION_TYPES[nextKey],
     targetType,
@@ -871,9 +852,9 @@ export const setSelectedEventThrowing = action((throwing: boolean) => {
 export const setSelectedTimerValue = action(
   (type: TimerType, value: string) => {
     const element = getCurrentElement();
-    if (!modeler || !element) return;
+    if (!service || !element) return;
 
-    setTimerDefinition(modeler, element, TIMER_TYPE_PROPERTY[type], value);
+    service.setTimerDefinition(element, TIMER_TYPE_PROPERTY[type], value);
 
     updateCurrent();
   },
@@ -882,9 +863,9 @@ export const setSelectedTimerValue = action(
 /** Switches the selected gateway to another gateway type. */
 export const setSelectedGatewayType = action((gatewayType: string) => {
   const element = getCurrentElement();
-  if (!modeler || !element || !isGatewayElementType(element.type)) return;
+  if (!service || !element || !isGatewayElementType(element.type)) return;
 
-  const replaced = setGatewayType(modeler, element, gatewayType);
+  const replaced = service.setGatewayType(element, gatewayType);
 
   if (!replaced) {
     setError('This gateway cannot be converted to that type.');
@@ -902,15 +883,15 @@ export const setSelectedGatewayType = action((gatewayType: string) => {
  */
 export const setSelectedAsDefaultFlow = action((asDefault: boolean) => {
   const element = getCurrentElement();
-  if (!modeler || !element || !isConnection(element)) return;
+  if (!service || !element || !isConnection(element)) return;
 
   const source = getFlowSource(element);
 
   if (!source || !isGatewayType(source.type)) return;
 
-  setDefaultFlow(modeler, source, asDefault ? element : null);
+  service.setDefaultFlow(source, asDefault ? element : null);
 
-  if (asDefault) setConditionExpression(modeler, element, null);
+  if (asDefault) service.setConditionExpression(element, null);
 
   updateCurrent();
 });
@@ -918,15 +899,13 @@ export const setSelectedAsDefaultFlow = action((asDefault: boolean) => {
 /** Chooses (or clears) the default outgoing flow of the selected gateway. */
 export const setGatewayDefaultFlow = action((flowId: string | null) => {
   const element = getCurrentElement();
-  if (!modeler || !element || isConnection(element)) return;
+  if (!service || !element || isConnection(element)) return;
 
-  const resolved = flowId
-    ? toDiagramElement(getServices(modeler).elementRegistry.get(flowId))
-    : null;
+  const resolved = flowId ? service.getElementById(flowId) : null;
 
-  setDefaultFlow(modeler, element, resolved);
+  service.setDefaultFlow(element, resolved);
 
-  if (resolved) setConditionExpression(modeler, resolved, null);
+  if (resolved) service.setConditionExpression(resolved, null);
 
   updateCurrent();
 });
@@ -939,7 +918,7 @@ export const setGatewayDefaultFlow = action((flowId: string | null) => {
 export const setSelectedApprovalCondition = action(
   (decisionKey: string, value: DecisionValue) => {
     const element = getCurrentElement();
-    if (!modeler || !element || !isConnection(element)) return;
+    if (!service || !element || !isConnection(element)) return;
 
     const key = decisionKey.trim();
 
@@ -952,14 +931,10 @@ export const setSelectedApprovalCondition = action(
     const source = getFlowSource(element);
 
     setError(null);
-    setConditionExpression(
-      modeler,
-      element,
-      buildApprovalCondition(key, value),
-    );
+    service.setConditionExpression(element, buildApprovalCondition(key, value));
 
     if (source && isDefaultFlowOf(source, element)) {
-      setDefaultFlow(modeler, source, null);
+      service.setDefaultFlow(source, null);
     }
 
     updateCurrent();
@@ -969,26 +944,26 @@ export const setSelectedApprovalCondition = action(
 export const duplicateSelected = action(() => {
   const selected = selectedElementAtom();
 
-  if (!modeler || !selected) return;
+  if (!service || !selected) return;
 
   const element = getElementById(selected.id);
 
   if (!element) return;
 
-  duplicateElement(modeler, element);
+  service.duplicateElement(element);
   setStats(readStats());
 });
 
 export const deleteSelected = action(() => {
   const selected = selectedElementAtom();
 
-  if (!modeler || !selected) return;
+  if (!service || !selected) return;
 
   const element = getElementById(selected.id);
 
   if (!element) return;
 
-  removeElement(modeler, element);
+  service.removeElement(element);
   setSelectedElement(null);
   setStats(readStats());
 });
@@ -996,13 +971,13 @@ export const deleteSelected = action(() => {
 export const changeSelectedType = action((target: PaletteElement) => {
   const selected = selectedElementAtom();
 
-  if (!modeler || !selected || isConnectionType(selected.type)) return;
+  if (!service || !selected || isConnectionType(selected.type)) return;
 
   const element = getElementById(selected.id);
 
   if (!element) return;
 
-  const replaced = replaceElementType(modeler, element, target);
+  const replaced = service.replaceElementType(element, target);
 
   if (!replaced) {
     setError('This element cannot be converted to that type.');
@@ -1015,15 +990,15 @@ export const changeSelectedType = action((target: PaletteElement) => {
 });
 
 export const fitViewport = action(() => {
-  if (modeler) zoomToFit(modeler);
+  service?.zoomToFit();
 });
 
 export const undo = action(() => {
-  if (modeler) getServices(modeler).commandStack.undo();
+  service?.undo();
 });
 
 export const redo = action(() => {
-  if (modeler) getServices(modeler).commandStack.redo();
+  service?.redo();
 });
 
 /**
@@ -1039,22 +1014,21 @@ export const cancelChanges = action(() => {
 
 /** Steps the zoom around the current viewport centre. */
 export const zoomBy = action((factor: number) => {
-  if (!modeler) return;
+  if (!service) return;
 
-  const { canvas } = getServices(modeler);
-  const { scale } = canvas.viewbox();
+  const { scale } = service.getViewbox();
   const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale * factor));
 
-  if (next !== scale) canvas.zoom(next);
+  if (next !== scale) service.zoomTo(next);
 });
 
 export const zoomIn = action(() => zoomBy(ZOOM_STEP));
 export const zoomOut = action(() => zoomBy(1 / ZOOM_STEP));
 
 export const exportDiagram = action(async () => {
-  if (!modeler) return;
+  if (!service) return;
 
-  const { xml, error } = await exportXml(modeler);
+  const { xml, error } = await service.exportXml();
 
   if (error) {
     setError(error);
@@ -1066,11 +1040,11 @@ export const exportDiagram = action(async () => {
 });
 
 export const resetDiagram = action(async () => {
-  if (!modeler) return;
+  if (!service) return;
 
   setSelectedElement(null);
 
-  const { error } = await importXml(modeler, starterDiagramXml);
+  const { error } = await service.importXml(starterDiagramXml);
 
   if (error) {
     setError(error);

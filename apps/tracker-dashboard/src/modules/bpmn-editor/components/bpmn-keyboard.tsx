@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 
 import { reatomComponent } from '@reatom/react';
-import type BpmnModeler from 'bpmn-js/lib/Modeler';
 
-import { clearSelection, getServices } from '../model/diagram-api';
+import type { DiagramService } from '../model/diagram-api';
 import {
   duplicateSelected,
   fitViewport,
-  getModeler,
+  getDiagramService,
   isReadyAtom,
   setSelectedElement,
   setTool,
@@ -48,14 +47,14 @@ const isPaletteShortcut = (event: KeyboardEvent): boolean => {
 
 /** Shortcuts the editor adds on top of bpmn-js's own bindings. */
 const handleEditorShortcut = (
-  modeler: BpmnModeler,
+  service: DiagramService,
   event: KeyboardEvent,
 ): boolean => {
   const meta = event.metaKey || event.ctrlKey;
   const key = event.key.toLowerCase();
 
   if (event.key === 'Escape') {
-    clearSelection(modeler);
+    service.clearSelection();
     setSelectedElement(null);
     setTool();
 
@@ -90,11 +89,11 @@ export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
   const isReady = isReadyAtom();
 
   useEffect(() => {
-    const modeler = getModeler();
+    const service = getDiagramService();
 
-    if (!isReady || !modeler) return;
+    if (!isReady || !service) return;
 
-    getServices(modeler).keyboard.unbind();
+    service.unbindKeyboard();
   }, [isReady]);
 
   useEffect(() => {
@@ -107,27 +106,23 @@ export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
         return;
       }
 
-      const modeler = getModeler();
+      const service = getDiagramService();
 
-      if (!modeler || shouldIgnoreKey(event)) return;
+      if (!service || shouldIgnoreKey(event)) return;
 
-      if (handleEditorShortcut(modeler, event)) return;
+      if (handleEditorShortcut(service, event)) return;
 
-      if (
-        getServices(modeler).eventBus.fire('keyboard.keydown', {
-          keyEvent: event,
-        })
-      ) {
+      if (service.triggerKeydown(event)) {
         event.preventDefault();
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      const modeler = getModeler();
+      const service = getDiagramService();
 
-      if (!modeler || shouldIgnoreKey(event)) return;
+      if (!service || shouldIgnoreKey(event)) return;
 
-      getServices(modeler).eventBus.fire('keyboard.keyup', { keyEvent: event });
+      service.triggerKeyup(event);
     };
 
     document.addEventListener('keydown', handleKeyDown);
