@@ -21,16 +21,16 @@ import {
 } from '@repo/ui-kit/components/common/layout/tabs';
 
 import {
+  DECISION_VALUES,
+  type DecisionValue,
+  parseApprovalCondition,
+} from '../../model/definitions/task-definitions';
+import {
   getDecisionTaskOptions,
   setSelectedApprovalCondition,
   setSelectedAsDefaultFlow,
   setSelectedConditionExpression,
 } from '../../model/editor-model';
-import {
-  DECISION_VALUES,
-  type DecisionValue,
-  parseApprovalCondition,
-} from '../../model/task-definitions';
 
 export interface ConditionFieldProps {
   elementId: string;

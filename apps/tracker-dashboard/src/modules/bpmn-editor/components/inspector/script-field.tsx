@@ -8,12 +8,12 @@ import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 import { Input } from '@repo/ui-kit/components/common/form/input';
 
+import type { ScriptExpression } from '../../model/definitions/task-definitions';
 import {
   addSelectedScriptExpression,
   removeSelectedScriptExpression,
   setSelectedScriptExpression,
 } from '../../model/editor-model';
-import type { ScriptExpression } from '../../model/task-definitions';
 
 export interface ScriptFieldProps {
   expressions: ScriptExpression[];

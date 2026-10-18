@@ -1,10 +1,10 @@
 import { reatomComponent } from '@reatom/react';
 
-import { type SelectedElementInfo } from '../../model/editor-model';
+import { type ConnectionInfo } from '../../model/definitions/element-definitions';
 import { ConditionField } from './condition-field';
 
 export interface ConnectionInspectorProps {
-  selected: SelectedElementInfo;
+  selected: ConnectionInfo;
 }
 
 export const ConnectionInspector = reatomComponent(

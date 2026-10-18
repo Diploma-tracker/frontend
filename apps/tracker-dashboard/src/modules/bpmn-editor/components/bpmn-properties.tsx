@@ -39,7 +39,8 @@ export const BpmnProperties = reatomComponent(function BpmnProperties() {
     title = t('bpmnEditor.inspector.title');
 
     const key = selected.type;
-    const specialKey = selected.taskDefinitionKey;
+    const specialKey =
+      'taskDefinitionKey' in selected ? selected.taskDefinitionKey : null;
     description = specialKey ? `${key} / ${specialKey}` : key;
   }
 

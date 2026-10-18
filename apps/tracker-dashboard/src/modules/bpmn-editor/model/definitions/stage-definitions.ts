@@ -99,6 +99,10 @@ export const isValidDeadlineDuration = (raw: string): boolean => {
   }
 };
 
+/** Whether a deadline value is the relative ISO 8601 duration shape. */
+export const isRelativeDeadline = (value: string): boolean =>
+  /^-?P/i.test(value);
+
 /** Encodes stage attributes for the custom `stage` attribute. */
 export const serializeStageAttributes = (info: StageAttributes): string => {
   const attributes: StageAttributes = {};

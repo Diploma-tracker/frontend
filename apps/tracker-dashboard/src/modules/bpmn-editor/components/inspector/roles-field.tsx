@@ -4,8 +4,8 @@ import { reatomComponent } from '@reatom/react';
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 
+import { TASK_ROLE_OPTIONS } from '../../model/definitions/task-definitions';
 import { setSelectedRoles } from '../../model/editor-model';
-import { TASK_ROLE_OPTIONS } from '../../model/task-definitions';
 
 export interface RolesFieldProps {
   selectedRoles: string[];

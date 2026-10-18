@@ -7,7 +7,7 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import type EventBus from 'diagram-js/lib/core/EventBus';
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
-import { parseApprovalCondition } from '../../model/task-definitions';
+import { parseApprovalCondition } from '../../model/definitions/task-definitions';
 
 /**
  * Gateway branches that get their own colour, so an approve path reads apart

@@ -7,10 +7,8 @@ import { Checkbox } from '@repo/ui-kit/components/common/form/checkbox';
 import { Label } from '@repo/ui-kit/components/common/form/label';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import {
-  type GatewayFlowInfo,
-  setGatewayDefaultFlow,
-} from '../../model/editor-model';
+import type { GatewayFlowInfo } from '../../model/definitions/element-definitions';
+import { setGatewayDefaultFlow } from '../../model/editor-model';
 
 export interface GatewayFlowsFieldProps {
   elementId: string;

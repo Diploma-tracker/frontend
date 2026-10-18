@@ -10,16 +10,14 @@ import {
   SelectValue,
 } from '@repo/ui-kit/components/common/form/select';
 
-import {
-  type SelectedElementInfo,
-  setSelectedGatewayType,
-} from '../../model/editor-model';
-import { gatewayTypeOptions } from '../../model/gateway-definitions';
-import { isGatewayType } from '../../model/task-definitions';
+import type { GatewayInfo } from '../../model/definitions/element-definitions';
+import { gatewayTypeOptions } from '../../model/definitions/gateway-definitions';
+import { isGatewayType } from '../../model/definitions/task-definitions';
+import { setSelectedGatewayType } from '../../model/editor-model';
 import { GatewayFlowsField } from './gateway-flows-field';
 
 export interface GatewayFieldProps {
-  selected: SelectedElementInfo;
+  selected: GatewayInfo;
 }
 
 /**

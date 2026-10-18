@@ -22,11 +22,8 @@ import {
 import { Input } from '@repo/ui-kit/components/common/form/input';
 import { Switch } from '@repo/ui-kit/components/common/form/switch';
 
-import {
-  type SelectedElementInfo,
-  setSelectedTimerValue,
-} from '../../model/editor-model';
-import type { TimerType } from '../../model/event-definitions';
+import type { EventInfo } from '../../model/definitions/element-definitions';
+import type { TimerType } from '../../model/definitions/event-definitions';
 import {
   EMPTY_CYCLE,
   TIMER_PRESETS,
@@ -37,10 +34,11 @@ import {
   parseCycle,
   parseDurationComponents,
   serializeCycle,
-} from '../../model/timer-definitions';
+} from '../../model/definitions/timer-definitions';
+import { setSelectedTimerValue } from '../../model/editor-model';
 
 export interface TimerFieldProps {
-  selected: SelectedElementInfo;
+  selected: EventInfo;
 }
 
 const MODE_LABEL_KEY: Record<TimerMode, string> = {

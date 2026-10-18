@@ -17,15 +17,15 @@ import {
 } from '@repo/ui-kit/components/common/form/field';
 import { Switch } from '@repo/ui-kit/components/common/form/switch';
 
+import type { SubProcessInfo } from '../../model/definitions/element-definitions';
+import { isRelativeDeadline } from '../../model/definitions/stage-definitions';
 import {
-  type SelectedElementInfo,
   setSelectedIsStage,
   setSelectedStageDeadline,
-  setSelectedStageDeadlineDuration,
 } from '../../model/editor-model';
 
 export interface SubProcessFieldProps {
-  selected: SelectedElementInfo;
+  selected: SubProcessInfo;
 }
 
 /** Deadline editor mode; mirrors the stored shape, not a stored field itself. */
@@ -47,8 +47,10 @@ const parseDateValue = (raw: string | null): Date | undefined => {
   return Number.isNaN(date.getTime()) ? undefined : date;
 };
 
-const modeOf = (selected: SelectedElementInfo): DeadlineMode =>
-  selected.stageDeadlineDuration ? 'relative' : 'absolute';
+const modeOf = (selected: SubProcessInfo): DeadlineMode =>
+  selected.stageDeadline !== null && isRelativeDeadline(selected.stageDeadline)
+    ? 'relative'
+    : 'absolute';
 
 /**
  * Properties for the selected subprocess: the `isStage` flag plus, once the
@@ -65,8 +67,7 @@ export const SubProcessField = reatomComponent(function SubProcessField({
   const { t } = useTranslation();
   const locale = getLocale();
 
-  const hasDeadline =
-    selected.stageDeadline !== null || selected.stageDeadlineDuration !== null;
+  const hasDeadline = selected.stageDeadline !== null;
   /** The editor may be open before a value is stored (just toggled on). */
   const [isPending, setIsPending] = useState(false);
   const deadlineOn = hasDeadline || isPending;
@@ -81,10 +82,10 @@ export const SubProcessField = reatomComponent(function SubProcessField({
   }, [selected.id]);
 
   const summary = selected.stageDeadline
-    ? formatDateTime(selected.stageDeadline)
-    : selected.stageDeadlineDuration
-      ? `${t('bpmnEditor.inspector.stageDeadlineRelativePrefix')} ${formatDurationToReadable(selected.stageDeadlineDuration)}`
-      : t('bpmnEditor.inspector.stageDeadlineNone');
+    ? isRelativeDeadline(selected.stageDeadline)
+      ? `${t('bpmnEditor.inspector.stageDeadlineRelativePrefix')} ${formatDurationToReadable(selected.stageDeadline)}`
+      : formatDateTime(selected.stageDeadline)
+    : t('bpmnEditor.inspector.stageDeadlineNone');
 
   const timeLabels = {
     hours: t('common.datePicker.hours'),
@@ -138,7 +139,6 @@ export const SubProcessField = reatomComponent(function SubProcessField({
 
                 setIsPending(false);
                 setSelectedStageDeadline(null);
-                setSelectedStageDeadlineDuration(null);
               }}
             />
           </Field>
@@ -169,7 +169,12 @@ export const SubProcessField = reatomComponent(function SubProcessField({
                 <DatePicker
                   mode="datetime"
                   clearable
-                  value={parseDateValue(selected.stageDeadline)}
+                  value={
+                    selected.stageDeadline &&
+                    !isRelativeDeadline(selected.stageDeadline)
+                      ? parseDateValue(selected.stageDeadline)
+                      : undefined
+                  }
                   locale={locale}
                   labels={timeLabels}
                   aria-label={t('bpmnEditor.inspector.stageDeadline')}
@@ -180,15 +185,18 @@ export const SubProcessField = reatomComponent(function SubProcessField({
                 />
               ) : (
                 <DurationPicker
-                  value={selected.stageDeadlineDuration ?? ''}
+                  value={
+                    selected.stageDeadline &&
+                    isRelativeDeadline(selected.stageDeadline)
+                      ? selected.stageDeadline
+                      : ''
+                  }
                   units={['years', 'months', 'days']}
                   labels={durationLabels}
                   aria-label={t('bpmnEditor.inspector.stageDeadline')}
                   onChange={(next) => {
                     setIsPending(false);
-                    setSelectedStageDeadlineDuration(
-                      next === 'PT0S' ? null : next,
-                    );
+                    setSelectedStageDeadline(next === 'PT0S' ? null : next);
                   }}
                 />
               )}

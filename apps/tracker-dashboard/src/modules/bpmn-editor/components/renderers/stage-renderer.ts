@@ -7,7 +7,7 @@ import type { Element, Shape } from 'bpmn-js/lib/model/Types';
 import type EventBus from 'diagram-js/lib/core/EventBus';
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
-import { isStageElement } from '../../model/stage-definitions';
+import { isStageElement } from '../../model/definitions/stage-definitions';
 
 /**
  * Stage paint. The values resolve against the diagram tokens in

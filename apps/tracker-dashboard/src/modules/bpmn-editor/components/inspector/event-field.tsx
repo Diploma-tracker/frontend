@@ -14,24 +14,24 @@ import {
 import { Switch } from '@repo/ui-kit/components/common/form/switch';
 import { Textarea } from '@repo/ui-kit/components/common/form/textarea';
 
-import {
-  type SelectedElementInfo,
-  setSelectedConditionExpression,
-  setSelectedEventDefinition,
-  setSelectedEventInterrupting,
-  setSelectedEventThrowing,
-} from '../../model/editor-model';
+import type { EventInfo } from '../../model/definitions/element-definitions';
 import {
   type EventDefinitionKey,
   eventDefinitionOptions,
   isBoundaryEventType,
   isIntermediateEventType,
   isToggleableIntermediateDefinition,
-} from '../../model/event-definitions';
+} from '../../model/definitions/event-definitions';
+import {
+  setSelectedConditionExpression,
+  setSelectedEventDefinition,
+  setSelectedEventInterrupting,
+  setSelectedEventThrowing,
+} from '../../model/editor-model';
 import { TimerField } from './timer-field';
 
 export interface EventFieldProps {
-  selected: SelectedElementInfo;
+  selected: EventInfo;
 }
 
 /**
@@ -43,7 +43,7 @@ export const EventField = reatomComponent(function EventField({
   selected,
 }: EventFieldProps) {
   const { t } = useTranslation();
-  const definition: EventDefinitionKey = selected.eventDefinition ?? 'none';
+  const definition: EventDefinitionKey = selected.eventDefinition;
   const options = eventDefinitionOptions(selected.type);
   const isConditional = definition === 'conditional';
   const isTimer = definition === 'timer';

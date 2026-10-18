@@ -3,28 +3,27 @@ import type BpmnModeler from 'bpmn-js/lib/Modeler';
 import type { Element } from 'bpmn-js/lib/model/Types';
 
 import {
-  DiagramService,
-  isConnection,
-  isConnectionType,
-  readStageAttributes,
-  toDiagramElement,
-} from './diagram-api';
-import type { EditorToolName, PaletteElement } from './element-catalog';
+  type ElementInfo,
+  describeElement,
+} from './definitions/element-definitions';
 import {
   EVENT_DEFINITION_TYPES,
   type EventDefinitionKey,
-  TIMER_TYPES,
   TIMER_TYPE_PROPERTY,
   type TimerType,
-  eventDefinitionKeyOf,
   eventDefinitionKeys,
   intermediateEventElementType,
   isEventType,
   isIntermediateEventType,
-} from './event-definitions';
-import { isGatewayElementType } from './gateway-definitions';
-import { type StageInfo, isStageElement } from './stage-definitions';
-import { starterDiagramXml } from './starter-diagram';
+  readEventDefinition,
+} from './definitions/event-definitions';
+import { isGatewayElementType } from './definitions/gateway-definitions';
+import {
+  type StageAttributes,
+  type StageInfo,
+  isRelativeDeadline,
+  isStageElement,
+} from './definitions/stage-definitions';
 import {
   DECISION_KEY_ATTRIBUTE,
   type DecisionValue,
@@ -34,75 +33,29 @@ import {
   createSetVariableExpression,
   isApproveTask,
   isGatewayType,
-  parseScriptExpressions,
   serializeScriptExpressions,
-} from './task-definitions';
+} from './definitions/task-definitions';
+import {
+  DiagramService,
+  getFlowSource,
+  isConnection,
+  isDefaultFlowOf,
+  readAttribute,
+  readStageAttributes,
+} from './diagram-api';
+import type { EditorToolName, PaletteElement } from './element-catalog';
+import { starterDiagramXml } from './starter-diagram';
 
 /** Zoom bounds applied by the `zoomBy` action. */
 const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 4;
 const ZOOM_STEP = 1.2;
 
-export interface GatewayFlowInfo {
-  id: string;
-  name: string;
-  conditionExpression: string | null;
-  isDefault: boolean;
-}
-
 /** An approve task offered as a branch source in the condition picker. */
 export interface DecisionTaskOption {
   id: string;
   name: string;
   decisionKey: string;
-}
-
-export interface SelectedElementInfo {
-  id: string;
-  type: string;
-  name: string;
-  /** Custom `taskDefinitionKey` attribute, only set on the supported tasks. */
-  taskDefinitionKey: string | null;
-  /** Custom `roles` attribute, stored as a JSON array string. */
-  roles: string[];
-  /** Custom `formKey` attribute, only set on the fill-form task. */
-  formKey: string | null;
-  /** Custom `decisionKey` attribute, only set on approve tasks. */
-  decisionKey: string | null;
-  /** Custom `expressions` attribute, only set on scripting tasks. */
-  scriptExpressions: ScriptExpression[];
-  /** Condition expression body of a sequence flow or conditional event. */
-  conditionExpression: string | null;
-  /** Attached event definition of an event element, `none` when plain. */
-  eventDefinition: EventDefinitionKey | null;
-  /** Whether a boundary (or start) event interrupts its scope. */
-  isInterrupting: boolean;
-  /** Kind of a timer event's definition, `null` when not a timer. */
-  timerType: TimerType | null;
-  /** Value of a timer event's definition, `''` when unset. */
-  timerValue: string | null;
-  /** Whether the selected flow is its gateway's `default` flow. */
-  isDefaultFlow: boolean;
-  /** Whether the selected flow leaves a gateway (so it may be a default). */
-  sourceIsGateway: boolean;
-  /** Outgoing flows of a selected gateway, in order. */
-  outgoingFlows: GatewayFlowInfo[];
-  /** Business-object id of the selected gateway's `default` flow. */
-  defaultFlowId: string | null;
-  /**
-   * Decision variable of the approve task feeding the selection — the source
-   * task for a flow, or the incoming approve task for a gateway.
-   */
-  feedingDecisionKey: string | null;
-  /** Whether the selected subprocess is flagged as a stage. */
-  isStage: boolean;
-  /** Absolute `stage` deadline of the selected stage; `null` when unset. */
-  stageDeadline: string | null;
-  /**
-   * Relative `stage` deadline of the selected stage — an ISO 8601 duration
-   * from the stage's runtime start; `null` when unset.
-   */
-  stageDeadlineDuration: string | null;
 }
 
 export interface DiagramStats {
@@ -149,7 +102,7 @@ export const isCommandPaletteOpenAtom = atom<boolean>(
 );
 export const canUndoAtom = atom<boolean>(false, 'bpmnEditor.canUndo');
 export const canRedoAtom = atom<boolean>(false, 'bpmnEditor.canRedo');
-export const selectedElementAtom = atom<SelectedElementInfo | null>(
+export const selectedElementAtom = atom<ElementInfo | null>(
   null,
   'bpmnEditor.selectedElement',
 );
@@ -225,7 +178,7 @@ export const setPropertiesOpen = action((open: boolean) => {
   isPropertiesOpenAtom.set(open);
 });
 
-export const setSelectedElement = action((info: SelectedElementInfo | null) => {
+export const setSelectedElement = action((info: ElementInfo | null) => {
   selectedElementAtom.set(info);
 });
 
@@ -246,204 +199,6 @@ export const setXml = action((xml: string) => {
 export const setError = action((message: string | null) => {
   lastErrorAtom.set(message);
 });
-
-/** Reads a string custom attribute from the element's business object. */
-const readStringAttribute = (element: Element, name: string): string | null => {
-  const value = element.businessObject?.get(name);
-
-  return typeof value === 'string' && value.length > 0 ? value : null;
-};
-
-/** `source` only exists on connections, so it is unwrapped structurally. */
-const getFlowSource = (flow: Element): Element | undefined =>
-  (flow as { source?: Element }).source;
-
-/** Parses the JSON-encoded `roles` attribute back into a list of role ids. */
-const readRolesAttribute = (element: Element): string[] => {
-  const raw = readStringAttribute(element, 'roles');
-
-  if (!raw) return [];
-
-  try {
-    const parsed: unknown = JSON.parse(raw);
-
-    return Array.isArray(parsed)
-      ? parsed.filter((role): role is string => typeof role === 'string')
-      : [];
-  } catch {
-    return [];
-  }
-};
-
-/** Condition expression body of a sequence flow, if any. */
-const readConditionExpression = (element: Element): string | null => {
-  const bo = element.businessObject;
-
-  const body = bo?.conditionExpression?.body;
-
-  if (typeof body === 'string' && body.length > 0) return body;
-
-  const eventDefs = (bo?.eventDefinitions ?? []) as Array<{
-    condition?: { body?: unknown };
-  }>;
-
-  for (const def of eventDefs) {
-    const defBody = def.condition?.body;
-
-    if (typeof defBody === 'string' && defBody.length > 0) return defBody;
-  }
-
-  return null;
-};
-
-/** True when `flow` is the `default` outgoing flow of `source`. */
-const isDefaultFlowOf = (source: Element | undefined, flow: Element): boolean =>
-  !!source && source.businessObject?.default === flow.businessObject;
-
-interface EventDefinitionLike {
-  $type?: string;
-  condition?: { body?: unknown };
-  timeDuration?: { body?: unknown };
-  timeDate?: { body?: unknown };
-  timeCycle?: { body?: unknown };
-}
-
-/** Attached `bpmn:*EventDefinition`s of an element, if any. */
-const readEventDefinitions = (element: Element): EventDefinitionLike[] => {
-  const defs = (element.businessObject as { eventDefinitions?: unknown })
-    ?.eventDefinitions;
-
-  return Array.isArray(defs) ? (defs as EventDefinitionLike[]) : [];
-};
-
-/** UI key of an event's first attached definition. */
-const readEventDefinition = (element: Element): EventDefinitionKey =>
-  eventDefinitionKeyOf(readEventDefinitions(element)[0]?.$type);
-
-/** Whether a boundary event interrupts, or a start event is interrupting. */
-const readIsInterrupting = (element: Element): boolean => {
-  if (element.type === 'bpmn:BoundaryEvent') {
-    return element.businessObject?.cancelActivity !== false;
-  }
-
-  if (element.type === 'bpmn:StartEvent') {
-    return element.businessObject?.isInterrupting !== false;
-  }
-
-  return true;
-};
-
-/** Kind and value of a timer event's definition. */
-const readTimer = (element: Element): { type: TimerType; value: string } => {
-  const definition = readEventDefinitions(element).find(
-    (def) => def.$type === 'bpmn:TimerEventDefinition',
-  );
-
-  if (!definition) return { type: 'duration', value: '' };
-
-  for (const type of TIMER_TYPES) {
-    const body = (definition as Record<string, { body?: unknown } | undefined>)[
-      TIMER_TYPE_PROPERTY[type]
-    ]?.body;
-
-    if (typeof body === 'string' && body.length > 0)
-      return { type, value: body };
-  }
-
-  return { type: 'duration', value: '' };
-};
-
-/** Outgoing sequence flows of a gateway, flattened for the panel. */
-const readOutgoingFlows = (gateway: Element): GatewayFlowInfo[] =>
-  ((gateway.outgoing ?? []) as unknown as Element[])
-    .filter((flow) => isConnection(flow))
-    .map((flow) => ({
-      id: flow.id,
-      name: flow.businessObject?.name ?? '',
-      conditionExpression: readConditionExpression(flow),
-      isDefault: isDefaultFlowOf(gateway, flow),
-    }));
-
-/**
- * Decision variable of the approve task feeding `element` — its own for a task,
- * the incoming task's for a gateway, or the feeding gateway's for a flow.
- */
-const readFeedingDecisionKey = (element: Element): string | null => {
-  if (isConnection(element)) {
-    const source = getFlowSource(element);
-
-    return source && isGatewayType(source.type)
-      ? readFeedingDecisionKey(source)
-      : null;
-  }
-
-  for (const flow of (element.incoming ?? []) as unknown as Element[]) {
-    const source = getFlowSource(flow);
-    const key = source
-      ? readStringAttribute(source, DECISION_KEY_ATTRIBUTE)
-      : null;
-
-    if (key) return key;
-  }
-
-  return null;
-};
-
-/** Flattens a diagram element into the serialisable shape React renders from. */
-export const describeElement = (
-  element: Element | undefined,
-): SelectedElementInfo | null => {
-  const target = toDiagramElement(element);
-
-  if (!target) return null;
-
-  const connection = isConnection(target);
-  const source = connection ? getFlowSource(target) : undefined;
-  const sourceIsGateway = !!source && isGatewayType(source.type);
-  const gateway = !connection && isGatewayType(target.type) ? target : null;
-  const defaultFlowId = gateway?.businessObject?.default?.id;
-  const event = isEventType(target.type);
-  const eventDefinition = event ? readEventDefinition(target) : null;
-  const timer = event && eventDefinition === 'timer' ? readTimer(target) : null;
-  const stage = readStageAttributes(target);
-
-  return {
-    id: target.id,
-    type: target.type,
-    name: target.businessObject?.name ?? '',
-    taskDefinitionKey: readStringAttribute(target, 'taskDefinitionKey'),
-    roles: readRolesAttribute(target),
-    formKey: readStringAttribute(target, 'formKey'),
-    decisionKey: readStringAttribute(target, DECISION_KEY_ATTRIBUTE),
-    scriptExpressions: parseScriptExpressions(
-      readStringAttribute(target, SCRIPT_EXPRESSIONS_ATTRIBUTE),
-    ),
-    conditionExpression:
-      connection || isEventType(target.type)
-        ? readConditionExpression(target)
-        : null,
-    eventDefinition,
-    isInterrupting: isEventType(target.type)
-      ? readIsInterrupting(target)
-      : true,
-    timerType: timer?.type ?? null,
-    timerValue: timer?.value ?? null,
-    isDefaultFlow: connection && isDefaultFlowOf(source, target),
-    sourceIsGateway,
-    outgoingFlows: gateway ? readOutgoingFlows(gateway) : [],
-    defaultFlowId: typeof defaultFlowId === 'string' ? defaultFlowId : null,
-    feedingDecisionKey: connection
-      ? sourceIsGateway
-        ? readFeedingDecisionKey(target)
-        : null
-      : gateway
-        ? readFeedingDecisionKey(gateway)
-        : null,
-    isStage: isStageElement(target),
-    stageDeadline: stage?.deadline ?? null,
-    stageDeadlineDuration: stage?.deadlineDuration ?? null,
-  };
-};
 
 export const readStats = (): DiagramStats => {
   if (!service) return { shapes: 0, connections: 0 };
@@ -505,11 +260,11 @@ export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
 
   for (const element of elements) {
     if (element.type !== 'bpmn:UserTask') continue;
-    if (!isApproveTask(readStringAttribute(element, 'taskDefinitionKey'))) {
+    if (!isApproveTask(readAttribute(element, 'taskDefinitionKey'))) {
       continue;
     }
 
-    const decisionKey = readStringAttribute(element, DECISION_KEY_ATTRIBUTE);
+    const decisionKey = readAttribute(element, DECISION_KEY_ATTRIBUTE);
 
     if (!decisionKey || seen.has(decisionKey)) continue;
 
@@ -617,45 +372,32 @@ export const setSelectedIsStage = action((isStage: boolean) => {
 });
 
 /**
- * Persists an absolute deadline on the selected stage; `null` clears it. A set
- * absolute deadline replaces any relative one — the two shapes are exclusive.
+ * Persists the selected stage's ISO 8601 deadline — an absolute datetime or a
+ * relative duration from the stage's runtime start; `null` clears it. The two
+ * shapes are exclusive, so writing one replaces the other.
  */
 export const setSelectedStageDeadline = action((deadline: string | null) => {
   const element = getCurrentElement();
   if (!service || !element || !isStageElement(element)) return;
 
-  const current = readStageAttributes(element) ?? {};
-  if ((current.deadline ?? null) === (deadline ?? null)) return;
+  const relative = deadline !== null && isRelativeDeadline(deadline);
+  const next: StageAttributes =
+    deadline === null
+      ? {}
+      : relative
+        ? { deadlineDuration: deadline }
+        : { deadline };
 
-  service.writeStageAttributes(element, {
-    ...current,
-    deadline: deadline ?? undefined,
-    deadlineDuration: deadline ? undefined : current.deadlineDuration,
-  });
+  const current = readStageAttributes(element) ?? {};
+  const unchanged =
+    (current.deadline ?? null) === (next.deadline ?? null) &&
+    (current.deadlineDuration ?? null) === (next.deadlineDuration ?? null);
+
+  if (unchanged) return;
+
+  service.writeStageAttributes(element, next);
   updateCurrent();
 });
-
-/**
- * Persists a relative deadline on the selected stage — an ISO 8601 duration
- * from the stage's runtime start; `null` clears it. A set relative deadline
- * replaces any absolute one — the two shapes are exclusive.
- */
-export const setSelectedStageDeadlineDuration = action(
-  (duration: string | null) => {
-    const element = getCurrentElement();
-    if (!service || !element || !isStageElement(element)) return;
-
-    const current = readStageAttributes(element) ?? {};
-    if ((current.deadlineDuration ?? null) === (duration ?? null)) return;
-
-    service.writeStageAttributes(element, {
-      ...current,
-      deadlineDuration: duration ?? undefined,
-      deadline: duration ? undefined : current.deadline,
-    });
-    updateCurrent();
-  },
-);
 
 /** Persists the process name shown in the general properties panel. */
 export const renameProcess = action((name: string) => {
@@ -737,9 +479,16 @@ const persistScriptExpressions = (expressions: ScriptExpression[]): void => {
   updateCurrent();
 };
 
+/** Expressions of the selected scripting task, empty for any other element. */
+const currentScriptExpressions = (): ScriptExpression[] => {
+  const selected = selectedElementAtom();
+
+  return selected?.kind === 'scriptTask' ? selected.scriptExpressions : [];
+};
+
 /** Appends an empty set-variable expression to the selected scripting task. */
 export const addSelectedScriptExpression = action(() => {
-  const current = selectedElementAtom()?.scriptExpressions ?? [];
+  const current = currentScriptExpressions();
 
   persistScriptExpressions([...current, createSetVariableExpression()]);
 });
@@ -747,7 +496,7 @@ export const addSelectedScriptExpression = action(() => {
 /** Replaces one expression in the selected scripting task's script. */
 export const setSelectedScriptExpression = action(
   (index: number, expression: ScriptExpression) => {
-    const current = selectedElementAtom()?.scriptExpressions ?? [];
+    const current = currentScriptExpressions();
 
     persistScriptExpressions(
       current.map((item, position) => (position === index ? expression : item)),
@@ -757,7 +506,7 @@ export const setSelectedScriptExpression = action(
 
 /** Removes one expression from the selected scripting task's script. */
 export const removeSelectedScriptExpression = action((index: number) => {
-  const current = selectedElementAtom()?.scriptExpressions ?? [];
+  const current = currentScriptExpressions();
 
   persistScriptExpressions(current.filter((_, position) => position !== index));
 });
@@ -971,7 +720,7 @@ export const deleteSelected = action(() => {
 export const changeSelectedType = action((target: PaletteElement) => {
   const selected = selectedElementAtom();
 
-  if (!service || !selected || isConnectionType(selected.type)) return;
+  if (!service || !selected || selected.kind === 'connection') return;
 
   const element = getElementById(selected.id);
 

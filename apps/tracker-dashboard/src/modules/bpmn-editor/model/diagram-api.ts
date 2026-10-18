@@ -21,7 +21,6 @@ import type SpaceTool from 'diagram-js/lib/features/space-tool/SpaceTool';
 import type ToolManager from 'diagram-js/lib/features/tool-manager/ToolManager';
 import type { ElementLike, ShapeLike } from 'diagram-js/lib/model/Types';
 
-import type { EditorToolName, PaletteElement } from './element-catalog';
 import {
   STAGE_ATTR,
   STAGE_ORDER_ATTR,
@@ -32,7 +31,8 @@ import {
   parseStageOrder,
   serializeStageAttributes,
   serializeStageOrder,
-} from './stage-definitions';
+} from './definitions/stage-definitions';
+import type { EditorToolName, PaletteElement } from './element-catalog';
 
 /** BPMN types that only make sense as a connection. */
 const CONNECTION_TYPES: string[] = [
@@ -94,6 +94,17 @@ export const isShape = (element: { type: string } | null): boolean =>
 /** Reads the stage attributes off an element, or `null` when it is not a stage. */
 export const readStageAttributes = (element: Element): StageAttributes | null =>
   parseStageAttributes(readAttribute(element, STAGE_ATTR));
+
+/** `source` only exists on connections, so it is unwrapped structurally. */
+export const getFlowSource = (flow: Element): Element | undefined =>
+  (flow as { source?: Element }).source;
+
+/** True when `flow` is the `default` outgoing flow of `source`. */
+export const isDefaultFlowOf = (
+  source: Element | undefined,
+  flow: Element,
+): boolean =>
+  !!source && source.businessObject?.default === flow.businessObject;
 
 /** Viewport centre in diagram coordinates — where palette drops land. */
 const getViewportCenter = (canvas: Canvas): { x: number; y: number } => {
@@ -168,7 +179,10 @@ const splitElementAttributes = (
 };
 
 /** Reads a string custom attribute off an element's business object. */
-const readAttribute = (element: Element, name: string): string | null => {
+export const readAttribute = (
+  element: Element,
+  name: string,
+): string | null => {
   const value = element.businessObject?.get(name);
 
   return typeof value === 'string' && value.length > 0 ? value : null;

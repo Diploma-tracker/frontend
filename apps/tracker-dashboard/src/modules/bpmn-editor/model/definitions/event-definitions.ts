@@ -1,4 +1,5 @@
 import { k } from '@/shared/utils/i18n';
+import type { Element } from 'bpmn-js/lib/model/Types';
 
 /** BPMN types that carry an event definition. */
 export const EVENT_TYPES: readonly string[] = [
@@ -125,6 +126,28 @@ export const eventDefinitionKeyOf = (
   bpmnType: string | null | undefined,
 ): EventDefinitionKey =>
   (bpmnType ? BPMN_TYPE_TO_KEY.get(bpmnType) : undefined) ?? 'none';
+
+interface EventDefinitionLike {
+  $type?: string;
+  condition?: { body?: unknown };
+  timeDuration?: { body?: unknown };
+  timeDate?: { body?: unknown };
+  timeCycle?: { body?: unknown };
+}
+
+/** Attached `bpmn:*EventDefinition`s of an element, if any. */
+export const readEventDefinitions = (
+  element: Element,
+): EventDefinitionLike[] => {
+  const defs = (element.businessObject as { eventDefinitions?: unknown })
+    ?.eventDefinitions;
+
+  return Array.isArray(defs) ? (defs as EventDefinitionLike[]) : [];
+};
+
+/** UI key of an event's first attached definition. */
+export const readEventDefinition = (element: Element): EventDefinitionKey =>
+  eventDefinitionKeyOf(readEventDefinitions(element)[0]?.$type);
 
 export interface EventDefinitionOption {
   value: EventDefinitionKey;

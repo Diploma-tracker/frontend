@@ -5,9 +5,9 @@ import { reatomComponent } from '@reatom/react';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 
 import customModdle from '../model/custom-moddle.json';
+import { describeElement } from '../model/definitions/element-definitions';
 import {
   activeToolAtom,
-  describeElement,
   isReadyAtom,
   readStats,
   refreshStageState,

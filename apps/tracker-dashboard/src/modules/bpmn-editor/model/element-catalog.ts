@@ -107,9 +107,6 @@ export const createGroups: CreateGroup[] = [
   { id: 'annotation', labelKey: k('bpmnEditor.palette.groups.annotation') },
 ];
 
-// TODO: Replace with a backend request once the real BPMN element catalog is
-// available. Canvas code must only depend on the `PaletteElement` contract so
-// that swapping the loader is the only change needed.
 export const paletteElements: PaletteElement[] = [
   {
     id: 'start-event',
