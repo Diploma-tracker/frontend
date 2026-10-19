@@ -7,6 +7,7 @@ import {
   ArrowsOutIcon,
   CopyIcon,
   FloppyDiskIcon,
+  MagnifyingGlassIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
   TrashIcon,
@@ -15,6 +16,7 @@ import {
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
+import { Shortcut } from '@repo/ui-kit/components/common/data-display/shortcut';
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +24,7 @@ import {
 } from '@repo/ui-kit/components/common/floating/tooltip';
 import { InlineInput } from '@repo/ui-kit/components/common/form/inline-input';
 import { Card } from '@repo/ui-kit/components/common/layout/card';
+import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
 import { saveDiagram } from '../model/diagram-persistence';
 import {
@@ -39,7 +42,7 @@ import {
   zoomIn,
   zoomOut,
 } from '../model/editor-model';
-import { BpmnSearch } from './bpmn-search';
+import { setCommandPaletteOpen } from '../model/editor-model';
 
 interface ActionProps {
   labelKey: string;
@@ -49,6 +52,34 @@ interface ActionProps {
   destructive?: boolean;
   active?: boolean;
 }
+
+export const BpmnSearch = reatomComponent(function BpmnSearch() {
+  const { t } = useTranslation();
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          intent="neutral"
+          size="icon-sm"
+          className="ui:size-8"
+          aria-label={t('bpmnEditor.command.open')}
+          onClick={() => setCommandPaletteOpen(true)}
+        >
+          <MagnifyingGlassIcon className="size-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        <span className="flex items-center gap-2">
+          {t('bpmnEditor.command.open')}
+          <Shortcut keys="Mod+k" />
+        </span>
+      </TooltipContent>
+    </Tooltip>
+  );
+});
 
 const Action = ({
   labelKey,
@@ -111,7 +142,7 @@ const ContextActions = reatomComponent(function ContextActions() {
         onValueChange={renameSelected}
       />
 
-      <div className="h-5 w-px bg-border" />
+      <Separator orientation="vertical" className="max-h-5" />
 
       <Action
         labelKey="bpmnEditor.menu.duplicate"
@@ -131,12 +162,12 @@ const ContextActions = reatomComponent(function ContextActions() {
 });
 
 /**
- * Single-row top bar. Three fixed zones so the bar never reflows: history on the
- * left, context-aware actions in the middle, global actions on the right. The
- * centre swaps between viewport controls and the actions for the current
- * selection.
+ * Single-row top action bar. Three fixed zones so the bar never reflows:
+ * history on the left, context-aware actions in the middle, global actions on
+ * the right. The centre swaps between viewport controls and the actions for the
+ * current selection.
  */
-export const BpmnTopbar = reatomComponent(function BpmnTopbar() {
+export const BpmnActionBar = reatomComponent(function BpmnActionBar() {
   const canUndo = canUndoAtom();
   const canRedo = canRedoAtom();
   const [isSaving, setIsSaving] = useState(false);
@@ -170,7 +201,7 @@ export const BpmnTopbar = reatomComponent(function BpmnTopbar() {
         </Action>
       </div>
 
-      <div className="mx-1 h-5 w-px shrink-0 bg-border" />
+      <Separator orientation="vertical" className="mx-1 max-h-5 shrink-0" />
 
       <div className="flex min-w-0 flex-1 items-center gap-1">
         <ContextActions />

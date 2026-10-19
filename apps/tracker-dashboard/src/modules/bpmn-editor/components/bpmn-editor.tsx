@@ -8,12 +8,12 @@ import { cn } from '@repo/ui-kit/lib/utils';
 
 import { PageLayout } from '../../../layouts/page-layout/page-layout';
 import { isPropertiesOpenAtom, lastErrorAtom } from '../model/editor-model';
+import { BpmnActionBar } from './bpmn-action-bar';
 import { BpmnCanvas } from './bpmn-canvas';
 import { BpmnCommandPalette } from './bpmn-command-palette';
 import { BpmnKeyboard } from './bpmn-keyboard';
 import { BpmnProperties, BpmnPropertiesPill } from './bpmn-properties';
-import { BpmnToolRail } from './bpmn-tool-rail';
-import { BpmnTopbar } from './bpmn-topbar';
+import { BpmnToolBar } from './bpmn-tool-bar';
 
 const INNER_PADDING = '1rem';
 
@@ -39,16 +39,13 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
           }}
         >
           <div className="pointer-events-auto absolute left-1/2 w-full max-w-200 -translate-x-1/2">
-            <BpmnTopbar />
+            <BpmnActionBar />
           </div>
 
           <div className="pointer-events-auto absolute top-1/2 max-h-8/12 w-16 -translate-y-1/2">
-            <BpmnToolRail />
+            <BpmnToolBar />
           </div>
 
-          {/* Stays mounted while closed so it can slide out; `invisible` drops it
-              from the tab order and the accessibility tree once the exit
-              transition finishes. */}
           <div
             aria-hidden={!isPropertiesOpen}
             className={cn(
@@ -61,8 +58,6 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
             <BpmnProperties />
           </div>
 
-          {/* The pill positions itself against the overlay, which is
-              `pointer-events-none` — so it opts back in on its own button. */}
           <BpmnPropertiesPill
             className={cn(
               'pointer-events-auto absolute top-1/2 right-0 z-40 size-9 -translate-y-1/2 transition-[translate,opacity] duration-200 ease-out',

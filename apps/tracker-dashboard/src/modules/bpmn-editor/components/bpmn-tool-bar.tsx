@@ -1,8 +1,10 @@
+import { Fragment } from 'react';
+
 import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
-import { Kbd } from '@repo/ui-kit/components/common/data-display/kbd';
+import { Shortcut } from '@repo/ui-kit/components/common/data-display/shortcut';
 import {
   Tooltip,
   TooltipContent,
@@ -10,7 +12,7 @@ import {
 } from '@repo/ui-kit/components/common/floating/tooltip';
 import { Card } from '@repo/ui-kit/components/common/layout/card';
 import { ScrollArea } from '@repo/ui-kit/components/common/layout/scroll-area';
-import { cn } from '@repo/ui-kit/lib/utils';
+import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
 import {
   activateTool,
@@ -24,7 +26,7 @@ import {
   toolEntries,
 } from '../model/element-catalog';
 
-interface RailButtonProps {
+interface ToolButtonProps {
   labelKey: string;
   descriptionKey: string;
   shortcut?: string;
@@ -34,17 +36,17 @@ interface RailButtonProps {
 }
 
 /**
- * A single rail entry. The tooltip carries the name, the description and — only
- * where bpmn-js actually binds one — the keyboard shortcut.
+ * A single toolbar entry. The tooltip carries the name, the description and —
+ * only where bpmn-js actually binds one — the keyboard shortcut.
  */
-const RailButton = ({
+const ToolButton = ({
   labelKey,
   descriptionKey,
   shortcut,
   active = false,
   children,
   onClick,
-}: RailButtonProps) => {
+}: ToolButtonProps) => {
   const { t } = useTranslation();
 
   return (
@@ -66,13 +68,13 @@ const RailButton = ({
       <TooltipContent side="right" className="flex max-w-64 flex-col gap-1">
         <span className="font-semibold">{t(labelKey)}</span>
         <span className="text-background/70">{t(descriptionKey)}</span>
-        {shortcut && <Kbd className="mt-0.5 w-fit">{shortcut}</Kbd>}
+        {shortcut && <Shortcut keys={shortcut} className="mt-0.5 w-fit" />}
       </TooltipContent>
     </Tooltip>
   );
 };
 
-const ToolRailItem = reatomComponent(function ToolRailItem({
+const ToolBarItem = reatomComponent(function ToolBarItem({
   entry,
   active,
 }: {
@@ -82,7 +84,7 @@ const ToolRailItem = reatomComponent(function ToolRailItem({
   const Icon = entry.icon;
 
   return (
-    <RailButton
+    <ToolButton
       labelKey={entry.labelKey}
       descriptionKey={entry.descriptionKey}
       shortcut={entry.shortcut}
@@ -90,11 +92,11 @@ const ToolRailItem = reatomComponent(function ToolRailItem({
       onClick={(event) => activateTool(entry.tool, event.nativeEvent)}
     >
       <Icon className="size-4" />
-    </RailButton>
+    </ToolButton>
   );
 });
 
-const CreateRailItem = reatomComponent(function CreateRailItem({
+const CreateBarItem = reatomComponent(function CreateBarItem({
   element,
 }: {
   element: PaletteElement;
@@ -102,13 +104,13 @@ const CreateRailItem = reatomComponent(function CreateRailItem({
   const Icon = element.icon;
 
   return (
-    <RailButton
+    <ToolButton
       labelKey={element.labelKey}
       descriptionKey={element.descriptionKey}
       onClick={() => spawnPaletteElement(element)}
     >
       <Icon className="size-4" />
-    </RailButton>
+    </ToolButton>
   );
 });
 
@@ -117,7 +119,7 @@ const CreateRailItem = reatomComponent(function CreateRailItem({
  * hidden via `bpmn-canvas.css`. Icons only — every entry explains itself in its
  * tooltip, together with its shortcut where bpmn-js defines one.
  */
-export const BpmnToolRail = reatomComponent(function BpmnToolRail() {
+export const BpmnToolBar = reatomComponent(function BpmnToolBar() {
   const activeTool = activeToolAtom();
 
   return (
@@ -125,23 +127,22 @@ export const BpmnToolRail = reatomComponent(function BpmnToolRail() {
       <ScrollArea className="h-full min-h-0">
         <div className="flex flex-col items-center gap-1 pb-1">
           {toolEntries.map((entry) => (
-            <div
+            <ToolBarItem
               key={entry.id}
-              className={cn('flex flex-col items-center gap-1')}
-            >
-              <ToolRailItem entry={entry} active={activeTool === entry.tool} />
-            </div>
+              entry={entry}
+              active={activeTool === entry.tool}
+            />
           ))}
 
           {createEntries.map(({ group, elements }) => (
-            <div
-              key={group.id}
-              className="flex flex-col items-center gap-1 border-t pt-1.5"
-            >
-              {elements.map((element) => (
-                <CreateRailItem key={element.id} element={element} />
-              ))}
-            </div>
+            <Fragment key={group.id}>
+              <Separator className="my-1" />
+              <div className="flex flex-col items-center gap-1">
+                {elements.map((element) => (
+                  <CreateBarItem key={element.id} element={element} />
+                ))}
+              </div>
+            </Fragment>
           ))}
         </div>
       </ScrollArea>
