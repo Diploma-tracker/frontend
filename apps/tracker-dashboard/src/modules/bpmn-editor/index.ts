@@ -9,6 +9,38 @@ export {
 } from './components/bpmn-properties';
 export { BpmnToolBar } from './components/bpmn-tool-bar';
 export {
+  type DecisionTaskOption,
+  getDecisionTaskOptions,
+  setSelectedApprovalCondition,
+  setSelectedConditionExpression,
+} from './model/actions/conditions';
+export {
+  setSelectedEventDefinition,
+  setSelectedEventInterrupting,
+  setSelectedEventThrowing,
+  setSelectedTimerValue,
+} from './model/actions/events';
+export {
+  setGatewayDefaultFlow,
+  setSelectedAsDefaultFlow,
+  setSelectedGatewayType,
+} from './model/actions/gateways';
+export {
+  refreshStageState,
+  reorderStages,
+  setSelectedIsStage,
+  setSelectedStageDeadline,
+  stagesAtom,
+} from './model/actions/stages';
+export {
+  addSelectedScriptExpression,
+  removeSelectedScriptExpression,
+  setSelectedDecisionKey,
+  setSelectedFormKey,
+  setSelectedRoles,
+  setSelectedScriptExpression,
+} from './model/actions/tasks';
+export {
   DiagramService,
   type SpawnOptions,
   getFlowSource,
@@ -21,11 +53,9 @@ export {
   toDiagramElement,
 } from './model/diagram-api';
 export {
-  type DecisionTaskOption,
   type EditorErrorKey,
   activateTool,
   activeToolAtom,
-  addSelectedScriptExpression,
   canRedoAtom,
   canUndoAtom,
   cancelChanges,
@@ -33,7 +63,6 @@ export {
   duplicateSelected,
   editorErrorKeys,
   fitViewport,
-  getDecisionTaskOptions,
   getDiagramService,
   isCommandPaletteOpenAtom,
   isPropertiesOpenAtom,
@@ -41,38 +70,19 @@ export {
   lastErrorAtom,
   pickElement,
   redo,
-  refreshStageState,
-  removeSelectedScriptExpression,
   renameSelected,
-  reorderStages,
   revealElement,
   selectedElementAtom,
   setActiveTool,
   setCommandPaletteOpen,
   setError,
-  setGatewayDefaultFlow,
   setModeler,
   setPropertiesOpen,
   setReady,
-  setSelectedApprovalCondition,
-  setSelectedAsDefaultFlow,
-  setSelectedConditionExpression,
-  setSelectedDecisionKey,
   setSelectedElement,
-  setSelectedEventDefinition,
-  setSelectedEventInterrupting,
-  setSelectedEventThrowing,
-  setSelectedFormKey,
-  setSelectedGatewayType,
-  setSelectedIsStage,
-  setSelectedRoles,
-  setSelectedScriptExpression,
-  setSelectedStageDeadline,
-  setSelectedTimerValue,
   setTool,
   setUndoRedoState,
   spawnPaletteElement,
-  stagesAtom,
   toggleCommandPalette,
   undo,
   zoomIn,

@@ -4,13 +4,13 @@ import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 
+import { refreshStageState } from '../model/actions/stages';
 import customModdle from '../model/custom-moddle.json';
 import { describeElement } from '../model/definitions/element-definitions';
 import {
   activeToolAtom,
   editorErrorKeys,
   isReadyAtom,
-  refreshStageState,
   setActiveTool,
   setError,
   setModeler,

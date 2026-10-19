@@ -21,12 +21,9 @@ import { reatomComponent } from '@reatom/react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
+import { reorderStages, stagesAtom } from '../../model/actions/stages';
 import type { StageInfo } from '../../model/definitions/stage-definitions';
-import {
-  pickElement,
-  reorderStages,
-  stagesAtom,
-} from '../../model/editor-model';
+import { pickElement } from '../../model/editor-model';
 
 function StageRow({ stage }: { stage: StageInfo }) {
   const { t } = useTranslation();

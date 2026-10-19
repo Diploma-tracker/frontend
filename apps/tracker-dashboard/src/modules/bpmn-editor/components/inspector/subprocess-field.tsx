@@ -17,12 +17,12 @@ import {
 } from '@repo/ui-kit/components/common/form/field';
 import { Switch } from '@repo/ui-kit/components/common/form/switch';
 
-import type { SubProcessInfo } from '../../model/definitions/element-definitions';
-import { isRelativeDeadline } from '../../model/definitions/stage-definitions';
 import {
   setSelectedIsStage,
   setSelectedStageDeadline,
-} from '../../model/editor-model';
+} from '../../model/actions/stages';
+import type { SubProcessInfo } from '../../model/definitions/element-definitions';
+import { isRelativeDeadline } from '../../model/definitions/stage-definitions';
 
 export interface SubProcessFieldProps {
   selected: SubProcessInfo;

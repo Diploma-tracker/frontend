@@ -14,6 +14,12 @@ import {
 import { Switch } from '@repo/ui-kit/components/common/form/switch';
 import { Textarea } from '@repo/ui-kit/components/common/form/textarea';
 
+import { setSelectedConditionExpression } from '../../model/actions/conditions';
+import {
+  setSelectedEventDefinition,
+  setSelectedEventInterrupting,
+  setSelectedEventThrowing,
+} from '../../model/actions/events';
 import type { EventInfo } from '../../model/definitions/element-definitions';
 import {
   type EventDefinitionKey,
@@ -22,12 +28,6 @@ import {
   isIntermediateEventType,
   isToggleableIntermediateDefinition,
 } from '../../model/definitions/event-definitions';
-import {
-  setSelectedConditionExpression,
-  setSelectedEventDefinition,
-  setSelectedEventInterrupting,
-  setSelectedEventThrowing,
-} from '../../model/editor-model';
 import { TimerField } from './timer-field';
 
 export interface EventFieldProps {

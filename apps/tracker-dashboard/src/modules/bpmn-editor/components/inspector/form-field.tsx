@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from '@repo/ui-kit/components/common/form/select';
 
+import { setSelectedFormKey } from '../../model/actions/tasks';
 import { FORM_OPTIONS } from '../../model/definitions/task-definitions';
-import { setSelectedFormKey } from '../../model/editor-model';
 
 export interface FormFieldProps {
   formKey: string | null;

@@ -7,7 +7,7 @@ import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Field, FieldLabel } from '@repo/ui-kit/components/common/form/field';
 import { Input } from '@repo/ui-kit/components/common/form/input';
 
-import { setSelectedDecisionKey } from '../../model/editor-model';
+import { setSelectedDecisionKey } from '../../model/actions/tasks';
 
 export interface DecisionKeyFieldProps {
   elementId: string;
