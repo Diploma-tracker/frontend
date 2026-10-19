@@ -5,7 +5,7 @@
 - `src/app/`: bootstrap, environment, i18n, router, providers, and global styles.
 - `src/pages/`: route-level composition and local presentation state only.
 - `src/layouts/`: reusable screen shells such as `PageLayout`.
-- `src/modules/`: domain state and features for `app`, `auth`, `user`, `project-enrollment`, `defense`, and `thesis-process`.
+- `src/modules/`: domain state and features for `app`, `auth`, `user`, `project-enrollment`, `defense`, `thesis-process`, `project-definition`, `form-builder`, and `bpmn-editor`.
 - `src/shared/`: domain-neutral components, model helpers, utilities, assets, constants, and types.
 
 Modules expose their supported API from their root `index.ts`. Cross-module deep imports are forbidden. Module `models/` own Reatom state, data fetching, mutations, and business rules; `features/` own interactions and rendering. A module with global concerns exposes one provider that composes its internal setup.

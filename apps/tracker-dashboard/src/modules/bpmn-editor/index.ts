@@ -1,37 +1,34 @@
-export { BpmnActionBar } from './components/bpmn-action-bar';
-export { BpmnCanvas } from './components/bpmn-canvas';
-export { BpmnCommandPalette } from './components/bpmn-command-palette';
-export { BpmnEditor } from './components/bpmn-editor';
-export { BpmnKeyboard } from './components/bpmn-keyboard';
-export {
-  BpmnProperties,
-  BpmnPropertiesPill,
-} from './components/bpmn-properties';
-export { BpmnToolBar } from './components/bpmn-tool-bar';
+export { BpmnActionBar } from './features/bpmn-action-bar';
+export { BpmnCanvas } from './features/bpmn-canvas';
+export { BpmnCommandPalette } from './features/bpmn-command-palette';
+export { BpmnEditor } from './features/bpmn-editor';
+export { BpmnKeyboard } from './features/bpmn-keyboard';
+export { BpmnProperties, BpmnPropertiesPill } from './features/bpmn-properties';
+export { BpmnToolBar } from './features/bpmn-tool-bar';
 export {
   type DecisionTaskOption,
   getDecisionTaskOptions,
   setSelectedApprovalCondition,
   setSelectedConditionExpression,
-} from './model/actions/conditions';
+} from './models/actions/conditions';
 export {
   setSelectedEventDefinition,
   setSelectedEventInterrupting,
   setSelectedEventThrowing,
   setSelectedTimerValue,
-} from './model/actions/events';
+} from './models/actions/events';
 export {
   setGatewayDefaultFlow,
   setSelectedAsDefaultFlow,
   setSelectedGatewayType,
-} from './model/actions/gateways';
+} from './models/actions/gateways';
 export {
   refreshStageState,
   reorderStages,
   setSelectedIsStage,
   setSelectedStageDeadline,
   stagesAtom,
-} from './model/actions/stages';
+} from './models/actions/stages';
 export {
   addSelectedScriptExpression,
   removeSelectedScriptExpression,
@@ -39,7 +36,7 @@ export {
   setSelectedFormKey,
   setSelectedRoles,
   setSelectedScriptExpression,
-} from './model/actions/tasks';
+} from './models/actions/tasks';
 export {
   DiagramService,
   type SpawnOptions,
@@ -51,7 +48,7 @@ export {
   readAttribute,
   readStageAttributes,
   toDiagramElement,
-} from './model/diagram-api';
+} from './models/diagram-api';
 export {
   type EditorErrorKey,
   activateTool,
@@ -87,20 +84,22 @@ export {
   undo,
   zoomIn,
   zoomOut,
-} from './model/editor-model';
-export { starterDiagramXml } from './model/starter-diagram';
+} from './models/editor-model';
+export { starterDiagramXml } from './models/starter-diagram';
 export {
   type EditorToolName,
   type CreateGroupId,
   type PaletteElement,
   type ToolEntry,
   type CreateGroup,
+} from './models/element-types';
+export {
   createEntries,
   createGroups,
   paletteElements,
   toolEntries,
-} from './model/element-catalog';
-export { type SaveResult, saveDiagram } from './model/diagram-persistence';
+} from './features/element-catalog';
+export { type SaveResult, saveDiagram } from './models/diagram-persistence';
 export {
   type ApproveTaskInfo,
   type ConnectionInfo,
@@ -116,7 +115,7 @@ export {
   type ShapeInfo,
   type SubProcessInfo,
   type TaskInfo,
-} from './model/definitions/element-definitions';
+} from './models/definitions/element-definitions';
 export {
   STAGE_ATTR,
   STAGE_ORDER_ATTR,
@@ -132,7 +131,7 @@ export {
   type StageAttributes,
   type StageElementLike,
   type StageInfo,
-} from './model/definitions/stage-definitions';
+} from './models/definitions/stage-definitions';
 export {
   type CycleComponents,
   type DurationComponents,
@@ -148,4 +147,4 @@ export {
   parseDurationComponents,
   serializeCycle,
   serializeDurationComponents,
-} from './model/definitions/timer-definitions';
+} from './models/definitions/timer-definitions';
