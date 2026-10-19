@@ -1,3 +1,4 @@
+import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
 import {
@@ -18,6 +19,7 @@ import { BpmnToolBar } from './bpmn-tool-bar';
 const INNER_PADDING = '1rem';
 
 export const BpmnEditor = reatomComponent(function BpmnEditor() {
+  const { t } = useTranslation();
   const error = lastErrorAtom();
   const isPropertiesOpen = isPropertiesOpenAtom();
 
@@ -73,7 +75,7 @@ export const BpmnEditor = reatomComponent(function BpmnEditor() {
             className="absolute right-4 bottom-4 left-4 z-50"
             variant="destructive"
           >
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>{t(error)}</AlertDescription>
           </Alert>
         )}
 

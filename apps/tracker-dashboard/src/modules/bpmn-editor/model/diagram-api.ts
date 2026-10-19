@@ -667,28 +667,6 @@ export class DiagramService {
     });
   }
 
-  replaceElementType(element: Element, target: PaletteElement): Element | null {
-    try {
-      const replaced = this.faced.bpmnReplace.replaceElement(element, {
-        type: target.bpmnType,
-      } as TargetElement);
-
-      // bpmn-js only carries over properties shared by both descriptors, so the
-      // task discriminator has to be applied from the target explicitly.
-      const taskDefinitionKey = target.attrs?.taskDefinitionKey;
-
-      if (replaced && typeof taskDefinitionKey === 'string') {
-        this.faced.modeling.updateProperties(replaced, { taskDefinitionKey });
-      }
-
-      this.faced.selection.select(replaced);
-
-      return replaced;
-    } catch {
-      return null;
-    }
-  }
-
   async exportXml(): Promise<{ xml: string; error?: string }> {
     try {
       return { xml: await this.faced.export() };

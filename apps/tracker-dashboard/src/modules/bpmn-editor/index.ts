@@ -1,18 +1,141 @@
-export { BpmnEditor } from './components/bpmn-editor';
 export { BpmnActionBar } from './components/bpmn-action-bar';
 export { BpmnCanvas } from './components/bpmn-canvas';
 export { BpmnCommandPalette } from './components/bpmn-command-palette';
+export { BpmnEditor } from './components/bpmn-editor';
 export { BpmnKeyboard } from './components/bpmn-keyboard';
 export {
   BpmnProperties,
   BpmnPropertiesPill,
 } from './components/bpmn-properties';
 export { BpmnToolBar } from './components/bpmn-tool-bar';
-export * from './model/diagram-api';
-export * from './model/editor-model';
-export * from './model/element-catalog';
-export * from './model/diagram-persistence';
-export * from './model/definitions/element-definitions';
-export * from './model/definitions/stage-definitions';
-export * from './model/definitions/timer-definitions';
+export {
+  DiagramService,
+  type SpawnOptions,
+  getFlowSource,
+  isConnection,
+  isConnectionType,
+  isDefaultFlowOf,
+  isShape,
+  readAttribute,
+  readStageAttributes,
+  toDiagramElement,
+} from './model/diagram-api';
+export {
+  type DecisionTaskOption,
+  type EditorErrorKey,
+  activateTool,
+  activeToolAtom,
+  addSelectedScriptExpression,
+  canRedoAtom,
+  canUndoAtom,
+  cancelChanges,
+  deleteSelected,
+  duplicateSelected,
+  editorErrorKeys,
+  fitViewport,
+  getDecisionTaskOptions,
+  getDiagramService,
+  isCommandPaletteOpenAtom,
+  isPropertiesOpenAtom,
+  isReadyAtom,
+  lastErrorAtom,
+  pickElement,
+  redo,
+  refreshStageState,
+  removeSelectedScriptExpression,
+  renameSelected,
+  reorderStages,
+  revealElement,
+  selectedElementAtom,
+  setActiveTool,
+  setCommandPaletteOpen,
+  setError,
+  setGatewayDefaultFlow,
+  setModeler,
+  setPropertiesOpen,
+  setReady,
+  setSelectedApprovalCondition,
+  setSelectedAsDefaultFlow,
+  setSelectedConditionExpression,
+  setSelectedDecisionKey,
+  setSelectedElement,
+  setSelectedEventDefinition,
+  setSelectedEventInterrupting,
+  setSelectedEventThrowing,
+  setSelectedFormKey,
+  setSelectedGatewayType,
+  setSelectedIsStage,
+  setSelectedRoles,
+  setSelectedScriptExpression,
+  setSelectedStageDeadline,
+  setSelectedTimerValue,
+  setTool,
+  setUndoRedoState,
+  spawnPaletteElement,
+  stagesAtom,
+  toggleCommandPalette,
+  undo,
+  zoomIn,
+  zoomOut,
+} from './model/editor-model';
 export { starterDiagramXml } from './model/starter-diagram';
+export {
+  type EditorToolName,
+  type CreateGroupId,
+  type PaletteElement,
+  type ToolEntry,
+  type CreateGroup,
+  createEntries,
+  createGroups,
+  paletteElements,
+  toolEntries,
+} from './model/element-catalog';
+export { type SaveResult, saveDiagram } from './model/diagram-persistence';
+export {
+  type ApproveTaskInfo,
+  type ConnectionInfo,
+  describeElement,
+  type ElementBase,
+  type ElementInfo,
+  type EventInfo,
+  type FormTaskInfo,
+  type GatewayFlowInfo,
+  type GatewayInfo,
+  type PlainTaskInfo,
+  type ScriptTaskInfo,
+  type ShapeInfo,
+  type SubProcessInfo,
+  type TaskInfo,
+} from './model/definitions/element-definitions';
+export {
+  STAGE_ATTR,
+  STAGE_ORDER_ATTR,
+  isRelativeDeadline,
+  isStageElement,
+  isSubProcessType,
+  isValidDeadlineDuration,
+  orderStages,
+  parseStageAttributes,
+  parseStageOrder,
+  serializeStageAttributes,
+  serializeStageOrder,
+  type StageAttributes,
+  type StageElementLike,
+  type StageInfo,
+} from './model/definitions/stage-definitions';
+export {
+  type CycleComponents,
+  type DurationComponents,
+  EMPTY_CYCLE,
+  EMPTY_DURATION,
+  TIMER_PRESETS,
+  type TimerMode,
+  detectTimerField,
+  detectTimerMode,
+  isCronExpression,
+  isValidTimerValue,
+  parseCycle,
+  parseDurationComponents,
+  serializeCycle,
+  serializeDurationComponents,
+} from './model/definitions/timer-definitions';

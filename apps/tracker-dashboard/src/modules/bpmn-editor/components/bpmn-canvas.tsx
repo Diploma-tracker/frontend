@@ -8,19 +8,16 @@ import customModdle from '../model/custom-moddle.json';
 import { describeElement } from '../model/definitions/element-definitions';
 import {
   activeToolAtom,
+  editorErrorKeys,
   isReadyAtom,
-  readStats,
   refreshStageState,
   setActiveTool,
-  setCanvasSize,
   setError,
   setModeler,
   setReady,
   setSelectedElement,
-  setStats,
   setTool,
   setUndoRedoState,
-  setXml,
 } from '../model/editor-model';
 import { starterDiagramXml } from '../model/starter-diagram';
 import './bpmn-canvas.css';
@@ -144,8 +141,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
       const { width, height } = service.getCanvasSize();
 
-      setCanvasSize({ width, height });
-
       if (hasAutoFitted || width === 0 || height === 0) return;
 
       hasAutoFitted = true;
@@ -169,7 +164,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       service.onImportDone(() => {
         setReady(true);
         setTool();
-        setStats(readStats());
         refreshStageState();
       }),
     );
@@ -191,21 +185,9 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
      * on the event bus; those names only exist on the command stack.
      */
     disposers.push(
-      service.onDiagramChanged(async () => {
-        setStats(readStats());
+      service.onDiagramChanged(() => {
         refreshStageState();
-
         setUndoRedoState(service.canUndo(), service.canRedo());
-
-        const { xml, error } = await service.exportXml();
-
-        if (error) {
-          setError(error);
-
-          return;
-        }
-
-        setXml(xml);
       }),
     );
 
@@ -217,10 +199,14 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     service
       .importXml(starterDiagramXml)
       .then(({ error }) => {
-        if (error) setError(error);
+        if (error) {
+          console.warn('bpmn-editor: diagram import failed', error);
+          setError(editorErrorKeys.importFailed);
+        }
       })
       .catch((error: unknown) => {
-        setError(error instanceof Error ? error.message : String(error));
+        console.warn('bpmn-editor: diagram import failed', error);
+        setError(editorErrorKeys.importFailed);
       });
 
     return () => {

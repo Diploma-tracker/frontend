@@ -1,8 +1,12 @@
-import { getDiagramService } from './editor-model';
+import {
+  type EditorErrorKey,
+  editorErrorKeys,
+  getDiagramService,
+} from './editor-model';
 
 export interface SaveResult {
   ok: boolean;
-  error?: string;
+  error?: EditorErrorKey;
 }
 
 /**
@@ -15,13 +19,17 @@ export interface SaveResult {
 export const saveDiagram = async (): Promise<SaveResult> => {
   const service = getDiagramService();
 
-  if (!service) return { ok: false, error: 'The editor is not ready yet.' };
+  if (!service) return { ok: false, error: editorErrorKeys.notReady };
 
   const { xml, error } = await service.exportXml();
 
-  if (error || !xml) {
-    return { ok: false, error: error ?? 'Nothing to save.' };
+  if (error) {
+    console.warn('bpmn-editor: diagram export failed', error);
+
+    return { ok: false, error: editorErrorKeys.exportFailed };
   }
+
+  if (!xml) return { ok: false, error: editorErrorKeys.nothingToSave };
 
   // eslint-disable-next-line no-console -- stand-in for the pending save endpoint
   console.log(xml);

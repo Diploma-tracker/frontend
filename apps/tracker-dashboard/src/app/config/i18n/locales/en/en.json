@@ -701,6 +701,16 @@
     }
   },
   "bpmnEditor": {
+    "error": {
+      "approvalRequired": "Choose the approval this branch handles.",
+      "createFailed": "Could not create this element.",
+      "eventConvertFailed": "This event cannot be converted to that type.",
+      "exportFailed": "The diagram could not be exported.",
+      "gatewayConvertFailed": "This gateway cannot be converted to that type.",
+      "importFailed": "The diagram could not be loaded.",
+      "notReady": "The editor is not ready yet.",
+      "nothingToSave": "There is nothing to save."
+    },
     "loading": "Loading diagram...",
     "tools": {
       "hand": {

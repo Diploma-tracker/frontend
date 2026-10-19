@@ -1,3 +1,4 @@
+import { k } from '@/shared/utils/i18n';
 import { action, atom } from '@reatom/core';
 import type BpmnModeler from 'bpmn-js/lib/Modeler';
 import type { Element } from 'bpmn-js/lib/model/Types';
@@ -44,7 +45,6 @@ import {
   readStageAttributes,
 } from './diagram-api';
 import type { EditorToolName, PaletteElement } from './element-catalog';
-import { starterDiagramXml } from './starter-diagram';
 
 /** Zoom bounds applied by the `zoomBy` action. */
 const MIN_ZOOM = 0.2;
@@ -58,10 +58,26 @@ export interface DecisionTaskOption {
   decisionKey: string;
 }
 
-export interface DiagramStats {
-  shapes: number;
-  connections: number;
-}
+/**
+ * Translation keys the editor can surface as a toast. Declared with `k()` so
+ * the i18n audit sees them in use; `lastErrorAtom` holds the key (never a raw
+ * sentence) and the alert renders it through `t()` in `bpmn-editor.tsx`.
+ * Library error details are narrowed to one of these keys at the call site
+ * and kept for the console only.
+ */
+export const editorErrorKeys = {
+  createFailed: k('bpmnEditor.error.createFailed'),
+  eventConvertFailed: k('bpmnEditor.error.eventConvertFailed'),
+  gatewayConvertFailed: k('bpmnEditor.error.gatewayConvertFailed'),
+  approvalRequired: k('bpmnEditor.error.approvalRequired'),
+  importFailed: k('bpmnEditor.error.importFailed'),
+  exportFailed: k('bpmnEditor.error.exportFailed'),
+  notReady: k('bpmnEditor.error.notReady'),
+  nothingToSave: k('bpmnEditor.error.nothingToSave'),
+} as const;
+
+export type EditorErrorKey =
+  (typeof editorErrorKeys)[keyof typeof editorErrorKeys];
 
 /**
  * The adapter over the `bpmn-js` instance. Held in a module-scoped variable
@@ -106,16 +122,10 @@ export const selectedElementAtom = atom<ElementInfo | null>(
   null,
   'bpmnEditor.selectedElement',
 );
-export const canvasSizeAtom = atom<{ width: number; height: number }>(
-  { width: 0, height: 0 },
-  'bpmnEditor.canvasSize',
+export const lastErrorAtom = atom<EditorErrorKey | null>(
+  null,
+  'bpmnEditor.lastError',
 );
-export const statsAtom = atom<DiagramStats>(
-  { shapes: 0, connections: 0 },
-  'bpmnEditor.stats',
-);
-export const xmlAtom = atom<string>('', 'bpmnEditor.xml');
-export const lastErrorAtom = atom<string | null>(null, 'bpmnEditor.lastError');
 /** Subprocesses flagged as stages, in their persisted order. */
 export const stagesAtom = atom<StageInfo[]>([], 'bpmnEditor.stages');
 
@@ -160,10 +170,6 @@ export const setTool = action(() => {
   service.clearSelection();
 });
 
-export const togglePropertiesPanel = action(() => {
-  isPropertiesOpenAtom.set(!isPropertiesOpenAtom());
-});
-
 export const setCommandPaletteOpen = action((open: boolean) => {
   isCommandPaletteOpenAtom.set(open);
 });
@@ -180,48 +186,16 @@ export const setSelectedElement = action((info: ElementInfo | null) => {
   selectedElementAtom.set(info);
 });
 
-export const setCanvasSize = action(
-  (size: { width: number; height: number }) => {
-    canvasSizeAtom.set(size);
-  },
-);
-
-export const setStats = action((stats: DiagramStats) => {
-  statsAtom.set(stats);
+export const setError = action((key: EditorErrorKey | null) => {
+  lastErrorAtom.set(key);
 });
-
-export const setXml = action((xml: string) => {
-  xmlAtom.set(xml);
-});
-
-export const setError = action((message: string | null) => {
-  lastErrorAtom.set(message);
-});
-
-export const readStats = (): DiagramStats => {
-  if (!service) return { shapes: 0, connections: 0 };
-
-  const elements = service.getAllElements();
-
-  return elements.reduce<DiagramStats>(
-    (stats, element) => {
-      if (element.type === 'label') return stats;
-      if (isConnection(element)) {
-        return { ...stats, connections: stats.connections + 1 };
-      }
-
-      return { ...stats, shapes: stats.shapes + 1 };
-    },
-    { shapes: 0, connections: 0 },
-  );
-};
 
 /**
  * Stage subprocesses as `{ id, name }`, in the persisted `stageOrder`. The
  * order is reconciled with the diagram first, so a stage added (or removed)
  * since the last sort is written into the XML too, not just appended.
  */
-export const readStages = (): StageInfo[] => {
+const readStages = (): StageInfo[] => {
   if (!service) return [];
 
   const names = new Map(
@@ -239,7 +213,7 @@ export const readStages = (): StageInfo[] => {
   }));
 };
 
-export const getElementById = (id: string): Element | null => {
+const getElementById = (id: string): Element | null => {
   if (!service) return null;
 
   return service.getElementById(id);
@@ -282,7 +256,7 @@ export const getDecisionTaskOptions = (): DecisionTaskOption[] => {
  * shortcuts while that element holds DOM focus. Everything outside the canvas
  * pushes focus back here after it is done.
  */
-export const focusCanvas = action(() => {
+const focusCanvas = action(() => {
   if (!service) return;
 
   service.focusCanvas();
@@ -323,12 +297,8 @@ export const spawnPaletteElement = action(
     const created = service.spawnElement(element, { name });
 
     if (!created) {
-      setError(`Could not create ${element.bpmnType}.`);
-
-      return;
+      setError(editorErrorKeys.createFailed);
     }
-
-    setStats(readStats());
   },
 );
 
@@ -534,7 +504,7 @@ export const setSelectedEventDefinition = action((key: EventDefinitionKey) => {
   );
 
   if (!replaced) {
-    setError('This event cannot be converted to that type.');
+    setError(editorErrorKeys.eventConvertFailed);
 
     return;
   }
@@ -573,7 +543,7 @@ export const setSelectedEventThrowing = action((throwing: boolean) => {
   );
 
   if (!replaced) {
-    setError('This event cannot be converted to that type.');
+    setError(editorErrorKeys.eventConvertFailed);
 
     return;
   }
@@ -602,7 +572,7 @@ export const setSelectedGatewayType = action((gatewayType: string) => {
   const replaced = service.setGatewayType(element, gatewayType);
 
   if (!replaced) {
-    setError('This gateway cannot be converted to that type.');
+    setError(editorErrorKeys.gatewayConvertFailed);
 
     return;
   }
@@ -657,7 +627,7 @@ export const setSelectedApprovalCondition = action(
     const key = decisionKey.trim();
 
     if (!key) {
-      setError('Choose the approval this branch handles.');
+      setError(editorErrorKeys.approvalRequired);
 
       return;
     }
@@ -685,7 +655,6 @@ export const duplicateSelected = action(() => {
   if (!element) return;
 
   service.duplicateElement(element);
-  setStats(readStats());
 });
 
 export const deleteSelected = action(() => {
@@ -699,28 +668,6 @@ export const deleteSelected = action(() => {
 
   service.removeElement(element);
   setSelectedElement(null);
-  setStats(readStats());
-});
-
-export const changeSelectedType = action((target: PaletteElement) => {
-  const selected = selectedElementAtom();
-
-  if (!service || !selected || selected.kind === 'connection') return;
-
-  const element = getElementById(selected.id);
-
-  if (!element) return;
-
-  const replaced = service.replaceElementType(element, target);
-
-  if (!replaced) {
-    setError('This element cannot be converted to that type.');
-
-    return;
-  }
-
-  setError(null);
-  setStats(readStats());
 });
 
 export const fitViewport = action(() => {
@@ -747,7 +694,7 @@ export const cancelChanges = action(() => {
 });
 
 /** Steps the zoom around the current viewport centre. */
-export const zoomBy = action((factor: number) => {
+const zoomBy = action((factor: number) => {
   if (!service) return;
 
   const { scale } = service.getViewbox();
@@ -758,34 +705,3 @@ export const zoomBy = action((factor: number) => {
 
 export const zoomIn = action(() => zoomBy(ZOOM_STEP));
 export const zoomOut = action(() => zoomBy(1 / ZOOM_STEP));
-
-export const exportDiagram = action(async () => {
-  if (!service) return;
-
-  const { xml, error } = await service.exportXml();
-
-  if (error) {
-    setError(error);
-
-    return;
-  }
-
-  setXml(xml);
-});
-
-export const resetDiagram = action(async () => {
-  if (!service) return;
-
-  setSelectedElement(null);
-
-  const { error } = await service.importXml(starterDiagramXml);
-
-  if (error) {
-    setError(error);
-
-    return;
-  }
-
-  setError(null);
-  setStats(readStats());
-});

@@ -13,8 +13,8 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@repo/ui-kit/components/sidebar';
-import AppSidebarMainNav from './components/app-sidebar-main-nav';
 
+import AppSidebarMainNav from './components/app-sidebar-main-nav';
 
 export const AppSidebar = () => {
   const { t } = useTranslation();
