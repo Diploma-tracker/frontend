@@ -55,11 +55,10 @@ const matchesFileTypes = (
 };
 
 /**
- * Creates an AJV instance with the backend's custom `x-*` keywords registered.
+ * Creates an AJV instance with the custom `x-*` keywords registered.
  *
- * Pass this to the `ajv` prop of `<JsonForms>` so that schemas produced by
- * `ProjectFieldDefinition.validation_schema` validate identically to the
- * backend's `ProjectFieldSchemaValidator`.
+ * Pass this to the `ajv` prop of `<JsonForms>` so that schemas carrying custom
+ * keywords validate identically to the backend's `ProjectFieldSchemaValidator`.
  *
  * Keywords use `compile` (not `validate`) so each schema instance gets its own
  * closure with access to the schema value — required for custom error messages
@@ -67,7 +66,7 @@ const matchesFileTypes = (
  *
  * @see backend `project_data_fields.py` — `ProjectFieldSchemaValidator`.
  */
-export const createProjectFieldsAjv = (): SharedAjv => {
+export const createCustomAjv = (): SharedAjv => {
   const ajv = createAjv();
 
   ajv.addKeyword({

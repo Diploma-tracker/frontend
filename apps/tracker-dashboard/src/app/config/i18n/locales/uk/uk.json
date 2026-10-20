@@ -24,6 +24,9 @@
     },
     "fileInput": {
       "chooseFile": "Обрати файл"
+    },
+    "actions": {
+      "submit": "Надіслати"
     }
   },
   "auth": {

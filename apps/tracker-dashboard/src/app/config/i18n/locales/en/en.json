@@ -24,6 +24,9 @@
     },
     "fileInput": {
       "chooseFile": "Choose file"
+    },
+    "actions": {
+      "submit": "Submit"
     }
   },
   "auth": {
