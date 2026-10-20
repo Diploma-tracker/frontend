@@ -98,13 +98,32 @@ export const definitionOutputAtom = computed(
   'projectDefinition.output',
 );
 
-export const hasDuplicateRoleNamesAtom = computed(() => {
-  const names = projectRolesAtom()
-    .map((role) => role.name.trim().toLowerCase())
-    .filter((name) => name.length > 0);
+/**
+ * Lower-cased names used by more than one role. Kept as a set so both the
+ * save-blocking flag and the per-row highlight read the same rule.
+ */
+export const duplicateRoleNamesAtom = computed(() => {
+  const counts = new Map<string, number>();
 
-  return new Set(names).size !== names.length;
-}, 'projectDefinition.hasDuplicateRoleNames');
+  for (const role of projectRolesAtom()) {
+    const name = role.name.trim().toLowerCase();
+
+    if (name.length === 0) {
+      continue;
+    }
+
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+
+  return new Set(
+    [...counts].filter(([, count]) => count > 1).map(([name]) => name),
+  );
+}, 'projectDefinition.duplicateRoleNames');
+
+export const hasDuplicateRoleNamesAtom = computed(
+  () => duplicateRoleNamesAtom().size > 0,
+  'projectDefinition.hasDuplicateRoleNames',
+);
 
 const entryToField = (entry: ProjectDefinitionEntry): ProjectField => ({
   id: crypto.randomUUID(),

@@ -1,2 +1,2 @@
 export * from './models';
-export { ProjectDefinitionEditor } from './features/project-definition-editor';
+export { ProjectDefinitionEditor } from './features/editor';

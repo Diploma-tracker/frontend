@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { anchorModifier } from '@/shared/components/dnd/anchor-modifier';
+import { createPaletteAnchorModifier } from '@/shared/components/dnd/palette-anchor-modifier';
+import { createPaletteCollisionDetection } from '@/shared/components/dnd/palette-collision';
 import { useTranslation } from '@/shared/utils/i18n';
 import {
-  type CollisionDetection,
   DndContext,
   type DragEndEvent,
   type DragStartEvent,
   KeyboardSensor,
-  type Modifier,
   PointerSensor,
-  closestCenter,
-  pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -45,49 +42,23 @@ import {
   reorderProjectFieldsAction,
   saveProjectDefinitionAction,
 } from '../../models';
-import { AvailableFieldsPanel } from './available-fields-panel';
-import { FieldPropertiesPanel } from './field-properties-panel';
-import { ProjectFieldsDragOverlay } from './project-fields-drag-overlay';
-import { ProjectFieldsPanel } from './project-fields-panel';
-import { RoleDefinitionsPanel } from './role-definitions-panel';
+import {
+  AvailableFieldsPanel,
+  FieldPropertiesPanel,
+  ProjectFieldsDragOverlay,
+  ProjectFieldsPanel,
+} from '../fields';
+import { RoleDefinitionsPanel } from '../roles';
 
-/**
- * A palette drag only counts as over a target when the pointer is actually
- * inside it, so hovering the palette or the properties panel shows neither an
- * insertion point nor a drop. Keyboard drags have no pointer, so they fall
- * back to proximity.
- *
- * Reordering ignores the canvas droppable: its id is not a sortable item, so
- * `over` landing on it makes every row's transform collapse (dnd-kit treats a
- * non-item `overIndex` as "nothing to displace") and the list jumps. Rows
- * alone already cover reordering, including to the very end.
- */
-const collisionDetection: CollisionDetection = (args) => {
-  const isPaletteDrag = args.active.data.current?.source === 'palette';
+const isPaletteDrag = (data: unknown) =>
+  (data as { source?: string } | undefined)?.source === 'palette';
 
-  if (isPaletteDrag) {
-    return args.pointerCoordinates ? pointerWithin(args) : closestCenter(args);
-  }
+const collisionDetection = createPaletteCollisionDetection(
+  isPaletteDrag,
+  PROJECT_FIELDS_DROPPABLE_ID,
+);
 
-  return closestCenter({
-    ...args,
-    droppableContainers: args.droppableContainers.filter(
-      (container) => container.id !== PROJECT_FIELDS_DROPPABLE_ID,
-    ),
-  });
-};
-
-/*
- * Palette squares keep their top-center anchored under the pointer, so the
- * small tile does not jump away from the cursor. Sortable reorders keep
- * dnd-kit's default transform.
- */
-const anchorPaletteSquare = anchorModifier(['center', 'top'], [0, 10]);
-
-const paletteAnchorModifier: Modifier = (args) =>
-  args.active?.data.current?.source === 'palette'
-    ? anchorPaletteSquare(args)
-    : args.transform;
+const paletteAnchorModifier = createPaletteAnchorModifier(isPaletteDrag);
 
 export const ProjectDefinitionEditor = reatomComponent(
   function ProjectDefinitionEditor() {

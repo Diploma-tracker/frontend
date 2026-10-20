@@ -19,6 +19,7 @@ import {
 
 import {
   addProjectRoleAction,
+  duplicateRoleNamesAtom,
   projectRolesAtom,
   removeProjectRoleAction,
   updateProjectRoleAction,
@@ -28,23 +29,12 @@ export const RoleDefinitionsPanel = reatomComponent(
   function RoleDefinitionsPanel() {
     const { t } = useTranslation();
     const roles = projectRolesAtom();
-
-    const nameCounts = new Map<string, number>();
-
-    roles.forEach((role) => {
-      const key = role.name.trim().toLowerCase();
-
-      if (!key) {
-        return;
-      }
-
-      nameCounts.set(key, (nameCounts.get(key) ?? 0) + 1);
-    });
+    const duplicateNames = duplicateRoleNamesAtom();
 
     const isDuplicateName = (role: (typeof roles)[number]) => {
       const key = role.name.trim().toLowerCase();
 
-      return key.length > 0 && (nameCounts.get(key) ?? 0) > 1;
+      return key.length > 0 && duplicateNames.has(key);
     };
 
     return (
