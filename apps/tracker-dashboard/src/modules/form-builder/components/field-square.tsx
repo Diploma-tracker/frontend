@@ -2,11 +2,11 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import type { PremadeField } from '../model/field-catalog';
+import type { ProjectFieldDefinition } from '../model/types';
 
 interface FieldSquareProps extends ComponentProps<'div'> {
-  /** The catalog field the square stands for. */
-  field: PremadeField;
+  /** The catalog field definition the square stands for. */
+  field: ProjectFieldDefinition;
 }
 
 /**
@@ -18,9 +18,10 @@ interface FieldSquareProps extends ComponentProps<'div'> {
 export const FIELD_SQUARE_SIZE = 80;
 
 /**
- * The square a catalog field is shown as: as a palette tile, and under the
- * cursor while it is being dragged. Presentational on purpose — the palette
- * puts the drag listeners on it, the drag overlay reuses it as the ghost.
+ * The square a catalog field definition is shown as: as a palette tile, and
+ * under the cursor while it is being dragged. Presentational on purpose — the
+ * palette puts the drag listeners on it, the drag overlay reuses it as the
+ * ghost.
  */
 export const FieldSquare = function FieldSquare({
   field,
@@ -28,8 +29,6 @@ export const FieldSquare = function FieldSquare({
   style,
   ...props
 }: FieldSquareProps) {
-  const Icon = field.icon;
-
   return (
     <div
       style={{
@@ -43,10 +42,8 @@ export const FieldSquare = function FieldSquare({
       )}
       {...props}
     >
-      <Icon className="size-5 shrink-0 text-muted-foreground" />
-
       <span className="line-clamp-2 text-xs leading-tight text-muted-foreground">
-        {field.label}
+        {field.name}
       </span>
     </div>
   );

@@ -19,15 +19,12 @@ import {
   CardTitle,
 } from '@repo/ui-kit/components/common/layout/card';
 
-import type {
-  FieldInstance,
-  FieldInstanceProps,
-} from '../model/schema-generator';
+import type { FormField } from '../model/types';
 
 interface PropertiesPanelProps {
-  field: FieldInstance;
+  field: FormField;
   onBack: () => void;
-  onUpdate: (instanceId: string, patch: Partial<FieldInstanceProps>) => void;
+  onUpdate: (name: string, patch: Partial<FormField>) => void;
 }
 
 export const PropertiesPanel = reatomComponent(function PropertiesPanel({
@@ -37,16 +34,13 @@ export const PropertiesPanel = reatomComponent(function PropertiesPanel({
 }: PropertiesPanelProps) {
   const { t } = useTranslation();
 
-  const update = (patch: Partial<FieldInstanceProps>) =>
-    onUpdate(field.instanceId, patch);
-
-  const hasPlaceholder = field.kind !== 'boolean' && field.kind !== 'file';
+  const update = (patch: Partial<FormField>) => onUpdate(field.name, patch);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('formBuilder.properties.title')}</CardTitle>
-        <CardDescription>{field.props.label}</CardDescription>
+        <CardDescription>{field.label}</CardDescription>
         <CardAction>
           <Button
             type="button"
@@ -66,29 +60,27 @@ export const PropertiesPanel = reatomComponent(function PropertiesPanel({
           <FieldLabel>{t('formBuilder.properties.label')}</FieldLabel>
           <Input
             aria-label={t('formBuilder.properties.label')}
-            value={field.props.label}
+            value={field.label}
             placeholder={t('formBuilder.properties.labelPlaceholder')}
             onChange={(event) => update({ label: event.target.value })}
           />
         </Field>
 
-        {hasPlaceholder && (
-          <Field orientation="vertical">
-            <FieldLabel>{t('formBuilder.properties.placeholder')}</FieldLabel>
-            <Input
-              aria-label={t('formBuilder.properties.placeholder')}
-              value={field.props.placeholder ?? ''}
-              placeholder={t('formBuilder.properties.placeholderHint')}
-              onChange={(event) =>
-                update({ placeholder: event.target.value || undefined })
-              }
-            />
-          </Field>
-        )}
+        <Field orientation="vertical">
+          <FieldLabel>{t('formBuilder.properties.placeholder')}</FieldLabel>
+          <Input
+            aria-label={t('formBuilder.properties.placeholder')}
+            value={field.placeholder ?? ''}
+            placeholder={t('formBuilder.properties.placeholderHint')}
+            onChange={(event) =>
+              update({ placeholder: event.target.value || undefined })
+            }
+          />
+        </Field>
 
         <Field orientation="horizontal">
           <Checkbox
-            checked={field.props.required}
+            checked={field.required}
             onCheckedChange={(checked) =>
               update({ required: checked === true })
             }

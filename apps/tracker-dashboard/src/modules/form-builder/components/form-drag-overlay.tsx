@@ -7,12 +7,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { reatomComponent } from '@reatom/react';
 
+import { dragSessionAtom, dropSessionAtom } from '../model/builder-state';
 import { catalogAtom } from '../model/field-catalog';
-import {
-  dragSessionAtom,
-  dropSessionAtom,
-  fieldsAtom,
-} from '../model/form-builder-model';
 import { FIELD_SQUARE_SIZE, FieldSquare } from './field-square';
 
 /**
@@ -44,7 +40,7 @@ const dropAnimationKeyframes: DropAnimationKeyframeResolver = ({
 }) => {
   const session = dropSessionAtom();
   const target = session
-    ? (droppableContainers.get(session.instanceId)?.rect.current ?? null)
+    ? (droppableContainers.get(session.name)?.rect.current ?? null)
     : null;
 
   if (!target) {
@@ -85,7 +81,7 @@ const dropAnimationSideEffects: DropAnimationSideEffects = ({
 }) => {
   const session = dropSessionAtom();
   const targetNode = session
-    ? (droppableContainers.get(session.instanceId)?.node.current ?? null)
+    ? (droppableContainers.get(session.name)?.node.current ?? null)
     : null;
 
   const hidden: Array<[HTMLElement, string]> = [];
@@ -113,12 +109,8 @@ export const FormDragOverlay = reatomComponent(function FormDragOverlay() {
    * instance, the catalog field comes off its type.
    */
   const dragSession = dragSessionAtom();
-  const draggedInstance = dragSession
-    ? fieldsAtom.get(dragSession.instanceId)
-    : null;
-  const draggedField = draggedInstance
-    ? (catalogAtom().find((item) => item.typeId === draggedInstance.typeId) ??
-      null)
+  const draggedField = dragSession
+    ? (catalogAtom().find((item) => item.name === dragSession.name) ?? null)
     : null;
 
   return (

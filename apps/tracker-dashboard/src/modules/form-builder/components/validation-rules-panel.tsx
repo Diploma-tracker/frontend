@@ -25,12 +25,12 @@ import {
   EmptyTitle,
 } from '@repo/ui-kit/components/common/states/empty';
 
-import { createRuleId } from '../model/form-builder-model';
-import type { FieldInstance, ValidationRule } from '../model/schema-generator';
+import { createRuleId } from '../model/builder-state';
+import type { FormField, ValidationRule } from '../model/types';
 
 interface ValidationRulesPanelProps {
   rules: ValidationRule[];
-  fields: FieldInstance[];
+  fields: FormField[];
   onAdd: (rule: ValidationRule) => void;
   onRemove: (ruleId: string) => void;
 }
@@ -44,34 +44,34 @@ export const ValidationRulesPanel = reatomComponent(
   }: ValidationRulesPanelProps) {
     const { t } = useTranslation();
     const [isAdding, setIsAdding] = useState(false);
-    const [selectedFieldIds, setSelectedFieldIds] = useState<string[]>([]);
+    const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);
 
-    const labelsById = useMemo(() => {
+    const labelsByName = useMemo(() => {
       const map = new Map<string, string>();
       for (const field of fields) {
-        map.set(field.instanceId, field.props.label);
+        map.set(field.name, field.label);
       }
       return map;
     }, [fields]);
 
-    const toggleField = (instanceId: string) => {
-      setSelectedFieldIds((current) =>
-        current.includes(instanceId)
-          ? current.filter((id) => id !== instanceId)
-          : [...current, instanceId],
+    const toggleField = (name: string) => {
+      setSelectedFieldNames((current) =>
+        current.includes(name)
+          ? current.filter((id) => id !== name)
+          : [...current, name],
       );
     };
 
     const handleCancel = () => {
       setIsAdding(false);
-      setSelectedFieldIds([]);
+      setSelectedFieldNames([]);
     };
 
     const handleAdd = () => {
       onAdd({
         id: createRuleId(),
-        type: 'requiredOneOf',
-        fieldIds: selectedFieldIds,
+        type: 'one_of_required',
+        field_names: selectedFieldNames,
       });
       handleCancel();
     };
@@ -98,8 +98,8 @@ export const ValidationRulesPanel = reatomComponent(
           ) : (
             <div className="flex flex-col gap-2">
               {rules.map((rule) => {
-                const labels = rule.fieldIds
-                  .map((id) => labelsById.get(id))
+                const labels = rule.field_names
+                  .map((name) => labelsByName.get(name))
                   .filter((label): label is string => Boolean(label));
                 return (
                   <div
@@ -140,19 +140,19 @@ export const ValidationRulesPanel = reatomComponent(
               ) : (
                 <div className="flex flex-col gap-1">
                   {fields.map((field) => {
-                    const checked = selectedFieldIds.includes(field.instanceId);
+                    const checked = selectedFieldNames.includes(field.name);
                     return (
                       <Field
-                        key={field.instanceId}
+                        key={field.name}
                         orientation="horizontal"
                         className="gap-3 rounded-md px-2 py-1"
                       >
                         <Checkbox
                           checked={checked}
-                          onCheckedChange={() => toggleField(field.instanceId)}
+                          onCheckedChange={() => toggleField(field.name)}
                         />
                         <FieldContent>
-                          <FieldLabel>{field.props.label}</FieldLabel>
+                          <FieldLabel>{field.label}</FieldLabel>
                         </FieldContent>
                       </Field>
                     );
@@ -166,7 +166,7 @@ export const ValidationRulesPanel = reatomComponent(
                   variant="solid"
                   intent="primary"
                   size="sm"
-                  disabled={selectedFieldIds.length < 2}
+                  disabled={selectedFieldNames.length < 2}
                   onClick={handleAdd}
                 >
                   {t('formBuilder.rules.addRuleSubmit')}

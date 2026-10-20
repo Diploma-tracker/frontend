@@ -107,6 +107,7 @@
       "crossFieldError": "Please fill in at least one of the highlighted fields.",
       "chooseFile": "Choose file",
       "clearFile": "Remove file",
+      "acceptedFileTypes": "Accepted file types: {{types}}",
       "projectDefinition": "Project Definition"
     }
   },

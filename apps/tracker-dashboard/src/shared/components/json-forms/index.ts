@@ -1,2 +1,2 @@
-export { JsonFormsMarkedFieldsProvider } from './marked-fields-provider';
+export { createProjectFieldsAjv } from './custom-ajv';
 export { jsonFormsRenderers } from './register-renderers';

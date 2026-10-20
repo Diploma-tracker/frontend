@@ -20,7 +20,7 @@ import {
 } from '@repo/ui-kit/components/common/states/empty';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { fieldsAtom, layoutAtom } from '../model/form-builder-model';
+import { fieldsAtom, layoutAtom } from '../model/builder-state';
 import {
   CANVAS_DROPPABLE_ID,
   rowDroppableId,
@@ -62,10 +62,10 @@ const CanvasRow = reatomComponent(function CanvasRow({
         items={row}
         strategy={horizontalListSortingStrategy}
       >
-        {row.map((instanceId) =>
-          fieldsAtom.has(instanceId) ? (
-            <div key={instanceId} className="min-w-0 flex-1">
-              <PlacedField instanceId={instanceId} />
+        {row.map((name) =>
+          fieldsAtom.has(name) ? (
+            <div key={name} className="min-w-0 flex-1">
+              <PlacedField name={name} />
             </div>
           ) : null,
         )}

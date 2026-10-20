@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
 import type { ControlProps, LayoutProps } from '@jsonforms/core';
@@ -29,10 +29,6 @@ import {
 import { Textarea } from '@repo/ui-kit/components/common/form/textarea';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { useMarkedField } from './marked-fields-context';
-
-const markedFieldClass = 'rounded-md ring-2 ring-destructive/60 ring-offset-2';
-
 const requiredLabel = (label: string, required: boolean): string =>
   required ? `${label} *` : label;
 
@@ -53,7 +49,6 @@ export const UiKitTextControl = withJsonFormsControlProps(function TextControl(
     <Field
       orientation="vertical"
       data-invalid={props.errors ? true : undefined}
-      className={useMarkedField(path) ? markedFieldClass : undefined}
     >
       <FieldLabel>
         {requiredLabel(props.label, props.required ?? false)}
@@ -80,7 +75,6 @@ export const UiKitTextareaControl = withJsonFormsControlProps(
       <Field
         orientation="vertical"
         data-invalid={props.errors ? true : undefined}
-        className={useMarkedField(path) ? markedFieldClass : undefined}
       >
         <FieldLabel>
           {requiredLabel(props.label, props.required ?? false)}
@@ -107,7 +101,6 @@ export const UiKitNumberControl = withJsonFormsControlProps(
       <Field
         orientation="vertical"
         data-invalid={props.errors ? true : undefined}
-        className={useMarkedField(path) ? markedFieldClass : undefined}
       >
         <FieldLabel>
           {requiredLabel(props.label, props.required ?? false)}
@@ -139,7 +132,6 @@ export const UiKitIntegerControl = withJsonFormsControlProps(
       <Field
         orientation="vertical"
         data-invalid={props.errors ? true : undefined}
-        className={useMarkedField(path) ? markedFieldClass : undefined}
       >
         <FieldLabel>
           {requiredLabel(props.label, props.required ?? false)}
@@ -178,7 +170,6 @@ export const UiKitBooleanControl = withJsonFormsControlProps(
       <Field
         orientation="horizontal"
         data-invalid={props.errors ? true : undefined}
-        className={useMarkedField(path) ? markedFieldClass : undefined}
       >
         <Checkbox
           id={id}
@@ -217,7 +208,6 @@ export const UiKitEnumControl = withJsonFormsControlProps(function EnumControl(
     <Field
       orientation="vertical"
       data-invalid={props.errors ? true : undefined}
-      className={useMarkedField(path) ? markedFieldClass : undefined}
     >
       <FieldLabel>
         {requiredLabel(props.label, props.required ?? false)}
@@ -256,7 +246,6 @@ export const UiKitDateControl = withJsonFormsControlProps(function DateControl(
     <Field
       orientation="vertical"
       data-invalid={props.errors ? true : undefined}
-      className={useMarkedField(path) ? markedFieldClass : undefined}
     >
       <FieldLabel>
         {requiredLabel(props.label, props.required ?? false)}
@@ -282,17 +271,35 @@ export const UiKitDateControl = withJsonFormsControlProps(function DateControl(
 export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
   props: ControlProps,
 ) {
-  const { data, handleChange, path, enabled, id } = props;
+  const { data, handleChange, path, enabled, id, schema } = props;
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const fileName = typeof data === 'string' && data.length > 0 ? data : null;
 
+  const fileTypes = useMemo(() => {
+    const raw = (schema as Record<string, unknown>)['x-file-types'];
+    return Array.isArray(raw)
+      ? raw.filter((v): v is string => typeof v === 'string')
+      : [];
+  }, [schema]);
+
+  const accept = useMemo(
+    () =>
+      fileTypes
+        .map((type) => {
+          const normalized = type.trim();
+          if (normalized.includes('/')) return normalized;
+          return normalized.startsWith('.') ? normalized : `.${normalized}`;
+        })
+        .join(','),
+    [fileTypes],
+  );
+
   return (
     <Field
       orientation="vertical"
       data-invalid={props.errors ? true : undefined}
-      className={useMarkedField(path) ? markedFieldClass : undefined}
     >
       <FieldLabel>
         {requiredLabel(props.label, props.required ?? false)}
@@ -306,6 +313,7 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
           aria-invalid={props.errors ? true : undefined}
           className="hidden"
           disabled={!enabled}
+          accept={accept || undefined}
           onChange={(event) => {
             const file = event.target.files?.[0];
             handleChange(path, file ? file.name : undefined);
@@ -340,6 +348,13 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
           </button>
         ) : null}
       </div>
+      {fileTypes.length > 0 ? (
+        <p className="text-xs text-muted-foreground">
+          {t('formBuilder.preview.acceptedFileTypes', {
+            types: fileTypes.join(', '),
+          })}
+        </p>
+      ) : null}
       {props.errors ? <FieldError>{props.errors}</FieldError> : null}
     </Field>
   );

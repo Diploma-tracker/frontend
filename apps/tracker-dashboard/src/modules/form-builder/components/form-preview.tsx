@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
-  JsonFormsMarkedFieldsProvider,
+  createProjectFieldsAjv,
   jsonFormsRenderers,
 } from '@/shared/components/json-forms';
 import { useTranslation } from '@/shared/utils/i18n';
 import { JsonForms } from '@jsonforms/react';
 import { FilesIcon } from '@phosphor-icons/react';
-import { reatomComponent } from '@reatom/react';
+import { reatomComponent, useAtom } from '@reatom/react';
 
 import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import {
@@ -22,25 +22,60 @@ import {
 import {
   builderOutput,
   fieldsAtom,
-  useBuilderPreview,
-} from '../model/form-builder-model';
+  previewDataAtom,
+} from '../model/builder-state';
 
-export const FormPreview = reatomComponent(function FormPreview() {
+/** Мінімальний вигляд AJV ErrorObject, який нам потрібен. */
+interface SchemaError {
+  instancePath: string;
+  message?: string;
+}
+
+interface FormPreviewProps {
+  onSubmit?: (data: Record<string, unknown>) => void;
+}
+
+/**
+ * Extracts the first segment of an AJV `instancePath` (e.g. `/title` → `title`).
+ * Root-level errors have an empty path and yield `null`.
+ */
+const errorField = (error: SchemaError): string | null => {
+  const segment = error.instancePath.split('/').filter(Boolean)[0];
+  return segment ?? null;
+};
+
+export const FormPreview = reatomComponent(function FormPreview({
+  onSubmit,
+}: FormPreviewProps) {
   const { t } = useTranslation();
-  const { data, setData, violatedRules, markedPaths } = useBuilderPreview();
+  const [data, setData] = useAtom(previewDataAtom);
+  const [errors, setErrors] = useState<SchemaError[]>([]);
 
   const fields = fieldsAtom();
-  const output = builderOutput();
+  const { schema, uischema } = builderOutput();
 
-  const labelsByInstanceId = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const field of fields) {
-      map.set(field.instanceId, field.props.label);
-    }
-    return map;
-  }, [fields]);
+  const ajv = useMemo(() => createProjectFieldsAjv(), []);
 
-  if (output.uischema.elements.length === 0) {
+  const fieldNames = useMemo(
+    () => new Set(fields.map((f) => f.name)),
+    [fields],
+  );
+
+  /**
+   * Помилки, які жоден Control не підхопив (root-рівень схеми, напр. `anyOf`
+   * для крос-польового правила). JsonForms показує per-field помилки сам;
+   * ці — показуємо summary-блоком.
+   */
+  const unhandledErrors = useMemo(
+    () =>
+      errors.filter((error) => {
+        const field = errorField(error);
+        return field === null || !fieldNames.has(field);
+      }),
+    [errors, fieldNames],
+  );
+
+  if (uischema.elements.length === 0) {
     return (
       <Empty>
         <EmptyContent>
@@ -61,19 +96,21 @@ export const FormPreview = reatomComponent(function FormPreview() {
   return (
     <div className="flex w-full max-w-2xl flex-col gap-4">
       <div className="rounded-xl border bg-card p-6">
-        <JsonFormsMarkedFieldsProvider paths={markedPaths}>
-          <JsonForms
-            data={data}
-            schema={output.schema}
-            uischema={output.uischema}
-            renderers={jsonFormsRenderers}
-            validationMode="ValidateAndShow"
-            onChange={(state) => setData(state.data ?? {})}
-          />
-        </JsonFormsMarkedFieldsProvider>
+        <JsonForms
+          data={data}
+          schema={schema}
+          uischema={uischema}
+          renderers={jsonFormsRenderers}
+          ajv={ajv}
+          validationMode="ValidateAndShow"
+          onChange={(state) => {
+            setData(state.data ?? {});
+            setErrors((state.errors ?? []) as SchemaError[]);
+          }}
+        />
       </div>
 
-      {violatedRules.length > 0 && (
+      {unhandledErrors.length > 0 && (
         <div
           role="alert"
           className="rounded-lg border border-destructive bg-destructive/10 px-4 py-3"
@@ -82,14 +119,9 @@ export const FormPreview = reatomComponent(function FormPreview() {
             {t('formBuilder.preview.crossFieldError')}
           </p>
           <ul className="mt-2 space-y-1 pl-4 text-sm text-destructive">
-            {violatedRules.map((rule) => (
-              <li key={rule.id} className="list-disc">
-                {t('formBuilder.rules.atLeastOneOf', {
-                  fields: rule.fieldIds
-                    .map((id) => labelsByInstanceId.get(id))
-                    .filter((label): label is string => Boolean(label))
-                    .join(', '),
-                })}
+            {unhandledErrors.map((error, index) => (
+              <li key={`${error.instancePath}-${index}`} className="list-disc">
+                {error.message ?? error.instancePath}
               </li>
             ))}
           </ul>
@@ -101,9 +133,8 @@ export const FormPreview = reatomComponent(function FormPreview() {
         variant="solid"
         intent="primary"
         className="ui:w-fit"
-        onClick={() => {
-          console.debug('[form-builder] submit clicked, values:', data);
-        }}
+        disabled={!onSubmit}
+        onClick={() => onSubmit?.(data)}
       >
         {t('formBuilder.preview.submit')}
       </Button>

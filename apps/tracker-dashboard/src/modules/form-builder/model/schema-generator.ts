@@ -1,139 +1,112 @@
-import type {
-  ControlElement,
-  JsonSchema,
-  Layout,
-  UISchemaElement,
-} from '@jsonforms/core';
+import type { JsonSchema, Layout, UISchemaElement } from '@jsonforms/core';
 
-import type { FieldOption, PremadeFieldKind } from './field-catalog';
+import type {
+  BuilderOutput,
+  FormDefinition,
+  FormField,
+  ProjectFieldDefinition,
+  RowLayout,
+  ValidationRule,
+} from './types';
 
 /**
- * 2D layout of the form: an array of rows, each row a list of field
- * instance ids in display order. A field per row → single-column block;
- * several ids in one row → side-by-side horizontal layout.
+ * Buduje JSON Schema з ProjectFieldDefinition (довідник схем) + FormField
+ * (поля форми) + правила крос-польової валідації.
+ *
+ * Крос-польове правило `{ field_names: [a, b, c] }` генерує
+ * `anyOf: [{ required: [a] }, { required: [b] }, { required: [c] }]` —
+ * «хоча б одне з полів заповнене», що відповідає `OneOfRequired.is_broken` на бекенді.
  */
-export type RowLayout = string[][];
-
-export interface FieldInstanceProps {
-  name: string;
-  label: string;
-  placeholder?: string;
-  required: boolean;
-  options?: FieldOption[];
-}
-
-export interface FieldInstance {
-  instanceId: string;
-  typeId: string;
-  kind: PremadeFieldKind;
-  props: FieldInstanceProps;
-}
-
-export interface RequiredOneOfRule {
-  id: string;
-  type: 'requiredOneOf';
-  fieldIds: string[];
-}
-
-export type ValidationRule = RequiredOneOfRule;
-
-export interface BuilderOutput {
-  schema: JsonSchema;
-  uischema: Layout;
-}
-
-const schemaFragmentForKind = (
-  kind: PremadeFieldKind,
-  options?: FieldOption[],
-): JsonSchema => {
-  switch (kind) {
-    case 'number':
-      return { type: 'number' };
-    case 'boolean':
-      return { type: 'boolean' };
-    case 'enum':
-      return {
-        type: 'string',
-        enum: options?.map((option) => option.value) ?? [],
-      };
-    case 'date':
-      return { type: 'string', format: 'date' };
-    case 'string':
-    case 'textarea':
-    case 'file':
-      return { type: 'string' };
-  }
-};
-
-const controlFor = (field: FieldInstance): ControlElement => ({
-  type: 'Control',
-  scope: `#/properties/${field.props.name}`,
-  label: field.props.label,
-  options: {
-    ...(field.props.placeholder
-      ? { placeholder: field.props.placeholder }
-      : {}),
-    ...(field.kind === 'textarea' ? { multi: true } : {}),
-    ...(field.kind === 'file' ? { file: true } : {}),
-  },
-});
-
-export const generateBuilderOutput = (
-  fields: FieldInstance[],
-  layout: RowLayout,
+export const generateJsonSchema = (
+  fieldDefinitions: ProjectFieldDefinition[],
+  formFields: FormField[],
   rules: ValidationRule[],
-): BuilderOutput => {
+): JsonSchema => {
+  const schemaByName = new Map(
+    fieldDefinitions.map((fd) => [fd.name, fd.schema]),
+  );
   const properties: Record<string, JsonSchema> = {};
   const required: string[] = [];
 
-  for (const field of fields) {
-    properties[field.props.name] = schemaFragmentForKind(
-      field.kind,
-      field.props.options,
-    );
-    if (field.props.required) {
-      required.push(field.props.name);
+  for (const field of formFields) {
+    const schema = schemaByName.get(field.name);
+    if (schema) {
+      properties[field.name] = schema;
+    }
+    if (field.required) {
+      required.push(field.name);
     }
   }
 
-  const existingIds = new Set(fields.map((field) => field.instanceId));
-  const nameById = new Map(
-    fields.map((field) => [field.instanceId, field.props.name]),
-  );
+  const existingNames = new Set(formFields.map((f) => f.name));
   const anyOf = rules
-    .filter((rule) => rule.type === 'requiredOneOf')
-    .map((rule) =>
-      rule.fieldIds
-        .filter((id) => existingIds.has(id))
-        .map((id) => nameById.get(id))
-        .filter((name): name is string => Boolean(name)),
-    )
-    .filter((fieldNames) => fieldNames.length >= 2)
-    .map((fieldNames) => ({ required: fieldNames }));
+    .filter((rule) => rule.type === 'one_of_required')
+    .flatMap((rule) => {
+      const names = rule.field_names.filter((name) => existingNames.has(name));
+      if (names.length < 2) return [];
+      return names.map((name) => ({ required: [name] }));
+    });
 
-  const schema = {
-    type: 'object',
-    properties,
-    ...(required.length > 0 ? { required } : {}),
-    ...(anyOf.length > 0 ? { anyOf } : {}),
-  } as JsonSchema;
+  const schema: JsonSchema = { type: 'object', properties } as JsonSchema;
+  if (required.length > 0) schema.required = required;
+  if (anyOf.length > 0) schema.anyOf = anyOf;
+  return schema;
+};
 
-  const fieldsById = new Map(fields.map((field) => [field.instanceId, field]));
+/**
+ * Buduje uiSchema для JsonForms з розкладки: кожен рядок → HorizontalLayout
+ * з Controls для полів у цьому рядку. Увесь форму — VerticalLayout над рядками.
+ *
+ * Rendering hints (e.g. the file control) come from the backend-provided
+ * `kind`, never from guessing keywords in the JSON Schema.
+ */
+export const generateUiSchema = (
+  layout: RowLayout,
+  formFields: FormField[],
+  fieldDefinitions: ProjectFieldDefinition[],
+): Layout => {
+  const fieldsByName = new Map(formFields.map((f) => [f.name, f]));
+  const kindByName = new Map(fieldDefinitions.map((fd) => [fd.name, fd.kind]));
+
   const elements: UISchemaElement[] = layout.flatMap((row) => {
     const controls = row
-      .map((id) => fieldsById.get(id))
-      .filter((field): field is FieldInstance => Boolean(field))
-      .map(controlFor);
+      .map((name) => fieldsByName.get(name))
+      .filter((field): field is FormField => Boolean(field))
+      .map((field): UISchemaElement => {
+        const kind = kindByName.get(field.name);
+        return {
+          type: 'Control',
+          scope: `#/properties/${field.name}`,
+          label: field.label,
+          options: {
+            ...(field.placeholder ? { placeholder: field.placeholder } : {}),
+            ...(kind === 'file' ? { file: true } : {}),
+          },
+        };
+      });
+
     if (controls.length === 0) {
       return [];
     }
     return [{ type: 'HorizontalLayout', elements: controls }];
   });
 
-  const uischema: Layout = {
-    type: 'VerticalLayout',
-    elements,
-  };
+  return { type: 'VerticalLayout', elements };
+};
 
+/**
+ * Повний вихід білдера: JSON Schema + uiSchema. Schema-фрагменти беруться з
+ * ProjectFieldDefinition.schema (надходить з бекенду), uiSchema — з layout.
+ */
+export const generateFormFromDomain = (
+  fieldDefinitions: ProjectFieldDefinition[],
+  form: FormDefinition,
+): BuilderOutput => {
+  const schema = generateJsonSchema(
+    fieldDefinitions,
+    form.fields,
+    form.validation_rules,
+  );
+  const uischema = generateUiSchema(form.ui, form.fields, fieldDefinitions);
   return { schema, uischema };
 };

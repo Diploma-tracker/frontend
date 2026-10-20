@@ -7,27 +7,27 @@ import {
   removeRule,
   rulesAtom,
   selectField,
-  selectedFieldIdAtom,
+  selectedFieldNameAtom,
   updateFieldProps,
-} from '../model/form-builder-model';
+} from '../model/builder-state';
 import { PropertiesPanel } from './properties-panel';
 import { ValidationRulesPanel } from './validation-rules-panel';
 
 export const FormPanel = reatomComponent(function FormPanel() {
   const fields = fieldsAtom();
   const rules = rulesAtom();
-  const selectedId = selectedFieldIdAtom();
+  const selectedId = selectedFieldNameAtom();
 
   const selectedField =
-    fields.find((field) => field.instanceId === selectedId) ?? null;
+    fields.find((field) => field.name === selectedId) ?? null;
 
   if (selectedField) {
     return (
       <PropertiesPanel
         field={selectedField}
         onBack={() => selectField(null)}
-        onUpdate={(instanceId, patch) => {
-          updateFieldProps(instanceId, patch);
+        onUpdate={(name, patch) => {
+          updateFieldProps(name, patch);
           commit();
         }}
       />

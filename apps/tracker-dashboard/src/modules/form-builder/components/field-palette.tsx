@@ -11,12 +11,16 @@ import {
 } from '@repo/ui-kit/components/common/layout/card';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { type PremadeField, catalogAtom } from '../model/field-catalog';
-import { commit, placeField } from '../model/form-builder-model';
+import {
+  availableFieldsAtom,
+  commit,
+  placeField,
+} from '../model/builder-state';
+import type { ProjectFieldDefinition } from '../model/types';
 import { FieldSquare } from './field-square';
 
 interface PaletteItemProps {
-  field: PremadeField;
+  field: ProjectFieldDefinition;
   addLabel: string;
 }
 
@@ -25,12 +29,12 @@ const PaletteItem = reatomComponent(function PaletteItem({
   addLabel,
 }: PaletteItemProps) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `form-field-palette-${field.typeId}`,
-    data: { source: 'palette', field, typeId: field.typeId },
+    id: `form-field-palette-${field.name}`,
+    data: { source: 'palette', field },
   });
 
   const handleAdd = () => {
-    placeField(field);
+    placeField({ name: field.name, label: field.name, required: false });
     commit();
   };
 
@@ -41,8 +45,8 @@ const PaletteItem = reatomComponent(function PaletteItem({
       {...listeners}
       onClick={handleAdd}
       field={field}
-      title={field.description}
-      aria-label={`${addLabel}: ${field.label}`}
+      title={field.name}
+      aria-label={`${addLabel}: ${field.name}`}
       className={cn('cursor-grab', isDragging ? 'opacity-0' : 'opacity-100')}
     />
   );
@@ -61,9 +65,9 @@ export const FieldPalette = reatomComponent(function FieldPalette() {
       </CardHeader>
 
       <CardContent className="grid grid-cols-3 justify-items-center gap-2">
-        {catalogAtom().map((field) => (
+        {availableFieldsAtom().map((field) => (
           <PaletteItem
-            key={field.typeId}
+            key={field.name}
             field={field}
             addLabel={t('formBuilder.palette.addField')}
           />

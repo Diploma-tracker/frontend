@@ -1,4 +1,7 @@
-import type { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
+import type {
+  JsonFormsRendererRegistryEntry,
+  UISchemaElement,
+} from '@jsonforms/core';
 import {
   isBooleanControl,
   isControl,
@@ -25,8 +28,13 @@ import {
   UiKitVerticalLayout,
 } from './ui-kit-renderers';
 
-const isFileControl = (uischema: unknown): boolean => {
-  if (!isControl(uischema as never)) {
+/**
+ * The backend marks a field's control kind via `options.file` in the uiSchema
+ * (generated from the domain `kind`), so the renderer never inspects the JSON
+ * Schema for custom keywords.
+ */
+const isFileControl = (uischema: UISchemaElement): boolean => {
+  if (!isControl(uischema)) {
     return false;
   }
   const options = (uischema as { options?: Record<string, unknown> }).options;

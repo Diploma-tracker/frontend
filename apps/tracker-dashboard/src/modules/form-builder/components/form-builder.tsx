@@ -19,9 +19,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { reatomComponent } from '@reatom/react';
 
-import { type PremadeField } from '../model/field-catalog';
 import {
-  type AddTarget,
   activeTabAtom,
   addField,
   commit,
@@ -33,9 +31,11 @@ import {
   rollback,
   selectField,
   unplaceField,
-} from '../model/form-builder-model';
+} from '../model/builder-state';
+import type { AddTarget } from '../model/layout';
 import { parseRowIndex } from '../model/row-dnd';
-import type { RowLayout } from '../model/schema-generator';
+import { type ProjectFieldDefinition } from '../model/types';
+import type { RowLayout } from '../model/types';
 import { BuilderTabs } from './builder-tabs';
 import { FieldPalette } from './field-palette';
 import { FormCanvas } from './form-canvas';
@@ -274,7 +274,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     // For a canvas drag the field is the active node and `active.id` covers
     // it; for a palette drag the active node is the palette tile, so the
     // placed field's id has to be excluded too — same pointer-following it.
-    const draggedId = dragSessionAtom()?.instanceId ?? args.active.id;
+    const draggedId = dragSessionAtom()?.name ?? args.active.id;
     const collisions = args.pointerCoordinates
       ? pointerWithin(args)
       : closestCenter(args);
@@ -301,14 +301,18 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     // If we drag from pallet we have to create and add field instance to fields.
     // Then in handleDragOver we track position for placing it.
     if (data?.source === 'palette') {
-      const field = data.field as PremadeField | undefined;
+      const field = data.field as ProjectFieldDefinition | undefined;
       if (!field) return;
 
-      const instance = addField(field);
+      const instance = addField({
+        name: field.name,
+        label: field.name,
+        required: false,
+      });
 
       dragSessionAtom.set({
         source: 'palette',
-        instanceId: instance.instanceId,
+        name: instance.name,
       });
 
       return;
@@ -320,7 +324,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
 
       dragSessionAtom.set({
         source: 'canvas',
-        instanceId,
+        name: instanceId,
       });
     }
   };
@@ -368,11 +372,11 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     const session = dragSessionAtom();
     if (!session) return;
 
-    const { instanceId } = session;
+    const { name } = session;
     const layout = layoutAtom();
     const target = resolveDropTarget(
       event,
-      instanceId,
+      name,
       layout,
       dragGeometryRef.current,
     );
@@ -381,7 +385,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
       // Pointer outside of the canvas: the field has no place until it is back.
       // Unplaced right away — a staged frame must not bring it back later.
       pendingMoveRef.current = null;
-      unplaceField(instanceId);
+      unplaceField(name);
       return;
     }
 
@@ -400,10 +404,10 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     }
 
     flipGuardRef.current = {
-      fromKey: placementKeyOf(layout, instanceId),
+      fromKey: placementKeyOf(layout, name),
       pointerX,
     };
-    stageMove(instanceId, target);
+    stageMove(name, target);
   };
 
   const handleDragEnd = () => {
@@ -418,8 +422,8 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
       // field added from the palette with a click; a field dropped outside has
       // no place and stays unselected.
       selectField(
-        layoutAtom().some((row) => row.includes(session.instanceId))
-          ? session.instanceId
+        layoutAtom().some((row) => row.includes(session.name))
+          ? session.name
           : null,
       );
     }

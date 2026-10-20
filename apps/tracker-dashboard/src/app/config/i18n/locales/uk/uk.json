@@ -107,6 +107,7 @@
       "crossFieldError": "Заповніть принаймні одне з виділених полів.",
       "chooseFile": "Обрати файл",
       "clearFile": "Видалити файл",
+      "acceptedFileTypes": "Дозволені типи файлів: {{types}}",
       "projectDefinition": "Визначення проєкту"
     }
   },

@@ -7,7 +7,7 @@ import {
   type BuilderTab,
   activeTabAtom,
   setActiveTab,
-} from '../model/form-builder-model';
+} from '../model/builder-state';
 
 const tabs: BuilderTab[] = ['build', 'preview'];
 

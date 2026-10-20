@@ -6,7 +6,9 @@ export {
 } from './components/forms-preview';
 export type { FormPreviewDefinition } from './components/forms-preview';
 export {
+  availableFieldsAtom,
   builderOutput,
+  formDefinition,
   addField,
   addRule,
   commit,
@@ -14,5 +16,28 @@ export {
   layoutAtom,
   moveField,
   removeField,
+  placeField,
+  rulesAtom,
+  formNameAtom,
   rollback,
-} from './model/form-builder-model';
+  selectField,
+  setActiveTab,
+  activeTabAtom,
+  previewDataAtom,
+  createRuleId,
+} from './model/builder-state';
+export { catalogAtom } from './model/field-catalog';
+export {
+  generateFormFromDomain,
+  generateJsonSchema,
+} from './model/schema-generator';
+export type {
+  BuilderOutput,
+  ProjectFieldDefinition,
+  FormField,
+  ValidationRule,
+  FormDefinition,
+  RowLayout,
+} from './model/types';
+export type { BuilderTab } from './model/builder-state';
+export type { AddTarget } from './model/layout';
