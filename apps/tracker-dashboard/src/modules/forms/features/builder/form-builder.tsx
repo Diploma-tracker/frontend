@@ -31,17 +31,17 @@ import {
   rollback,
   selectField,
   unplaceField,
-} from '../model/builder-state';
-import type { AddTarget } from '../model/layout';
-import { parseRowIndex } from '../model/row-dnd';
-import { type ProjectFieldDefinition } from '../model/types';
-import type { RowLayout } from '../model/types';
+} from '../../models/builder-state';
+import type { AddTarget } from '../../models/layout';
+import { parseRowIndex } from '../../models/row-dnd';
+import { type ProjectFieldDefinition } from '../../models/types';
+import type { RowLayout } from '../../models/types';
+import { FormPanel } from '../panels/form-panel';
+import { FormBuilderPreview } from '../preview/form-builder-preview';
 import { BuilderTabs } from './builder-tabs';
 import { FieldPalette } from './field-palette';
 import { FormCanvas } from './form-canvas';
 import { FormDragOverlay } from './form-drag-overlay';
-import { FormPanel } from './form-panel';
-import { FormPreview } from './form-preview';
 
 /** Data attached to every droppable the canvas registers. */
 interface DroppableData {
@@ -445,7 +445,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     return (
       <div className="flex flex-col gap-4">
         <BuilderTabs />
-        <FormPreview />
+        <FormBuilderPreview />
       </div>
     );
   }

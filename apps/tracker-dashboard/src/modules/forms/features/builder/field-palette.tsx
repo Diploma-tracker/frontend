@@ -15,8 +15,8 @@ import {
   availableFieldsAtom,
   commit,
   placeField,
-} from '../model/builder-state';
-import type { ProjectFieldDefinition } from '../model/types';
+} from '../../models/builder-state';
+import type { ProjectFieldDefinition } from '../../models/types';
 import { FieldSquare } from './field-square';
 
 interface PaletteItemProps {

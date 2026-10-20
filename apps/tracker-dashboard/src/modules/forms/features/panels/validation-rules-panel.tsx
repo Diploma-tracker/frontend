@@ -25,8 +25,8 @@ import {
   EmptyTitle,
 } from '@repo/ui-kit/components/common/states/empty';
 
-import { createRuleId } from '../model/builder-state';
-import type { FormField, ValidationRule } from '../model/types';
+import { createRuleId } from '../../models/builder-state';
+import type { FormField, ValidationRule } from '../../models/types';
 
 interface ValidationRulesPanelProps {
   rules: ValidationRule[];

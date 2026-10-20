@@ -1,26 +1,15 @@
 import type { ComponentProps } from 'react';
 import { useMeasure } from 'react-use';
 
-import { jsonFormsRenderers } from '@/shared/components/json-forms';
 import type { JsonSchema, Layout } from '@jsonforms/core';
 import { JsonForms } from '@jsonforms/react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
+import { jsonFormsRenderers } from './register-renderers';
+
 /** Any CSS length: a number is treated as px, a string may carry any unit. */
 type CssLength = number | string;
-
-/**
- * A form attached to a project definition: the name shown on cards plus the
- * JSON Forms pair the builder produces for it. A project definition can hold
- * several forms, so each one is identified separately.
- */
-export interface FormPreviewDefinition {
-  id: string;
-  name: string;
-  schema: JsonSchema;
-  uischema: Layout;
-}
 
 export const FORM_PREVIEW_REAL_SIZE: CssLength = 400;
 
@@ -51,9 +40,16 @@ const supportsCssUnitDivision = () => {
 const cssScale = (realSize: CssLength, padding: CssLength) =>
   `scale(calc(100cqw / (${toCssLength(realSize)} + ${toCssLength(padding)} * 2)))`;
 
-interface FormsPreviewProps extends Omit<ComponentProps<'div'>, 'children'> {
-  /** The form to preview. */
-  definition: FormPreviewDefinition;
+export interface FormPreviewProps extends Omit<
+  ComponentProps<'div'>,
+  'children'
+> {
+  /** JSON Schema describing the form data. */
+  schema: JsonSchema;
+  /** JSON Forms uiSchema (layout of controls). */
+  uischema: Layout;
+  /** Name shown on top of the card. */
+  title: string;
   /** Form natural width before scaling. Defaults to `FORM_PREVIEW_REAL_SIZE`. */
   realSize?: CssLength;
   /**
@@ -65,20 +61,22 @@ interface FormsPreviewProps extends Omit<ComponentProps<'div'>, 'children'> {
 }
 
 /**
- * The card a form is previewed as: a square (sized by `className`, so it can be
- * fixed or responsive) showing the form at its natural width, scaled down and
- * clipped under a gradient with the name on top. The scale is `square width /
- * padded form width`, computed in CSS where possible and measured with
- * `ResizeObserver` otherwise.
+ * A form as a card: a square (sized by `className`, so it can be fixed or
+ * responsive) showing the schema at its natural width, scaled down and clipped
+ * under a gradient with the title on top. The scale is `square width / padded
+ * form width`, computed in CSS where possible and measured with `ResizeObserver`
+ * otherwise. Domain-neutral: it only needs a JSON Schema + uiSchema pair.
  */
-export const FormsPreview = function FormsPreview({
-  definition,
+export const FormPreview = function FormPreview({
+  schema,
+  uischema,
+  title,
   realSize = FORM_PREVIEW_REAL_SIZE,
   padding = FORM_PREVIEW_PADDING,
   className,
   style,
   ...props
-}: FormsPreviewProps) {
+}: FormPreviewProps) {
   /* Hooks stay unconditional; on the CSS path the refs are never attached. */
   const [boxRef, boxRect] = useMeasure<HTMLDivElement>();
   const [formRef, formRect] = useMeasure<HTMLDivElement>();
@@ -119,8 +117,8 @@ export const FormsPreview = function FormsPreview({
           <div style={{ padding, width: realSize, boxSizing: 'content-box' }}>
             <JsonForms
               data={{}}
-              schema={definition.schema}
-              uischema={definition.uischema}
+              schema={schema}
+              uischema={uischema}
               renderers={jsonFormsRenderers}
               readonly
               validationMode="NoValidation"
@@ -132,7 +130,7 @@ export const FormsPreview = function FormsPreview({
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-card via-card/80 to-card/40" />
 
       <span className="absolute right-2 bottom-2 left-2 line-clamp-3 text-sm font-medium">
-        {definition.name}
+        {title}
       </span>
     </div>
   );

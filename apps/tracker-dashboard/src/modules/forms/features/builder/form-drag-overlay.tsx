@@ -7,8 +7,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { reatomComponent } from '@reatom/react';
 
-import { dragSessionAtom, dropSessionAtom } from '../model/builder-state';
-import { catalogAtom } from '../model/field-catalog';
+import { dragSessionAtom, dropSessionAtom } from '../../models/builder-state';
+import { catalogAtom } from '../../models/field-catalog';
 import { FIELD_SQUARE_SIZE, FieldSquare } from './field-square';
 
 /**

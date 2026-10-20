@@ -9,7 +9,7 @@ import {
   selectField,
   selectedFieldNameAtom,
   updateFieldProps,
-} from '../model/builder-state';
+} from '../../models/builder-state';
 import { PropertiesPanel } from './properties-panel';
 import { ValidationRulesPanel } from './validation-rules-panel';
 

@@ -12,9 +12,9 @@ import {
   EmptyTitle,
 } from '@repo/ui-kit/components/common/states/empty';
 
-import { builderOutput, previewDataAtom } from '../model/builder-state';
+import { builderOutput, previewDataAtom } from '../../models/builder-state';
 
-interface FormPreviewProps {
+interface FormBuilderPreviewProps {
   onSubmit?: (data: Record<string, unknown>) => void;
 }
 
@@ -23,9 +23,9 @@ interface FormPreviewProps {
  * from the builder state and hands them, with the draft data, to the shared
  * {@link DeclarativeForm}; all rendering and validation lives there.
  */
-export const FormPreview = reatomComponent(function FormPreview({
+export const FormBuilderPreview = reatomComponent(function FormBuilderPreview({
   onSubmit,
-}: FormPreviewProps) {
+}: FormBuilderPreviewProps) {
   const { t } = useTranslation();
   const [data, setData] = useAtom(previewDataAtom);
   const { schema, uischema } = builderOutput();

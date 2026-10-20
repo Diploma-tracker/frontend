@@ -1,5 +1,5 @@
 import { PageLayout } from '@/layouts';
-import { FormBuilder } from '@/modules/form-builder';
+import { FormBuilder } from '@/modules/forms';
 
 export const FormBuilderPage = function FormBuilderPage() {
   return (

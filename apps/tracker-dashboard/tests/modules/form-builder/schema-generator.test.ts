@@ -3,8 +3,8 @@ import type {
   FormField,
   ProjectFieldDefinition,
   ValidationRule,
-} from '@/modules/form-builder';
-import { generateFormFromDomain } from '@/modules/form-builder';
+} from '@/modules/forms';
+import { generateFormFromDomain } from '@/modules/forms';
 import { describe, expect, it } from 'vitest';
 
 const fieldDef = (name: string): ProjectFieldDefinition => ({

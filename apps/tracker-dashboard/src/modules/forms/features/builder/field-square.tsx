@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import type { ProjectFieldDefinition } from '../model/types';
+import type { ProjectFieldDefinition } from '../../models/types';
 
 interface FieldSquareProps extends ComponentProps<'div'> {
   /** The catalog field definition the square stands for. */

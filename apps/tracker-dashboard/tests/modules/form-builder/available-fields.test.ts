@@ -5,7 +5,7 @@ import {
   fieldsAtom,
   placeField,
   removeField,
-} from '@/modules/form-builder';
+} from '@/modules/forms';
 import { resetFormBuilderTestState } from '@tests/utils/reset-form-builder-test-state';
 import { beforeEach, describe, expect, it } from 'vitest';
 

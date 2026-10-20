@@ -5,7 +5,7 @@ import {
   layoutAtom,
   previewDataAtom,
   rulesAtom,
-} from '@/modules/form-builder';
+} from '@/modules/forms';
 
 export function resetFormBuilderTestState(): void {
   fieldsAtom.set([]);

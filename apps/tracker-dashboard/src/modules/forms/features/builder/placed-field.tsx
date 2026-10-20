@@ -17,10 +17,10 @@ import {
   fieldsAtom,
   removeField,
   selectedFieldNameAtom,
-} from '../model/builder-state';
-import { catalogAtom } from '../model/field-catalog';
-import { generateFormFromDomain } from '../model/schema-generator';
-import type { BuilderOutput } from '../model/types';
+} from '../../models/builder-state';
+import { catalogAtom } from '../../models/field-catalog';
+import { generateFormFromDomain } from '../../models/schema-generator';
+import type { BuilderOutput } from '../../models/types';
 
 interface PlacedFieldProps {
   name: string;

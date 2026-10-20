@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from '@repo/ui-kit/components/common/layout/card';
 
-import type { FormField } from '../model/types';
+import type { FormField } from '../../models/types';
 
 interface PropertiesPanelProps {
   field: FormField;

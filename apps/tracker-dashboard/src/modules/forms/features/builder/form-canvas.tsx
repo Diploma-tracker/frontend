@@ -20,12 +20,12 @@ import {
 } from '@repo/ui-kit/components/common/states/empty';
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { fieldsAtom, layoutAtom } from '../model/builder-state';
+import { fieldsAtom, layoutAtom } from '../../models/builder-state';
 import {
   CANVAS_DROPPABLE_ID,
   rowDroppableId,
   rowGapDroppableId,
-} from '../model/row-dnd';
+} from '../../models/row-dnd';
 import { PlacedField } from './placed-field';
 
 interface RowGapProps {
