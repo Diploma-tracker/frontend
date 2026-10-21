@@ -299,6 +299,14 @@ export class DiagramService {
   }
 
   zoomToFit(): void {
+    const { width, height } = this.getCanvasSize();
+    if (
+      !Number.isFinite(width) ||
+      !Number.isFinite(height) ||
+      width <= 0 ||
+      height <= 0
+    )
+      return;
     this.faced.canvas.zoom('fit-viewport');
   }
 
@@ -680,8 +688,6 @@ export class DiagramService {
   ): Promise<{ warnings: string[]; error?: string }> {
     try {
       const { warnings } = await this.faced.import(xml);
-
-      this.zoomToFit();
 
       return { warnings };
     } catch (error) {

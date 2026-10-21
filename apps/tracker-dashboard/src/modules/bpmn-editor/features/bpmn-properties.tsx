@@ -25,8 +25,8 @@ import { BpmnInspector } from './bpmn-inspector';
  * Floating properties panel shown over the canvas on the right. Its body is
  * contextual.
  *
- * Stays mounted while closed so it can animate out — see `BpmnEditor`, which
- * owns the open state and the slide.
+ * Stays mounted while closed so it can animate out — see `BpmnEditorInner`,
+ * which renders the open state and the slide.
  */
 export const BpmnProperties = reatomComponent(function BpmnProperties() {
   const { t } = useTranslation();

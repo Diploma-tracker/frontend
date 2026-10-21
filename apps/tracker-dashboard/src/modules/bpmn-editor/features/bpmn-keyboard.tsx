@@ -7,6 +7,7 @@ import {
   duplicateSelected,
   fitViewport,
   getDiagramService,
+  isActiveAtom,
   isReadyAtom,
   setSelectedElement,
   setTool,
@@ -87,6 +88,7 @@ const handleEditorShortcut = (
  */
 export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
   const isReady = isReadyAtom();
+  const isActive = isActiveAtom();
 
   useEffect(() => {
     const service = getDiagramService();
@@ -97,7 +99,9 @@ export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
   }, [isReady]);
 
   useEffect(() => {
+    if (!isActive || !isReady) return;
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isActiveAtom()) return;
       // The palette shortcuts work anywhere on the page, including its own input.
       if (isPaletteShortcut(event)) {
         event.preventDefault();
@@ -118,6 +122,7 @@ export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+      if (!isActiveAtom()) return;
       const service = getDiagramService();
 
       if (!service || shouldIgnoreKey(event)) return;
@@ -132,7 +137,7 @@ export const BpmnKeyboard = reatomComponent(function BpmnKeyboard() {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, []);
+  }, [isActive, isReady]);
 
   return null;
 });

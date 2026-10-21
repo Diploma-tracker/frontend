@@ -1,5 +1,5 @@
 import { k } from '@/shared/utils/i18n';
-import { action, atom } from '@reatom/core';
+import { action, atom, computed } from '@reatom/core';
 import type BpmnModeler from 'bpmn-js/lib/Modeler';
 import type { Element } from 'bpmn-js/lib/model/Types';
 
@@ -36,27 +36,28 @@ export const editorErrorKeys = {
 export type EditorErrorKey =
   (typeof editorErrorKeys)[keyof typeof editorErrorKeys];
 
-/**
- * The adapter over the `bpmn-js` instance. Held in a module-scoped variable
- * rather than a reatom atom: it wraps a huge, non-serialisable object and would
- * flood the dev logger on every patch. `setModeler` rebuilds it whenever the
- * canvas (re)creates the modeler, so callers never touch the raw instance.
- */
-let service: DiagramService | null = null;
+export const isReadyAtom = atom<boolean>(false, 'bpmnEditor.isReady');
+const modelerAtom = atom<BpmnModeler | null>(null, 'bpmnEditor.modeler');
+export const isActiveAtom = atom(false, 'bpmnEditor.isActive');
 
-export const getDiagramService = (): DiagramService | null => service;
+const serviceAtom = computed<DiagramService | null>(() => {
+  const modeler = modelerAtom();
+  if (!modeler) return null;
+  return new DiagramService(modeler);
+});
+export const getDiagramService = (): DiagramService | null => serviceAtom();
+
+/** Returns the raw `bpmn-js` modeler instance, or `null` when not yet created. */
+export const getModeler = (): BpmnModeler | null => modelerAtom();
 
 export function setModeler(instance: BpmnModeler): DiagramService;
 export function setModeler(instance: null): null;
 export function setModeler(
   instance: BpmnModeler | null,
 ): DiagramService | null {
-  service = instance ? new DiagramService(instance) : null;
-
-  return service;
+  modelerAtom.set(instance);
+  return getDiagramService();
 }
-
-export const isReadyAtom = atom<boolean>(false, 'bpmnEditor.isReady');
 /**
  * Name of the active bpmn-js tool, or `null` for the default pointer
  * interaction. Mirrors `tool-manager.update` from the tool manager.
@@ -106,6 +107,7 @@ export const setUndoRedoState = action((canUndo: boolean, canRedo: boolean) => {
 });
 
 export const activateTool = action((tool: EditorToolName, event?: Event) => {
+  const service = getDiagramService();
   if (!service) return;
 
   service.clearSelection();
@@ -119,6 +121,7 @@ export const activateTool = action((tool: EditorToolName, event?: Event) => {
 export const setTool = action(() => {
   activeToolAtom.set(null);
 
+  const service = getDiagramService();
   if (!service) return;
 
   service.deactivateTool();
@@ -146,6 +149,7 @@ export const setError = action((key: EditorErrorKey | null) => {
 });
 
 const getElementById = (id: string): Element | null => {
+  const service = getDiagramService();
   return service?.getElementById(id) ?? null;
 };
 
@@ -155,6 +159,7 @@ const getElementById = (id: string): Element | null => {
  * pushes focus back here after it is done.
  */
 const focusCanvas = action(() => {
+  const service = getDiagramService();
   if (!service) return;
 
   service.focusCanvas();
@@ -166,6 +171,7 @@ const focusCanvas = action(() => {
  * so a hit can be opened with a single click.
  */
 export const revealElement = action((id: string) => {
+  const service = getDiagramService();
   if (!service) return;
 
   const element = getElementById(id);
@@ -177,6 +183,7 @@ export const revealElement = action((id: string) => {
 });
 
 export const pickElement = action((id: string) => {
+  const service = getDiagramService();
   if (!service) return;
 
   const element = getElementById(id);
@@ -188,6 +195,7 @@ export const pickElement = action((id: string) => {
 
 export const spawnPaletteElement = action(
   (element: PaletteElement, name?: string) => {
+    const service = getDiagramService();
     if (!service) return;
 
     setError(null);
@@ -207,6 +215,7 @@ export const spawnPaletteElement = action(
  */
 export const getCurrentElement = (): Element | null => {
   const selected = selectedElementAtom();
+  const service = getDiagramService();
   if (!service || !selected) return null;
   return getElementById(selected.id);
 };
@@ -218,21 +227,23 @@ export const getCurrentElement = (): Element | null => {
  */
 export const updateCurrent = action(() => {
   const element = getCurrentElement();
-  if (!service || !element) return;
+  if (!element) return;
   setSelectedElement(describeElement(element));
 });
 
 export const renameSelected = action((name: string) => {
   const element = getCurrentElement();
-  if (!service || !element) return;
+  if (!element) return;
 
+  const service = getDiagramService();
+  if (!service) return;
   service.updateProperties(element, { name });
   updateCurrent();
 });
 
 export const duplicateSelected = action(() => {
   const selected = selectedElementAtom();
-
+  const service = getDiagramService();
   if (!service || !selected) return;
 
   const element = getElementById(selected.id);
@@ -244,7 +255,7 @@ export const duplicateSelected = action(() => {
 
 export const deleteSelected = action(() => {
   const selected = selectedElementAtom();
-
+  const service = getDiagramService();
   if (!service || !selected) return;
 
   const element = getElementById(selected.id);
@@ -256,14 +267,17 @@ export const deleteSelected = action(() => {
 });
 
 export const fitViewport = action(() => {
+  const service = getDiagramService();
   service?.zoomToFit();
 });
 
 export const undo = action(() => {
+  const service = getDiagramService();
   service?.undo();
 });
 
 export const redo = action(() => {
+  const service = getDiagramService();
   service?.redo();
 });
 
@@ -280,6 +294,7 @@ export const cancelChanges = action(() => {
 
 /** Steps the zoom around the current viewport centre. */
 const zoomBy = action((factor: number) => {
+  const service = getDiagramService();
   if (!service) return;
 
   const { scale } = service.getViewbox();

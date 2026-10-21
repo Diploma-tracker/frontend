@@ -1,7 +1,7 @@
 export { BpmnActionBar } from './features/bpmn-action-bar';
 export { BpmnCanvas } from './features/bpmn-canvas';
 export { BpmnCommandPalette } from './features/bpmn-command-palette';
-export { BpmnEditor } from './features/bpmn-editor';
+export { BpmnEditorInner } from './features/bpmn-editor-inner';
 export { BpmnKeyboard } from './features/bpmn-keyboard';
 export { BpmnProperties, BpmnPropertiesPill } from './features/bpmn-properties';
 export { BpmnToolBar } from './features/bpmn-tool-bar';
@@ -61,6 +61,9 @@ export {
   editorErrorKeys,
   fitViewport,
   getDiagramService,
+  setModeler,
+  isActiveAtom,
+  getModeler,
   isCommandPaletteOpenAtom,
   isPropertiesOpenAtom,
   isReadyAtom,
@@ -73,7 +76,6 @@ export {
   setActiveTool,
   setCommandPaletteOpen,
   setError,
-  setModeler,
   setPropertiesOpen,
   setReady,
   setSelectedElement,

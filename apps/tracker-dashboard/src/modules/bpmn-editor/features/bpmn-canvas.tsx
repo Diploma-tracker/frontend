@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
+import type { Element } from 'bpmn-js/lib/model/Types';
 
 import { refreshStageState } from '../models/actions/stages';
 import customModdle from '../models/custom-moddle.json';
@@ -53,16 +54,10 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     const modeler = new BpmnModeler({
       container,
-      // Inline styles resolve CSS variables, so the diagram uses the app font.
       textRenderer: { defaultStyle: { fontFamily: 'var(--font-sans)' } },
       moddleExtensions: {
         custom: customModdle,
       },
-      // Higher-priority renderers: `taskRenderer` tints the supported task
-      // kinds, `flowRenderer` colours gateway approve/reject branches, and
-      // `stageRenderer` marks subprocesses flagged as stages.
-      // `__init__` forces them to be constructed so they subscribe to the render
-      // events; without it didi would never instantiate the lazy services.
       additionalModules: [
         {
           __init__: ['taskRenderer', 'flowRenderer', 'stageRenderer'],
@@ -71,39 +66,21 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
           stageRenderer: ['type', StageRenderer],
         },
       ],
-      /**
-       * `bpmnRenderer` is a documented config path: `BpmnRenderer.$inject` asks
-       * for `config.bpmnRenderer`, and `config` is the modeler options object.
-       *
-       * The defaults are handed over as unresolved `var()` references rather
-       * than resolved colours. They land on the shapes as SVG presentation
-       * attributes, which resolve against the diagram tokens in
-       * `packages/tailwind-config/tokens.css` — so the whole diagram follows the
-       * app theme, and light/dark switching needs no re-import. Anything that
-       * sets a real colour on bpmndi still wins, because `getFillColor` /
-       * `getStrokeColor` prefer it over the default.
-       */
       bpmnRenderer: {
         defaultFillColor: 'var(--bpmn-element-bg)',
         defaultStrokeColor: 'var(--bpmn-stroke)',
         defaultLabelColor: 'var(--bpmn-element-fg)',
       },
     });
-
     const service = setModeler(modeler);
+    let disposed = false;
+    let imported = false;
 
     const disposers: Array<() => void> = [];
 
-    /**
-     * The dot grid lives on `.djs-container` as a CSS background, but bpmn-js
-     * pans/zooms by transforming an inner <svg> — a plain background would stay
-     * pinned to the viewport. Recomputing the tile size and offset from the
-     * viewbox keeps the dots moving and scaling with the diagram.
-     */
     const updateGrid = (viewbox: { x: number; y: number; scale: number }) => {
       let step = GRID_STEP;
 
-      // Zoomed far out, a fixed step would smear into noise; double it up.
       while (step * viewbox.scale < MIN_GRID_PX) step *= 2;
 
       const size = step * viewbox.scale;
@@ -128,20 +105,13 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     disposers.push(service.onViewboxChanged(updateGrid));
 
-    /**
-     * bpmn-js measures its container once, at import time. Inside a flex/grid
-     * page the container has no usable size yet at that point, which would fit
-     * the diagram at a near-zero zoom. Re-measure on every resize and re-fit
-     * once the container is actually laid out.
-     */
     let hasAutoFitted = false;
 
     const observer = new ResizeObserver(() => {
-      service.resize();
-
       const { width, height } = service.getCanvasSize();
-
-      if (hasAutoFitted || width === 0 || height === 0) return;
+      if (width <= 0 || height <= 0) return;
+      service.resize();
+      if (!imported || hasAutoFitted) return;
 
       hasAutoFitted = true;
       service.zoomToFit();
@@ -149,13 +119,8 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
 
     observer.observe(container);
 
-    /**
-     * The tool manager broadcasts the active tool on `tool-manager.update`; the
-     * built-in palette highlights from the same event, and so does the tool
-     * rail.
-     */
     disposers.push(
-      service.onToolChanged((tool) => {
+      service.onToolChanged((tool: string | null) => {
         setActiveTool(tool);
       }),
     );
@@ -169,7 +134,7 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
     );
 
     disposers.push(
-      service.onSelectionChanged((selected) => {
+      service.onSelectionChanged((selected: Element[]) => {
         if (selected.length > 1) {
           setSelectedElement(null);
         } else {
@@ -178,12 +143,6 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       }),
     );
 
-    /**
-     * `commandStack.changed` is the single reliable notification that the
-     * diagram was modified — it covers create/remove/move/replace as well as
-     * undo and redo. bpmn-js does not re-fire `shape.create` / `connection.create`
-     * on the event bus; those names only exist on the command stack.
-     */
     disposers.push(
       service.onDiagramChanged(() => {
         refreshStageState();
@@ -191,30 +150,38 @@ export const BpmnCanvas = reatomComponent(function BpmnCanvas() {
       }),
     );
 
-    /**
-     * Deletion, undo, redo and the editor shortcuts are handled centrally by
-     * `BpmnKeyboard`; bpmn-js's own SVG-bound keyboard is detached there too.
-     */
-
+    // The canvas mounts once per design session, not once per tab activation.
     service
       .importXml(starterDiagramXml)
-      .then(({ error }) => {
+      .then(({ error }: { error?: string }) => {
+        if (disposed) return;
         if (error) {
           console.warn('bpmn-editor: diagram import failed', error);
           setError(editorErrorKeys.importFailed);
+        } else {
+          imported = true;
+          const { width, height } = service.getCanvasSize();
+          if (width > 0 && height > 0 && !hasAutoFitted) {
+            service.resize();
+            service.zoomToFit();
+            hasAutoFitted = true;
+          }
         }
       })
       .catch((error: unknown) => {
+        if (disposed) return;
         console.warn('bpmn-editor: diagram import failed', error);
         setError(editorErrorKeys.importFailed);
       });
-
     return () => {
+      disposed = true;
       observer.disconnect();
       for (const dispose of disposers) dispose();
       modeler.destroy();
       setModeler(null);
       setReady(false);
+      setUndoRedoState(false, false);
+      setActiveTool(null);
       setSelectedElement(null);
       refreshStageState();
     };
