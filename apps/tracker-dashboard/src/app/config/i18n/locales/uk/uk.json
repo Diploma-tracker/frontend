@@ -1,8 +1,26 @@
 {
+  "design": {
+    "draft": "Чернетка",
+    "available": "Доступна",
+    "formName": "Назва форми",
+    "createForm": "Створити форму",
+    "untitledForm": "Без назви",
+    "actions": {
+      "save": "Зберегти",
+      "cancel": "Скасувати"
+    },
+    "definition": "Визначення",
+    "forms": "Форми",
+    "process": "Процес"
+  },
   "common": {
     "confirm": {
       "cancel": "Скасувати",
-      "proceed": "Підтвердити"
+      "proceed": "Підтвердити",
+      "saveTitle": "Зберегти зміни?",
+      "saveDescription": "Бажаєте зберегти зміни?",
+      "discardTitle": "Відкинути зміни?",
+      "discardDescription": "Усі незбережені зміни буде втрачено."
     },
     "datePicker": {
       "placeholder": "Оберіть дату",
@@ -27,7 +45,10 @@
     },
     "actions": {
       "submit": "Надіслати"
-    }
+    },
+    "search": "Пошук",
+    "back": "Назад",
+    "noResults": "Нічого не знайдено"
   },
   "auth": {
     "login": {
@@ -58,7 +79,8 @@
       "projectEnrollment": "Зарахування до проєктів",
       "schedule": "Розклад",
       "formBuilder": "Конструктор форм",
-      "bpmnEditor": "Редактор BPMN"
+      "bpmnEditor": "Редактор BPMN",
+      "design": "Дизайн"
     },
     "collapsed": "Розгорнути бокову панель",
     "expanded": "Згорнути бокову панель",

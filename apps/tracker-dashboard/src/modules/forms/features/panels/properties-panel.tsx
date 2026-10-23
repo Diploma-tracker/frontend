@@ -37,7 +37,7 @@ export const PropertiesPanel = reatomComponent(function PropertiesPanel({
   const update = (patch: Partial<FormField>) => onUpdate(field.name, patch);
 
   return (
-    <Card>
+    <Card className="min-h-[25rem]">
       <CardHeader>
         <CardTitle>{t('formBuilder.properties.title')}</CardTitle>
         <CardDescription>{field.label}</CardDescription>

@@ -4,7 +4,6 @@ import type {
   BuilderOutput,
   FormDefinition,
   FormField,
-  ProjectFieldDefinition,
   RowLayout,
   ValidationRule,
 } from './types';
@@ -18,13 +17,10 @@ import type {
  * «хоча б одне з полів заповнене», що відповідає `OneOfRequired.is_broken` на бекенді.
  */
 export const generateJsonSchema = (
-  fieldDefinitions: ProjectFieldDefinition[],
   formFields: FormField[],
   rules: ValidationRule[],
 ): JsonSchema => {
-  const schemaByName = new Map(
-    fieldDefinitions.map((fd) => [fd.name, fd.schema]),
-  );
+  const schemaByName = new Map(formFields.map((fd) => [fd.name, fd.schema]));
   const properties: Record<string, JsonSchema> = {};
   const required: string[] = [];
 
@@ -63,10 +59,9 @@ export const generateJsonSchema = (
 export const generateUiSchema = (
   layout: RowLayout,
   formFields: FormField[],
-  fieldDefinitions: ProjectFieldDefinition[],
 ): Layout => {
   const fieldsByName = new Map(formFields.map((f) => [f.name, f]));
-  const kindByName = new Map(fieldDefinitions.map((fd) => [fd.name, fd.kind]));
+  const kindByName = new Map(formFields.map((fd) => [fd.name, fd.kind]));
 
   const elements: UISchemaElement[] = layout.flatMap((row) => {
     const controls = row
@@ -98,15 +93,8 @@ export const generateUiSchema = (
  * Повний вихід білдера: JSON Schema + uiSchema. Schema-фрагменти беруться з
  * ProjectFieldDefinition.schema (надходить з бекенду), uiSchema — з layout.
  */
-export const generateFormFromDomain = (
-  fieldDefinitions: ProjectFieldDefinition[],
-  form: FormDefinition,
-): BuilderOutput => {
-  const schema = generateJsonSchema(
-    fieldDefinitions,
-    form.fields,
-    form.validation_rules,
-  );
-  const uischema = generateUiSchema(form.ui, form.fields, fieldDefinitions);
+export const generateFormFromDomain = (form: FormDefinition): BuilderOutput => {
+  const schema = generateJsonSchema(form.fields, form.validation_rules);
+  const uischema = generateUiSchema(form.ui, form.fields);
   return { schema, uischema };
 };

@@ -13,7 +13,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { CircleNotchIcon, FloppyDiskIcon } from '@phosphor-icons/react';
 import { wrap } from '@reatom/core';
 import { reatomComponent } from '@reatom/react';
 
@@ -40,7 +39,6 @@ import {
   projectFieldsAtom,
   projectRolesAtom,
   reorderProjectFieldsAction,
-  saveProjectDefinitionAction,
 } from '../../models';
 import {
   AvailableFieldsPanel,
@@ -65,7 +63,6 @@ export const ProjectDefinitionEditor = reatomComponent(
     const { t } = useTranslation();
 
     const loadStatus = loadProjectDefinitionAction.status();
-    const saveStatus = saveProjectDefinitionAction.status();
     const fields = projectFieldsAtom();
     const roles = projectRolesAtom();
     const name = projectDefinitionNameAtom();
@@ -74,7 +71,6 @@ export const ProjectDefinitionEditor = reatomComponent(
     const hasUnnamedFieldsOrRoles =
       fields.some((field) => !field.name.trim()) ||
       roles.some((role) => !role.name.trim());
-    const hasInvalidNames = !name.trim() || hasUnnamedFieldsOrRoles;
     const isNameInvalid = isNameTouched && !name.trim();
     const hasDuplicateRoleNames = hasDuplicateRoleNamesAtom();
     const isLoading = loadStatus.isPending || !loadStatus.isEverPending;
@@ -211,34 +207,16 @@ export const ProjectDefinitionEditor = reatomComponent(
                 {t('projectDefinition.roles.duplicateName')}
               </p>
             )}
-
-            <Button
-              type="button"
-              disabled={
-                saveStatus.isPending ||
-                !loadStatus.isFulfilled ||
-                hasInvalidNames ||
-                hasDuplicateRoleNames
-              }
-              onClick={() => wrap(saveProjectDefinitionAction())}
-            >
-              {saveStatus.isPending ? (
-                <CircleNotchIcon className="animate-spin" />
-              ) : (
-                <FloppyDiskIcon />
-              )}
-              {t('projectDefinition.actions.save')}
-            </Button>
           </div>
         </div>
 
         {isLoading && (
           <div className="grid grid-cols-[320px_minmax(0,1fr)_340px] gap-6">
-            <Skeleton className="h-72 w-full" />
-            <Skeleton className="h-72 w-full" />
-            <Skeleton className="h-72 w-full" />
+            <Skeleton className="h-[25rem] w-full" />
+            <Skeleton className="h-[25rem] w-full" />
+            <Skeleton className="h-[25rem] w-full" />
 
-            <Skeleton className="col-start-2 row-start-2 h-72 w-full" />
+            <Skeleton className="col-start-2 row-start-2 h-[25rem] w-full" />
           </div>
         )}
 

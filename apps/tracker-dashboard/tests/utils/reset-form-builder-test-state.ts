@@ -1,6 +1,6 @@
 import {
-  activeTabAtom,
   fieldsAtom,
+  formIdAtom,
   formNameAtom,
   layoutAtom,
   previewDataAtom,
@@ -9,9 +9,9 @@ import {
 
 export function resetFormBuilderTestState(): void {
   fieldsAtom.set([]);
+  formIdAtom.set('');
   layoutAtom.set([]);
   rulesAtom.set([]);
   formNameAtom.set('');
   previewDataAtom.set({});
-  activeTabAtom.set('build');
 }

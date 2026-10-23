@@ -1,5 +1,5 @@
 import { createAtomsWithCommit } from '@/shared/model/transaction';
-import { atom, computed } from '@reatom/core';
+import { action, atom, computed } from '@reatom/core';
 
 import { catalogAtom } from './field-catalog';
 import {
@@ -12,11 +12,10 @@ import { generateFormFromDomain } from './schema-generator';
 import type {
   FormDefinition,
   FormField,
+  ProjectFieldDefinition,
   RowLayout,
   ValidationRule,
 } from './types';
-
-export type BuilderTab = 'build' | 'preview';
 
 export type DragSession = {
   source: 'palette' | 'canvas';
@@ -49,7 +48,7 @@ export const dropSessionAtom = atom<DragSession | null>(
   'formBuilder.dropSession',
 );
 
-export const activeTabAtom = atom<BuilderTab>('build', 'formBuilder.activeTab');
+export const formIdAtom = atom<string>('', 'formBuilder.formId');
 export const formNameAtom = atom<string>('', 'formBuilder.formName');
 export const rulesAtom = atom<ValidationRule[]>([], 'formBuilder.rules');
 export const previewDataAtom = atom<Record<string, unknown>>(
@@ -107,9 +106,30 @@ export const commit = (): void => {
   commitBuilderState();
 };
 
+export const loadDefinition = action((definition: FormDefinition) => {
+  formIdAtom.set(definition.id);
+  formNameAtom.set(definition.name);
+  fieldsAtom.set(definition.fields);
+  layoutAtom.set(definition.ui);
+  rulesAtom.set(definition.validation_rules);
+  selectedFieldNameAtom.set(null);
+  previewDataAtom.set({});
+  commit();
+}, 'formBuilder.loadDefinition');
+
 // ---------------------------------------------------------------------------
 // Field actions
 // ---------------------------------------------------------------------------
+
+export const createFormFieldFromDefinition = (
+  definition: ProjectFieldDefinition,
+): FormField => ({
+  name: definition.name,
+  label: definition.name,
+  kind: definition.kind,
+  schema: definition.schema,
+  required: false,
+});
 
 /**
  * Adds a field instance. `FormField.name` doubles as the catalog type name, so
@@ -197,10 +217,6 @@ export const selectField = (name: string | null): void => {
   selectedFieldNameAtom.set(name);
 };
 
-export const setActiveTab = (tab: BuilderTab): void => {
-  activeTabAtom.set(tab);
-};
-
 // ---------------------------------------------------------------------------
 // Rules
 // ---------------------------------------------------------------------------
@@ -224,6 +240,7 @@ export const removeRule = (ruleId: string): void => {
  */
 export const formDefinition = computed<FormDefinition>(
   () => ({
+    id: formIdAtom(),
     name: formNameAtomResult(),
     fields: fieldsAtomResult(),
     validation_rules: rulesAtomResult(),
@@ -238,7 +255,7 @@ export const formDefinition = computed<FormDefinition>(
  * бекенду), а uiSchema — з `layoutAtom` (кожен рядок → HorizontalLayout).
  */
 export const builderOutput = computed(
-  () => generateFormFromDomain(catalogAtom(), formDefinition()),
+  () => generateFormFromDomain(formDefinition()),
   'formBuilder.output',
 );
 

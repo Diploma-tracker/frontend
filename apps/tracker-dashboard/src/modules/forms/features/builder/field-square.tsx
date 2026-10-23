@@ -1,5 +1,7 @@
 import type { ComponentProps } from 'react';
 
+import { SquaresFourIcon } from '@phosphor-icons/react';
+
 import { cn } from '@repo/ui-kit/lib/utils';
 
 import type { ProjectFieldDefinition } from '../../models/types';
@@ -29,6 +31,8 @@ export const FieldSquare = function FieldSquare({
   style,
   ...props
 }: FieldSquareProps) {
+  const Icon = field.icon ?? SquaresFourIcon;
+
   return (
     <div
       style={{
@@ -42,6 +46,7 @@ export const FieldSquare = function FieldSquare({
       )}
       {...props}
     >
+      <Icon aria-hidden="true" className="size-6 text-muted-foreground" />
       <span className="line-clamp-2 text-xs leading-tight text-muted-foreground">
         {field.name}
       </span>

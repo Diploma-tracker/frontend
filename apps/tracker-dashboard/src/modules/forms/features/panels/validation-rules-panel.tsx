@@ -77,7 +77,7 @@ export const ValidationRulesPanel = reatomComponent(
     };
 
     return (
-      <Card>
+      <Card className="min-h-[25rem]">
         <CardHeader>
           <CardTitle>{t('formBuilder.rules.title')}</CardTitle>
           <CardDescription>

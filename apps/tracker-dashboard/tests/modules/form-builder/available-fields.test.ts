@@ -23,7 +23,13 @@ describe('availableFieldsAtom', () => {
   });
 
   it('hides a type once its field is placed', () => {
-    placeField({ name: 'string', label: 'string', required: false });
+    placeField({
+      name: 'string',
+      kind: 'string',
+      schema: { type: 'string' },
+      label: 'string',
+      required: false,
+    });
     commit();
 
     expect(availableFieldsAtom().map((field) => field.name)).not.toContain(
@@ -33,7 +39,13 @@ describe('availableFieldsAtom', () => {
   });
 
   it('keeps types that are not placed', () => {
-    placeField({ name: 'integer', label: 'integer', required: false });
+    placeField({
+      name: 'integer',
+      kind: 'integer',
+      schema: { type: 'integer' },
+      label: 'integer',
+      required: false,
+    });
     commit();
 
     const names = availableFieldsAtom().map((field) => field.name);
@@ -43,7 +55,13 @@ describe('availableFieldsAtom', () => {
   });
 
   it('restores a type to the palette after its field is removed', () => {
-    placeField({ name: 'bool', label: 'bool', required: false });
+    placeField({
+      name: 'bool',
+      kind: 'boolean',
+      schema: { type: 'boolean' },
+      label: 'bool',
+      required: false,
+    });
     commit();
     expect(availableFieldsAtom().map((field) => field.name)).not.toContain(
       'bool',
@@ -56,7 +74,13 @@ describe('availableFieldsAtom', () => {
 
   it('does not mutate the catalog when filtering', () => {
     const before = catalogNames();
-    placeField({ name: 'grade', label: 'grade', required: false });
+    placeField({
+      name: 'grade',
+      kind: 'integer',
+      schema: { type: 'integer' },
+      label: 'grade',
+      required: false,
+    });
     commit();
 
     availableFieldsAtom();
@@ -65,8 +89,20 @@ describe('availableFieldsAtom', () => {
   });
 
   it('reflects every placed field, not just the first', () => {
-    placeField({ name: 'string', label: 'string', required: false });
-    placeField({ name: 'integer', label: 'integer', required: false });
+    placeField({
+      name: 'string',
+      kind: 'string',
+      schema: { type: 'string' },
+      label: 'string',
+      required: false,
+    });
+    placeField({
+      name: 'integer',
+      kind: 'integer',
+      schema: { type: 'integer' },
+      label: 'integer',
+      required: false,
+    });
     commit();
 
     const names = availableFieldsAtom().map((field) => field.name);

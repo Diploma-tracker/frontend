@@ -55,7 +55,7 @@ export const AvailableFieldsPanel = reatomComponent(
     const { t } = useTranslation();
 
     return (
-      <Card className="min-h-[22rem]">
+      <Card className="min-h-[25rem]">
         <CardHeader>
           <CardTitle>{t('projectDefinition.available.title')}</CardTitle>
           <CardDescription>

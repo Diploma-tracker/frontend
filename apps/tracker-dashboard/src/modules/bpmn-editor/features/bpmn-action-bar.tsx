@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
 import {
@@ -6,12 +6,10 @@ import {
   ArrowUUpRightIcon,
   ArrowsOutIcon,
   CopyIcon,
-  FloppyDiskIcon,
   MagnifyingGlassIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
   TrashIcon,
-  XIcon,
 } from '@phosphor-icons/react';
 import { reatomComponent } from '@reatom/react';
 
@@ -26,18 +24,15 @@ import { InlineInput } from '@repo/ui-kit/components/common/form/inline-input';
 import { Card } from '@repo/ui-kit/components/common/layout/card';
 import { Separator } from '@repo/ui-kit/components/common/layout/separator';
 
-import { saveDiagram } from '../models/diagram-persistence';
 import {
   canRedoAtom,
   canUndoAtom,
-  cancelChanges,
   deleteSelected,
   duplicateSelected,
   fitViewport,
   redo,
   renameSelected,
   selectedElementAtom,
-  setError,
   undo,
   zoomIn,
   zoomOut,
@@ -161,30 +156,35 @@ const ContextActions = reatomComponent(function ContextActions() {
   );
 });
 
+interface BpmnActionBarProps {
+  centerContent?: ReactNode;
+  rightActions?: ReactNode;
+}
+
 /**
  * Single-row top action bar. Three fixed zones so the bar never reflows:
  * history on the left, context-aware actions in the middle, global actions on
  * the right. The centre swaps between viewport controls and the actions for the
  * current selection.
  */
-export const BpmnActionBar = reatomComponent(function BpmnActionBar() {
+export const BpmnActionBar = reatomComponent(function BpmnActionBar({
+  centerContent,
+  rightActions,
+}: BpmnActionBarProps) {
   const canUndo = canUndoAtom();
   const canRedo = canRedoAtom();
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSave = async () => {
-    setIsSaving(true);
-
-    const { error } = await saveDiagram();
-
-    setIsSaving(false);
-
-    if (error) setError(error);
-  };
 
   return (
-    <Card className="flex h-12 flex-row flex-nowrap items-center gap-1 px-2 py-1 shadow-lg">
-      <div className="flex shrink-0 items-center gap-1">
+    <Card
+      className={
+        centerContent
+          ? 'grid h-12 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-2 py-1 shadow-lg'
+          : 'flex h-12 flex-row flex-nowrap items-center justify-between gap-1 px-2 py-1 shadow-lg'
+      }
+    >
+      <div
+        className={`min-w-0 items-center gap-1 ${centerContent ? 'invisible md:visible md:flex' : 'flex'}`}
+      >
         <Action
           labelKey="bpmnEditor.topbar.undo"
           disabled={!canUndo}
@@ -199,26 +199,29 @@ export const BpmnActionBar = reatomComponent(function BpmnActionBar() {
         >
           <ArrowUUpRightIcon className="size-4" />
         </Action>
-      </div>
-
-      <Separator orientation="vertical" className="mx-1 max-h-5 shrink-0" />
-
-      <div className="flex min-w-0 flex-1 items-center gap-1">
+        <Separator orientation="vertical" className="mx-1 max-h-5 shrink-0" />
         <ContextActions />
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      {centerContent && (
+        <div className="flex min-w-0 items-center justify-center gap-1">
+          <Separator
+            orientation="vertical"
+            className="mx-1 hidden max-h-5 shrink-0 md:block"
+          />
+          {centerContent}
+          <Separator
+            orientation="vertical"
+            className="mx-1 hidden max-h-5 shrink-0 md:block"
+          />
+        </div>
+      )}
+
+      <div
+        className={`flex shrink-0 items-center gap-1 ${centerContent ? 'justify-self-end' : ''}`}
+      >
         <BpmnSearch />
-        <Action
-          labelKey="bpmnEditor.topbar.save"
-          disabled={isSaving}
-          onClick={handleSave}
-        >
-          <FloppyDiskIcon className="size-4" />
-        </Action>
-        <Action labelKey="bpmnEditor.topbar.cancel" onClick={cancelChanges}>
-          <XIcon className="size-4" />
-        </Action>
+        {rightActions}
       </div>
     </Card>
   );

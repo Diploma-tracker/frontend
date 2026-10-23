@@ -1,23 +1,21 @@
 import type {
+  FieldKind,
   FormDefinition,
   FormField,
-  ProjectFieldDefinition,
   ValidationRule,
 } from '@/modules/forms';
 import { generateFormFromDomain } from '@/modules/forms';
 import { describe, expect, it } from 'vitest';
 
-const fieldDef = (name: string): ProjectFieldDefinition => ({
-  name,
-  kind: 'string',
-  schema: { type: 'string' },
-});
-
 const formField = (
   name: string,
   label: string,
   required = false,
-): FormField => ({ name, label, required });
+  kind: FieldKind = 'string',
+  schema: FormField['schema'] = {
+    type: kind === 'file' ? 'string' : kind,
+  },
+): FormField => ({ name, label, required, kind, schema });
 
 const makeForm = (
   fields: FormField[],
@@ -25,6 +23,7 @@ const makeForm = (
   rules: ValidationRule[] = [],
   name = 'form',
 ): FormDefinition => ({
+  id: crypto.randomUUID(),
   name,
   fields,
   validation_rules: rules,
@@ -33,18 +32,16 @@ const makeForm = (
 
 describe('generateFormFromDomain', () => {
   it('maps required fields into schema.required', () => {
-    const defs = [fieldDef('a'), fieldDef('b')];
     const form = makeForm(
       [formField('a', 'A', true), formField('b', 'B')],
       [['a'], ['b']],
     );
-    const { schema } = generateFormFromDomain(defs, form);
+    const { schema } = generateFormFromDomain(form);
 
     expect(schema.required).toEqual(['a']);
   });
 
   it('produces one anyOf branch per field for one_of_required', () => {
-    const defs = [fieldDef('a'), fieldDef('b'), fieldDef('c')];
     const form = makeForm(
       [formField('a', 'A'), formField('b', 'B'), formField('c', 'C')],
       [['a', 'b', 'c']],
@@ -56,7 +53,7 @@ describe('generateFormFromDomain', () => {
         },
       ],
     );
-    const { schema } = generateFormFromDomain(defs, form);
+    const { schema } = generateFormFromDomain(form);
 
     expect(schema.anyOf).toEqual([
       { required: ['a'] },
@@ -65,22 +62,24 @@ describe('generateFormFromDomain', () => {
     ]);
   });
 
-  it('takes schema fragments from field definitions, not hardcoded', () => {
-    const defs = [fieldDef('age'), fieldDef('name')];
-    const ageDef = defs[0];
-    if (ageDef) ageDef.schema = { type: 'integer', minimum: 0 };
+  it('takes schema fragments from each form field', () => {
     const form = makeForm(
-      [formField('age', 'Age'), formField('name', 'Name')],
+      [
+        formField('age', 'Age', false, 'integer', {
+          type: 'integer',
+          minimum: 0,
+        }),
+        formField('name', 'Name'),
+      ],
       [['age', 'name']],
     );
-    const { schema } = generateFormFromDomain(defs, form);
+    const { schema } = generateFormFromDomain(form);
 
     expect(schema.properties?.['age']).toEqual({ type: 'integer', minimum: 0 });
     expect(schema.properties?.['name']).toEqual({ type: 'string' });
   });
 
   it('drops rule fields that are not present among fields', () => {
-    const defs = [fieldDef('a'), fieldDef('b')];
     const form = makeForm(
       [formField('a', 'A'), formField('b', 'B')],
       [['a', 'b']],
@@ -92,13 +91,12 @@ describe('generateFormFromDomain', () => {
         },
       ],
     );
-    const { schema } = generateFormFromDomain(defs, form);
+    const { schema } = generateFormFromDomain(form);
 
     expect(schema.anyOf).toEqual([{ required: ['a'] }, { required: ['b'] }]);
   });
 
   it('requires at least two present fields for a rule branch', () => {
-    const defs = [fieldDef('a'), fieldDef('b')];
     const form = makeForm(
       [formField('a', 'A'), formField('b', 'B')],
       [['a', 'b']],
@@ -110,18 +108,17 @@ describe('generateFormFromDomain', () => {
         },
       ],
     );
-    const { schema } = generateFormFromDomain(defs, form);
+    const { schema } = generateFormFromDomain(form);
 
     expect(schema.anyOf).toHaveLength(2);
   });
 
   it('wraps same-row fields in HorizontalLayout', () => {
-    const defs = [fieldDef('a'), fieldDef('b')];
     const form = makeForm(
       [formField('a', 'A'), formField('b', 'B')],
       [['a', 'b']],
     );
-    const { uischema } = generateFormFromDomain(defs, form);
+    const { uischema } = generateFormFromDomain(form);
 
     expect(uischema.elements).toEqual([
       {
@@ -132,28 +129,27 @@ describe('generateFormFromDomain', () => {
   });
 
   it('returns empty uischema for empty layout', () => {
-    const defs: ProjectFieldDefinition[] = [];
     const form: FormDefinition = {
+      id: crypto.randomUUID(),
       name: 'empty',
       fields: [],
       validation_rules: [],
       ui: [],
     };
-    const { uischema } = generateFormFromDomain(defs, form);
+    const { uischema } = generateFormFromDomain(form);
 
     expect(uischema.elements).toEqual([]);
   });
 
   it('marks file kind controls with options.file, others without', () => {
-    const defs: ProjectFieldDefinition[] = [
-      { name: 'doc', kind: 'file', schema: { type: 'string' } },
-      { name: 'age', kind: 'integer', schema: { type: 'integer' } },
-    ];
     const form = makeForm(
-      [formField('doc', 'Doc'), formField('age', 'Age')],
+      [
+        formField('doc', 'Doc', false, 'file', { type: 'string' }),
+        formField('age', 'Age', false, 'integer', { type: 'integer' }),
+      ],
       [['doc', 'age']],
     );
-    const { uischema } = generateFormFromDomain(defs, form);
+    const { uischema } = generateFormFromDomain(form);
 
     const row = uischema.elements?.[0];
     const controls = row && 'elements' in row ? row.elements : [];

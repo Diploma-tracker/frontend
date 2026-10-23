@@ -5,7 +5,7 @@
 - `src/app/`: bootstrap, environment, i18n, router, providers, and global styles.
 - `src/pages/`: route-level composition and local presentation state only.
 - `src/layouts/`: reusable screen shells such as `PageLayout`.
-- `src/modules/`: domain state and features for `app`, `auth`, `user`, `project-enrollment`, `defense`, `thesis-process`, `project-definition`, `forms`, and `bpmn-editor`.
+- `src/modules/`: domain state and features for `app`, `auth`, `user`, `project-enrollment`, `defense`, `thesis-process`, `design`, `project-definition`, `forms`, and `bpmn-editor`.
 - `src/shared/`: domain-neutral components, model helpers, utilities, assets, constants, and types.
 
 Modules expose their supported API from their root `index.ts`. Cross-module deep imports are forbidden. Module `models/` own Reatom state, data fetching, mutations, and business rules; `features/` own interactions and rendering. A module with global concerns exposes one provider that composes its internal setup.
@@ -19,16 +19,17 @@ module; transport-only helpers may live in a module's `api/`.
 TanStack Router generates `src/app/routeTree.gen.ts` from `src/app/routes`; never edit the generated file.
 Route files select pages and read typed route context/params, not domain logic.
 
-| Path                           | Screen                        |
-| ------------------------------ | ----------------------------- |
-| `/login`                       | Authentication                |
-| `/`                            | Role-specific home            |
-| `/project-enrollment`          | Role-specific enrollment list |
-| `/project-enrollment/$roundId` | Enrollment round              |
-| `/defense/$roundId`            | Defense schedule              |
-| `/schedule`                    | Student schedule              |
-| `/thesis-process`              | Current user's theses         |
-| `/thesis-process/$processId`   | Thesis process details        |
+| Path                           | Screen                                 |
+| ------------------------------ | -------------------------------------- |
+| `/login`                       | Authentication                         |
+| `/`                            | Role-specific home                     |
+| `/project-enrollment`          | Role-specific enrollment list          |
+| `/project-enrollment/$roundId` | Enrollment round                       |
+| `/defense/$roundId`            | Defense schedule                       |
+| `/schedule`                    | Student schedule                       |
+| `/design`                      | Definition, forms and process designer |
+| `/thesis-process`              | Current user's theses                  |
+| `/thesis-process/$processId`   | Thesis process details                 |
 
 Pathless `(auth)` and `(app)` groups apply authentication redirects. Role-specific screens use `roleBasedComponent`; permission-controlled fragments use `Guard`.
 

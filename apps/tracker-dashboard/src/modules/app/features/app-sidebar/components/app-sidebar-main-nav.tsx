@@ -3,9 +3,7 @@ import {
   CalendarIcon,
   CaretRightIcon,
   FilesIcon,
-  FlowArrowIcon,
   ListChecksIcon,
-  SquaresFourIcon,
   StackIcon,
 } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
@@ -64,19 +62,9 @@ export default function AppSidebarMainNav(props: Props) {
       icon: CalendarIcon,
     },
     {
-      title: t('sidebar.nav.projectDefinition'),
-      url: '/project-definition',
+      title: t('sidebar.nav.design', { default: 'Design' }),
+      url: '/design',
       icon: StackIcon,
-    },
-    {
-      title: t('sidebar.nav.formBuilder'),
-      url: '/form-builder',
-      icon: SquaresFourIcon,
-    },
-    {
-      title: t('sidebar.nav.bpmnEditor'),
-      url: '/bpmn-editor',
-      icon: FlowArrowIcon,
     },
   ];
 

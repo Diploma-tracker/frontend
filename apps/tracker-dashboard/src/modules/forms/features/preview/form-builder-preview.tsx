@@ -11,11 +11,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@repo/ui-kit/components/common/states/empty';
+import { cn } from '@repo/ui-kit/lib/utils';
 
 import { builderOutput, previewDataAtom } from '../../models/builder-state';
 
 interface FormBuilderPreviewProps {
-  onSubmit?: (data: Record<string, unknown>) => void;
+  classNames?: string;
 }
 
 /**
@@ -24,7 +25,7 @@ interface FormBuilderPreviewProps {
  * {@link DeclarativeForm}; all rendering and validation lives there.
  */
 export const FormBuilderPreview = reatomComponent(function FormBuilderPreview({
-  onSubmit,
+  classNames,
 }: FormBuilderPreviewProps) {
   const { t } = useTranslation();
   const [data, setData] = useAtom(previewDataAtom);
@@ -32,12 +33,12 @@ export const FormBuilderPreview = reatomComponent(function FormBuilderPreview({
 
   return (
     <DeclarativeForm
-      className="max-w-2xl"
+      className={cn('w-2xl', classNames)}
       schema={schema}
       uischema={uischema}
       data={data}
       onChange={setData}
-      onSubmit={onSubmit}
+      onSubmit={() => {}}
       submitLabel={t('formBuilder.preview.submit')}
       crossFieldErrorLabel={t('formBuilder.preview.crossFieldError')}
       emptyState={

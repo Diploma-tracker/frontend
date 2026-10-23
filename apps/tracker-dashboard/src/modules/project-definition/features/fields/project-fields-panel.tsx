@@ -196,7 +196,7 @@ export const ProjectFieldsPanel = reatomComponent(
     const items = useMemo(() => fields.map((field) => field.id), [fields]);
 
     return (
-      <Card className="min-h-[22rem]">
+      <Card className="min-h-[25rem]">
         <CardHeader>
           <CardTitle>{t('projectDefinition.fields.title')}</CardTitle>
         </CardHeader>

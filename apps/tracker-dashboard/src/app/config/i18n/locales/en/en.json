@@ -1,8 +1,26 @@
 {
+  "design": {
+    "draft": "Draft",
+    "available": "Available",
+    "formName": "Form name",
+    "createForm": "Create form",
+    "untitledForm": "Untitled form",
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "definition": "Definition",
+    "forms": "Forms",
+    "process": "Process"
+  },
   "common": {
     "confirm": {
       "cancel": "Cancel",
-      "proceed": "Confirm"
+      "proceed": "Confirm",
+      "saveTitle": "Save changes?",
+      "saveDescription": "Do you want to save your changes?",
+      "discardTitle": "Discard changes?",
+      "discardDescription": "Any unsaved changes will be lost."
     },
     "datePicker": {
       "placeholder": "Pick a date",
@@ -27,7 +45,10 @@
     },
     "actions": {
       "submit": "Submit"
-    }
+    },
+    "search": "Search",
+    "back": "Back",
+    "noResults": "No results found"
   },
   "auth": {
     "login": {
@@ -58,7 +79,8 @@
       "projectEnrollment": "Project Enrollment",
       "schedule": "Schedule",
       "formBuilder": "Form Builder",
-      "bpmnEditor": "BPMN Editor"
+      "bpmnEditor": "BPMN Editor",
+      "design": "Design"
     },
     "collapsed": "Expand sidebar",
     "expanded": "Collapse sidebar",

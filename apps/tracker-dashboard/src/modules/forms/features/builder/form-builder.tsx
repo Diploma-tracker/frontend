@@ -1,6 +1,7 @@
-import { useCallback, useRef } from 'react';
+import { type ReactNode, useCallback, useRef } from 'react';
 
 import { anchorModifier } from '@/shared/components/dnd/anchor-modifier';
+import { useTranslation } from '@/shared/utils/i18n';
 import {
   type ClientRect,
   type Collision,
@@ -19,13 +20,17 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { reatomComponent } from '@reatom/react';
 
+import { FieldLabel } from '@repo/ui-kit/components/common/form/field';
+import { Input } from '@repo/ui-kit/components/common/form/input';
+
 import {
-  activeTabAtom,
   addField,
   commit,
+  createFormFieldFromDefinition,
   dragSessionAtom,
   dropSessionAtom,
   fieldsAtom,
+  formNameAtom,
   layoutAtom,
   moveField,
   rollback,
@@ -37,8 +42,6 @@ import { parseRowIndex } from '../../models/row-dnd';
 import { type ProjectFieldDefinition } from '../../models/types';
 import type { RowLayout } from '../../models/types';
 import { FormPanel } from '../panels/form-panel';
-import { FormBuilderPreview } from '../preview/form-builder-preview';
-import { BuilderTabs } from './builder-tabs';
 import { FieldPalette } from './field-palette';
 import { FormCanvas } from './form-canvas';
 import { FormDragOverlay } from './form-drag-overlay';
@@ -237,9 +240,15 @@ const placementKeyOf = (layout: RowLayout, instanceId: string): string => {
  */
 const FLIP_CURSOR_HYSTERESIS_PX = 6;
 
-export const FormBuilder = reatomComponent(function FormBuilder() {
-  const activeTab = activeTabAtom();
+interface FormBuilderProps {
+  actions?: ReactNode;
+}
 
+export const FormBuilder = reatomComponent(function FormBuilder({
+  actions,
+}: FormBuilderProps) {
+  const { t } = useTranslation();
+  const formName = formNameAtom();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, {
@@ -304,11 +313,7 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
       const field = data.field as ProjectFieldDefinition | undefined;
       if (!field) return;
 
-      const instance = addField({
-        name: field.name,
-        label: field.name,
-        required: false,
-      });
+      const instance = addField(createFormFieldFromDefinition(field));
 
       dragSessionAtom.set({
         source: 'palette',
@@ -441,19 +446,25 @@ export const FormBuilder = reatomComponent(function FormBuilder() {
     clearDragState();
   };
 
-  if (activeTab === 'preview') {
-    return (
-      <div className="flex flex-col gap-4">
-        <BuilderTabs />
-        <FormBuilderPreview />
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-4">
-      <BuilderTabs />
-
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="grid w-full max-w-xl gap-1.5">
+          <FieldLabel htmlFor="form-builder-name">
+            {t('design.formName')}
+          </FieldLabel>
+          <Input
+            id="form-builder-name"
+            value={formName}
+            placeholder={t('design.formName')}
+            autoComplete="off"
+            maxLength={120}
+            className="h-11 text-lg font-semibold"
+            onChange={(event) => formNameAtom.set(event.target.value)}
+          />
+        </div>
+        {actions && <div className="flex items-center gap-3">{actions}</div>}
+      </div>
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}

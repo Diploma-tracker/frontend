@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { useTranslation } from '@/shared/utils/i18n';
 import { reatomComponent } from '@reatom/react';
 
@@ -21,7 +23,15 @@ import { BpmnToolBar } from './bpmn-tool-bar';
 
 const INNER_PADDING = '1rem';
 
-export const BpmnEditorInner = reatomComponent(function BpmnEditorInner() {
+interface BpmnEditorInnerProps {
+  actionBarCenter?: ReactNode;
+  actionBarRight?: ReactNode;
+}
+
+export const BpmnEditorInner = reatomComponent(function BpmnEditorInner({
+  actionBarCenter,
+  actionBarRight,
+}: BpmnEditorInnerProps) {
   const isActive = isActiveAtom();
   const { t } = useTranslation();
   const error = lastErrorAtom();
@@ -47,11 +57,14 @@ export const BpmnEditorInner = reatomComponent(function BpmnEditorInner() {
           width: `calc(100% - ${INNER_PADDING} * 2)`,
         }}
       >
-        <div className="pointer-events-auto absolute top-16 left-1/2 w-full max-w-200 -translate-x-1/2">
-          <BpmnActionBar />
+        <div className="pointer-events-auto absolute left-1/2 w-full max-w-200 -translate-x-1/2">
+          <BpmnActionBar
+            centerContent={actionBarCenter}
+            rightActions={actionBarRight}
+          />
         </div>
 
-        <div className="pointer-events-auto absolute top-1/2 max-h-8/12 w-16 -translate-y-1/2">
+        <div className="pointer-events-auto absolute top-1/2 hidden max-h-8/12 w-16 -translate-y-1/2 md:block">
           <BpmnToolBar />
         </div>
 

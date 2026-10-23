@@ -14,6 +14,7 @@ import { cn } from '@repo/ui-kit/lib/utils';
 import {
   availableFieldsAtom,
   commit,
+  createFormFieldFromDefinition,
   placeField,
 } from '../../models/builder-state';
 import type { ProjectFieldDefinition } from '../../models/types';
@@ -34,7 +35,7 @@ const PaletteItem = reatomComponent(function PaletteItem({
   });
 
   const handleAdd = () => {
-    placeField({ name: field.name, label: field.name, required: false });
+    placeField(createFormFieldFromDefinition(field));
     commit();
   };
 
@@ -56,7 +57,7 @@ export const FieldPalette = reatomComponent(function FieldPalette() {
   const { t } = useTranslation();
 
   return (
-    <Card>
+    <Card className="min-h-[25rem]">
       <CardHeader>
         <CardTitle>{t('formBuilder.palette.title')}</CardTitle>
         <CardDescription>

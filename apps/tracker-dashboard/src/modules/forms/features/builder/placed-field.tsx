@@ -18,7 +18,6 @@ import {
   removeField,
   selectedFieldNameAtom,
 } from '../../models/builder-state';
-import { catalogAtom } from '../../models/field-catalog';
 import { generateFormFromDomain } from '../../models/schema-generator';
 import type { BuilderOutput } from '../../models/types';
 
@@ -52,7 +51,8 @@ export const PlacedField = reatomComponent(function PlacedField({
 
   const preview = useMemo<BuilderOutput | null>(() => {
     if (!field) return null;
-    return generateFormFromDomain(catalogAtom(), {
+    return generateFormFromDomain({
+      id: globalThis.crypto.randomUUID(),
       name: '',
       fields: [field],
       validation_rules: [],

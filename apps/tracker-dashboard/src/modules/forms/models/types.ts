@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import type { JsonSchema, Layout } from '@jsonforms/core';
 
 export type RowLayout = string[][];
@@ -27,6 +29,7 @@ export interface ProjectFieldDefinition {
   name: string;
   kind: FieldKind;
   schema: ProjectFieldSchema;
+  icon?: ComponentType<{ className?: string }>;
 }
 
 /**
@@ -35,6 +38,8 @@ export interface ProjectFieldDefinition {
  */
 export interface FormField {
   name: string;
+  kind: FieldKind; // aggregated from ProjectFieldDefinition
+  schema: ProjectFieldSchema; // aggregated from ProjectFieldDefinition
   label: string;
   required: boolean;
   placeholder?: string;
@@ -52,6 +57,7 @@ export type ValidationRule = OneOfRequiredRule;
  * Вихід білдера — generalized форма: назва, поля, правила, ui, розкладка.
  */
 export interface FormDefinition {
+  id: string;
   name: string;
   fields: FormField[];
   validation_rules: ValidationRule[];

@@ -4,20 +4,21 @@ export {
   availableFieldsAtom,
   builderOutput,
   formDefinition,
+  loadDefinition,
   addField,
   addRule,
   commit,
   fieldsAtom,
+  formIdAtom,
   layoutAtom,
   moveField,
   removeField,
   placeField,
   rulesAtom,
   formNameAtom,
+  selectedFieldNameAtom,
   rollback,
   selectField,
-  setActiveTab,
-  activeTabAtom,
   previewDataAtom,
   createRuleId,
 } from './models/builder-state';
@@ -35,5 +36,4 @@ export type {
   FormDefinition,
   RowLayout,
 } from './models/types';
-export type { BuilderTab } from './models/builder-state';
 export type { AddTarget } from './models/layout';
