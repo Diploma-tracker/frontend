@@ -9,6 +9,8 @@ import { action, atom, computed } from '@reatom/core';
 
 export interface DesignForm extends FormDefinition {
   isDraft: boolean;
+  draftOrigin?: 'new' | 'available';
+  originalForm?: FormDefinition;
 }
 
 export const draftsAtom = atom<DesignForm[]>([], 'design.forms.drafts');
@@ -37,7 +39,15 @@ const snapshotCurrent = (): void => {
   if (!id) return;
 
   commit();
-  const snapshot: DesignForm = { ...formDefinition(), isDraft: true };
+  const existingDraft = draftsAtom().find((form) => form.id === id);
+  const snapshot: DesignForm = {
+    ...formDefinition(),
+    isDraft: true,
+    draftOrigin: existingDraft?.draftOrigin ?? 'new',
+    ...(existingDraft?.originalForm
+      ? { originalForm: existingDraft.originalForm }
+      : {}),
+  };
   draftsAtom.set((drafts) => {
     const exists = drafts.some((form) => form.id === id);
     return exists
@@ -59,7 +69,12 @@ export const openFormDraft = action((id: string) => {
   const availableForm = availableFormsAtom().find((form) => form.id === id);
   if (!availableForm) return;
 
-  const draft: DesignForm = { ...availableForm, isDraft: true };
+  const draft: DesignForm = {
+    ...availableForm,
+    isDraft: true,
+    draftOrigin: 'available',
+    originalForm: availableForm,
+  };
   availableFormsAtom.set((forms) => forms.filter((form) => form.id !== id));
   draftsAtom.set((forms) => [...forms, draft]);
   loadDefinition(draft);
@@ -75,6 +90,7 @@ export const createFormDraft = action(() => {
     validation_rules: [],
     ui: [],
     isDraft: true,
+    draftOrigin: 'new',
   };
   draftsAtom.set((forms) => [...forms, draft]);
   openFormDraft(id);
@@ -100,6 +116,25 @@ export const saveFormDraft = action(() => {
     ...forms.filter((form) => form.id !== id),
     availableForm,
   ]);
+  draftsAtom.set((forms) => forms.filter((form) => form.id !== id));
+  selectedFormIdAtom.set(null);
+});
+
+/** Discards the current draft, restoring an original available form if edited. */
+export const discardFormDraft = action(() => {
+  const id = selectedFormIdAtom();
+  if (!id) return;
+
+  const draft = draftsAtom().find((form) => form.id === id);
+  const originalForm =
+    draft?.draftOrigin === 'available' ? draft.originalForm : undefined;
+  if (originalForm) {
+    availableFormsAtom.set((forms) => [
+      ...forms.filter((form) => form.id !== id),
+      originalForm,
+    ]);
+  }
+
   draftsAtom.set((forms) => forms.filter((form) => form.id !== id));
   selectedFormIdAtom.set(null);
 });

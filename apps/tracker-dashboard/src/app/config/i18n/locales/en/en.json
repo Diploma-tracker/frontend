@@ -7,7 +7,7 @@
     "untitledForm": "Untitled form",
     "actions": {
       "save": "Save",
-      "cancel": "Cancel",
+      "discard": "Discard",
       "createForm": "Create a form"
     },
     "formSelector": {
@@ -15,6 +15,16 @@
       "description": "Choose a form to use in this task.",
       "searchPlaceholder": "Search forms...",
       "noForms": "No forms found."
+    },
+    "formLeave": {
+      "title": "Leave Design?",
+      "description": "Save or discard your changes before leaving this page.",
+      "saveAndLeave": "Save and leave",
+      "discardAndLeave": "Discard and leave",
+      "confirmSaveTitle": "Save changes and leave?",
+      "confirmSaveDescription": "Your changes will be saved before leaving Design.",
+      "confirmDiscardTitle": "Discard changes and leave?",
+      "confirmDiscardDescription": "Your changes will be discarded before leaving Design."
     },
     "definition": "Definition",
     "forms": "Forms",

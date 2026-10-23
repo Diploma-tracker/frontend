@@ -2,6 +2,7 @@ export { DesignPage } from './features/design-page';
 export {
   closeFormDraft,
   createFormDraft,
+  discardFormDraft,
   draftsAtom,
   filteredFormsAtom,
   formSearchAtom,

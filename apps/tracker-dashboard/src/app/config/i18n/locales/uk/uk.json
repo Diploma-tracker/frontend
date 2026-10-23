@@ -7,7 +7,7 @@
     "untitledForm": "Без назви",
     "actions": {
       "save": "Зберегти",
-      "cancel": "Скасувати",
+      "discard": "Відкинути",
       "createForm": "Створити форму"
     },
     "formSelector": {
@@ -15,6 +15,16 @@
       "description": "Оберіть форму для використання в цій задачі.",
       "searchPlaceholder": "Пошук форм...",
       "noForms": "Форм не знайдено."
+    },
+    "formLeave": {
+      "title": "Вийти з розділу Design?",
+      "description": "Збережіть або відкиньте зміни перед виходом зі сторінки.",
+      "saveAndLeave": "Зберегти й вийти",
+      "discardAndLeave": "Відкинути й вийти",
+      "confirmSaveTitle": "Зберегти зміни й вийти?",
+      "confirmSaveDescription": "Перед виходом із Design зміни буде збережено.",
+      "confirmDiscardTitle": "Відкинути зміни й вийти?",
+      "confirmDiscardDescription": "Перед виходом із Design зміни буде відкинуто."
     },
     "definition": "Визначення",
     "forms": "Форми",

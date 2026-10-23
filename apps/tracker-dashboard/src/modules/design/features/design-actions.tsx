@@ -43,13 +43,13 @@ export const DesignActions = reatomComponent(function DesignActions() {
               variant="ghost"
               intent="neutral"
               size="icon-sm"
-              aria-label={t('design.actions.cancel')}
+              aria-label={t('design.actions.discard')}
               onClick={() => setIsCancelConfirmationOpen(true)}
             >
               <XIcon className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{t('design.actions.cancel')}</TooltipContent>
+          <TooltipContent>{t('design.actions.discard')}</TooltipContent>
         </Tooltip>
       </div>
       <ConfirmationModal
@@ -65,7 +65,8 @@ export const DesignActions = reatomComponent(function DesignActions() {
         onOpenChange={setIsCancelConfirmationOpen}
         title={t('common.confirm.discardTitle')}
         description={t('common.confirm.discardDescription')}
-        confirmLabel={t('design.actions.cancel')}
+        confirmLabel={t('design.actions.discard')}
+        confirmVariant="solid"
         confirmIntent="destructive"
         onConfirm={() => setIsCancelConfirmationOpen(false)}
       />

@@ -1,6 +1,7 @@
 import {
   closeFormDraft,
   createFormDraft,
+  discardFormDraft,
   draftsAtom,
   formSearchAtom,
   openFormDraft,
@@ -58,6 +59,13 @@ it('moves an edited available form and a new form into drafts until saved', () =
     name: 'Edited registration',
   });
   expect(draftsAtom().some((form) => form.id === availableForm.id)).toBe(false);
+
+  openFormDraft(availableForm.id);
+  formNameAtom.set('Changes to discard');
+  discardFormDraft();
+  expect(
+    availableFormsAtom().find((form) => form.id === availableForm.id)?.name,
+  ).toBe('Edited registration');
 
   createFormDraft();
   const newFormId = selectedFormIdAtom();
