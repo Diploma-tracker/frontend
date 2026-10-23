@@ -7,7 +7,14 @@
     "untitledForm": "Без назви",
     "actions": {
       "save": "Зберегти",
-      "cancel": "Скасувати"
+      "cancel": "Скасувати",
+      "createForm": "Створити форму"
+    },
+    "formSelector": {
+      "title": "Вибрати форму",
+      "description": "Оберіть форму для використання в цій задачі.",
+      "searchPlaceholder": "Пошук форм...",
+      "noForms": "Форм не знайдено."
     },
     "definition": "Визначення",
     "forms": "Форми",

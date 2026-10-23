@@ -1,5 +1,4 @@
 import {
-  availableFormsAtom,
   closeFormDraft,
   createFormDraft,
   draftsAtom,
@@ -9,6 +8,7 @@ import {
   selectedFormIdAtom,
 } from '@/modules/design';
 import {
+  availableFormsAtom,
   commit,
   fieldsAtom,
   formNameAtom,
@@ -56,7 +56,6 @@ it('moves an edited available form and a new form into drafts until saved', () =
   );
   expect(savedAvailableForm).toMatchObject({
     name: 'Edited registration',
-    isDraft: false,
   });
   expect(draftsAtom().some((form) => form.id === availableForm.id)).toBe(false);
 
@@ -78,7 +77,6 @@ it('moves an edited available form and a new form into drafts until saved', () =
     expect.objectContaining({
       id: newFormId,
       name: 'New draft',
-      isDraft: false,
     }),
   );
 });

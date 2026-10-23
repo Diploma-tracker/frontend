@@ -197,14 +197,3 @@ export const TASK_ROLE_OPTIONS: RoleOption[] = [
   },
   { value: 'reviewer', labelKey: k('thesisProcess.roles.reviewer') },
 ];
-
-export interface FormOption {
-  value: string;
-  label: string;
-}
-
-/**
- * Forms the fill-form task can reference. Empty for now — the picker is a
- * placeholder until the forms list is available.
- */
-export const FORM_OPTIONS: FormOption[] = [];

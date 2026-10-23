@@ -2,11 +2,13 @@ import { useEffect } from 'react';
 
 import { BpmnEditorInner, isActiveAtom } from '@/modules/bpmn-editor';
 import { ProjectDefinitionEditor } from '@/modules/project-definition';
+import { CREATE_DESIGN_FORM_EVENT } from '@/shared/events/design';
 import { reatomComponent } from '@reatom/react';
 
 import { cn } from '@repo/ui-kit/lib/utils';
 
-import { activeTabPathAtom } from '../models/design-model';
+import { activeTabPathAtom, setActiveTab } from '../models/design-model';
+import { createFormDraft } from '../models/form-drafts';
 import { DesignActions } from './design-actions';
 import { DesignForms } from './design-forms';
 import { DesignTabs } from './design-tabs';
@@ -22,6 +24,21 @@ export const DesignPage = reatomComponent(function DesignPage() {
       isActiveAtom.set(false);
     };
   }, [activeTopTab]);
+
+  useEffect(() => {
+    const handleCreateFormRequest = () => {
+      createFormDraft();
+      setActiveTab('forms', 'builder', 'build');
+    };
+
+    window.addEventListener(CREATE_DESIGN_FORM_EVENT, handleCreateFormRequest);
+    return () => {
+      window.removeEventListener(
+        CREATE_DESIGN_FORM_EVENT,
+        handleCreateFormRequest,
+      );
+    };
+  }, []);
 
   return (
     <div className="relative isolate flex h-full w-full flex-col overflow-hidden">

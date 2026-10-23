@@ -7,7 +7,14 @@
     "untitledForm": "Untitled form",
     "actions": {
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "createForm": "Create a form"
+    },
+    "formSelector": {
+      "title": "Select a form",
+      "description": "Choose a form to use in this task.",
+      "searchPlaceholder": "Search forms...",
+      "noForms": "No forms found."
     },
     "definition": "Definition",
     "forms": "Forms",

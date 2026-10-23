@@ -1,6 +1,5 @@
 export { DesignPage } from './features/design-page';
 export {
-  availableFormsAtom,
   closeFormDraft,
   createFormDraft,
   draftsAtom,

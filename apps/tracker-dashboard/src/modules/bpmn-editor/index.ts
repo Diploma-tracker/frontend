@@ -1,6 +1,7 @@
 export { BpmnActionBar } from './features/bpmn-action-bar';
 export { BpmnCanvas } from './features/bpmn-canvas';
 export { BpmnCommandPalette } from './features/bpmn-command-palette';
+export { FormField as BpmnFormField } from './features/inspector/form-field';
 export { BpmnEditorInner } from './features/bpmn-editor-inner';
 export { BpmnKeyboard } from './features/bpmn-keyboard';
 export { BpmnProperties, BpmnPropertiesPill } from './features/bpmn-properties';

@@ -1,5 +1,6 @@
 export { FormBuilder } from './features/builder/form-builder';
 export { FormBuilderPreview } from './features/preview/form-builder-preview';
+export { availableFormsAtom } from './models/available-forms';
 export {
   availableFieldsAtom,
   builderOutput,

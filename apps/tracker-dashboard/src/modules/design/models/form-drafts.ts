@@ -1,4 +1,9 @@
-import { commit, formDefinition, loadDefinition } from '@/modules/forms';
+import {
+  availableFormsAtom,
+  commit,
+  formDefinition,
+  loadDefinition,
+} from '@/modules/forms';
 import type { FormDefinition } from '@/modules/forms';
 import { action, atom, computed } from '@reatom/core';
 
@@ -6,62 +11,12 @@ export interface DesignForm extends FormDefinition {
   isDraft: boolean;
 }
 
-const initialAvailableForms: DesignForm[] = [
-  {
-    id: 'student-registration',
-    name: 'Student registration',
-    isDraft: false,
-    fields: [
-      {
-        name: 'full_name',
-        kind: 'string',
-        schema: { type: 'string', minLength: 1 },
-        label: 'Full name',
-        required: true,
-      },
-      {
-        name: 'email',
-        kind: 'string',
-        schema: { type: 'string', format: 'email' },
-        label: 'Email',
-        required: true,
-      },
-    ],
-    validation_rules: [],
-    ui: [['full_name'], ['email']],
-  },
-  {
-    id: 'project-proposal',
-    name: 'Project proposal',
-    isDraft: false,
-    fields: [
-      {
-        name: 'title',
-        kind: 'string',
-        schema: { type: 'string', minLength: 1 },
-        label: 'Project title',
-        required: true,
-      },
-      {
-        name: 'summary',
-        kind: 'string',
-        schema: { type: 'string' },
-        label: 'Summary',
-        required: false,
-      },
-    ],
-    validation_rules: [],
-    ui: [['title'], ['summary']],
-  },
-];
-
 export const draftsAtom = atom<DesignForm[]>([], 'design.forms.drafts');
-export const availableFormsAtom = atom<DesignForm[]>(
-  initialAvailableForms,
-  'design.forms.available',
-);
 const formsAtom = computed(
-  () => [...draftsAtom(), ...availableFormsAtom()],
+  () => [
+    ...draftsAtom(),
+    ...availableFormsAtom().map((form) => ({ ...form, isDraft: false })),
+  ],
   'design.forms.all',
 );
 
@@ -134,7 +89,13 @@ export const saveFormDraft = action(() => {
   const draft = draftsAtom().find((form) => form.id === id);
   if (!draft) return;
 
-  const availableForm: DesignForm = { ...draft, isDraft: false };
+  const availableForm: FormDefinition = {
+    id: draft.id,
+    name: draft.name,
+    fields: draft.fields,
+    validation_rules: draft.validation_rules,
+    ui: draft.ui,
+  };
   availableFormsAtom.set((forms) => [
     ...forms.filter((form) => form.id !== id),
     availableForm,
