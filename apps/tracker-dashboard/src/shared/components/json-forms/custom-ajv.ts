@@ -25,7 +25,7 @@ const MIME_TO_EXTENSIONS: Record<string, readonly string[]> = {
   'text/plain': ['.txt'],
 };
 
-const matchesFileTypes = (
+export const matchesAcceptedFileTypes = (
   acceptableTypes: readonly string[],
   filename: string,
 ): boolean => {
@@ -54,6 +54,20 @@ const matchesFileTypes = (
   return false;
 };
 
+export const matchesAcceptedFileMimeType = (
+  acceptableTypes: readonly string[],
+  mimeType: string,
+): boolean | undefined => {
+  const normalizedMimeType = mimeType.trim().toLowerCase();
+  if (!normalizedMimeType) return undefined;
+
+  const extensions = MIME_TO_EXTENSIONS[normalizedMimeType];
+  if (!extensions) return false;
+  return extensions.some((extension) =>
+    matchesAcceptedFileTypes(acceptableTypes, `file${extension}`),
+  );
+};
+
 /**
  * Creates an AJV instance with the custom `x-*` keywords registered.
  *
@@ -79,7 +93,7 @@ export const createCustomAjv = (): SharedAjv => {
       }
       const types: readonly string[] = acceptableTypes;
       return function validateFileTypes(data: unknown): boolean {
-        if (typeof data !== 'string' || matchesFileTypes(types, data)) {
+        if (typeof data !== 'string' || matchesAcceptedFileTypes(types, data)) {
           return true;
         }
         (validateFileTypes as { errors?: unknown[] }).errors = [

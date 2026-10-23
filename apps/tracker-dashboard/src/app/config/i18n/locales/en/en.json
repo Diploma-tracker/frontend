@@ -148,7 +148,9 @@
       "submit": "Submit",
       "crossFieldError": "Please fill in at least one of the highlighted fields.",
       "chooseFile": "Choose file",
+      "dropFile": "Drop a file here or click to browse",
       "clearFile": "Remove file",
+      "invalidFileTypes": "This file type is not allowed. Accepted types: {{types}}",
       "acceptedFileTypes": "Accepted file types: {{types}}",
       "projectDefinition": "Project Definition"
     }

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { type DragEvent, useMemo, useRef, useState } from 'react';
 
 import { useTranslation } from '@/shared/utils/i18n';
 import type { ControlProps, LayoutProps } from '@jsonforms/core';
@@ -10,6 +10,7 @@ import {
 import { FileArrowUpIcon, XIcon } from '@phosphor-icons/react';
 import { format, parseISO } from 'date-fns';
 
+import { Button } from '@repo/ui-kit/components/common/data-display/button';
 import { Checkbox } from '@repo/ui-kit/components/common/form/checkbox';
 import { DatePicker } from '@repo/ui-kit/components/common/form/date-picker';
 import {
@@ -28,6 +29,11 @@ import {
 } from '@repo/ui-kit/components/common/form/select';
 import { Textarea } from '@repo/ui-kit/components/common/form/textarea';
 import { cn } from '@repo/ui-kit/lib/utils';
+
+import {
+  matchesAcceptedFileMimeType,
+  matchesAcceptedFileTypes,
+} from './custom-ajv';
 
 const requiredLabel = (label: string, required: boolean): string =>
   required ? `${label} *` : label;
@@ -274,6 +280,10 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
   const { data, handleChange, path, enabled, id, schema } = props;
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dragStatus, setDragStatus] = useState<'idle' | 'valid' | 'invalid'>(
+    'idle',
+  );
+  const [hasRejectedFile, setHasRejectedFile] = useState(false);
 
   const fileName = typeof data === 'string' && data.length > 0 ? data : null;
 
@@ -296,6 +306,58 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
     [fileTypes],
   );
 
+  const selectFile = (file: File | undefined) => {
+    if (!file) {
+      handleChange(path, undefined);
+      setHasRejectedFile(false);
+      return;
+    }
+
+    if (
+      fileTypes.length > 0 &&
+      !matchesAcceptedFileTypes(fileTypes, file.name)
+    ) {
+      setHasRejectedFile(true);
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+
+    setHasRejectedFile(false);
+    handleChange(path, file.name);
+  };
+
+  const fileFromTransfer = (transfer: DataTransfer): File | undefined =>
+    transfer.files[0] ??
+    Array.from(transfer.items)
+      .map((item) => item.getAsFile())
+      .find((file): file is File => file !== null);
+
+  const isTransferFileAllowed = (
+    transfer: DataTransfer,
+  ): boolean | undefined => {
+    if (fileTypes.length === 0) return true;
+
+    const file = fileFromTransfer(transfer);
+    if (file) return matchesAcceptedFileTypes(fileTypes, file.name);
+
+    const fileItem = Array.from(transfer.items).find(
+      (item) => item.kind === 'file',
+    );
+    if (!fileItem) return undefined;
+
+    return matchesAcceptedFileMimeType(fileTypes, fileItem.type);
+  };
+
+  const updateDragStatus = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (!enabled) return;
+
+    const isAllowed = isTransferFileAllowed(event.dataTransfer) ?? true;
+
+    setDragStatus(isAllowed ? 'valid' : 'invalid');
+    event.dataTransfer.dropEffect = isAllowed ? 'copy' : 'none';
+  };
+
   return (
     <Field
       orientation="vertical"
@@ -304,7 +366,33 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
       <FieldLabel>
         {requiredLabel(props.label, props.required ?? false)}
       </FieldLabel>
-      <div className="flex items-center gap-2">
+      <div
+        className={cn(
+          'flex min-h-24 items-stretch rounded-lg border border-dashed transition-colors',
+          dragStatus === 'valid' && 'border-primary bg-primary/5',
+          dragStatus === 'invalid' && 'border-destructive bg-destructive/5',
+          dragStatus === 'idle' && 'border-input bg-muted/20',
+          props.errors && 'border-destructive',
+          !enabled && 'cursor-not-allowed opacity-50',
+        )}
+        onDragEnter={updateDragStatus}
+        onDragOver={updateDragStatus}
+        onDragLeave={(event) => {
+          const nextTarget = event.relatedTarget;
+          if (
+            !(nextTarget instanceof Node) ||
+            !event.currentTarget.contains(nextTarget)
+          ) {
+            setDragStatus('idle');
+          }
+        }}
+        onDrop={(event) => {
+          event.preventDefault();
+          setDragStatus('idle');
+          if (!enabled) return;
+          selectFile(fileFromTransfer(event.dataTransfer));
+        }}
+      >
         <input
           ref={inputRef}
           id={id}
@@ -315,47 +403,63 @@ export const UiKitFileControl = withJsonFormsControlProps(function FileControl(
           disabled={!enabled}
           accept={accept || undefined}
           onChange={(event) => {
-            const file = event.target.files?.[0];
-            handleChange(path, file ? file.name : undefined);
+            selectFile(event.target.files?.[0]);
           }}
         />
-        <label
-          htmlFor={id}
-          className={cn(
-            'inline-flex items-center gap-2 rounded-md border border-input px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent',
-            enabled ? 'cursor-pointer' : 'cursor-not-allowed opacity-50',
-          )}
+        <button
+          type="button"
+          disabled={!enabled}
+          aria-label={fileName ?? t('formBuilder.preview.dropFile')}
+          aria-invalid={props.errors ? true : undefined}
+          className="flex min-w-0 flex-1 items-center gap-3 rounded-l-lg px-4 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:cursor-not-allowed"
+          onClick={() => inputRef.current?.click()}
         >
-          <FileArrowUpIcon className="size-4 shrink-0" />
-          <span className="max-w-40 truncate">
-            {fileName ?? t('formBuilder.preview.chooseFile')}
+          <FileArrowUpIcon className="size-6 shrink-0 text-muted-foreground" />
+          <span className="flex min-w-0 flex-col gap-1">
+            <span className="truncate text-sm font-medium">
+              {fileName ?? t('formBuilder.preview.dropFile')}
+            </span>
+            {fileTypes.length > 0 ? (
+              <span className="text-xs text-muted-foreground">
+                {t('formBuilder.preview.acceptedFileTypes', {
+                  types: fileTypes.join(', '),
+                })}
+              </span>
+            ) : !fileName ? (
+              <span className="text-xs text-muted-foreground">
+                {t('formBuilder.preview.chooseFile')}
+              </span>
+            ) : null}
           </span>
-        </label>
+        </button>
         {fileName ? (
-          <button
+          <Button
             type="button"
             aria-label={t('formBuilder.preview.clearFile')}
+            variant="ghost"
+            size="icon-sm"
             disabled={!enabled}
-            className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+            className="my-auto mr-2 shrink-0"
             onClick={() => {
               if (inputRef.current) {
                 inputRef.current.value = '';
               }
+              setHasRejectedFile(false);
               handleChange(path, undefined);
             }}
           >
             <XIcon className="size-4" />
-          </button>
+          </Button>
         ) : null}
       </div>
-      {fileTypes.length > 0 ? (
-        <p className="text-xs text-muted-foreground">
-          {t('formBuilder.preview.acceptedFileTypes', {
+      {props.errors ? <FieldError>{props.errors}</FieldError> : null}
+      {hasRejectedFile ? (
+        <FieldError>
+          {t('formBuilder.preview.invalidFileTypes', {
             types: fileTypes.join(', '),
           })}
-        </p>
+        </FieldError>
       ) : null}
-      {props.errors ? <FieldError>{props.errors}</FieldError> : null}
     </Field>
   );
 });
