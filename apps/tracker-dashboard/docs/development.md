@@ -31,7 +31,7 @@ Tests use Testing Library and the MSW server in `tests/setup`. Add endpoint hand
 ## Usage of Reatom state manager
 
 Utils live in `apps/tracker-dashboard/src/shared/model/data-access/`:
-`query.ts` (`reatomQuery`, `stableKey`), `mutation.ts` (`reatomMutation`), `async-list.ts` (`reatomAsyncList`).
+`query.ts` (`reatomQuery`), `mutation.ts` (`reatomMutation`), `async-list.ts` (`reatomAsyncList`).
 
 ### Choose the tool
 
@@ -52,8 +52,9 @@ Utils live in `apps/tracker-dashboard/src/shared/model/data-access/`:
 
 - No input: `reatomQuery({ name, queryFn: ({ signal }) => api.x({ signal }) })`.
 - With input: `reatomQuery({ name, key, queryFn: (arg, { signal }) => ... })`.
-  - Put all request inputs in ONE argument; build the key from the whole argument.
-  - Object inputs → `key: stableKey` (JSON-serializable only; no Map/Set/classes/functions).
+  - Put all request inputs in ONE argument. Write the key explicitly and include EVERY field:
+    ``key: ({ teacherId, semester }) => `${teacherId}:${semester}` ``.
+  - A missing field merges different requests into one instance (semester 2 would show semester 1 data).
 - `queryFn` is IO only: atoms read inside are NOT tracked. Add reactivity by composition:
   `computed(() => query(input()))`.
 - Always pass `signal` to `fetch`.
@@ -113,7 +114,7 @@ queryFn: ({ filters, params }, { signal }) => ... }, 'name')`.
 - Each filter combination is a cached instance. Previous rows stay visible while a page loads.
   Fast typing aborts stale requests.
 - A `params` change resets filters to `defaultFilters` with exactly one request. Filters set before
-  the first mount are kept. `filters` and `params` must be JSON-serializable.
+  the first mount are kept. `filters` and `params` must be JSON-serializable (field order does not matter).
 
 ### Do NOT use the utils for
 

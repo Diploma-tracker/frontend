@@ -28,15 +28,18 @@ export type InvalidationSource<TArgs extends unknown[], TResult> = Pick<
   'onFulfill'
 >;
 
-interface BaseQueryOptions<TData> {
+interface BaseQueryOptions<TInit> {
   /** Name for devtools and logs. */
   name: string;
   /** Initial value of `data()`. When provided, `data()` excludes `undefined`. */
-  initState?: TData;
+  initState?: TInit;
 }
 
 /** Single query options. */
-export interface QueryOptions<TData> extends BaseQueryOptions<TData> {
+export interface QueryOptions<
+  TData,
+  TInit extends TData | undefined = undefined,
+> extends BaseQueryOptions<TInit> {
   /** Server request. IO only: atoms read here are not tracked. */
   queryFn: (ctx: QueryContext) => Promise<TData>;
   key?: never;
@@ -48,10 +51,11 @@ export interface QueryOptions<TData> extends BaseQueryOptions<TData> {
 export interface KeyedQueryOptions<
   TArg,
   TData,
-> extends BaseQueryOptions<TData> {
+  TInit extends TData | undefined = undefined,
+> extends BaseQueryOptions<TInit> {
   /**
-   * String key for the argument. Must fully identify what `queryFn` loads.
-   * Use `stableKey` for object arguments.
+   * String key for the argument. Must include every field the request depends on,
+   * e.g. both `teacherId` and `semester` for `{ teacherId, semester }`.
    */
   key: (arg: TArg) => string;
   /** Request for a specific argument. IO only: atoms read here are not tracked. */
@@ -120,23 +124,6 @@ export type KeyedQuery<TArg, TData, TInit = undefined> = ((
   ) => Unsubscribe;
 };
 
-/**
- * Deterministic string key for JSON-serializable values.
- * Object keys are sorted; `undefined` properties are ignored.
- * @param value Value to serialize.
- * @returns Key string.
- */
-export const stableKey = (value: unknown): string =>
-  JSON.stringify(value, (_key, nested: unknown) =>
-    nested && typeof nested === 'object' && !Array.isArray(nested)
-      ? Object.fromEntries(
-          Object.entries(nested).sort(([a], [b]) =>
-            a < b ? -1 : a > b ? 1 : 0,
-          ),
-        )
-      : nested,
-  ) ?? 'undefined';
-
 function createQueryAtom<TData>(
   name: string,
   queryFn: (ctx: QueryContext) => Promise<TData>,
@@ -183,7 +170,7 @@ function reatomSingleQuery<TData>({
   name,
   queryFn,
   initState,
-}: QueryOptions<TData>): SingleQuery<TData> {
+}: QueryOptions<TData, TData | undefined>): SingleQuery<TData> {
   const query = createQueryAtom(name, queryFn, initState);
 
   return Object.assign(query, {
@@ -200,7 +187,7 @@ function reatomKeyedQuery<TArg, TData>({
   initState,
   scope,
   ttl = 5 * 60_000,
-}: KeyedQueryOptions<TArg, TData>): KeyedQuery<TArg, TData> {
+}: KeyedQueryOptions<TArg, TData, TData | undefined>): KeyedQuery<TArg, TData> {
   interface Entry {
     instance: QueryAtom<TData>;
     idleSince: number | null;
@@ -277,20 +264,15 @@ function reatomKeyedQuery<TArg, TData>({
 }
 
 const isKeyed = <TArg, TData>(
-  options: QueryOptions<TData> | KeyedQueryOptions<TArg, TData>,
-): options is KeyedQueryOptions<TArg, TData> =>
+  options:
+    | QueryOptions<TData, TData | undefined>
+    | KeyedQueryOptions<TArg, TData, TData | undefined>,
+): options is KeyedQueryOptions<TArg, TData, TData | undefined> =>
   typeof options.key === 'function';
 
 /**
- * Keyed query with `initState`: a separate instance for each key.
- * @param options {@link KeyedQueryOptions}
- * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `invalidateOn`, `clear`
- */
-export function reatomQuery<TArg, TData>(
-  options: KeyedQueryOptions<TArg, TData> & { initState: TData },
-): KeyedQuery<TArg, TData, TData>;
-/**
  * Keyed query: a separate instance for each key.
+ * With `initState`, `data()` excludes `undefined`.
  * @param options {@link KeyedQueryOptions}
  * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `invalidateOn`, `clear`
  * @example
@@ -300,19 +282,16 @@ export function reatomQuery<TArg, TData>(
  *   queryFn: (id, { signal }) => api.teacher(id, { signal }),
  * });
  */
-export function reatomQuery<TArg, TData>(
-  options: KeyedQueryOptions<TArg, TData>,
-): KeyedQuery<TArg, TData>;
-/**
- * Single query with `initState`: `data()` excludes `undefined`.
- * @param options {@link QueryOptions}
- * @returns {@link SingleQuery}
- */
-export function reatomQuery<TData>(
-  options: QueryOptions<TData> & { initState: TData },
-): SingleQuery<TData, TData>;
+export function reatomQuery<
+  TArg,
+  TData,
+  TInit extends TData | undefined = undefined,
+>(
+  options: KeyedQueryOptions<TArg, TData, TInit>,
+): KeyedQuery<TArg, TData, TInit>;
 /**
  * Single query. The request starts on the first subscription.
+ * With `initState`, `data()` excludes `undefined`.
  * @param options {@link QueryOptions}
  * @returns {@link SingleQuery}
  * @example
@@ -321,11 +300,13 @@ export function reatomQuery<TData>(
  *   queryFn: ({ signal }) => api.me({ signal }),
  * });
  */
-export function reatomQuery<TData>(
-  options: QueryOptions<TData>,
-): SingleQuery<TData>;
+export function reatomQuery<TData, TInit extends TData | undefined = undefined>(
+  options: QueryOptions<TData, TInit>,
+): SingleQuery<TData, TInit>;
 export function reatomQuery<TArg, TData>(
-  options: QueryOptions<TData> | KeyedQueryOptions<TArg, TData>,
+  options:
+    | QueryOptions<TData, TData | undefined>
+    | KeyedQueryOptions<TArg, TData, TData | undefined>,
 ) {
   return isKeyed(options)
     ? reatomKeyedQuery(options)

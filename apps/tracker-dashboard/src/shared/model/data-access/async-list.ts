@@ -16,8 +16,19 @@ import {
   type QueryAtom,
   type QueryContext,
   reatomQuery,
-  stableKey,
 } from './query';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** `JSON.stringify` replacer: sorts object keys so equal filters give the same cache key. */
+const sortKeys = (_key: string, value: unknown): unknown => {
+  if (!isRecord(value)) return value;
+
+  const sorted: Record<string, unknown> = {};
+  for (const key of Object.keys(value).sort()) sorted[key] = value[key];
+  return sorted;
+};
 
 /** Required pagination fields for list filters. */
 export interface AsyncListPagination {
@@ -50,7 +61,8 @@ export interface AsyncListOptions<
   params?: () => TParams;
   /**
    * Fetch a page. IO only: atoms read here are not tracked.
-   * `filters` and `params` must be JSON-serializable: they form the cache key.
+   * `filters` and `params` must be JSON-serializable: they form the cache key
+   * (field order does not matter).
    */
   queryFn: (
     input: AsyncListInput<TFilters, TParams>,
@@ -137,7 +149,7 @@ export function reatomAsyncList<
 
   const query = reatomQuery({
     name: `${name}.query`,
-    key: stableKey,
+    key: (input) => JSON.stringify(input, sortKeys),
     queryFn,
     initState,
     ttl,
