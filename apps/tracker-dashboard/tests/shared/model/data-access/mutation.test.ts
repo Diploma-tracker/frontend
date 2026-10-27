@@ -1,13 +1,13 @@
 // @vitest-environment node
 import { reatomMutation } from '@/shared/model/data-access/mutation';
 import { reatomQuery } from '@/shared/model/data-access/query';
-import { abortVar, isAbort, wrap } from '@reatom/core';
+import { abortVar, context, isAbort, sleep, wrap } from '@reatom/core';
 import { deferred, flush, testModel } from '@tests/utils/reatom-model-test';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('reatomMutation', () => {
   it('tracks pending and fulfilled state and passes the result and original arguments to onSuccess', () =>
-    testModel(async () => {
+    context.start(async () => {
       const response = deferred<{ id: string; name: string }>();
       const mutationFn = vi.fn(
         (_id: string, _patch: { name: string }) => response.promise,
@@ -47,6 +47,7 @@ describe('reatomMutation', () => {
       expect(onSuccess.mock.calls[0]?.[2]).toBe(patch);
       expect(mutation.ready()).toBe(true);
       expect(mutation.error()).toBeUndefined();
+      await wrap(sleep(0));
       expect(mutation.status()).toMatchObject({
         isPending: false,
         isFulfilled: true,
@@ -218,25 +219,27 @@ describe('reatomMutation', () => {
       });
     }));
 
-  it('invalidates an existing entity through find without creating queries for unseen entities', () =>
+  it('invalidates selected entities on success without creating queries for unseen entities', () =>
     testModel(async ({ watch }) => {
       const fetcher = vi.fn(async (id: string) => ({ id }));
       const query = reatomQuery({
         name: 'mutation.entity',
         key: (id: string) => id,
-        fetcher,
+        queryFn: fetcher,
       });
       const mutation = reatomMutation({
         name: 'mutation.invalidate',
         mutationFn: async (id: string) => ({ id }),
-        onSuccess: (_saved, id) => query.find(id)?.cacheAtom.invalidate(),
       });
+      const select = vi.fn((saved: { id: string }, _id: string) => [saved.id]);
+      const unsubscribe = query.invalidateOn(mutation, select);
       const visible = query('visible');
       watch(visible.data);
       await wrap(flush());
 
       await wrap(mutation('visible'));
       await wrap(flush());
+      expect(select).toHaveBeenLastCalledWith({ id: 'visible' }, 'visible');
       expect(fetcher.mock.calls).toEqual([
         [
           'visible',
@@ -252,6 +255,12 @@ describe('reatomMutation', () => {
       await wrap(mutation('unseen'));
       await wrap(flush());
       expect(query.find('unseen')).toBeUndefined();
+      expect(fetcher).toHaveBeenCalledTimes(2);
+
+      unsubscribe();
+      await wrap(mutation('visible'));
+      await wrap(flush());
+      expect(select).toHaveBeenCalledTimes(2);
       expect(fetcher).toHaveBeenCalledTimes(2);
     }));
 });

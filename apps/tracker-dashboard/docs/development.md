@@ -30,56 +30,124 @@ Tests use Testing Library and the MSW server in `tests/setup`. Add endpoint hand
 
 ## Usage of Reatom state manager
 
-Use the data-access utilities from `@/shared/model` for server data displayed in
-the UI. Choose the utility by its purpose:
+Utils live in `apps/tracker-dashboard/src/shared/model/data-access/`:
+`query.ts` (`reatomQuery`, `stableKey`), `mutation.ts` (`reatomMutation`), `async-list.ts` (`reatomAsyncList`).
 
-| Task                                                     | Tool                           |
-| -------------------------------------------------------- | ------------------------------ |
-| Read server data with caching and request status         | `reatomQuery`                  |
-| Read the same entity type for multiple IDs independently | `reatomQuery` with `key`       |
-| Display a table with pagination and filters              | `reatomAsyncList`              |
-| Change server data with status in the UI                 | `reatomMutation`               |
-| Manage other state or workflows                          | `action` / `atom` / `computed` |
+### Choose the tool
 
-### Rules
+- Server data shown in UI → `reatomQuery`. Tables with filters/pagination → `reatomAsyncList`.
+  Server writes with UI status → `reatomMutation`. Everything else → `atom` / `computed` / `action`.
+- Create queries, mutations and lists at module level only, never inside components or render.
 
-1. Read reactive request inputs **synchronously in `params`**. Keep `fetcher`
-   limited to the request, using the supplied inputs; atom reads there are not
-   tracked.
-2. Pass the supplied `signal` to every query/list request so obsolete requests
-   are actually cancelled.
-3. Use `cacheAtom.invalidate()` to force a fresh request. `retry()` may reuse
-   cached data. For a keyed query, use `query.invalidate()` to invalidate all
-   instances: visible ones refetch, while hidden ones are evicted.
-4. In mutation `onSuccess`, invalidate an existing keyed instance with
-   `query.find(id)?.cacheAtom.invalidate()`. Do not call `query(id)` there: it
-   creates an instance if none exists.
-5. Wrap event handlers in `reatomComponent` with `wrap`. In async actions, use
-   `await wrap(promise)` to preserve Reatom context across awaits.
+### Reatom basics
 
-For lists, update filters through `setFilter`. Changing a filter other than
-`page` resets the page to `1` unless an explicit page is supplied. Changes to
-external `params` restore `defaultFilters`.
+- Give every atom/computed/action a unique name (last argument).
+- Every `await` inside actions and tests → `await wrap(...)`.
+- Components that read atoms → `reatomComponent(render, 'Name')`. Event handlers → `wrap(...)`.
+- Custom action with abort + status: `.extend(withAbort(...), withAsync(...))` (`withAbort` first,
+  otherwise `status().isPending` stays `true` after `abort()`).
+- Never use `any`.
 
-### When to use plain Reatom primitives
+### reatomQuery
 
-These utilities are not a general wrapper for every async operation:
+- No input: `reatomQuery({ name, queryFn: ({ signal }) => api.x({ signal }) })`.
+- With input: `reatomQuery({ name, key, queryFn: (arg, { signal }) => ... })`.
+  - Put all request inputs in ONE argument; build the key from the whole argument.
+  - Object inputs → `key: stableKey` (JSON-serializable only; no Map/Set/classes/functions).
+- `queryFn` is IO only: atoms read inside are NOT tracked. Add reactivity by composition:
+  `computed(() => query(input()))`.
+- Always pass `signal` to `fetch`.
+- Options: `initState` (removes `undefined` from `data()`). Keyed only: `scope` (resets all instances
+  when it changes; return a primitive), `ttl` (ms an instance is kept without subscribers; default
+  5 min; `Infinity` = forever).
+- Instance: `data()`, `ready()`, `error()`, `status()`, `retry()` (refetch now),
+  `invalidate()` (now if subscribed, otherwise on next subscription), `abort()`.
+- Keyed: `query(arg)`, `find(arg)` (never creates), `invalidate()`, `clear()`, `invalidateOn()`.
+- Requests start lazily on first subscription; one instance = one shared request.
+  Returning to an already loaded input shows data without a request.
+- Calling `query(arg)` in render is fine. In actions/mutations never call `query(arg)` just to
+  refresh (it creates and loads an instance) → use `find(arg)?.invalidate()` or `invalidateOn`.
 
-- **Data used only inside an action:** await the request in that action; do not
-  create a query. Add `withAsync({ status: true })` only if the UI needs status.
-- **Multi-step workflows:** use one async action that awaits each step, then
-  invalidates affected queries. Avoid chains of mutations calling one another
-  through `onSuccess`.
-- **Analytics or logging without UI status:** use a plain action and handle any
-  async failures.
-- **Local or derived state:** use `atom` / `computed` for dialogs, selected tabs,
-  totals, and similar values.
-- **Server-pushed data (WebSocket/SSE):** use `atom` with `withConnectHook` to
-  manage the subscription lifecycle.
-- **Forms:** use `reatomForm`'s submit status and error handling; do not wrap its
-  submit in a mutation.
+### Invalidation
 
-`reatomMutation` combines `action`, `withAsync({ status: true })`, and an optional
-`onSuccess` hook, with optional cancellation support. If neither the hook nor
-cancellation is needed, an action extended with `withAsync({ status: true })`
-is sufficient.
+- Declare it in the query module, once, at module level:
+  - `query.invalidateOn(mutation)` → invalidates everything;
+  - `keyed.invalidateOn(mutation, (result, ...args) => [arg])` → only listed inputs. Always
+    return an array. Missing instances are not created.
+- Fires on success only. Works with any action extended with `withAsync`. Returns an unsubscribe.
+- `onSuccess` is for side effects only (toast, navigation), never for invalidation.
+- Queries import mutations, never the reverse.
+
+### reatomMutation
+
+- `reatomMutation({ name, mutationFn: (...args) => api.x(...args), onSuccess?, abort? })`.
+- Calling it returns `Promise<TResult>`. `ready()` / `error()` / `status()` are shared across calls.
+- In async handlers: `await wrap(mutation(...))`. Prevent double submit with `disabled={!mutation.ready()}`.
+- Unmounting a component does not cancel a mutation.
+
+### Cancellation (all optional)
+
+- Query/list: a loading instance that loses all subscribers (unmount, input switch) is aborted
+  automatically and restarts when a subscriber returns. `retry()` / `invalidate()` during loading
+  restart the request. `clear()` / `scope` change abort pending requests of old instances.
+- Manual `query.abort()` does NOT auto-restart; call `retry()` or `invalidate()`.
+- Abort is not an error: `error()` stays empty, `ready()` becomes `true`, `data()` keeps the previous value.
+- Mutation `abort` option: `'last-in-win'` (a new call aborts the previous one) or `'manual'`
+  (`abort()` cancels all running calls). Get the signal via `abortVar.require().signal`, which works
+  only with the `abort` option (otherwise "Variable is not set").
+- An aborted mutation call: promise rejects, `onSuccess` / `invalidateOn` don't fire, no unhandled rejection.
+- Never use `'first-in-win'`: in Reatom 1001.3.0 the ignored call throws synchronously.
+- React StrictMode (dev only): reading `ready()` keeps the previous instance connected when a
+  component switches inputs. For switching instances check `status().isPending` instead.
+
+### reatomAsyncList
+
+- `reatomAsyncList<Filters, Data, Params?>({ defaultFilters, initState, params?, ttl?,
+queryFn: ({ filters, params }, { signal }) => ... }, 'name')`.
+- Returns: `data`, `status`, `ready`, `error`, `filter`, `setFilter`, `invalidate`, `invalidateOn`, `abort`.
+- Change filters only via `setFilter`:
+  - changing any field except `page` resets `page` to 1;
+  - an explicit `page` wins;
+  - no-op updates are ignored;
+  - `undefined` clears a field.
+- Each filter combination is a cached instance. Previous rows stay visible while a page loads.
+  Fast typing aborts stale requests.
+- A `params` change resets filters to `defaultFilters` with exactly one request. Filters set before
+  the first mount are kept. `filters` and `params` must be JSON-serializable.
+
+### Do NOT use the utils for
+
+- Data needed only inside an action → `await wrap(api.x())` in a plain `action`.
+- Multi-step flows → one `action` + `withAsync` (it can still be an `invalidateOn` source),
+  not chained mutations.
+- Fire-and-forget (analytics, logging) → plain `action`.
+- Local/derived state → `atom` / `computed`. Server push (WebSocket/SSE) → `atom` + `withConnectHook`.
+  Forms → `reatomForm` `submit`.
+
+### Testing (vitest)
+
+```ts
+export const test = (name: string, fn: () => unknown) =>
+  viTest(name, () => context.start(fn));
+export const subscribe = <T>(target: AtomLike<T>) => {
+  const spy = vi.fn<(state: T) => void>();
+  return Object.assign(spy, { unsubscribe: target.subscribe(spy) });
+};
+```
+
+- Run every test in `context.start` (helper above). State, including keyed registries, is per context.
+- Every `await` in a test → `await wrap(...)`; otherwise the context is silently lost.
+- Queries are lazy: subscribe (`subscribe(query.data)`) to trigger requests.
+- Mock the API layer (`vi.spyOn(api, ...)`). Don't use Reatom `mock()` on mutations (it fails).
+- Prefer fake timers: `vi.useFakeTimers()` + `await wrap(vi.advanceTimersByTimeAsync(ms))`.
+  `ttl` uses `Date.now()` → control it with `vi.setSystemTime`.
+- Unsubscribe is processed asynchronously: advance by 0 ms before asserting abort or `ttl`.
+- Mutation `status()`:
+  - it settles one tick after the promise;
+  - under fake timers it never reaches `isFulfilled`.
+    → Assert mutation `status()` with real timers + `await wrap(sleep(0))`. Under fake timers assert
+    `ready()`, `error()` and the promise result. Queries and lists are unaffected.
+- Assert cancellation via `signal.aborted` taken from the mock call arguments.
+- React tests: subscriptions happen in effects flushed when `act` ends, so trigger and wait in
+  separate `act` calls. For a custom context use `reatomContext.Provider value={context.start()}`
+  and `wrap` handlers.

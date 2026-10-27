@@ -11,8 +11,8 @@ describe('reatomQuery: single query', () => {
   it('starts on subscription, shares one request, and publishes loading and data', () =>
     testModel(async ({ watch }) => {
       const response = deferred<string>();
-      const fetcher = vi.fn((_ctx: QueryContext<void>) => response.promise);
-      const query = reatomQuery({ name: 'single.lazy', fetcher });
+      const fetcher = vi.fn((_ctx: QueryContext) => response.promise);
+      const query = reatomQuery({ name: 'single.lazy', queryFn: fetcher });
       const firstReader = vi.fn();
       const secondReader = vi.fn();
 
@@ -50,7 +50,7 @@ describe('reatomQuery: single query', () => {
       const response = deferred<string>();
       const query = reatomQuery({
         name: 'single.error',
-        fetcher: () => response.promise,
+        queryFn: () => response.promise,
       });
       watch(query.data);
       await wrap(flush());
@@ -70,80 +70,17 @@ describe('reatomQuery: single query', () => {
       });
     }));
 
-  it('aborts obsolete params and ignores their late response', () =>
-    testModel(async ({ watch }) => {
-      const id = atom('first');
-      const first = deferred<string>();
-      const last = deferred<string>();
-      const fetcher = vi.fn(({ params }: QueryContext<string>) =>
-        params === 'first' ? first.promise : last.promise,
-      );
-      const query = reatomQuery({
-        name: 'single.params',
-        params: id,
-        fetcher,
-      });
-      watch(query.data);
-      await wrap(flush());
-      const firstSignal = fetcher.mock.calls[0]?.[0].signal;
-
-      id.set('last');
-      await wrap(flush());
-      expect(fetcher).toHaveBeenCalledTimes(2);
-      expect(firstSignal?.aborted).toBe(true);
-      expect(fetcher.mock.calls[1]?.[0].signal.aborted).toBe(false);
-
-      last.resolve('latest result');
-      await wrap(flush());
-      first.resolve('obsolete result');
-      await wrap(flush());
-      expect(query.data()).toBe('latest result');
-      expect(query.error()).toBeUndefined();
-    }));
-
-  it('reuses cached params for navigation and retry, but always fetches on invalidate', () =>
-    testModel(async ({ watch }) => {
-      const id = atom('a');
-      const fetcher = vi.fn(async ({ params }: QueryContext<string>) => params);
-      const query = reatomQuery({
-        name: 'single.cache',
-        params: id,
-        fetcher,
-      });
-      watch(query.data);
-      await wrap(flush());
-      id.set('b');
-      await wrap(flush());
-      expect(query.data()).toBe('b');
-
-      id.set('a');
-      await wrap(flush());
-      expect(query.data()).toBe('a');
-      expect(fetcher).toHaveBeenCalledTimes(2);
-
-      query.retry();
-      await wrap(flush());
-      expect(fetcher).toHaveBeenCalledTimes(2);
-
-      for (const expectedCalls of [3, 4]) {
-        query.cacheAtom.invalidate();
-        await wrap(flush());
-        expect(fetcher).toHaveBeenCalledTimes(expectedCalls);
-        expect(fetcher.mock.lastCall?.[0].params).toBe('a');
-      }
-    }));
-
   it('manual abort preserves previous data without error or an automatic restart', () =>
     testModel(async ({ watch }) => {
       const response = deferred<string>();
       const fetcher = vi
-        .fn<(ctx: QueryContext<void>) => Promise<string>>()
+        .fn<(ctx: QueryContext) => Promise<string>>()
         .mockResolvedValueOnce('previous')
         .mockImplementation(() => response.promise);
-      const query = reatomQuery({ name: 'single.abort', fetcher });
+      const query = reatomQuery({ name: 'single.abort', queryFn: fetcher });
       watch(query.data);
       await wrap(flush());
-      query.cacheAtom.invalidate();
+      query.invalidate();
       await wrap(flush());
       expect(query.ready()).toBe(false);
 
@@ -166,10 +103,76 @@ const isolatedFetcher = vi.fn(async (id: string) => id);
 const isolatedQuery = reatomQuery({
   name: 'keyed.contextIsolation',
   key: (id: string) => id,
-  fetcher: isolatedFetcher,
+  queryFn: isolatedFetcher,
 });
 
 describe('reatomQuery: keyed queries', () => {
+  it('aborts obsolete inputs and ignores their late response', () =>
+    testModel(async ({ watch }) => {
+      const id = atom('first');
+      const first = deferred<string>();
+      const last = deferred<string>();
+      const fetcher = vi.fn((id: string, _ctx: QueryContext) =>
+        id === 'first' ? first.promise : last.promise,
+      );
+      const query = reatomQuery({
+        name: 'keyed.inputs',
+        key: (id: string) => id,
+        queryFn: fetcher,
+      });
+      const current = computed(() => query(id()));
+      const data = computed(() => current().data());
+      watch(data);
+      await wrap(flush());
+      const firstSignal = fetcher.mock.calls[0]?.[1].signal;
+
+      id.set('last');
+      await wrap(flush());
+      expect(fetcher).toHaveBeenCalledTimes(2);
+      expect(firstSignal?.aborted).toBe(true);
+      expect(fetcher.mock.calls[1]?.[1].signal.aborted).toBe(false);
+
+      last.resolve('latest result');
+      await wrap(flush());
+      first.resolve('obsolete result');
+      await wrap(flush());
+      expect(data()).toBe('latest result');
+      expect(current().error()).toBeUndefined();
+    }));
+
+  it('reuses loaded inputs for navigation but refetches on retry and invalidate', () =>
+    testModel(async ({ watch }) => {
+      const id = atom('a');
+      const fetcher = vi.fn(async (id: string) => id);
+      const query = reatomQuery({
+        name: 'keyed.cache',
+        key: (id: string) => id,
+        queryFn: fetcher,
+      });
+      const current = computed(() => query(id()));
+      const data = computed(() => current().data());
+      watch(data);
+      await wrap(flush());
+      id.set('b');
+      await wrap(flush());
+      expect(data()).toBe('b');
+
+      id.set('a');
+      await wrap(flush());
+      expect(data()).toBe('a');
+      expect(fetcher).toHaveBeenCalledTimes(2);
+
+      expect(await wrap(current().retry())).toBe('a');
+      expect(fetcher).toHaveBeenCalledTimes(3);
+
+      for (const expectedCalls of [4, 5]) {
+        current().invalidate();
+        await wrap(flush());
+        expect(fetcher).toHaveBeenCalledTimes(expectedCalls);
+        expect(fetcher.mock.lastCall?.[0]).toBe('a');
+      }
+    }));
+
   it.each([1, 2])('isolates the module-level registry in context %s', () =>
     testModel(async ({ watch }) => {
       expect(isolatedQuery.find('a')).toBeUndefined();
@@ -189,7 +192,7 @@ describe('reatomQuery: keyed queries', () => {
       const query = reatomQuery({
         name: 'keyed.identity',
         key: ({ id }: { id: string }) => id,
-        fetcher,
+        queryFn: fetcher,
       });
 
       expect(query.find({ id: 'missing' })).toBeUndefined();
@@ -223,7 +226,7 @@ describe('reatomQuery: keyed queries', () => {
           name: `keyed.${reset}`,
           key: (id: string) => id,
           scope,
-          fetcher,
+          queryFn: fetcher,
         });
         const reader = computed(() => {
           const instance = query('a');
@@ -252,13 +255,13 @@ describe('reatomQuery: keyed queries', () => {
       }),
   );
 
-  it('invalidates visible instances now and evicts hidden ones until shown again', () =>
+  it('refetches visible instances now and hidden ones on their next subscription', () =>
     testModel(async ({ watch }) => {
       const fetcher = vi.fn(async (id: string) => id);
       const query = reatomQuery({
         name: 'keyed.invalidate',
         key: (id: string) => id,
-        fetcher,
+        queryFn: fetcher,
       });
       const visible = query('visible');
       const hidden = query('hidden');
@@ -272,7 +275,7 @@ describe('reatomQuery: keyed queries', () => {
       query.invalidate();
       await wrap(flush());
       expect(query.find('visible')).toBe(visible);
-      expect(query.find('hidden')).toBeUndefined();
+      expect(query.find('hidden')).toBe(hidden);
       expect(fetcher.mock.calls.map(([id]) => id)).toEqual([
         'visible',
         'hidden',
@@ -280,21 +283,21 @@ describe('reatomQuery: keyed queries', () => {
       ]);
 
       const shownAgain = query('hidden');
-      expect(shownAgain).not.toBe(hidden);
+      expect(shownAgain).toBe(hidden);
       watch(shownAgain.data);
       await wrap(flush());
       expect(shownAgain.data()).toBe('hidden');
       expect(fetcher).toHaveBeenCalledTimes(4);
     }));
 
-  it('evicts an unused instance exactly at gcTime', () =>
+  it('evicts idle instances at ttl when a new key is created', () =>
     testModel(async ({ watch }) => {
       const fetcher = vi.fn(async (id: string) => id);
       const query = reatomQuery({
-        name: 'keyed.gc',
+        name: 'keyed.ttl',
         key: (id: string) => id,
-        fetcher,
-        gcTime: 1_000,
+        queryFn: fetcher,
+        ttl: 1_000,
       });
       const instance = query('a');
       const hide = watch(instance.data);
@@ -303,8 +306,10 @@ describe('reatomQuery: keyed queries', () => {
       await wrap(flush());
 
       await wrap(vi.advanceTimersByTimeAsync(999));
+      query('beforeExpiry');
       expect(query.find('a')).toBe(instance);
       await wrap(vi.advanceTimersByTimeAsync(1));
+      query('atExpiry');
       expect(query.find('a')).toBeUndefined();
       expect(fetcher).toHaveBeenCalledTimes(1);
     }));
@@ -315,8 +320,8 @@ describe('reatomQuery: keyed queries', () => {
       const query = reatomQuery({
         name: 'keyed.remount',
         key: (id: string) => id,
-        fetcher,
-        gcTime: 1_000,
+        queryFn: fetcher,
+        ttl: 1_000,
       });
       const instance = query('a');
       const hide = watch(instance.data);
@@ -324,6 +329,7 @@ describe('reatomQuery: keyed queries', () => {
       hide();
       watch(query('a').data);
       await wrap(vi.advanceTimersByTimeAsync(1_000));
+      query('another');
 
       expect(query.find('a')).toBe(instance);
       expect(isConnected(instance)).toBe(true);

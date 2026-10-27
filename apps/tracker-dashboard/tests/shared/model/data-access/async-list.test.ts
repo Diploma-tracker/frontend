@@ -1,8 +1,9 @@
 // @vitest-environment node
 import {
-  type AsyncListContext,
+  type AsyncListInput,
   reatomAsyncList,
 } from '@/shared/model/data-access/async-list';
+import { type QueryContext } from '@/shared/model/data-access/query';
 import { atom, wrap } from '@reatom/core';
 import { deferred, flush, testModel } from '@tests/utils/reatom-model-test';
 import { describe, expect, it, vi } from 'vitest';
@@ -19,7 +20,7 @@ interface Params {
   projectId: string;
 }
 
-function createList(params?: () => Params) {
+function createList(params?: () => Params, ttl?: number) {
   const defaultFilters: Filters = {
     page: 1,
     pageSize: 20,
@@ -27,15 +28,15 @@ function createList(params?: () => Params) {
     sort: 'name',
   };
   const fetcher = vi.fn(
-    async ({
-      filters,
-      params,
-    }: AsyncListContext<Filters, Params | undefined>) => [
+    async (
+      { filters, params }: AsyncListInput<Filters, Params | undefined>,
+      _ctx: QueryContext,
+    ) => [
       `${params?.projectId ?? 'all'}:${filters.page}:${filters.search ?? ''}`,
     ],
   );
   const list = reatomAsyncList<Filters, string[], Params | undefined>(
-    { defaultFilters, initState: [], params, fetcher },
+    { defaultFilters, initState: [], params, queryFn: fetcher, ttl },
     'testList',
   );
   return { list, fetcher, defaultFilters };
@@ -140,14 +141,14 @@ describe('reatomAsyncList: requests and cache', () => {
         .mockImplementationOnce(() => last.promise);
       list.setFilter({ search: 'a' });
       await wrap(flush());
-      const obsoleteSignal = fetcher.mock.lastCall?.[0].signal;
+      const obsoleteSignal = fetcher.mock.lastCall?.[1].signal;
       expect(list.status().isPending).toBe(true);
       expect(list.data()).toEqual(['all:1:']);
 
       list.setFilter({ search: 'ab' });
       await wrap(flush());
       expect(obsoleteSignal?.aborted).toBe(true);
-      expect(fetcher.mock.lastCall?.[0].signal.aborted).toBe(false);
+      expect(fetcher.mock.lastCall?.[1].signal.aborted).toBe(false);
       expect(list.data()).toEqual(['all:1:']);
 
       last.resolve(['latest rows']);
@@ -157,14 +158,14 @@ describe('reatomAsyncList: requests and cache', () => {
 
       expect(list.data()).toEqual(['latest rows']);
       expect(list.status().isPending).toBe(false);
-      expect(list.query.error()).toBeUndefined();
+      expect(list.error()).toBeUndefined();
       expect(rows.mock.calls).toEqual([[[]], [['all:1:']], [['latest rows']]]);
       expect(fetcher).toHaveBeenCalledTimes(3);
     }));
 
-  it('reuses cached filter combinations and evicts the oldest after five combinations', () =>
+  it('reuses cached filter combinations beyond five pages until their ttl expires', () =>
     testModel(async ({ watch }) => {
-      const { list, fetcher } = createList();
+      const { list, fetcher } = createList(undefined, 1_000);
       list.setFilter({ search: 'initial' });
       watch(list.data);
       await wrap(flush());
@@ -198,7 +199,18 @@ describe('reatomAsyncList: requests and cache', () => {
       list.setFilter({ search: 'initial' });
       await wrap(flush());
       expect(list.data()).toEqual(['all:1:initial']);
+      expect(fetcher).toHaveBeenCalledTimes(6);
+
+      // New keys evict idle pages once their retention period has elapsed.
+      await wrap(vi.advanceTimersByTimeAsync(1_000));
+      list.setFilter({ search: 'after expiry' });
+      await wrap(flush());
       expect(fetcher).toHaveBeenCalledTimes(7);
+
+      list.setFilter({ search: 'a' });
+      await wrap(flush());
+      expect(list.data()).toEqual(['all:1:a']);
+      expect(fetcher).toHaveBeenCalledTimes(8);
     }));
 
   it('invalidates and reloads the current page with its current filters', () =>
@@ -209,7 +221,7 @@ describe('reatomAsyncList: requests and cache', () => {
       await wrap(flush());
       fetcher.mockResolvedValueOnce(['refreshed page 3']);
 
-      list.cacheAtom.invalidate();
+      list.invalidate();
       await wrap(flush());
 
       expect(fetcher).toHaveBeenCalledTimes(2);

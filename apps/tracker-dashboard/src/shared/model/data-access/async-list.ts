@@ -1,15 +1,23 @@
 import {
   type Action,
   type Atom,
-  type WithCacheOptions,
+  type Computed,
+  type Unsubscribe,
   action,
   atom,
   computed,
   isDeepEqual,
+  peek,
   withChangeHook,
 } from '@reatom/core';
 
-import { type QueryAtom, reatomQuery } from './query';
+import {
+  type InvalidationSource,
+  type QueryAtom,
+  type QueryContext,
+  reatomQuery,
+  stableKey,
+} from './query';
 
 /** Required pagination fields for list filters. */
 export interface AsyncListPagination {
@@ -17,14 +25,12 @@ export interface AsyncListPagination {
   pageSize: number;
 }
 
-/** Context passed to `fetcher` on each request. */
-export interface AsyncListContext<TFilters, TParams> {
+/** Input passed to `queryFn` on each request. */
+export interface AsyncListInput<TFilters, TParams> {
   /** Current table filters. */
   filters: TFilters;
   /** Current value of the external `params()`. */
   params: TParams;
-  /** Aborted when the request becomes obsolete. Pass this signal to `fetch`. */
-  signal: AbortSignal;
 }
 
 /** List options. */
@@ -37,39 +43,58 @@ export interface AsyncListOptions<
   defaultFilters: TFilters;
   /** Initial value of `data()`. */
   initState: TData;
-  /** `withCache` options. Caches 5 filter combinations by default. */
-  cache?: WithCacheOptions;
   /**
-   * External reactive inputs. Read atoms synchronously and only here.
+   * External reactive inputs, e.g. the selected faculty. Read atoms synchronously.
    * When the value changes, filters reset to `defaultFilters`.
    */
   params?: () => TParams;
-  /** Fetch a page. IO only: atoms read here are not tracked. */
-  fetcher: (ctx: AsyncListContext<TFilters, TParams>) => Promise<TData>;
+  /**
+   * Fetch a page. IO only: atoms read here are not tracked.
+   * `filters` and `params` must be JSON-serializable: they form the cache key.
+   */
+  queryFn: (
+    input: AsyncListInput<TFilters, TParams>,
+    ctx: QueryContext,
+  ) => Promise<TData>;
+  /** How long a page without subscribers stays cached, in ms. Defaults to 5 min. */
+  ttl?: number;
 }
 
 /** List model. */
 export interface AsyncListResult<TFilters extends AsyncListPagination, TData> {
-  /** Current page data. Previous data is preserved while loading. */
-  data: QueryAtom<TData, TData>['data'];
-  /** Detailed request status (`isPending`, etc.). */
-  status: QueryAtom<TData, TData>['status'];
+  /** Current page data. Previous data is preserved while a new page loads. */
+  data: Computed<TData>;
+  /** Detailed status of the current page request (`isPending`, etc.). */
+  status: Computed<ReturnType<QueryAtom<TData, TData>['status']>>;
+  /** `false` while the current page is loading. */
+  ready: Computed<boolean>;
+  /** Latest error of the current page request. */
+  error: Computed<Error | undefined>;
   /** Current filters. Update them through `setFilter`. */
   filter: Atom<TFilters>;
   /**
-   * Partially update filters. Changing any field except `page` resets it to 1.
+   * Partially update filters. Changing a field other than `page` resets it to 1.
    * An explicit `page` takes precedence. Unchanged values have no effect;
    * `undefined` clears a field.
    */
   setFilter: Action<[update: Partial<TFilters>], TFilters>;
-  /** Page cache. `cacheAtom.invalidate()` refetches the current page. */
-  cacheAtom: QueryAtom<TData, TData>['cacheAtom'];
-  /** Underlying query with `abort()`, `ready()`, `error()`, etc. */
-  query: QueryAtom<TData, TData>;
+  /** Refetch the current page; other cached pages reload when shown again. */
+  invalidate: Action<[], void>;
+  /**
+   * Invalidate the list after every successful `source` call.
+   * Call once at module level.
+   * @returns Function that removes the subscription.
+   */
+  invalidateOn: <TArgs extends unknown[], TResult>(
+    source: InvalidationSource<TArgs, TResult>,
+  ) => Unsubscribe;
+  /** Cancel the current page request. */
+  abort: Action<[], void>;
 }
 
 /**
- * A paginated, filterable list built on `reatomQuery`.
+ * A paginated, filterable list built on a keyed `reatomQuery`:
+ * every filter combination is a separate cached instance.
  * @param options {@link AsyncListOptions}
  * @param name Name for devtools and logs.
  * @returns {@link AsyncListResult}
@@ -77,7 +102,7 @@ export interface AsyncListResult<TFilters extends AsyncListPagination, TData> {
  * const teachersList = reatomAsyncList<TeacherFilters, Page<Teacher>>({
  *   defaultFilters: { page: 1, pageSize: 20 },
  *   initState: { items: [], total: 0 },
- *   fetcher: ({ filters, signal }) => api.teachers(filters, { signal }),
+ *   queryFn: ({ filters }, { signal }) => api.teachers(filters, { signal }),
  * }, 'teachersList');
  */
 export function reatomAsyncList<
@@ -88,9 +113,9 @@ export function reatomAsyncList<
   {
     defaultFilters,
     initState,
-    cache,
     params,
-    fetcher,
+    queryFn,
+    ttl,
   }: AsyncListOptions<TFilters, TData, TParams>,
   name: string,
 ): AsyncListResult<TFilters, TData> {
@@ -112,35 +137,54 @@ export function reatomAsyncList<
 
   const query = reatomQuery({
     name: `${name}.query`,
-    params: () => ({ filters: filter(), params: external().value }),
-    fetcher: ({ params: input, signal }) => fetcher({ ...input, signal }),
+    key: stableKey,
+    queryFn,
     initState,
-    cache,
+    ttl,
   });
 
+  const current = computed(
+    () => query({ filters: filter(), params: external().value }),
+    `${name}.current`,
+  );
+
+  const status = computed(() => current().status(), `${name}.status`);
+
+  const data = computed((previous?: TData) => {
+    const page = current();
+    return status().isPending && previous !== undefined
+      ? previous
+      : page.data();
+  }, `${name}.data`);
+
   const setFilter = action((update: Partial<TFilters>) => {
-    return filter.set((current) => {
+    return filter.set((state) => {
       const changed = (Object.keys(update) as Array<keyof TFilters>).filter(
-        (key) => !isDeepEqual(update[key], current[key]),
+        (key) => !isDeepEqual(update[key], state[key]),
       );
-      if (changed.length === 0) return current;
+      if (changed.length === 0) return state;
 
       const filtersChanged = changed.some((key) => key !== 'page');
 
       return {
-        ...current,
+        ...state,
         ...update,
-        page: update.page ?? (filtersChanged ? 1 : current.page),
+        page: update.page ?? (filtersChanged ? 1 : state.page),
       };
     });
   }, `${name}.setFilter`);
 
   return {
-    data: query.data,
-    status: query.status,
+    data,
+    status,
+    ready: computed(() => !status().isPending, `${name}.ready`),
+    error: computed(() => current().error(), `${name}.error`),
     filter,
     setFilter,
-    cacheAtom: query.cacheAtom,
-    query,
+    invalidate: action(() => query.invalidate(), `${name}.invalidate`),
+    invalidateOn: (source) => query.invalidateOn(source),
+    abort: action(() => {
+      peek(current).abort();
+    }, `${name}.abort`),
   };
 }

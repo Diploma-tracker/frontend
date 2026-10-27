@@ -1,69 +1,68 @@
 import {
   type Action,
   type AsyncDataExt,
-  type CacheAtom,
+  type AsyncExt,
   type Computed,
-  type WithCacheOptions,
+  type Unsubscribe,
   abortVar,
   action,
+  addCallHook,
   atom,
   computed,
   isConnected,
   peek,
   withAsyncData,
-  withCache,
   withConnectHook,
   wrap,
 } from '@reatom/core';
 
-/** Context passed to `fetcher` on each request. */
-export interface QueryContext<TParams> {
-  /** Value of `params()` for this request. */
-  params: TParams;
+/** Context passed to `queryFn` on each request. */
+export interface QueryContext {
   /** Aborted when the request becomes obsolete. Pass this signal to `fetch`. */
   signal: AbortSignal;
 }
 
-interface BaseQueryOptions<TData, TParams> {
+/** Any async action with `onFulfill`, e.g. a `reatomMutation`. */
+export type InvalidationSource<TArgs extends unknown[], TResult> = Pick<
+  AsyncExt<TArgs, TResult, unknown>,
+  'onFulfill'
+>;
+
+interface BaseQueryOptions<TData> {
   /** Name for devtools and logs. */
   name: string;
-  /**
-   * Reactive inputs. Read atoms synchronously and only here.
-   * Changes restart the request, and the returned value is the cache key.
-   */
-  params?: () => TParams;
   /** Initial value of `data()`. When provided, `data()` excludes `undefined`. */
   initState?: TData;
-  /** `withCache` options: `length`, `staleTime`, `swr`, etc. */
-  cache?: WithCacheOptions;
 }
 
 /** Single query options. */
-export interface QueryOptions<TData, TParams = void> extends BaseQueryOptions<
-  TData,
-  TParams
-> {
+export interface QueryOptions<TData> extends BaseQueryOptions<TData> {
   /** Server request. IO only: atoms read here are not tracked. */
-  fetcher: (ctx: QueryContext<TParams>) => Promise<TData>;
+  queryFn: (ctx: QueryContext) => Promise<TData>;
   key?: never;
   scope?: never;
-  gcTime?: never;
+  ttl?: never;
 }
 
 /** Keyed query options: a separate instance for each key. */
 export interface KeyedQueryOptions<
   TArg,
   TData,
-  TParams = void,
-> extends BaseQueryOptions<TData, TParams> {
-  /** String key for the argument. Must fully identify what `fetcher` loads. */
+> extends BaseQueryOptions<TData> {
+  /**
+   * String key for the argument. Must fully identify what `queryFn` loads.
+   * Use `stableKey` for object arguments.
+   */
   key: (arg: TArg) => string;
-  /** Request for a specific argument. IO only. */
-  fetcher: (arg: TArg, ctx: QueryContext<TParams>) => Promise<TData>;
+  /** Request for a specific argument. IO only: atoms read here are not tracked. */
+  queryFn: (arg: TArg, ctx: QueryContext) => Promise<TData>;
   /** All instances reset when this value changes. Return a primitive. */
   scope?: () => unknown;
-  /** Retention time without subscribers, in ms. Defaults to 5 min; `Infinity` keeps instances forever. */
-  gcTime?: number;
+  /**
+   * How long an instance without subscribers is kept, in ms, counted from the
+   * moment its last subscriber left. Defaults to 5 min; `Infinity` keeps instances forever.
+   */
+  ttl?: number;
 }
 
 type QueryComputed<TData> = Computed<Promise<TData>>;
@@ -72,159 +71,261 @@ type QueryComputed<TData> = Computed<Promise<TData>>;
  * Query atom:
  * - `data()` holds the data; `ready()` is `false` while loading;
  *   `error()` holds the latest error.
- * - `status()` provides detailed state (`isPending`, `isSWR`, etc.).
- * - `cacheAtom.invalidate()` clears the cache and refetches.
- * - `retry()` restarts the query and may reuse cached data.
+ * - `status()` provides detailed state (`isPending`, etc.).
+ * - `retry()` refetches now.
+ * - `invalidate()` refetches now if subscribed, otherwise on the next subscription.
  * - `abort()` cancels the current request.
+ *
+ * A pending request is aborted when the last subscriber leaves and restarts
+ * when a subscriber returns.
  */
 export type QueryAtom<TData, TInit = undefined> = QueryComputed<TData> &
   AsyncDataExt<[], TData, TData, TInit, Error | undefined> & {
-    cacheAtom: CacheAtom<QueryComputed<TData>>;
+    invalidate: Action<[], void>;
   };
+
+/** Single query: a {@link QueryAtom} that can subscribe to mutations. */
+export type SingleQuery<TData, TInit = undefined> = QueryAtom<TData, TInit> & {
+  /**
+   * Invalidate the query after every successful `source` call.
+   * Call once at module level.
+   * @returns Function that removes the subscription.
+   */
+  invalidateOn: <TArgs extends unknown[], TResult>(
+    source: InvalidationSource<TArgs, TResult>,
+  ) => Unsubscribe;
+};
 
 /** Keyed query. Calling `query(arg)` returns the {@link QueryAtom} for that key. */
 export type KeyedQuery<TArg, TData, TInit = undefined> = ((
   arg: TArg,
 ) => QueryAtom<TData, TInit>) & {
-  /** Existing instance or `undefined`. Creates nothing; intended for mutations. */
+  /** Existing instance or `undefined`. Creates nothing. */
   find: (arg: TArg) => QueryAtom<TData, TInit> | undefined;
-  /** Refetch visible instances now; evict hidden ones to reload when shown. */
+  /** Invalidate every instance. */
   invalidate: Action<[], void>;
-  /** Remove all instances. Visible components receive new ones. */
+  /** Remove all instances. Subscribed components receive new ones. */
   clear: Action<[], void>;
+  /**
+   * Invalidate instances after every successful `source` call.
+   * Call once at module level.
+   * @param source Mutation or another async action.
+   * @param select Returns the arguments whose instances to invalidate.
+   *   Without it, every instance is invalidated.
+   * @returns Function that removes the subscription.
+   */
+  invalidateOn: <TArgs extends unknown[], TResult>(
+    source: InvalidationSource<TArgs, TResult>,
+    select?: NoInfer<(result: TResult, ...args: TArgs) => readonly TArg[]>,
+  ) => Unsubscribe;
 };
 
-function reatomSingleQuery<TData, TParams>(
-  options: Omit<QueryOptions<TData, TParams>, 'key' | 'scope' | 'gcTime'>,
+/**
+ * Deterministic string key for JSON-serializable values.
+ * Object keys are sorted; `undefined` properties are ignored.
+ * @param value Value to serialize.
+ * @returns Key string.
+ */
+export const stableKey = (value: unknown): string =>
+  JSON.stringify(value, (_key, nested: unknown) =>
+    nested && typeof nested === 'object' && !Array.isArray(nested)
+      ? Object.fromEntries(
+          Object.entries(nested).sort(([a], [b]) =>
+            a < b ? -1 : a > b ? 1 : 0,
+          ),
+        )
+      : nested,
+  ) ?? 'undefined';
+
+function createQueryAtom<TData>(
+  name: string,
+  queryFn: (ctx: QueryContext) => Promise<TData>,
+  initState: TData | undefined,
 ): QueryAtom<TData>;
-function reatomSingleQuery<TData, TParams>({
-  name,
-  params,
-  fetcher,
-  initState,
-  cache,
-}: Omit<QueryOptions<TData, TParams>, 'key' | 'scope' | 'gcTime'>) {
-  return computed(async () => {
-    const currentParams = params?.() as TParams;
+function createQueryAtom<TData>(
+  name: string,
+  queryFn: (ctx: QueryContext) => Promise<TData>,
+  initState: TData | undefined,
+) {
+  const needsRefetch = atom(false, `${name}._needsRefetch`);
 
+  const target = computed(async () => {
     await wrap(Promise.resolve());
+    return await wrap(queryFn({ signal: abortVar.require().signal }));
+  }, name).extend(withAsyncData({ initState, status: true }));
 
-    return await wrap(
-      fetcher({ params: currentParams, signal: abortVar.require().signal }),
-    );
-  }, name).extend(withAsyncData({ initState, status: true }), withCache(cache));
+  const refetch = () => {
+    target.retry().catch(() => {});
+  };
+
+  return target.extend(
+    withConnectHook(() => {
+      if (peek(needsRefetch)) {
+        needsRefetch.set(false);
+        refetch();
+      }
+      return () => {
+        if (peek(target.ready)) return;
+        needsRefetch.set(true);
+        target.abort('idle');
+      };
+    }),
+    () => ({
+      invalidate: action(() => {
+        if (isConnected(target)) refetch();
+        else needsRefetch.set(true);
+      }, `${name}.invalidate`),
+    }),
+  );
 }
 
-function reatomKeyedQuery<TArg, TData, TParams>(
-  options: KeyedQueryOptions<TArg, TData, TParams>,
-): KeyedQuery<TArg, TData> {
-  const { name, key, fetcher, scope, gcTime = 5 * 60_000, ...rest } = options;
-  type Instance = QueryAtom<TData>;
+function reatomSingleQuery<TData>({
+  name,
+  queryFn,
+  initState,
+}: QueryOptions<TData>): SingleQuery<TData> {
+  const query = createQueryAtom(name, queryFn, initState);
+
+  return Object.assign(query, {
+    invalidateOn: <TArgs extends unknown[], TResult>(
+      source: InvalidationSource<TArgs, TResult>,
+    ) => addCallHook(source.onFulfill, () => query.invalidate()),
+  });
+}
+
+function reatomKeyedQuery<TArg, TData>({
+  name,
+  key,
+  queryFn,
+  initState,
+  scope,
+  ttl = 5 * 60_000,
+}: KeyedQueryOptions<TArg, TData>): KeyedQuery<TArg, TData> {
+  interface Entry {
+    instance: QueryAtom<TData>;
+    idleSince: number | null;
+  }
 
   const generation = atom(0, `${name}._generation`);
 
   const registry = computed(() => {
     generation();
     scope?.();
-    return new Map<string, Instance>();
+    return new Map<string, Entry>();
   }, `${name}._registry`);
 
-  const create = (map: Map<string, Instance>, id: string, arg: TArg) => {
-    let evictTimer: ReturnType<typeof setTimeout> | undefined;
+  const evictIdle = (map: Map<string, Entry>) => {
+    if (ttl === Infinity) return;
+    const now = Date.now();
+    for (const [id, entry] of map) {
+      if (entry.idleSince !== null && now - entry.idleSince >= ttl) {
+        map.delete(id);
+      }
+    }
+  };
 
-    const instance: Instance = reatomSingleQuery<TData, TParams>({
-      ...rest,
-      name: `${name}#${id}`,
-      fetcher: (ctx) => fetcher(arg, ctx),
-    }).extend(
+  const create = (map: Map<string, Entry>, id: string, arg: TArg) => {
+    evictIdle(map);
+
+    const instance = createQueryAtom(
+      `${name}#${id}`,
+      (ctx) => queryFn(arg, ctx),
+      initState,
+    );
+    const entry: Entry = { instance, idleSince: Date.now() };
+
+    instance.extend(
       withConnectHook(() => {
-        clearTimeout(evictTimer);
+        entry.idleSince = null;
         return () => {
-          if (gcTime === Infinity) return;
-          evictTimer = setTimeout(() => {
-            if (map.get(id) === instance) map.delete(id);
-          }, gcTime);
+          entry.idleSince = Date.now();
         };
       }),
     );
 
-    map.set(id, instance);
+    map.set(id, entry);
     return instance;
   };
 
-  const query = (arg: TArg): Instance => {
+  const query = (arg: TArg): QueryAtom<TData> => {
     const map = registry();
     const id = key(arg);
-    return map.get(id) ?? create(map, id, arg);
+    return map.get(id)?.instance ?? create(map, id, arg);
   };
 
+  const find = (arg: TArg) => peek(registry).get(key(arg))?.instance;
+
+  const invalidate = action(() => {
+    for (const { instance } of peek(registry).values()) instance.invalidate();
+  }, `${name}.invalidate`);
+
   return Object.assign(query, {
-    find: (arg: TArg) => peek(registry).get(key(arg)),
-    invalidate: action(() => {
-      const map = peek(registry);
-      for (const [id, instance] of map) {
-        if (isConnected(instance)) instance.cacheAtom.invalidate();
-        else map.delete(id);
-      }
-    }, `${name}.invalidate`),
+    find,
+    invalidate,
     clear: action(() => {
       generation.set((n) => n + 1);
     }, `${name}.clear`),
+    invalidateOn: <TArgs extends unknown[], TResult>(
+      source: InvalidationSource<TArgs, TResult>,
+      select?: NoInfer<(result: TResult, ...args: TArgs) => readonly TArg[]>,
+    ) =>
+      addCallHook(source.onFulfill, ({ payload, params }) => {
+        if (!select) return invalidate();
+        for (const arg of select(payload, ...params)) find(arg)?.invalidate();
+      }),
   });
 }
 
-const isKeyed = <TArg, TData, TParams>(
-  options:
-    QueryOptions<TData, TParams> | KeyedQueryOptions<TArg, TData, TParams>,
-): options is KeyedQueryOptions<TArg, TData, TParams> =>
+const isKeyed = <TArg, TData>(
+  options: QueryOptions<TData> | KeyedQueryOptions<TArg, TData>,
+): options is KeyedQueryOptions<TArg, TData> =>
   typeof options.key === 'function';
 
 /**
  * Keyed query with `initState`: a separate instance for each key.
  * @param options {@link KeyedQueryOptions}
- * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `clear`
+ * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `invalidateOn`, `clear`
  */
-export function reatomQuery<TArg, TData, TParams = void>(
-  options: KeyedQueryOptions<TArg, TData, TParams> & { initState: TData },
+export function reatomQuery<TArg, TData>(
+  options: KeyedQueryOptions<TArg, TData> & { initState: TData },
 ): KeyedQuery<TArg, TData, TData>;
 /**
  * Keyed query: a separate instance for each key.
  * @param options {@link KeyedQueryOptions}
- * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `clear`
+ * @returns {@link KeyedQuery}: `query(arg)`, `find`, `invalidate`, `invalidateOn`, `clear`
  * @example
  * const teacherById = reatomQuery({
  *   name: 'teacherById',
  *   key: (id: string) => id,
- *   fetcher: (id, { signal }) => api.teacher(id, { signal }),
+ *   queryFn: (id, { signal }) => api.teacher(id, { signal }),
  * });
  */
-export function reatomQuery<TArg, TData, TParams = void>(
-  options: KeyedQueryOptions<TArg, TData, TParams>,
+export function reatomQuery<TArg, TData>(
+  options: KeyedQueryOptions<TArg, TData>,
 ): KeyedQuery<TArg, TData>;
 /**
  * Single query with `initState`: `data()` excludes `undefined`.
  * @param options {@link QueryOptions}
- * @returns {@link QueryAtom}
+ * @returns {@link SingleQuery}
  */
-export function reatomQuery<TData, TParams = void>(
-  options: QueryOptions<TData, TParams> & { initState: TData },
-): QueryAtom<TData, TData>;
+export function reatomQuery<TData>(
+  options: QueryOptions<TData> & { initState: TData },
+): SingleQuery<TData, TData>;
 /**
- * Single query. The request starts on the first read in a component.
+ * Single query. The request starts on the first subscription.
  * @param options {@link QueryOptions}
- * @returns {@link QueryAtom}
+ * @returns {@link SingleQuery}
  * @example
  * const currentUser = reatomQuery({
  *   name: 'currentUser',
- *   fetcher: ({ signal }) => api.me({ signal }),
+ *   queryFn: ({ signal }) => api.me({ signal }),
  * });
  */
-export function reatomQuery<TData, TParams = void>(
-  options: QueryOptions<TData, TParams>,
-): QueryAtom<TData>;
-export function reatomQuery<TArg, TData, TParams>(
-  options:
-    QueryOptions<TData, TParams> | KeyedQueryOptions<TArg, TData, TParams>,
+export function reatomQuery<TData>(
+  options: QueryOptions<TData>,
+): SingleQuery<TData>;
+export function reatomQuery<TArg, TData>(
+  options: QueryOptions<TData> | KeyedQueryOptions<TArg, TData>,
 ) {
   return isKeyed(options)
     ? reatomKeyedQuery(options)

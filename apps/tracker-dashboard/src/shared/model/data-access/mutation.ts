@@ -22,7 +22,10 @@ export interface MutationOptions<TArgs extends unknown[], TResult> {
   name: string;
   /** Server request receiving the mutation call arguments. */
   mutationFn: (...args: TArgs) => Promise<TResult>;
-  /** Receives the result and original arguments on success. Invalidate queries here. */
+  /**
+   * Receives the result and original arguments on success. Use it for side effects
+   * such as toasts or navigation; invalidate queries with `query.invalidateOn(mutation)`.
+   */
   onSuccess?: (result: TResult, ...args: TArgs) => void;
   /** Enable cancellation. Access the signal in `mutationFn` via `abortVar.require().signal`. */
   abort?: MutationAbortStrategy;
@@ -56,8 +59,9 @@ export function reatomMutation<TArgs extends unknown[], TResult>(
  * const updateTeacher = reatomMutation({
  *   name: 'updateTeacher',
  *   mutationFn: (id: string, patch: Partial<Teacher>) => api.updateTeacher(id, patch),
- *   onSuccess: (_saved, id) => teacherById.find(id)?.cacheAtom.invalidate(),
  * });
+ *
+ * teacherById.invalidateOn(updateTeacher, (_saved, id) => [id]);
  */
 export function reatomMutation<TArgs extends unknown[], TResult>(
   options: MutationOptions<TArgs, TResult>,
