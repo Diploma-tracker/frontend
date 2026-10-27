@@ -126,6 +126,64 @@ describe('reatomAsyncList: filters', () => {
 });
 
 describe('reatomAsyncList: requests and cache', () => {
+  it.each(['filters', 'params'] as const)(
+    'reuses cached data when %s fields are reordered, including nested objects',
+    (target) =>
+      testModel(async ({ watch }) => {
+        const initialSelection = {
+          facultyId: 'faculty-a',
+          period: { year: 2026, semester: 1 },
+        };
+        const params = atom(initialSelection);
+        const defaultFilters = {
+          page: 1,
+          pageSize: 20,
+          selection: initialSelection,
+        };
+        const fetcher = vi.fn(
+          async ({
+            filters,
+            params,
+          }: AsyncListInput<
+            typeof defaultFilters,
+            typeof initialSelection
+          >) => [`${filters.selection.facultyId}:${params.facultyId}`],
+        );
+        const list = reatomAsyncList(
+          { defaultFilters, initState: [], params, queryFn: fetcher },
+          `list.fieldOrder.${target}`,
+        );
+        const setSelection = (selection: typeof initialSelection) => {
+          if (target === 'filters') list.setFilter({ selection });
+          else params.set(selection);
+        };
+
+        watch(list.data);
+        await wrap(flush());
+        const cachedRows = list.data();
+        expect(cachedRows).toEqual(['faculty-a:faculty-a']);
+        expect(fetcher).toHaveBeenCalledTimes(1);
+
+        setSelection({ ...initialSelection, facultyId: 'faculty-b' });
+        await wrap(flush());
+        expect(fetcher).toHaveBeenCalledTimes(2);
+        expect(list.data()).toEqual([
+          target === 'filters' ? 'faculty-b:faculty-a' : 'faculty-a:faculty-b',
+        ]);
+
+        setSelection({
+          period: { semester: 1, year: 2026 },
+          facultyId: 'faculty-a',
+        });
+        await wrap(flush());
+
+        expect(fetcher).toHaveBeenCalledTimes(2);
+        expect(list.data()).toBe(cachedRows);
+        expect(list.ready()).toBe(true);
+        expect(list.error()).toBeUndefined();
+      }),
+  );
+
   it('keeps previous rows while typing, aborts obsolete requests, and only accepts the latest result', () =>
     testModel(async ({ watch }) => {
       const { list, fetcher } = createList();
