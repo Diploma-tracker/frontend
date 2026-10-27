@@ -21,7 +21,6 @@ import {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-/** `JSON.stringify` replacer: sorts object keys so equal filters give the same cache key. */
 const sortKeys = (_key: string, value: unknown): unknown => {
   if (!isRecord(value)) return value;
 
