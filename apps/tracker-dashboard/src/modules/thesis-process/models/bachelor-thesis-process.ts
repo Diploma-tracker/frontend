@@ -13,13 +13,7 @@ import { bachelorThesisProcess } from '@repo/api';
 import type { ThesisDataDTO } from '@repo/api';
 import { LoginTokenUserRole } from '@repo/api/model';
 
-const Status = {
-  active: 'active',
-  completed: 'completed',
-  waiting: 'waiting',
-} as const;
-
-type Status = keyof typeof Status;
+type Status = 'active' | 'completed' | 'waiting';
 
 export interface Stage {
   id: string;
