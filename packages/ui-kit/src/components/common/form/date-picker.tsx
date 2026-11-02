@@ -131,7 +131,7 @@ function DatePickerCalendar({
       defaultMonth={value}
       disabled={minDate || maxDate ? isDisabled : undefined}
       locale={locale}
-      initialFocus
+      autoFocus
     />
   );
 }

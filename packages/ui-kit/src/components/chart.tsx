@@ -117,8 +117,20 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+}: Omit<
+  Partial<
+    RechartsPrimitive.TooltipContentProps<
+      RechartsPrimitive.TooltipValueType,
+      number | string
+    >
+  >,
+  'formatter'
+> &
   React.ComponentProps<'div'> & {
+    formatter?: RechartsPrimitive.DefaultTooltipContentProps<
+      RechartsPrimitive.TooltipValueType,
+      number | string
+    >['formatter'];
     hideLabel?: boolean;
     hideIndicator?: boolean;
     indicator?: 'line' | 'dot' | 'dashed';
@@ -133,11 +145,11 @@ function ChartTooltipContent({
     }
 
     const [item] = payload;
-    const key = `${labelKey || item?.dataKey || item?.name || 'value'}`;
+    const key = `${labelKey ?? item?.dataKey ?? item?.name ?? 'value'}`;
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
-      !labelKey && typeof label === 'string'
-        ? config[label as keyof typeof config]?.label || label
+      !labelKey && (typeof label === 'string' || typeof label === 'number')
+        ? (config[label]?.label ?? label)
         : itemConfig?.label;
 
     if (labelFormatter) {
@@ -148,7 +160,7 @@ function ChartTooltipContent({
       );
     }
 
-    if (!value) {
+    if (value === undefined || value === null) {
       return null;
     }
 
@@ -181,20 +193,22 @@ function ChartTooltipContent({
         {payload
           .filter((item) => item.type !== 'none')
           .map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || 'value'}`;
+            const key = `${nameKey ?? item.name ?? item.dataKey ?? 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            const indicatorColor = color || item.payload.fill || item.color;
+            const indicatorColor = color || item.payload?.fill || item.color;
 
             return (
               <div
-                key={item.dataKey}
+                key={`${item.dataKey ?? item.name ?? 'value'}-${index}`}
                 className={cn(
                   'ui:flex ui:w-full ui:flex-wrap ui:items-stretch ui:gap-2 ui:[&>svg]:h-2.5 ui:[&>svg]:w-2.5 ui:[&>svg]:text-muted-foreground',
                   indicator === 'dot' && 'ui:items-center',
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                {formatter &&
+                item.value !== undefined &&
+                item.name !== undefined ? (
+                  formatter(item.value, item.name, item, index, payload)
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -205,11 +219,11 @@ function ChartTooltipContent({
                           className={cn(
                             'ui:shrink-0 ui:rounded-[2px] ui:border-(--color-border) ui:bg-(--color-bg)',
                             {
-                              'h-2.5 w-2.5': indicator === 'dot',
-                              'w-1': indicator === 'line',
-                              'w-0 border-[1.5px] border-dashed bg-transparent':
+                              'ui:size-2.5': indicator === 'dot',
+                              'ui:w-1': indicator === 'line',
+                              'ui:w-0 ui:border-[1.5px] ui:border-dashed ui:bg-transparent':
                                 indicator === 'dashed',
-                              'my-0.5': nestLabel && indicator === 'dashed',
+                              'ui:my-0.5': nestLabel && indicator === 'dashed',
                             },
                           )}
                           style={
@@ -233,7 +247,7 @@ function ChartTooltipContent({
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
-                      {item.value && (
+                      {item.value !== undefined && item.value !== null && (
                         <span className="ui:font-mono ui:font-medium ui:text-foreground ui:tabular-nums">
                           {item.value.toLocaleString()}
                         </span>
@@ -258,7 +272,10 @@ function ChartLegendContent({
   verticalAlign = 'bottom',
   nameKey,
 }: React.ComponentProps<'div'> &
-  Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
+  Pick<
+    RechartsPrimitive.DefaultLegendContentProps,
+    'payload' | 'verticalAlign'
+  > & {
     hideIcon?: boolean;
     nameKey?: string;
   }) {
