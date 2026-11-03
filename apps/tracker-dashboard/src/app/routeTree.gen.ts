@@ -9,25 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
 import { Route as appAppRouteImport } from './routes/(app)/_app'
+import { Route as authAuthRouteImport } from './routes/(auth)/_auth'
 import { Route as appAppIndexRouteImport } from './routes/(app)/_app.index'
-import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
-import { Route as appAppThesisProcessRouteImport } from './routes/(app)/_app.thesis-process'
-import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
 import { Route as appAppProjectEnrollmentRouteImport } from './routes/(app)/_app.project-enrollment'
-import { Route as appAppThesisProcessIndexRouteImport } from './routes/(app)/_app.thesis-process.index'
-import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
-import { Route as appAppThesisProcessProcessIdRouteImport } from './routes/(app)/_app.thesis-process.$processId'
-import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
+import { Route as appAppScheduleRouteImport } from './routes/(app)/_app.schedule'
+import { Route as appAppThesisProcessRouteImport } from './routes/(app)/_app.thesis-process'
+import { Route as authAuthLoginRouteImport } from './routes/(auth)/_auth.login'
 import { Route as appAppDefenseRoundIdRouteImport } from './routes/(app)/_app.defense.$roundId'
+import { Route as appAppProjectEnrollmentIndexRouteImport } from './routes/(app)/_app.project-enrollment.index'
+import { Route as appAppProjectEnrollmentRoundIdRouteImport } from './routes/(app)/_app.project-enrollment.$roundId'
+import { Route as appAppThesisProcessIndexRouteImport } from './routes/(app)/_app.thesis-process.index'
+import { Route as appAppThesisProcessProcessIdRouteImport } from './routes/(app)/_app.thesis-process.$processId'
 
-const authAuthRoute = authAuthRouteImport.update({
-  id: '/(auth)/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const appAppRoute = appAppRouteImport.update({
   id: '/(app)/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authAuthRoute = authAuthRouteImport.update({
+  id: '/(auth)/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appAppIndexRoute = appAppIndexRouteImport.update({
@@ -35,14 +35,9 @@ const appAppIndexRoute = appAppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appAppRoute,
 } as any)
-const authAuthLoginRoute = authAuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => authAuthRoute,
-} as any)
-const appAppThesisProcessRoute = appAppThesisProcessRouteImport.update({
-  id: '/thesis-process',
-  path: '/thesis-process',
+const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
+  id: '/project-enrollment',
+  path: '/project-enrollment',
   getParentRoute: () => appAppRoute,
 } as any)
 const appAppScheduleRoute = appAppScheduleRouteImport.update({
@@ -50,28 +45,26 @@ const appAppScheduleRoute = appAppScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => appAppRoute,
 } as any)
-const appAppProjectEnrollmentRoute = appAppProjectEnrollmentRouteImport.update({
-  id: '/project-enrollment',
-  path: '/project-enrollment',
+const appAppThesisProcessRoute = appAppThesisProcessRouteImport.update({
+  id: '/thesis-process',
+  path: '/thesis-process',
   getParentRoute: () => appAppRoute,
 } as any)
-const appAppThesisProcessIndexRoute =
-  appAppThesisProcessIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => appAppThesisProcessRoute,
-  } as any)
+const authAuthLoginRoute = authAuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => authAuthRoute,
+} as any)
+const appAppDefenseRoundIdRoute = appAppDefenseRoundIdRouteImport.update({
+  id: '/defense/$roundId',
+  path: '/defense/$roundId',
+  getParentRoute: () => appAppRoute,
+} as any)
 const appAppProjectEnrollmentIndexRoute =
   appAppProjectEnrollmentIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => appAppProjectEnrollmentRoute,
-  } as any)
-const appAppThesisProcessProcessIdRoute =
-  appAppThesisProcessProcessIdRouteImport.update({
-    id: '/$processId',
-    path: '/$processId',
-    getParentRoute: () => appAppThesisProcessRoute,
   } as any)
 const appAppProjectEnrollmentRoundIdRoute =
   appAppProjectEnrollmentRoundIdRouteImport.update({
@@ -79,11 +72,18 @@ const appAppProjectEnrollmentRoundIdRoute =
     path: '/$roundId',
     getParentRoute: () => appAppProjectEnrollmentRoute,
   } as any)
-const appAppDefenseRoundIdRoute = appAppDefenseRoundIdRouteImport.update({
-  id: '/defense/$roundId',
-  path: '/defense/$roundId',
-  getParentRoute: () => appAppRoute,
-} as any)
+const appAppThesisProcessIndexRoute =
+  appAppThesisProcessIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appAppThesisProcessRoute,
+  } as any)
+const appAppThesisProcessProcessIdRoute =
+  appAppThesisProcessProcessIdRouteImport.update({
+    id: '/$processId',
+    path: '/$processId',
+    getParentRoute: () => appAppThesisProcessRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/project-enrollment': typeof appAppProjectEnrollmentRouteWithChildren
@@ -168,18 +168,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(auth)/_auth': {
-      id: '/(auth)/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof authAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(app)/_app': {
       id: '/(app)/_app'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof appAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/_auth': {
+      id: '/(auth)/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_app/': {
@@ -189,18 +189,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppIndexRouteImport
       parentRoute: typeof appAppRoute
     }
-    '/(auth)/_auth/login': {
-      id: '/(auth)/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authAuthLoginRouteImport
-      parentRoute: typeof authAuthRoute
-    }
-    '/(app)/_app/thesis-process': {
-      id: '/(app)/_app/thesis-process'
-      path: '/thesis-process'
-      fullPath: '/thesis-process'
-      preLoaderRoute: typeof appAppThesisProcessRouteImport
+    '/(app)/_app/project-enrollment': {
+      id: '/(app)/_app/project-enrollment'
+      path: '/project-enrollment'
+      fullPath: '/project-enrollment'
+      preLoaderRoute: typeof appAppProjectEnrollmentRouteImport
       parentRoute: typeof appAppRoute
     }
     '/(app)/_app/schedule': {
@@ -210,19 +203,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppScheduleRouteImport
       parentRoute: typeof appAppRoute
     }
-    '/(app)/_app/project-enrollment': {
-      id: '/(app)/_app/project-enrollment'
-      path: '/project-enrollment'
-      fullPath: '/project-enrollment'
-      preLoaderRoute: typeof appAppProjectEnrollmentRouteImport
+    '/(app)/_app/thesis-process': {
+      id: '/(app)/_app/thesis-process'
+      path: '/thesis-process'
+      fullPath: '/thesis-process'
+      preLoaderRoute: typeof appAppThesisProcessRouteImport
       parentRoute: typeof appAppRoute
     }
-    '/(app)/_app/thesis-process/': {
-      id: '/(app)/_app/thesis-process/'
-      path: '/'
-      fullPath: '/thesis-process/'
-      preLoaderRoute: typeof appAppThesisProcessIndexRouteImport
-      parentRoute: typeof appAppThesisProcessRoute
+    '/(auth)/_auth/login': {
+      id: '/(auth)/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authAuthLoginRouteImport
+      parentRoute: typeof authAuthRoute
+    }
+    '/(app)/_app/defense/$roundId': {
+      id: '/(app)/_app/defense/$roundId'
+      path: '/defense/$roundId'
+      fullPath: '/defense/$roundId'
+      preLoaderRoute: typeof appAppDefenseRoundIdRouteImport
+      parentRoute: typeof appAppRoute
     }
     '/(app)/_app/project-enrollment/': {
       id: '/(app)/_app/project-enrollment/'
@@ -231,13 +231,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppProjectEnrollmentIndexRouteImport
       parentRoute: typeof appAppProjectEnrollmentRoute
     }
-    '/(app)/_app/thesis-process/$processId': {
-      id: '/(app)/_app/thesis-process/$processId'
-      path: '/$processId'
-      fullPath: '/thesis-process/$processId'
-      preLoaderRoute: typeof appAppThesisProcessProcessIdRouteImport
-      parentRoute: typeof appAppThesisProcessRoute
-    }
     '/(app)/_app/project-enrollment/$roundId': {
       id: '/(app)/_app/project-enrollment/$roundId'
       path: '/$roundId'
@@ -245,12 +238,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appAppProjectEnrollmentRoundIdRouteImport
       parentRoute: typeof appAppProjectEnrollmentRoute
     }
-    '/(app)/_app/defense/$roundId': {
-      id: '/(app)/_app/defense/$roundId'
-      path: '/defense/$roundId'
-      fullPath: '/defense/$roundId'
-      preLoaderRoute: typeof appAppDefenseRoundIdRouteImport
-      parentRoute: typeof appAppRoute
+    '/(app)/_app/thesis-process/': {
+      id: '/(app)/_app/thesis-process/'
+      path: '/'
+      fullPath: '/thesis-process/'
+      preLoaderRoute: typeof appAppThesisProcessIndexRouteImport
+      parentRoute: typeof appAppThesisProcessRoute
+    }
+    '/(app)/_app/thesis-process/$processId': {
+      id: '/(app)/_app/thesis-process/$processId'
+      path: '/$processId'
+      fullPath: '/thesis-process/$processId'
+      preLoaderRoute: typeof appAppThesisProcessProcessIdRouteImport
+      parentRoute: typeof appAppThesisProcessRoute
     }
   }
 }

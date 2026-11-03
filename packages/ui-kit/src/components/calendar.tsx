@@ -4,6 +4,7 @@ import {
   type DayButtonProps,
   DayPicker,
   type RootProps,
+  WeekNumber,
   getDefaultClassNames,
 } from 'react-day-picker';
 
@@ -99,7 +100,10 @@ function Calendar({
             : 'ui:rounded-md ui:pl-2 ui:pr-1 ui:flex ui:items-center ui:gap-1 ui:text-sm ui:h-8 ui:[&>svg]:text-muted-foreground ui:[&>svg]:size-3.5',
           defaultClassNames.caption_label,
         ),
-        table: 'ui:w-full ui:border-collapse',
+        month_grid: cn(
+          'ui:w-full ui:border-collapse',
+          defaultClassNames.month_grid,
+        ),
         weekdays: cn('ui:flex', defaultClassNames.weekdays),
         weekday: cn(
           'ui:text-muted-foreground ui:rounded-md ui:flex-1 ui:font-normal ui:text-[0.8rem] ui:select-none',
@@ -182,11 +186,11 @@ function Calendar({
         DayButton: CalendarDayButton,
         WeekNumber: ({ children, ...props }) => {
           return (
-            <td {...props}>
+            <WeekNumber {...props}>
               <div className="ui:flex ui:size-(--cell-size) ui:items-center ui:justify-center ui:text-center">
                 {children}
               </div>
-            </td>
+            </WeekNumber>
           );
         },
         ...components,
@@ -226,7 +230,7 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       className={cn(
         'ui:flex ui:aspect-square ui:size-auto ui:w-full ui:min-w-(--cell-size) ui:flex-col ui:gap-1 ui:leading-none ui:font-normal ui:group-data-[focused=true]/day:relative ui:group-data-[focused=true]/day:z-10 ui:group-data-[focused=true]/day:border-ring ui:group-data-[focused=true]/day:ring-[3px] ui:group-data-[focused=true]/day:ring-ring/50 ui:data-[range-end=true]:rounded-md ui:data-[range-end=true]:rounded-r-md ui:data-[range-end=true]:bg-primary ui:data-[range-end=true]:text-primary-foreground ui:data-[range-middle=true]:rounded-none ui:data-[range-middle=true]:bg-accent ui:data-[range-middle=true]:text-accent-foreground ui:data-[range-start=true]:rounded-md ui:data-[range-start=true]:rounded-l-md ui:data-[range-start=true]:bg-primary ui:data-[range-start=true]:text-primary-foreground ui:data-[selected-single=true]:bg-primary ui:data-[selected-single=true]:text-primary-foreground ui:dark:hover:text-accent-foreground ui:[&>span]:text-xs ui:[&>span]:opacity-70',
-        defaultClassNames.day,
+        defaultClassNames.day_button,
         className,
       )}
       {...props}

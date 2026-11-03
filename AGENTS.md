@@ -8,6 +8,7 @@
 - Keep public exports, workspace dependencies, and documentation synchronized with code changes.
 - Run relevant tests and applicable type, lint, format, and build checks, narrowest first. Prefer non-mutating checks; CI runs monorepo tests through `pnpm run test`.
 - Leave touched code cleaner without expanding scope.
+- During migrations, preserve existing behavior, including error handling and return contracts. Propose optional behavior improvements separately after the migration and implement them only with the user's agreement.
 
 ## Documentation
 

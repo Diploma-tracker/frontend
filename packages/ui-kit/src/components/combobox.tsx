@@ -56,18 +56,24 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
 function ComboboxInput({
   className,
   children,
-  disabled = false,
+  disabled,
   showTrigger = true,
   showClear = false,
+  labels,
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean;
   showClear?: boolean;
+  labels?: {
+    trigger?: string;
+    clear?: string;
+  };
 }) {
   return (
     <InputGroup className={cn('ui:w-auto', className)}>
       <ComboboxPrimitive.Input
-        render={<InputGroupInput disabled={disabled} />}
+        disabled={disabled}
+        render={<InputGroupInput />}
         {...props}
       />
       <InputGroupAddon align="inline-end">
@@ -80,10 +86,17 @@ function ComboboxInput({
             className="ui:group-has-data-[slot=combobox-clear]/input-group:hidden ui:data-pressed:bg-transparent"
             disabled={disabled}
           >
-            <ComboboxTrigger />
+            <ComboboxTrigger
+              aria-label={labels?.trigger ?? 'Toggle suggestions'}
+            />
           </InputGroupButton>
         )}
-        {showClear && <ComboboxClear disabled={disabled} />}
+        {showClear && (
+          <ComboboxClear
+            disabled={disabled}
+            aria-label={labels?.clear ?? 'Clear selection'}
+          />
+        )}
       </InputGroupAddon>
       {children}
     </InputGroup>
@@ -246,9 +259,11 @@ function ComboboxChip({
   className,
   children,
   showRemove = true,
+  removeLabel = 'Remove',
   ...props
 }: ComboboxPrimitive.Chip.Props & {
   showRemove?: boolean;
+  removeLabel?: string;
 }) {
   return (
     <ComboboxPrimitive.Chip
@@ -262,6 +277,7 @@ function ComboboxChip({
       {children}
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
+          aria-label={removeLabel}
           render={<Button variant="ghost" size="icon-xs" />}
           className="ui:-ml-1 ui:opacity-50 ui:hover:opacity-100"
           data-slot="combobox-chip-remove"
