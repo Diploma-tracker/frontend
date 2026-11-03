@@ -18,8 +18,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.3.1",
-    "@commitlint/config-conventional": "^20.3.1",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "branch-name-lint": "^3.0.1",
     "eslint": "^9.39.1",
